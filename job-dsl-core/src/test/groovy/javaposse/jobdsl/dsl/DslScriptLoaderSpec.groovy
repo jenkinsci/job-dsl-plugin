@@ -222,6 +222,18 @@ folder('folder-b') {
         jobs.any { it.jobName == 'folder-b' }
     }
 
+    def 'JENKINS-32941'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('JENKINS_32941.groovy', null, resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        jm.savedConfigs['example'] ==
+                getClass().getResource('/JENKINS_32941.xml').text.replace(System.getProperty('line.separator'), '\n')
+    }
+
     def 'script name which is not a valid class name'() {
         setup:
         ScriptRequest request = new ScriptRequest('test-script.dsl', null, resourcesDir, false)
@@ -230,9 +242,32 @@ folder('folder-b') {
         DslScriptLoader.runDslEngine(request, jm)
 
         then:
+        Exception e = thrown(DslException)
+        e.message =~ /invalid script name/
+        e.message =~ /test-script\.dsl/
+    }
+
+    def 'JENKINS-32628 script name which collides with package name'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('java.dsl', null, resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
+        content =~ /identical to a package name/
+        content =~ /java\.dsl/
+    }
+
+    def 'script in directory'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('foo/test.dsl', null, resourcesDir, false)
+
+        when:
+        DslScriptLoader.runDslEngine(request, jm)
+
+        then:
         noExceptionThrown()
-        baos.toString() =~ /support for arbitrary names is deprecated/
-        baos.toString() =~ /test-script\.dsl/
     }
 
     def 'script with method'() {

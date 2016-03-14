@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -9,13 +8,14 @@ import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.MarkUnstable
+import static javaposse.jobdsl.dsl.helpers.publisher.WeblogicDeployerContext.WeblogicDeploymentStageModes
 
 class PublisherContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
     Item item = new FreeStyleJob(jobManagement)
     PublisherContext context = new PublisherContext(jobManagement, item)
 
-    def 'empty call extended email method'() {
+    def 'empty call deprecated extended email method'() {
         when:
         context.extendedEmail()
 
@@ -35,7 +35,7 @@ class PublisherContextSpec extends Specification {
         email.body[0].value() == '$PROJECT_DEFAULT_CONTENT'
     }
 
-    def 'call extended email with args'() {
+    def 'call deprecated extended email with args'() {
         when:
         context.extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
             trigger('PreBuild')
@@ -75,7 +75,7 @@ class PublisherContextSpec extends Specification {
         email.sendToRecipientList[0].value() as String == 'false'
     }
 
-    def 'loop triggers to set send to requester'() {
+    def 'call deprecated extendedEmail with triggers to set send to requester'() {
         when:
         // Given by Thaddeus Diamond <thaddeus@hadapt.com> in mailing list
         def triggerNames = ['Unstable', 'Aborted', 'Success', 'Failure']
@@ -93,6 +93,224 @@ class PublisherContextSpec extends Specification {
         Node emailDefault = triggers.children()[0].email[0]
         emailDefault.sendToDevelopers[0].value() == 'false'
         emailDefault.sendToRequester[0].value() == 'true'
+    }
+
+    def 'call extendedEmail with no options'() {
+        when:
+        context.extendedEmail {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.emailext.ExtendedEmailPublisher'
+            children().size() == 13
+            recipientList[0].value() == '$DEFAULT_RECIPIENTS'
+            contentType[0].value() == 'default'
+            defaultSubject[0].value() == '$DEFAULT_SUBJECT'
+            defaultContent[0].value() == '$DEFAULT_CONTENT'
+            attachmentsPattern[0].value().empty
+            presendScript[0].value() == '$DEFAULT_PRESEND_SCRIPT'
+            classpath[0].value().empty
+            attachBuildLog[0].value() == false
+            compressBuildLog[0].value() == false
+            replyTo[0].value() == '$DEFAULT_REPLYTO'
+            saveOutput[0].value() == false
+            disabled[0].value() == false
+            with(configuredTriggers[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.emailext.plugins.trigger.FailureTrigger'
+                    children().size() == 1
+                    with(email[0]) {
+                        children().size() == 9
+                        recipientList[0].value().empty
+                        subject[0].value() == '$PROJECT_DEFAULT_SUBJECT'
+                        body[0].value() == '$PROJECT_DEFAULT_CONTENT'
+                        with(recipientProviders[0]) {
+                            children().size() == 1
+                            children()[0].name() == 'hudson.plugins.emailext.plugins.recipients.ListRecipientProvider'
+                        }
+                        attachmentsPattern[0].value().empty
+                        attachBuildLog[0].value() == false
+                        compressBuildLog[0].value() == false
+                        replyTo[0].value() == '$PROJECT_DEFAULT_REPLYTO'
+                        contentType[0].value() == 'project'
+                    }
+                }
+            }
+        }
+    }
+
+    def 'call extendedEmail with invalid content type'() {
+        when:
+        context.extendedEmail {
+            contentType(value)
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        value << ['', null, 'project']
+    }
+
+    def 'call extendedEmail with invalid trigger content type'() {
+        when:
+        context.extendedEmail {
+            triggers {
+                failure {
+                    contentType(value)
+                }
+            }
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        value << ['', null, 'default']
+    }
+
+    def 'call extendedEmail with all options'() {
+        when:
+        context.extendedEmail {
+            recipientList('me@example.org', 'you@example.org')
+            recipientList('other@example.org')
+            contentType('text/plain')
+            defaultSubject('Important')
+            defaultContent('read me')
+            attachmentPatterns('*.log', '**/report.html')
+            attachmentPatterns('foo.txt')
+            preSendScript('a script')
+            additionalGroovyClasspath('foo.jar', 'bar.jar')
+            additionalGroovyClasspath('my.jar')
+            attachBuildLog()
+            compressBuildLog()
+            replyToList('someone@example.org')
+            replyToList('test@example.org', 'ci@example.org')
+            saveToWorkspace()
+            disabled()
+            triggers {
+                "${trigger}" {
+                    sendTo {
+                        culprits()
+                        developers()
+                        recipientList()
+                        requester()
+                        failingTestSuspects()
+                        firstFailingBuildSuspects()
+                        upstreamCommitter()
+                    }
+                    recipientList('test@example.org', 'foo@example.org')
+                    recipientList('lala@example.org')
+                    contentType('text/html')
+                    subject('Lorem')
+                    content('Ipsum')
+                    attachmentPatterns('test*.html', '*.xml')
+                    attachmentPatterns('hello.txt')
+                    attachBuildLog()
+                    compressBuildLog()
+                    replyToList('one@example.org')
+                    replyToList('two@example.org', 'three@example.org')
+                }
+            }
+            configure {
+                it / foo('bar')
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.emailext.ExtendedEmailPublisher'
+            children().size() == 14
+            recipientList[0].value() == 'me@example.org, you@example.org, other@example.org'
+            contentType[0].value() == 'text/plain'
+            defaultSubject[0].value() == 'Important'
+            defaultContent[0].value() == 'read me'
+            attachmentsPattern[0].value() == '*.log, **/report.html, foo.txt'
+            presendScript[0].value() == 'a script'
+            with(classpath[0]) {
+                children().size() == 3
+                with(children()[0]) {
+                    name() == 'hudson.plugins.emailext.GroovyScriptPath'
+                    children().size() == 1
+                    path[0].value() == 'foo.jar'
+                }
+                with(children()[1]) {
+                    name() == 'hudson.plugins.emailext.GroovyScriptPath'
+                    children().size() == 1
+                    path[0].value() == 'bar.jar'
+                }
+                with(children()[2]) {
+                    name() == 'hudson.plugins.emailext.GroovyScriptPath'
+                    children().size() == 1
+                    path[0].value() == 'my.jar'
+                }
+            }
+            attachBuildLog[0].value() == true
+            compressBuildLog[0].value() == true
+            replyTo[0].value() == 'someone@example.org, test@example.org, ci@example.org'
+            saveOutput[0].value() == true
+            disabled[0].value() == true
+            with(configuredTriggers[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == "hudson.plugins.emailext.plugins.trigger.${className}"
+                    children().size() == 1
+                    with(email[0]) {
+                        children().size() == 9
+                        recipientList[0].value() == 'test@example.org, foo@example.org, lala@example.org'
+                        subject[0].value() == 'Lorem'
+                        body[0].value() == 'Ipsum'
+                        with(recipientProviders[0]) {
+                            children().size() == 7
+                            children()[0].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.CulpritsRecipientProvider'
+                            children()[1].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider'
+                            children()[2].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.ListRecipientProvider'
+                            children()[3].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.RequesterRecipientProvider'
+                            children()[4].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.FailingTestSuspectsRecipientProvider'
+                            children()[5].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.FirstFailingBuildSuspectsRecipientProvider'
+                            children()[6].name() ==
+                                'hudson.plugins.emailext.plugins.recipients.UpstreamComitterRecipientProvider'
+                        }
+                        attachmentsPattern[0].value() == 'test*.html, *.xml, hello.txt'
+                        attachBuildLog[0].value() == true
+                        compressBuildLog[0].value() == true
+                        replyTo[0].value() == 'one@example.org, two@example.org, three@example.org'
+                        contentType[0].value() == 'text/html'
+                    }
+                }
+            }
+            foo[0].value() == 'bar'
+        }
+
+        where:
+        trigger          || className
+        'aborted'        || 'AbortedTrigger'
+        'always'         || 'AlwaysTrigger'
+        'beforeBuild'    || 'PreBuildTrigger'
+        'firstFailure'   || 'FirstFailureTrigger'
+        'secondFailure'  || 'SecondFailureTrigger'
+        'failure'        || 'FailureTrigger'
+        'stillFailing'   || 'StillFailingTrigger'
+        'fixed'          || 'FixedTrigger'
+        'notBuilt'       || 'NotBuiltTrigger'
+        'statusChanged'  || 'StatusChangedTrigger'
+        'success'        || 'SuccessTrigger'
+        'improvement'    || 'ImprovementTrigger'
+        'regression'     || 'RegressionTrigger'
+        'unstable'       || 'UnstableTrigger'
+        'firstUnstable'  || 'FirstUnstableTrigger'
+        'stillUnstable'  || 'StillUnstableTrigger'
+        'fixedUnhealthy' || 'FixedUnhealthyTrigger'
     }
 
     def 'call standard mailer method'() {
@@ -202,8 +420,12 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call junit archive with all args'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('junit', '1.10') >> true
+
         when:
         context.archiveJunit('include/*') {
+            allowEmptyResults()
             retainLongStdout()
             testDataPublishers {
                 allowClaimingOfFailedTests()
@@ -216,8 +438,9 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.junit.JUnitResultArchiver'
-            children().size() == 3
+            children().size() == 4
             testResults[0].value() == 'include/*'
+            allowEmptyResults[0].value() == true
             keepLongStdio[0].value() == true
             testDataPublishers[0].children().size() == 4
             testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
@@ -226,13 +449,36 @@ class PublisherContextSpec extends Specification {
             testDataPublishers[0].'com.google.jenkins.flakyTestHandler.plugin.JUnitFlakyTestDataPublisher'[0] != null
         }
 
+        1 * jobManagement.requirePlugin('junit')
         1 * jobManagement.requireMinimumPluginVersion('claim', '2.0')
         1 * jobManagement.requireMinimumPluginVersion('junit-attachments', '1.0')
         1 * jobManagement.requireMinimumPluginVersion('test-stability', '1.0')
         1 * jobManagement.requireMinimumPluginVersion('flaky-test-handler', '1.0.0')
+        1 * jobManagement.requireMinimumPluginVersion('junit', '1.10')
+        1 * jobManagement.logPluginDeprecationWarning('junit', '1.10')
     }
 
     def 'call junit archive with minimal args'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('junit', '1.10') >> true
+
+        when:
+        context.archiveJunit('include/*')
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.tasks.junit.JUnitResultArchiver'
+            children().size() == 4
+            testResults[0].value() == 'include/*'
+            keepLongStdio[0].value() == false
+            allowEmptyResults[0].value() == false
+            testDataPublishers[0].children().size() == 0
+        }
+        1 * jobManagement.requirePlugin('junit')
+        1 * jobManagement.logPluginDeprecationWarning('junit', '1.10')
+    }
+
+    def 'call junit archive with minimal args, plugin version older than 1.10'() {
         when:
         context.archiveJunit('include/*')
 
@@ -244,6 +490,8 @@ class PublisherContextSpec extends Specification {
             keepLongStdio[0].value() == false
             testDataPublishers[0].children().size() == 0
         }
+        1 * jobManagement.requirePlugin('junit')
+        1 * jobManagement.logPluginDeprecationWarning('junit', '1.10')
     }
 
     def 'call archiveXUnit with no args'() {
@@ -573,6 +821,34 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('testng-plugin', '1.10')
     }
 
+    def 'calling gatling archive with minimal args'() {
+        when:
+        context.archiveGatling()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'io.gatling.jenkins.GatlingPublisher'
+            children().size == 1
+            enabled[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('gatling', '1.1.1')
+    }
+
+    def 'calling gatling archive with all args'() {
+        when:
+        context.archiveGatling {
+            enabled(false)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'io.gatling.jenkins.GatlingPublisher'
+            children().size == 1
+            enabled[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('gatling', '1.1.1')
+    }
+
     def 'call jacoco code coverage with no args'() {
         when:
         context.jacocoCodeCoverage()
@@ -668,6 +944,11 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'calling minimal html publisher closure'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.3') >> true
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.4') >> true
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.5') >> true
+
         when:
         context.publishHtml {
             report('build/*') {
@@ -691,9 +972,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'calling minimal html publisher closure, plugin version older than 1.3'() {
-        setup:
-        jobManagement.getPluginVersion('htmlpublisher') >> new VersionNumber('1.2')
-
         when:
         context.publishHtml {
             report('build/*') {
@@ -717,7 +995,7 @@ class PublisherContextSpec extends Specification {
 
     def 'calling minimal html publisher closure, plugin version older than 1.4'() {
         setup:
-        jobManagement.getPluginVersion('htmlpublisher') >> new VersionNumber('1.3')
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.3') >> true
 
         when:
         context.publishHtml {
@@ -742,6 +1020,11 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'calling html publisher closure with all options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.3') >> true
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.4') >> true
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.5') >> true
+
         when:
         context.publishHtml {
             report('build/*') {
@@ -802,22 +1085,91 @@ class PublisherContextSpec extends Specification {
         context.publishJabber('me@gmail.com')
 
         then:
-        Node publisherNode = context.publisherNodes[0]
-        publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        def targetNode = publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'[0]
-        targetNode.value[0].value() == 'me@gmail.com'
-        targetNode.notificationOnly.size() == 0 // No noficationOnly when not a group
-        publisherNode.strategy[0].value() == 'ALL'
-        publisherNode.notifyOnBuildStart[0].value() == false
-        publisherNode.notifySuspects[0].value() == false
-        publisherNode.notifyCulprits[0].value() == false
-        publisherNode.notifyFixers[0].value() == false
-        publisherNode.notifyUpstreamCommitters[0].value() == false
-        Node buildToNode = publisherNode.buildToChatNotifier[0]
-        buildToNode.attributes().containsKey('class')
-        buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
-        publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+            children().size() == 9
+            with(targets[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.im.DefaultIMMessageTarget'
+                    children().size() == 1
+                    value[0].value() == 'me@gmail.com'
+                }
+            }
+            strategy[0].value() == 'ALL'
+            notifyOnBuildStart[0].value() == false
+            notifySuspects[0].value() == false
+            notifyCulprits[0].value() == false
+            notifyFixers[0].value() == false
+            notifyUpstreamCommitters[0].value() == false
+            buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+            matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        }
         1 * jobManagement.requirePlugin('jabber')
+        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+    }
+
+    def 'call Jabber publish with group chat'() {
+        when:
+        context.publishJabber('*@gmail.com')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+            children().size() == 9
+            with(targets[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.im.GroupChatIMMessageTarget'
+                    children().size() == 2
+                    name[0].value() == '@gmail.com'
+                    notificationOnly[0].value() == false
+                }
+            }
+            strategy[0].value() == 'ALL'
+            notifyOnBuildStart[0].value() == false
+            notifySuspects[0].value() == false
+            notifyCulprits[0].value() == false
+            notifyFixers[0].value() == false
+            notifyUpstreamCommitters[0].value() == false
+            buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+            matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        }
+        1 * jobManagement.requirePlugin('jabber')
+        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+    }
+
+    def 'call Jabber publish with conference room'() {
+        when:
+        context.publishJabber('room@conference.gmail.com')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+            children().size() == 9
+            with(targets[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.im.GroupChatIMMessageTarget'
+                    children().size() == 2
+                    name[0].value() == 'room@conference.gmail.com'
+                    notificationOnly[0].value() == false
+                }
+            }
+            strategy[0].value() == 'ALL'
+            notifyOnBuildStart[0].value() == false
+            notifySuspects[0].value() == false
+            notifyCulprits[0].value() == false
+            notifyFixers[0].value() == false
+            notifyUpstreamCommitters[0].value() == false
+            buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+            matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        }
+        1 * jobManagement.requirePlugin('jabber')
+        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
     }
 
     def 'call Jabber publish with closure args'() {
@@ -833,22 +1185,63 @@ class PublisherContextSpec extends Specification {
         }
 
         then:
-        Node publisherNode = context.publisherNodes[0]
-        publisherNode.name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
-        def targetNode = publisherNode.targets[0].'hudson.plugins.im.DefaultIMMessageTarget'[0]
-        targetNode.value[0].value() == 'me@gmail.com'
-        targetNode.notificationOnly.size() == 0
-        publisherNode.strategy[0].value() == 'FAILURE_AND_FIXED'
-        publisherNode.notifyOnBuildStart[0].value() == true
-        publisherNode.notifySuspects[0].value() == true
-        publisherNode.notifyCulprits[0].value() == true
-        publisherNode.notifyFixers[0].value() == true
-        publisherNode.notifyUpstreamCommitters[0].value() == true
-        Node buildToNode = publisherNode.buildToChatNotifier[0]
-        buildToNode.attributes().containsKey('class')
-        buildToNode.attribute('class') == 'hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier'
-        publisherNode.matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+            children().size() == 9
+            with(targets[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.im.DefaultIMMessageTarget'
+                    children().size() == 1
+                    value[0].value() == 'me@gmail.com'
+                }
+            }
+            strategy[0].value() == 'FAILURE_AND_FIXED'
+            notifyOnBuildStart[0].value() == true
+            notifySuspects[0].value() == true
+            notifyCulprits[0].value() == true
+            notifyFixers[0].value() == true
+            notifyUpstreamCommitters[0].value() == true
+            buildToChatNotifier[0].attribute('class') ==
+                    'hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier'
+            matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        }
         1 * jobManagement.requirePlugin('jabber')
+        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+    }
+
+    def 'call Jabber publish with NEW_FAILURE_AND_FIXED strategy'() {
+        when:
+        context.publishJabber('me@gmail.com') {
+            strategyName('NEW_FAILURE_AND_FIXED')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.jabber.im.transport.JabberPublisher'
+            children().size() == 9
+            with(targets[0]) {
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'hudson.plugins.im.DefaultIMMessageTarget'
+                    children().size() == 1
+                    value[0].value() == 'me@gmail.com'
+                }
+            }
+            strategy[0].value() == 'NEW_FAILURE_AND_FIXED'
+            notifyOnBuildStart[0].value() == false
+            notifySuspects[0].value() == false
+            notifyCulprits[0].value() == false
+            notifyFixers[0].value() == false
+            notifyUpstreamCommitters[0].value() == false
+            buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
+            matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
+        }
+        1 * jobManagement.requirePlugin('jabber')
+        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+        1 * jobManagement.requireMinimumPluginVersion('instant-messaging', '1.26')
     }
 
     def 'call Jabber publish with invalid strategy'() {
@@ -1074,106 +1467,6 @@ class PublisherContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'call downstream ext with all args with deprecated methods'() {
-        when:
-        context.downstreamParameterized {
-            trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true) {
-                currentBuild() // Current build parameters
-                propertiesFile('dir/my.properties') // Parameters from properties file
-                gitRevision(false) // Pass-through Git commit that was built
-                predefinedProp('key1', 'value1') // Predefined properties
-                predefinedProps([key2: 'value2', key3: 'value3'])
-                predefinedProps('key4=value4\nkey5=value5') // Newline separated
-                matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
-                subversionRevision() // Subversion Revision
-                boolParam('aParam')
-                boolParam('bParam', false)
-                boolParam('cParam', true)
-                sameNode()
-                nodeLabel('nodeParam', 'node_label')
-            }
-            trigger('Project2') {
-                currentBuild()
-            }
-        }
-
-        then:
-        Node publisherNode = context.publisherNodes[0]
-        publisherNode.name() == 'hudson.plugins.parameterizedtrigger.BuildTrigger'
-        publisherNode.configs[0].children().size() == 2
-        with(publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]) {
-            projects[0].value() == 'Project1, Project2'
-            condition[0].value() == 'UNSTABLE_OR_BETTER'
-            triggerWithNoParameters[0].value() == true
-            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
-            configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() ==
-                    'dir/my.properties'
-            configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
-            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
-            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
-                    'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
-            configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() ==
-                    'label=="${TARGET}"'
-            configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
-            block.size() == 0
-
-            def boolParams = configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameters'[0].configs[0]
-            boolParams.children().size() == 3
-            def boolNode = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0]
-            boolNode.name[0].value() == 'aParam'
-            boolNode.value[0].value() == false
-            def boolNode1 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1]
-            boolNode1.name[0].value() == 'bParam'
-            boolNode1.value[0].value() == false
-            def boolNode2 = boolParams.'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2]
-            boolNode2.name[0].value() == 'cParam'
-            boolNode2.value[0].value() == true
-
-            def nodeNode = configs[0].'hudson.plugins.parameterizedtrigger.NodeParameters'[0]
-            nodeNode != null
-
-            def nodeLabel = configs[0].
-                'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0]
-            nodeLabel.name[0].value() == 'nodeParam'
-            nodeLabel.nodeLabel[0].value() == 'node_label'
-
-            block.isEmpty()
-        }
-
-        Node second = publisherNode.configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[1]
-        second.projects[0].value() == 'Project2'
-        second.condition[0].value() == 'SUCCESS'
-        second.triggerWithNoParameters[0].value() == false
-        second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
-
-        1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-
-        when:
-        context.downstreamParameterized {
-            trigger('Project3') {
-            }
-        }
-
-        then:
-        Node third = context.publisherNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BuildTriggerConfig'[0]
-        third.projects[0].value() == 'Project3'
-        third.condition[0].value() == 'SUCCESS'
-        third.triggerWithNoParameters[0].value() == false
-        third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
-        1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-
-        when:
-        context.downstreamParameterized {
-            trigger('Project4', 'WRONG')
-        }
-
-        then:
-        thrown(DslScriptException)
-    }
-
     def 'call downstream ext with all args'() {
         when:
         context.downstreamParameterized {
@@ -1251,8 +1544,8 @@ class PublisherContextSpec extends Specification {
         second.triggerWithNoParameters[0].value() == false
         second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
 
-        1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         when:
@@ -1267,16 +1560,8 @@ class PublisherContextSpec extends Specification {
         third.condition[0].value() == 'SUCCESS'
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
-        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-
-        when:
-        context.downstreamParameterized {
-            trigger('Project4', 'WRONG')
-        }
-
-        then:
-        thrown(DslScriptException)
     }
 
     def 'call parametrized downstream with project list'() {
@@ -1292,13 +1577,13 @@ class PublisherContextSpec extends Specification {
         third.condition[0].value() == 'SUCCESS'
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
-        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call parametrized downstream with FAILED_OR_BETTER condition'() {
         given:
-        jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.26')
+        jobManagement.isMinimumPluginVersionInstalled('parameterized-trigger', '2.26') >> true
 
         when:
         context.downstreamParameterized {
@@ -1313,14 +1598,11 @@ class PublisherContextSpec extends Specification {
         third.condition[0].value() == 'FAILED_OR_BETTER'
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
-        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call parametrized downstream with FAILED_OR_BETTER condition and older plugin version'() {
-        given:
-        jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.25')
-
         when:
         context.downstreamParameterized {
             trigger('Project1') {
@@ -1442,6 +1724,7 @@ class PublisherContextSpec extends Specification {
         targets.value()[1].value()[0].name() == 'name'
         targets.value()[1].value()[0].value() == '#c2'
         1 * jobManagement.requirePlugin('ircbot')
+        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
     }
 
     def 'irc notification strategy is set'() {
@@ -1453,6 +1736,20 @@ class PublisherContextSpec extends Specification {
         then:
         context.publisherNodes[0].strategy[0].value() == 'STATECHANGE_ONLY'
         1 * jobManagement.requirePlugin('ircbot')
+        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+    }
+
+    def 'irc notification strategy is set to NEW_FAILURE_AND_FIXED'() {
+        when:
+        context.irc {
+            strategy('NEW_FAILURE_AND_FIXED')
+        }
+
+        then:
+        context.publisherNodes[0].strategy[0].value() == 'NEW_FAILURE_AND_FIXED'
+        1 * jobManagement.requirePlugin('ircbot')
+        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+        1 * jobManagement.requireMinimumPluginVersion('instant-messaging', '1.26')
     }
 
     def 'irc notification invalid strategy triggers exception'() {
@@ -1472,8 +1769,9 @@ class PublisherContextSpec extends Specification {
         }
 
         then:
-        context.publisherNodes[0].notifyFixers[0].value() == 'true'
+        context.publisherNodes[0].notifyFixers[0].value() == true
         1 * jobManagement.requirePlugin('ircbot')
+        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
     }
 
     def 'irc notification message is set'() {
@@ -1490,6 +1788,7 @@ class PublisherContextSpec extends Specification {
         ircPublisher.'buildToChatNotifier'[0].attributes()['class'] ==
                 'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier'
         1 * jobManagement.requirePlugin('ircbot')
+        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
     }
 
     def 'default notification message is set if not specified'() {
@@ -1505,6 +1804,7 @@ class PublisherContextSpec extends Specification {
         ircPublisher.'buildToChatNotifier'[0].attributes()['class'] ==
                 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
         1 * jobManagement.requirePlugin('ircbot')
+        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
     }
 
     def 'default notification strategy is set if not specified'() {
@@ -1517,6 +1817,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         context.publisherNodes[0].strategy[0].value() == 'ALL'
         1 * jobManagement.requirePlugin('ircbot')
+        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
     }
 
     def 'given the required cobertura report file name all defaults are set for your pleasure'() {
@@ -1955,10 +2256,7 @@ class PublisherContextSpec extends Specification {
         aggregateNode.includeFailedBuilds[0].value() == true
     }
 
-    def 'call groovyPostBuild with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('1.10')
-
+    def 'call groovyPostBuild'() {
         when:
         context.groovyPostBuild('foo')
 
@@ -1966,17 +2264,17 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
             children().size() == 2
-            groovyScript[0].value() == 'foo'
+            with(script[0]) {
+                children().size() == 2
+                script[0].value() == 'foo'
+                sandbox[0].value() == false
+            }
             behavior[0].value() == 0
         }
-        (1.._) * jobManagement.requirePlugin('groovy-postbuild')
-        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
+        (1.._) * jobManagement.requireMinimumPluginVersion('groovy-postbuild', '2.2')
     }
 
-    def 'call groovyPostBuild with overriden failure behavior and older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('1.10')
-
+    def 'call groovyPostBuild with overridden failure behavior'() {
         when:
         context.groovyPostBuild('foo', MarkUnstable)
 
@@ -1984,17 +2282,17 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
             children().size() == 2
-            groovyScript[0].value() == 'foo'
+            with(script[0]) {
+                children().size() == 2
+                script[0].value() == 'foo'
+                sandbox[0].value() == false
+            }
             behavior[0].value() == 1
         }
-        (1.._) * jobManagement.requirePlugin('groovy-postbuild')
-        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
+        (1.._) * jobManagement.requireMinimumPluginVersion('groovy-postbuild', '2.2')
     }
 
-    def 'call groovyPostBuild with no options and newer plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('2.2')
-
+    def 'call groovyPostBuild with closure and no options'() {
         when:
         context.groovyPostBuild {
         }
@@ -2010,14 +2308,10 @@ class PublisherContextSpec extends Specification {
             }
             behavior[0].value() == 0
         }
-        1 * jobManagement.requirePlugin('groovy-postbuild')
-        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
+        1 * jobManagement.requireMinimumPluginVersion('groovy-postbuild', '2.2')
     }
 
-    def 'call groovyPostBuild with all options and newer plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('groovy-postbuild') >> new VersionNumber('2.2')
-
+    def 'call groovyPostBuild with closure and all options'() {
         when:
         context.groovyPostBuild {
             script('foo')
@@ -2036,9 +2330,7 @@ class PublisherContextSpec extends Specification {
             }
             behavior[0].value() == 2
         }
-        1 * jobManagement.requirePlugin('groovy-postbuild')
         1 * jobManagement.requireMinimumPluginVersion('groovy-postbuild', '2.2')
-        1 * jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
     }
 
     def 'call javadoc archiver with no args'() {
@@ -2295,7 +2587,7 @@ class PublisherContextSpec extends Specification {
             configs[0].value().empty
         }
         1 * jobManagement.requirePlugin('build-pipeline-plugin')
-        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
@@ -2324,7 +2616,7 @@ class PublisherContextSpec extends Specification {
                     'key1=value1'
         }
         1 * jobManagement.requirePlugin('build-pipeline-plugin')
-        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
@@ -2369,27 +2661,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].pushMerge[0].value() == false
         context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
         context.publisherNodes[0].forcePush[0].value() == false
-        1 * jobManagement.requirePlugin('git')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-    }
-
-    def 'call git with minimal options pre 2.2.6'() {
-        setup:
-        jobManagement.getPluginVersion('git') >> new VersionNumber('2.2.5')
-
-        when:
-        context.git {
-        }
-
-        then:
-        context.publisherNodes.size() == 1
-        context.publisherNodes[0].name() == 'hudson.plugins.git.GitPublisher'
-        context.publisherNodes[0].children().size() == 5
-        context.publisherNodes[0].configVersion[0].value() == 2
-        context.publisherNodes[0].pushMerge[0].value() == false
-        context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
-        1 * jobManagement.requirePlugin('git')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
     def 'call git with all options'() {
@@ -2430,8 +2702,7 @@ class PublisherContextSpec extends Specification {
                 branchName[0].value() == 'master'
             }
         }
-        1 * jobManagement.requirePlugin('git')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
     def 'call git with minimal tag options'() {
@@ -2458,8 +2729,7 @@ class PublisherContextSpec extends Specification {
                 updateTag[0].value() == false
             }
         }
-        1 * jobManagement.requirePlugin('git')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
     def 'call git without tag targetRepoName'() {
@@ -3023,27 +3293,30 @@ class PublisherContextSpec extends Specification {
     def 'call rundeck with all args should create valid rundeck node'() {
         when:
         context.rundeck('jobId') {
-            options key1: 'value1', key2: 'value2'
-            options key4: 'value4'
-            option 'key3', 'value3'
-            nodeFilters key1: 'value1', key2: 'value2'
-            nodeFilters key4: 'value4'
-            nodeFilter 'key3', 'value3'
-            tag 'tag'
+            options(key1: 'value1', key2: 'value2')
+            options(key4: 'value4')
+            option('key3', 'value3')
+            nodeFilters(key1: 'value1', key2: 'value2')
+            nodeFilters(key4: 'value4')
+            nodeFilter('key3', 'value3')
+            tag('tag')
             shouldWaitForRundeckJob()
-            shouldFailTheBuild false
+            shouldFailTheBuild()
         }
 
         then:
-        Node rundeckNode = context.publisherNodes[0]
-        rundeckNode.name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
-        rundeckNode.jobId[0].value() == 'jobId'
-        rundeckNode.options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-        rundeckNode.nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-        rundeckNode.tag[0].value() == 'tag'
-        rundeckNode.shouldWaitForRundeckJob[0].value() == true
-        rundeckNode.shouldFailTheBuild[0].value() == false
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
+            children().size() == 6
+            jobId[0].value() == 'jobId'
+            options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+            nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+            tag[0].value() == 'tag'
+            shouldWaitForRundeckJob[0].value() == true
+            shouldFailTheBuild[0].value() == true
+        }
         1 * jobManagement.requirePlugin('rundeck')
+        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
     }
 
     def 'call rundeck with invalid jobId should fail'() {
@@ -3055,9 +3328,7 @@ class PublisherContextSpec extends Specification {
         exception.message =~ /\(.+, line \d+\) jobIdentifier cannot be null or empty/
 
         where:
-        id   | _
-        null | _
-        ''   | _
+        id << [null, '']
     }
 
     def 'call rundeck with default values'() {
@@ -3065,13 +3336,76 @@ class PublisherContextSpec extends Specification {
         context.rundeck('jobId')
 
         then:
-        Node rundeckNode = context.publisherNodes[0]
-        rundeckNode.options[0].value().isEmpty()
-        rundeckNode.nodeFilters[0].value().isEmpty()
-        rundeckNode.tag[0].value() == ''
-        rundeckNode.shouldWaitForRundeckJob[0].value() == false
-        rundeckNode.shouldFailTheBuild[0].value() == false
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
+            children().size() == 6
+            jobId[0].value() == 'jobId'
+            options[0].value().isEmpty()
+            nodeFilters[0].value().isEmpty()
+            tag[0].value() == ''
+            shouldWaitForRundeckJob[0].value() == false
+            shouldFailTheBuild[0].value() == false
+        }
         1 * jobManagement.requirePlugin('rundeck')
+        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
+    }
+
+    def 'call rundeck with all args should create valid rundeck node (version 3.4)'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.4') >> true
+
+        when:
+        context.rundeck('jobId') {
+            options(key1: 'value1', key2: 'value2')
+            options(key4: 'value4')
+            option('key3', 'value3')
+            nodeFilters(key1: 'value1', key2: 'value2')
+            nodeFilters(key4: 'value4')
+            nodeFilter('key3', 'value3')
+            tag('tag')
+            shouldWaitForRundeckJob()
+            shouldFailTheBuild()
+            includeRundeckLogs()
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
+            children().size() == 7
+            jobId[0].value() == 'jobId'
+            options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+            nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+            tag[0].value() == 'tag'
+            shouldWaitForRundeckJob[0].value() == true
+            shouldFailTheBuild[0].value() == true
+            includeRundeckLogs[0].value() == true
+        }
+        1 * jobManagement.requirePlugin('rundeck')
+        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
+        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
+    }
+
+    def 'call rundeck with default values (version 3.4)'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.4') >> true
+
+        when:
+        context.rundeck('jobId')
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
+            children().size() == 7
+            jobId[0].value() == 'jobId'
+            options[0].value().isEmpty()
+            nodeFilters[0].value().isEmpty()
+            tag[0].value() == ''
+            shouldWaitForRundeckJob[0].value() == false
+            shouldFailTheBuild[0].value() == false
+            includeRundeckLogs[0].value() == false
+        }
+        1 * jobManagement.requirePlugin('rundeck')
+        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
     }
 
     def 'call s3 without profile'(String profile) {
@@ -3123,9 +3457,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call s3 with some options'() {
-        setup:
-        jobManagement.getPluginVersion('s3') >> new VersionNumber('0.7')
-
         when:
         context.s3('profile') {
             entry('foo', 'bar', 'us-east-1')
@@ -3160,13 +3491,10 @@ class PublisherContextSpec extends Specification {
                 value[0].value() == 'value'
             }
         }
-        1 * jobManagement.requirePlugin('s3')
+        1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
     }
 
     def 'call s3 with more options'() {
-        setup:
-        jobManagement.getPluginVersion('s3') >> new VersionNumber('0.7')
-
         when:
         context.s3('profile') {
             entry('foo', 'bar', 'eu-west-1')
@@ -3221,65 +3549,28 @@ class PublisherContextSpec extends Specification {
                 value[0].value() == 'value'
             }
         }
-        1 * jobManagement.requirePlugin('s3')
-    }
-
-    def 'call s3 with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('s3') >> new VersionNumber('0.6')
-
-        when:
-        context.s3('profile') {
-            entry('foo', 'bar', 'EU_WEST_1')
-        }
-
-        then:
-        context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            name() == 'hudson.plugins.s3.S3BucketPublisher'
-            children().size() == 3
-            profileName[0].value() == 'profile'
-            entries.size() == 1
-            entries[0].'hudson.plugins.s3.Entry'.size() == 1
-            with(entries[0].'hudson.plugins.s3.Entry'[0]) {
-                children().size() == 7
-                sourceFile[0].value() == 'foo'
-                bucket[0].value() == 'bar'
-                storageClass[0].value() == 'STANDARD'
-                selectedRegion[0].value() == 'EU_WEST_1'
-                noUploadOnFailure[0].value() == false
-                uploadFromSlave[0].value() == false
-                managedArtifacts[0].value() == false
-            }
-            userMetadata[0].value().empty
-        }
-        1 * jobManagement.requirePlugin('s3')
-        1 * jobManagement.logPluginDeprecationWarning('s3', '0.7')
+        1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
     }
 
     def 'call flexible publish'() {
         when:
-        context.flexiblePublish {
-            condition {
-                stringsMatch('foo', 'bar', false)
-            }
-            publisher {
-                mailer('test@test.com')
-            }
-        }
+        context.flexiblePublish(closure)
 
         then:
+        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
             publishers[0].children().size == 1
-
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == 'false'
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+                runner[0].value().empty
                 publisherList[0].children().size() == 1
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Mailer'
@@ -3288,31 +3579,49 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
+
+        where:
+        closure << [
+                {
+                    condition {
+                        stringsMatch('foo', 'bar', false)
+                    }
+                    publisher {
+                        mailer('test@test.com')
+                    }
+                },
+                {
+                    conditionalAction {
+                        condition {
+                            stringsMatch('foo', 'bar', false)
+                        }
+                        publishers {
+                            mailer('test@test.com')
+                        }
+                    }
+                }
+        ]
     }
 
     def 'call flexible publish with build step'() {
         when:
-        context.flexiblePublish {
-            condition {
-                stringsMatch('foo', 'bar', false)
-            }
-            step {
-                shell('echo hello')
-            }
-        }
+        context.flexiblePublish(closure)
 
         then:
+        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
             publishers[0].children().size == 1
-
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == 'false'
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+                runner[0].value().empty
                 publisherList[0].children().size() == 1
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Shell'
@@ -3322,34 +3631,49 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
         1 * jobManagement.requirePlugin('any-buildstep')
+
+        where:
+        closure << [
+                {
+                    condition {
+                        stringsMatch('foo', 'bar', false)
+                    }
+                    step {
+                        shell('echo hello')
+                    }
+                },
+                {
+                    conditionalAction {
+                        condition {
+                            stringsMatch('foo', 'bar', false)
+                        }
+                        steps {
+                            shell('echo hello')
+                        }
+                    }
+                }
+        ]
     }
 
     def 'call flexible publish with multiple actions'() {
         when:
-        context.flexiblePublish {
-            condition {
-                stringsMatch('foo', 'bar', false)
-            }
-            step {
-                shell('echo hello')
-            }
-            publisher {
-                wsCleanup()
-            }
-        }
+        context.flexiblePublish(closure)
 
         then:
+        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
             publishers[0].children().size == 1
-
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == 'false'
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+                runner[0].value().empty
                 publisherList[0].children().size() == 2
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Shell'
@@ -3359,30 +3683,129 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
         1 * jobManagement.requirePlugin('any-buildstep')
+
+        where:
+        closure << [
+                {
+                    condition {
+                        stringsMatch('foo', 'bar', false)
+                    }
+                    step {
+                        shell('echo hello')
+                    }
+                    publisher {
+                        wsCleanup()
+                    }
+                },
+                {
+                    conditionalAction {
+                        condition {
+                            stringsMatch('foo', 'bar', false)
+                        }
+                        steps {
+                            shell('echo hello')
+                        }
+                        publishers {
+                            wsCleanup()
+                        }
+                    }
+                }
+        ]
     }
 
     def 'call flexible publish without condition'() {
         when:
-        context.flexiblePublish {
-            step {
-                shell('echo hello')
-            }
-        }
+        context.flexiblePublish(closure)
 
         then:
+        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
             publishers[0].children().size == 1
-
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
                 condition[0].children().size() == 0
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+                runner[0].value().empty
                 publisherList[0].children().size() == 1
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Shell'
                     children()[0].command[0].value() == 'echo hello'
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
+
+        where:
+        closure << [
+                {
+                    step {
+                        shell('echo hello')
+                    }
+                },
+                {
+                    conditionalAction {
+                        steps {
+                            shell('echo hello')
+                        }
+                    }
+                }
+        ]
+    }
+
+    def 'call flexible publish with multiple conditional actions'() {
+        when:
+        context.flexiblePublish {
+            conditionalAction {
+                steps {
+                    shell('echo hello')
+                }
+            }
+            conditionalAction {
+                condition {
+                    stringsMatch('foo', 'bar', false)
+                }
+                runner('DontRun')
+                publishers {
+                    wsCleanup()
+                }
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 2
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
+                condition[0].children().size() == 0
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+                runner[0].value().empty
+                with(publisherList[0]) {
+                    children().size() == 1
+                    children()[0].name() == 'hudson.tasks.Shell'
+                    children()[0].command[0].value() == 'echo hello'
+                }
+            }
+            with(publishers[0].children()[1]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 3
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                condition[0].arg1[0].value() == 'foo'
+                condition[0].arg2[0].value() == 'bar'
+                condition[0].ignoreCase[0].value() == 'false'
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun'
+                runner[0].value().empty
+                with(publisherList[0]) {
+                    children().size() == 1
+                    children()[0].name() == 'hudson.plugins.ws__cleanup.WsCleanup'
                 }
             }
         }
@@ -3395,10 +3818,16 @@ class PublisherContextSpec extends Specification {
         }
 
         then:
-        thrown(DslScriptException)
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].value().empty
+        }
+        1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
     }
 
-    def 'call post build scripts with minimal options'() {
+    def 'call post build scripts with minimal options with plugin version 0.14'() {
         when:
         context.postBuildScripts {
         }
@@ -3411,15 +3840,16 @@ class PublisherContextSpec extends Specification {
             scriptOnlyIfSuccess[0].value() == true
         }
         1 * jobManagement.requirePlugin('postbuildscript')
+        1 * jobManagement.logPluginDeprecationWarning('postbuildscript', '0.17')
     }
 
-    def 'call post build scripts with all options'() {
+    def 'call post build scripts with all options with plugin version 0.14'() {
         when:
         context.postBuildScripts {
             steps {
                 shell('echo TEST')
             }
-            onlyIfBuildSucceeds(false)
+            onlyIfBuildSucceeds(value)
         }
 
         then:
@@ -3428,9 +3858,63 @@ class PublisherContextSpec extends Specification {
             children().size() == 2
             buildSteps[0].children().size == 1
             buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
-            scriptOnlyIfSuccess[0].value() == false
+            scriptOnlyIfSuccess[0].value() == value
         }
         1 * jobManagement.requirePlugin('postbuildscript')
+        1 * jobManagement.logPluginDeprecationWarning('postbuildscript', '0.17')
+
+        where:
+        value << [true, false]
+    }
+
+    def 'call post build scripts with minimal options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('postbuildscript', '0.17') >> true
+
+        when:
+        context.postBuildScripts {
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
+            children().size() == 4
+            buildSteps[0].children().size == 0
+            scriptOnlyIfSuccess[0].value() == true
+            scriptOnlyIfFailure[0].value() == false
+            markBuildUnstable[0].value() == false
+        }
+        1 * jobManagement.requirePlugin('postbuildscript')
+    }
+
+    def 'call post build scripts with all options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('postbuildscript', '0.17') >> true
+
+        when:
+        context.postBuildScripts {
+            steps {
+                shell('echo TEST')
+            }
+            onlyIfBuildSucceeds(value)
+            onlyIfBuildFails(value)
+            markBuildUnstable(value)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
+            children().size() == 4
+            buildSteps[0].children().size == 1
+            buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
+            scriptOnlyIfSuccess[0].value() == value
+            scriptOnlyIfFailure[0].value() == value
+            markBuildUnstable[0].value() == value
+        }
+        1 * jobManagement.requirePlugin('postbuildscript')
+
+        where:
+        value << [true, false]
     }
 
     def 'call sonar with no options'() {
@@ -3460,6 +3944,7 @@ class PublisherContextSpec extends Specification {
     def 'call sonar with all options'() {
         when:
         context.sonar {
+            installationName('sonarTest')
             branch('test')
             additionalProperties('-Dtest=test')
             overrideTriggers {
@@ -3470,7 +3955,8 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.plugins.sonar.SonarPublisher'
-            children().size() == 11
+            children().size() == 12
+            installationName[0].value() == 'sonarTest'
             jdk[0].value() == '(Inherit From Job)'
             branch[0].value() == 'test'
             language[0].value().empty
@@ -4301,8 +4787,8 @@ class PublisherContextSpec extends Specification {
             failOnNonMerge[0].value() == false
             deleteOnMerge[0].value() == false
         }
-        1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.17')
-        1 * jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
+        1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.26')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'mergePullRequest with all options'() {
@@ -4327,29 +4813,8 @@ class PublisherContextSpec extends Specification {
             failOnNonMerge[0].value() == true
             deleteOnMerge[0].value() == true
         }
-        1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.17')
-        2 * jobManagement.requireMinimumPluginVersion('ghprb', '1.26')
-        1 * jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
-    }
-
-    def 'mergePullRequest with no options and older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('ghprb') >> new VersionNumber('1.25')
-
-        when:
-        context.mergePullRequest()
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
-            children().size() == 4
-            mergeComment[0].value() == ''
-            onlyTriggerPhrase[0].value() == false
-            onlyAdminsMerge[0].value() == false
-            disallowOwnCode[0].value() == false
-        }
-        1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.17')
-        1 * jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
+        1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.26')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'publishBuild with no options'() {
@@ -4488,6 +4953,75 @@ class PublisherContextSpec extends Specification {
             completeJobMessage[0].value() == 'JOB DONE! $URL'
         }
         1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
+    }
+
+    def 'mattermost notification with no options'() {
+        when:
+        context.mattermost()
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'jenkins.plugins.mattermost.MattermostNotifier'
+            children().size() == 15
+            endpoint[0].value() == ''
+            room[0].value() == ''
+            icon[0].value() == ''
+            customMessage[0].value() == ''
+            startNotification[0].value() == false
+            notifySuccess[0].value() == false
+            notifyAborted[0].value() == false
+            notifyNotBuilt[0].value() == false
+            notifyUnstable[0].value() == false
+            notifyFailure[0].value() == false
+            notifyBackToNormal[0].value() == false
+            notifyRepeatedFailure[0].value() == false
+            includeTestSummary[0].value() == false
+            showCommitList[0].value() == false
+            includeCustomMessage[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('mattermost', '1.5.0')
+    }
+
+    def 'mattermost notification with all options'() {
+        when:
+        context.mattermost {
+            endpoint('one')
+            room('two')
+            icon('three')
+            customMessage('four')
+            notifyBuildStart()
+            notifySuccess()
+            notifyAborted()
+            notifyNotBuilt()
+            notifyUnstable()
+            notifyFailure()
+            notifyBackToNormal()
+            notifyRepeatedFailure()
+            includeTestSummary()
+            showCommitList()
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'jenkins.plugins.mattermost.MattermostNotifier'
+            children().size() == 15
+            endpoint[0].value() == 'one'
+            room[0].value() == 'two'
+            icon[0].value() == 'three'
+            customMessage[0].value() == 'four'
+            startNotification[0].value() == true
+            notifySuccess[0].value() == true
+            notifyAborted[0].value() == true
+            notifyNotBuilt[0].value() == true
+            notifyUnstable[0].value() == true
+            notifyFailure[0].value() == true
+            notifyBackToNormal[0].value() == true
+            notifyRepeatedFailure[0].value() == true
+            includeTestSummary[0].value() == true
+            showCommitList[0].value() == true
+            includeCustomMessage[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('mattermost', '1.5.0')
     }
 
     def 'call publishOverSsh without server'() {
@@ -4772,7 +5306,9 @@ class PublisherContextSpec extends Specification {
             publishers {
                 downstreamParameterized {
                     trigger('upload-to-staging') {
-                        currentBuild()
+                        parameters {
+                            currentBuild()
+                        }
                     }
                 }
             }
@@ -4996,148 +5532,730 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
     }
 
-    def 'jiraIssueUpdater'() {
+    def 'slocCount with no options'() {
         when:
-        context.jira {
-            jiraIssueUpdater()
-        }
+        context.slocCount {}
 
         then:
-        context.publisherNodes != null
-        context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
-            name() == 'hudson.plugins.jira.JiraIssueUpdater'
+            name() == 'hudson.plugins.sloccount.SloccountPublisher'
+            children().size() == 5
+            pattern[0].value().empty
+            encoding[0].value().empty
+            commentIsCode[0].value() == false
+            ignoreBuildFailure[0].value() == false
+            numBuildsInGraph[0].value() == 0
         }
-        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
+        1 * jobManagement.requireMinimumPluginVersion('sloccount', '1.20')
     }
 
-    def 'jiraReleaseVersionUpdater'() {
+    def 'slocCount with all options'() {
         when:
-        context.jira {
-            jiraReleaseVersionUpdater {
-                jiraProjectKey(projectKey)
-                jiraRelease(release)
-            }
+        context.slocCount {
+            pattern('build/result.xml')
+            encoding('UTF-8')
+            commentIsCode(value)
+            buildsInGraph(10)
+            ignoreBuildFailure(value)
         }
 
         then:
-        context.publisherNodes != null
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.sloccount.SloccountPublisher'
+            children().size() == 5
+            pattern[0].value() == 'build/result.xml'
+            encoding[0].value() == 'UTF-8'
+            numBuildsInGraph[0].value() == 10
+            commentIsCode[0].value() == value
+            ignoreBuildFailure[0].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('sloccount', '1.20')
+
+        where:
+        value << [true, false]
+    }
+
+    def 'svnTag with no options'() {
+        when:
+        context.svnTag {}
+
+        then:
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
-            name() == 'hudson.plugins.jira.JiraReleaseVersionUpdater'
+            name() == 'hudson.plugins.svn__tag.SvnTagPublisher'
+            children().size() == 3
+            tagBaseURL[0].value() == "http://subversion_host/project/tags/last-successful/\${env['JOB_NAME']}"
+            tagComment[0].value() == "Tagged by Jenkins svn-tag plugin. Build:\${env['BUILD_TAG']}."
+            tagDeleteComment[0].value() == 'Delete old tag by svn-tag Jenkins plugin.'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('svn-tag', '1.18')
+    }
+
+    def 'svnTag with all options'() {
+        when:
+        context.svnTag {
+            baseUrl('http://subversion.com')
+            comment('tag comment')
+            deleteComment('delete comment')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.svn__tag.SvnTagPublisher'
+            children().size() == 3
+            tagBaseURL[0].value() == 'http://subversion.com'
+            tagComment[0].value() == 'tag comment'
+            tagDeleteComment[0].value() == 'delete comment'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('svn-tag', '1.18')
+    }
+
+    def 'call cucumberReports with no options'() {
+        when:
+        context.cucumberReports {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'net.masterthought.jenkins.CucumberReportPublisher'
+            children().size() == 11
+            jsonReportDirectory[0].value().empty
+            pluginUrlPath[0].value().empty
+            fileIncludePattern[0].value().empty
+            fileExcludePattern[0].value().empty
+            skippedFails[0].value() == false
+            pendingFails[0].value() == false
+            undefinedFails[0].value() == false
+            missingFails[0].value() == false
+            noFlashCharts[0].value() == false
+            ignoreFailedTests[0].value() == false
+            parallelTesting[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6.0')
+    }
+
+    def 'call cucumberReports with all options'() {
+        when:
+        context.cucumberReports {
+            jsonReportPath('files.json')
+            pluginUrlPath('url')
+            fileIncludePattern('included')
+            fileExcludePattern('excluded')
+            failOnSkipSteps(value)
+            failOnPendingSteps(value)
+            failOnUndefinedSteps(value)
+            failOnMissingSteps(value)
+            turnOffFlashCharts(value)
+            ignoreFailedTests(value)
+            parallelTesting(value)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'net.masterthought.jenkins.CucumberReportPublisher'
+            children().size() == 11
+            jsonReportDirectory[0].value() == 'files.json'
+            pluginUrlPath[0].value() == 'url'
+            fileIncludePattern[0].value() == 'included'
+            fileExcludePattern[0].value() == 'excluded'
+            skippedFails[0].value() == value
+            pendingFails[0].value() == value
+            undefinedFails[0].value() == value
+            missingFails[0].value() == value
+            noFlashCharts[0].value() == value
+            ignoreFailedTests[0].value() == value
+            parallelTesting[0].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6.0')
+
+        where:
+        value << [true, false]
+    }
+
+    def 'call cucumberTestResults with no options'() {
+        when:
+        context.cucumberTestResults {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.cucumber.jsontestsupport.CucumberTestResultArchiver'
             children().size() == 2
-            with(entries[0]) {
-                jiraProjectKey[0].value() == expectedKey
-                jiraRelease[0].value() == expectedRelease
-            }
+            testResults[0].value().empty
+            ignoreBadSteps[0].value() == false
         }
-        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
-
-        where:
-        projectKey | release | expectedKey | expectedRelease
-        null       | null    | ''          | ''
-        'key'      | null    | 'key'       | ''
-        null       | 'key2'  | ''          | 'key2'
-        'key1'     | 'key2'  | 'key1'      | 'key2'
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-testresult-plugin', '0.8.2')
     }
 
-    def 'jiraIssueMigrator'() {
+    def 'call cucumberTestResults with all options'() {
         when:
-        context.jira {
-            jiraIssueMigrator {
-                jiraProjectKey(projectKey)
-                jiraRelease(release)
-                jiraReplaceVersion(replace)
-                jiraQuery(query)
-            }
+        context.cucumberTestResults {
+            jsonReportFiles('file.json')
+            ignoreBadSteps(value)
         }
 
         then:
-        context.publisherNodes != null
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
-            name() == 'hudson.plugins.jira.JiraIssueMigrator'
-            children().size() == 4
-            with(entries[0]) {
-                jiraProjectKey[0].value() == expectedKey
-                jiraRelease[0].value() == expectedRelease
-                jiraReplaceVersion[0].value() == expectedReplace
-                jiraQuery[0].value() == expectedQuery
-            }
-        }
-        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
-
-        where:
-        projectKey | release | replace | query | expectedKey | expectedRelease | expectedReplace | expectedQuery
-        null       | null    | null    | null  | ''          | ''              | ''              | ''
-        'key'      | null    | null    | null  | 'key'       | ''              | ''              | ''
-        'key1'     | 'key2'  | null    | null  | 'key1'      | 'key2'          | ''              | ''
-        'key1'     | 'key2'  | 'key3'  | null  | 'key1'      | 'key2'          | 'key3'          | ''
-        'key1'     | 'key2'  | 'key3'  | 'key' | 'key1'      | 'key2'          | 'key3'          | 'key'
-    }
-
-    def 'jiraVersionCreator'() {
-        when:
-        context.jira {
-            jiraVersionCreator {
-                jiraProjectKey(projectKey)
-                jiraVersion(version)
-            }
-        }
-
-        then:
-        context.publisherNodes != null
-        context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            name() == 'hudson.plugins.jira.JiraVersionCreator'
+            name() == 'org.jenkinsci.plugins.cucumber.jsontestsupport.CucumberTestResultArchiver'
             children().size() == 2
-            with(entries[0]) {
-                jiraProjectKey[0].value() == expectedKey
-                jiraVersion[0].value() == expectedVersion
-            }
+            testResults[0].value() == 'file.json'
+            ignoreBadSteps[0].value() == value
         }
-        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-testresult-plugin', '0.8.2')
 
         where:
-        projectKey | version | expectedKey | expectedVersion
-        null       | null    | ''          | ''
-        'key'      | null    | 'key'       | ''
-        null       | 'key2'  | ''          | 'key2'
-        'key1'     | 'key2'  | 'key1'      | 'key2'
+        value << [true, false]
     }
 
-    def 'jiraCreateIssueNotifier'() {
+    def 'call mantis with no options'() {
         when:
-        context.jira {
-            jiraCreateIssueNotifier {
-                projectKey(key)
-                testDescription(desc)
-                assignee(assig)
-                component(comp)
+        context.mantis {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.mantis.MantisIssueUpdater'
+            children().size() == 2
+            keepNotePrivate[0].value() == false
+            recordChangelog[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('mantis', '0.26')
+    }
+
+    def 'call mantis with all options'() {
+        when:
+        context.mantis {
+            keepNotePrivate(value)
+            recordChangelogToNote(value)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.mantis.MantisIssueUpdater'
+            children().size() == 2
+            keepNotePrivate[0].value() == value
+            recordChangelog[0].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('mantis', '0.26')
+
+        where:
+        value << [true, false]
+    }
+
+    def 'publish deployment to WebLogic with least args'() {
+        when:
+        context.deployToWeblogic {}
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.deploy.weblogic.WeblogicDeploymentPlugin'
+            children().size() == 6
+            mustExitOnFailure[0].value() == false
+            forceStopOnFirstFailure[0].value() == false
+            selectedDeploymentStrategyIds[0].value().empty
+            isDeployingOnlyWhenUpdates[0].value() == false
+            deployedProjectsDependencies[0].value().empty
+            tasks[0].value().empty
+        }
+    }
+
+    def 'publish one deployment to WebLogic with all args'() {
+        when:
+        context.deployToWeblogic {
+            mustExitOnFailure()
+            forceStopOnFirstFailure()
+            deployingOnlyWhenUpdates()
+            deployedProjectsDependencies('abc,def')
+            deploymentPolicies {
+                legacyCode()
+                user()
+                userId()
+                remoteHost()
+                upstream()
+                deploymentTimer()
+                scmChange()
+            }
+            task {
+                weblogicEnvironmentTargetedName('test_environment')
+                deploymentName('myApp')
+                deploymentTargets('ms_one')
+                isLibrary()
+                builtResourceRegexToDeploy('myApp.ear')
+                baseResourcesGeneratedDirectory('foo')
+                taskName('test_deploy_task')
+                jdkName('JDK 7')
+                jdkHome('lala')
+                stageMode(stageModeEnum)
+                commandLine('one;')
+                commandLine('two;')
+                deploymentPlan('test')
+            }
+            task {}
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.deploy.weblogic.WeblogicDeploymentPlugin'
+            children().size() == 6
+            mustExitOnFailure[0].value() == true
+            forceStopOnFirstFailure[0].value() == true
+            isDeployingOnlyWhenUpdates[0].value() == true
+            deployedProjectsDependencies[0].value() == 'abc,def'
+            with(selectedDeploymentStrategyIds[0]) {
+                children().size() == 7
+                string[0].value() == 'hudson.model.Cause\\\\$LegacyCodeCause'
+                string[1].value() == 'hudson.model.Cause\\\\$UserCause'
+                string[2].value() == 'hudson.model.Cause\\\\$UserIdCause'
+                string[3].value() == 'hudson.model.Cause\\\\$RemoteCause'
+                string[4].value() == 'hudson.model.Cause\\\\$UpstreamCause'
+                string[5].value() ==
+                        'org.jenkinsci.plugins.deploy.weblogic.trigger.DeploymentTrigger\\\\$DeploymentTriggerCause'
+                string[6].value() == 'hudson.triggers.SCMTrigger\\\\$SCMTriggerCause'
+            }
+            tasks[0].children().size() == 2
+            with(tasks[0].children()[0]) {
+                name() == 'org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask'
+                children().size() == 12
+                !id[0].value().empty
+                weblogicEnvironmentTargetedName[0].value() == 'test_environment'
+                deploymentName[0].value() == 'myApp'
+                deploymentTargets[0].value() == 'ms_one'
+                isLibrary[0].value() == true
+                builtResourceRegexToDeploy[0].value() == 'myApp.ear'
+                baseResourcesGeneratedDirectory[0].value() == 'foo'
+                taskName[0].value() == 'test_deploy_task'
+                jdk[0].children().size() == 2
+                jdk[0].name[0].value() == 'JDK 7'
+                jdk[0].home[0].value() == 'lala'
+                stageMode[0].value() == stageModeString
+                commandLine[0].value() == 'one;\ntwo;'
+                deploymentPlan[0].value() == 'test'
+            }
+            with(tasks[0].children()[1]) {
+                name() == 'org.jenkinsci.plugins.deploy.weblogic.data.DeploymentTask'
+                children().size() == 12
+                !id[0].value().empty
+                weblogicEnvironmentTargetedName[0].value() == ''
+                deploymentName[0].value() == ''
+                deploymentTargets[0].value() == 'AdminServer'
+                isLibrary[0].value() == false
+                builtResourceRegexToDeploy[0].value() == ''
+                baseResourcesGeneratedDirectory[0].value() == ''
+                taskName[0].value() == ''
+                jdk[0].children().size() == 2
+                jdk[0].name[0].value() == ''
+                jdk[0].home[0].value() == ''
+                stageMode[0].value() == 'bydefault'
+                commandLine[0].value() == ''
+                deploymentPlan[0].value() == ''
             }
         }
+
+        where:
+        stageModeEnum                               || stageModeString
+        WeblogicDeploymentStageModes.BY_DEFAULT     || 'bydefault'
+        WeblogicDeploymentStageModes.EXTERNAL_STAGE || 'external_stage'
+        WeblogicDeploymentStageModes.NO_STAGE       || 'nostage'
+        WeblogicDeploymentStageModes.STAGE          || 'stage'
+    }
+
+    def 'call flog with no options'() {
+        when:
+        context.flog()
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.flog.FlogPublisher'
+            children().size() == 2
+            rbDirectories[0].value().empty
+            with(splittedDirectories[0]) {
+                children().size() == 1
+                string[0].value() == '.'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call flog with all options'() {
+        when:
+        context.flog {
+            rubyDirectories('a', 'b')
+            rubyDirectories('c')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.flog.FlogPublisher'
+            children().size() == 2
+            rbDirectories[0].value() == 'a\nb\nc'
+            with(splittedDirectories[0]) {
+                children().size() == 3
+                string[0].value() == 'a'
+                string[1].value() == 'b'
+                string[2].value() == 'c'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call railsNotes with no options'() {
+        when:
+        context.railsNotes()
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.railsNotes.RailsNotesPublisher'
+            children().size() == 4
+            with(rake[0]) {
+                name() == 'rake'
+                children().size() == 5
+                rakeInstallation[0].value() == '(Default)'
+                rakeWorkingDir[0].value().empty
+                tasks[0].value() == 'notes'
+                silent[0].value() == true
+                bundleExec[0].value() == true
+            }
+            rakeInstallation[0].value() == '(Default)'
+            rakeWorkingDir[0].value().empty
+            task[0].value() == 'notes'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call railsNotes with all options'() {
+        when:
+        context.railsNotes {
+            rakeVersion('rake_2')
+            rakeWorkingDirectory('src')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.railsNotes.RailsNotesPublisher'
+            children().size() == 4
+            with(rake[0]) {
+                name() == 'rake'
+                children().size() == 5
+                rakeInstallation[0].value() == 'rake_2'
+                rakeWorkingDir[0].value() == 'src'
+                tasks[0].value() == 'notes'
+                silent[0].value() == true
+                bundleExec[0].value() == true
+            }
+            rakeInstallation[0].value() == 'rake_2'
+            rakeWorkingDir[0].value() == 'src'
+            task[0].value() == 'notes'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call railsStats with no options'() {
+        when:
+        context.railsStats {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.railsStats.RailsStatsPublisher'
+            children().size() == 4
+            with(rake[0]) {
+                name() == 'rake'
+                children().size() == 5
+                rakeInstallation[0].value() == '(Default)'
+                rakeWorkingDir[0].value().empty
+                tasks[0].value() == 'stats'
+                silent[0].value() == true
+                bundleExec[0].value() == true
+            }
+            rakeInstallation[0].value() == '(Default)'
+            rakeWorkingDir[0].value().empty
+            task[0].value() == 'stats'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call railsStats with all options'() {
+        when:
+        context.railsStats {
+            rakeVersion('rake_2')
+            rakeWorkingDirectory('src')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.railsStats.RailsStatsPublisher'
+            children().size() == 4
+            with(rake[0]) {
+                name() == 'rake'
+                children().size() == 5
+                rakeInstallation[0].value() == 'rake_2'
+                rakeWorkingDir[0].value() == 'src'
+                tasks[0].value() == 'stats'
+                silent[0].value() == true
+                bundleExec[0].value() == true
+            }
+            rakeInstallation[0].value() == 'rake_2'
+            rakeWorkingDir[0].value() == 'src'
+            task[0].value() == 'stats'
+        }
+
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call seleniumReport with no options'() {
+        when:
+        context.seleniumReport()
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.seleniumhq.SeleniumhqPublisher'
+            children().size() == 2
+            testResults[0].value().empty
+            useTestCommands[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('seleniumhq', '0.4')
+    }
+
+    def 'call seleniumReport with all options'() {
+        when:
+        context.seleniumReport('./selenium*') {
+            useTestCommands(value)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.seleniumhq.SeleniumhqPublisher'
+            children().size() == 2
+            testResults[0].value() == './selenium*'
+            useTestCommands[0].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('seleniumhq', '0.4')
+
+        where:
+        value << [true, false]
+    }
+
+    def 'call seleniumHtmlReport with no options'() {
+        when:
+        context.seleniumHtmlReport()
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.seleniumhtmlreport.SeleniumHtmlReportPublisher'
+            children().size() == 3
+            testResultsDir[0].value() == 'target'
+            failureIfExceptionOnParsingResultFiles[0].value() == true
+            SELENIUM__REPORTS__TARGET[0].value() == 'seleniumReports'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('seleniumhtmlreport', '1.0')
+    }
+
+    def 'call seleniumHtmlReport with all options'() {
+        when:
+        context.seleniumHtmlReport('./selenium') {
+            failOnExceptions(value)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.seleniumhtmlreport.SeleniumHtmlReportPublisher'
+            children().size() == 3
+            testResultsDir[0].value() == './selenium'
+            failureIfExceptionOnParsingResultFiles[0].value() == value
+            SELENIUM__REPORTS__TARGET[0].value() == 'seleniumReports'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('seleniumhtmlreport', '1.0')
+
+        where:
+        value << [true, false]
+    }
+
+    def 'call rcov with no options'() {
+        when:
+        context.rcov {
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.rcov.RcovPublisher'
+            children().size() == 2
+            reportDir[0].value().empty
+            with(targets[0]) {
+                children().size() == 2
+                with(children()[0]) {
+                    name() == 'hudson.plugins.rubyMetrics.rcov.model.MetricTarget'
+                    children().size() == 4
+                    metric[0].value() == 'TOTAL_COVERAGE'
+                    healthy[0].value() == 80
+                    unhealthy[0].value() == 0
+                    unstable[0].value() == 0
+                }
+                with(children()[1]) {
+                    name() == 'hudson.plugins.rubyMetrics.rcov.model.MetricTarget'
+                    children().size() == 4
+                    metric[0].value() == 'CODE_COVERAGE'
+                    healthy[0].value() == 80
+                    unhealthy[0].value() == 0
+                    unstable[0].value() == 0
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call rcov with all options'() {
+        when:
+        context.rcov {
+            reportDirectory('folder')
+            totalCoverage(90, 50, 10)
+            codeCoverage(91, 51, 11)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.rubyMetrics.rcov.RcovPublisher'
+            children().size() == 2
+            reportDir[0].value() == 'folder'
+            with(targets[0]) {
+                children().size() == 2
+                with(children()[0]) {
+                    name() == 'hudson.plugins.rubyMetrics.rcov.model.MetricTarget'
+                    children().size() == 4
+                    metric[0].value() == 'TOTAL_COVERAGE'
+                    healthy[0].value() == 90
+                    unhealthy[0].value() == 50
+                    unstable[0].value() == 10
+                }
+                with(children()[1]) {
+                    name() == 'hudson.plugins.rubyMetrics.rcov.model.MetricTarget'
+                    children().size() == 4
+                    metric[0].value() == 'CODE_COVERAGE'
+                    healthy[0].value() == 91
+                    unhealthy[0].value() == 51
+                    unstable[0].value() == 11
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('rubyMetrics', '1.6.3')
+    }
+
+    def 'call cloverPHP with missing XML location'() {
+        when:
+        context.cloverPHP(xmlLocation)
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        xmlLocation << [null, '']
+    }
+
+    def 'call cloverPHP with missing report directory'() {
+        when:
+        context.cloverPHP('foo') {
+            publishHtmlReport(directory)
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        directory << [null, '']
+    }
+
+    def 'call cloverPHP minimal options'() {
+        when:
+        context.cloverPHP('html')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.cloverphp.CloverPHPPublisher'
+            children().size() == 6
+            publishHtmlReport[0].value() == false
+            xmlLocation[0].value() == 'html'
+            disableArchiving[0].value() == false
+            with(healthyTarget[0]) {
+                children().size() == 2
+                methodCoverage[0].value() == 70
+                statementCoverage[0].value() == 80
+            }
+            unhealthyTarget[0].value().empty
+            failingTarget[0].value().empty
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cloverphp', '0.5')
+    }
+
+    def 'call cloverPHP with all options'() {
+        when:
+        context.cloverPHP('html') {
+            publishHtmlReport('dir') {
+                disableArchiving(disable)
+            }
+            healthyMethodCoverage(null)
+            healthyStatementCoverage(null)
+            unhealthyMethodCoverage(3)
+            unhealthyStatementCoverage(4)
+            unstableMethodCoverage(5)
+            unstableStatementCoverage(6)
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.cloverphp.CloverPHPPublisher'
+            children().size() == 7
+            publishHtmlReport[0].value() == true
+            reportDir[0].value() == 'dir'
+            xmlLocation[0].value() == 'html'
+            disableArchiving[0].value() == disable
+            healthyTarget[0].value().empty
+            with(unhealthyTarget[0]) {
+                children().size() == 2
+                methodCoverage[0].value() == 3
+                statementCoverage[0].value() == 4
+            }
+            with(failingTarget[0]) {
+                children().size() == 2
+                methodCoverage[0].value() == 5
+                statementCoverage[0].value() == 6
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cloverphp', '0.5')
+
+        where:
+        disable << [true, false]
+    }
+
+    def 'call emotional with no options'() {
+        when:
+        context.emotional()
 
         then:
         context.publisherNodes != null
         context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            name() == 'hudson.plugins.jira.JiraCreateIssueNotifier'
-            children().size() == 4
-            with(entries[0]) {
-                projectKey[0].value() == expectedKey
-                testDescription[0].value() == expectedDesc
-                assignee[0].value() == expectedAssignee
-                component[0].value() == expectedComponent
-            }
-        }
-        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
-
-        where:
-        key    | desc   | assig  | comp  | expectedKey | expectedDesc | expectedAssignee | expectedComponent
-        null   | null   | null   | null  | ''          | ''           | ''               | ''
-        'key'  | null   | null   | null  | 'key'       | ''           | ''               | ''
-        'key1' | 'key2' | null   | null  | 'key1'      | 'key2'       | ''               | ''
-        'key1' | 'key2' | 'key3' | null  | 'key1'      | 'key2'       | 'key3'           | ''
-        'key1' | 'key2' | 'key3' | 'key' | 'key1'      | 'key2'       | 'key3'           | 'key'
+        context.publisherNodes[0].name() == 'org.jenkinsci.plugins.emotional__jenkins.EmotionalJenkinsPublisher'
+        1 * jobManagement.requireMinimumPluginVersion('emotional-jenkins-plugin', '1.2')
     }
 }

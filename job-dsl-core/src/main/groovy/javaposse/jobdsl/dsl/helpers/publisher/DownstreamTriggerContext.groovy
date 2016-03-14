@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
@@ -29,7 +28,7 @@ class DownstreamTriggerContext extends AbstractDownstreamTriggerContext {
      */
     void condition(String condition) {
         Set<String> validConditions = new HashSet<>(VALID_DOWNSTREAM_CONDITIONS)
-        if (!jobManagement.getPluginVersion('parameterized-trigger')?.isOlderThan(new VersionNumber('2.26'))) {
+        if (jobManagement.isMinimumPluginVersionInstalled('parameterized-trigger', '2.26')) {
             validConditions << 'FAILED_OR_BETTER'
         }
 

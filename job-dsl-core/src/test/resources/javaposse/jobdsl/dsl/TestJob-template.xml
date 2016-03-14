@@ -1,1 +1,5 @@
-<test/>
+<test>
+    <foo/>
+    <bar/>
+    <baz/>
+</test>

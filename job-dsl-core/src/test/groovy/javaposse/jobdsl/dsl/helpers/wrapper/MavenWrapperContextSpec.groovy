@@ -26,6 +26,8 @@ class MavenWrapperContextSpec extends Specification {
         m2releaseNode.selectAppendHudsonUsername[0].value() == false
         m2releaseNode.selectScmCredentials[0].value() == false
         m2releaseNode.numberOfReleaseBuildsToKeep[0].value() == 1
+
+        1 * mockJobManagement.requirePlugin('m2release')
     }
 
     def 'configure m2release plugin with all args'() {
@@ -55,5 +57,7 @@ class MavenWrapperContextSpec extends Specification {
         m2releaseNode.selectAppendHudsonUsername[0].value() == true
         m2releaseNode.selectScmCredentials[0].value() == true
         m2releaseNode.numberOfReleaseBuildsToKeep[0].value() == 10
+
+        1 * mockJobManagement.requirePlugin('m2release')
     }
 }

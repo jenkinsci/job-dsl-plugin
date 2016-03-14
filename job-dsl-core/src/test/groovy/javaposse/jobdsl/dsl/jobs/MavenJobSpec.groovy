@@ -10,14 +10,6 @@ class MavenJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
     private final MavenJob job = new MavenJob(jobManagement)
 
-    def 'deprecation warning'() {
-        when:
-        new MavenJob(jobManagement)
-
-        then:
-        1 * jobManagement.logPluginDeprecationWarning('maven-plugin', '2.3')
-    }
-
     def 'construct simple Maven job and generate xml from it'() {
         when:
         def xml = job.node
@@ -105,6 +97,27 @@ class MavenJobSpec extends Specification {
 
         then:
         job.node.localRepository[0].attribute('class') == 'hudson.maven.local_repo.PerJobLocalRepositoryLocator'
+    }
+
+    def 'incrementalBuild constructs xml'() {
+        when:
+        job.incrementalBuild(value)
+
+        then:
+        job.node.incrementalBuild.size() == 1
+        job.node.incrementalBuild[0].value() == value
+
+        where:
+        value << [true, false]
+    }
+
+    def 'incrementalBuild without arg constructs xml'() {
+        when:
+        job.incrementalBuild()
+
+        then:
+        job.node.incrementalBuild.size() == 1
+        job.node.incrementalBuild[0].value() == true
     }
 
     def 'can add preBuildSteps'() {

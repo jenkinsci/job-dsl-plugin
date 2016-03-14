@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NoDoc
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.IvyBuilderContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 
@@ -29,7 +28,7 @@ class IvyJob extends Job {
      * @param ivyFilePattern pattern to use to search for ivy module descriptor files
      */
     void ivyFilePattern(String ivyFilePattern) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('ivyFilePattern', ivyFilePattern)
             project / node
         }
@@ -41,7 +40,7 @@ class IvyJob extends Job {
      * @param ivyFileExcludesPattern modules to be excluded from the build
      */
     void ivyFileExcludesPattern(String ivyFileExcludesPattern) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('ivyFileExcludesPattern', ivyFileExcludesPattern)
             project / node
         }
@@ -53,7 +52,7 @@ class IvyJob extends Job {
      * @param ivyBranch default Ivy branch name
      */
     void ivyBranch(String ivyBranch) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('ivyBranch', ivyBranch)
             project / node
         }
@@ -66,7 +65,7 @@ class IvyJob extends Job {
      * @param relativePathToDescriptorFromModuleRoot relative path to the module descriptor file
      */
     void relativePathToDescriptorFromModuleRoot(String relativePathToDescriptorFromModuleRoot) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('relativePathToDescriptorFromModuleRoot', relativePathToDescriptorFromModuleRoot)
             project / node
         }
@@ -78,7 +77,7 @@ class IvyJob extends Job {
      * @param ivySettingsFile relative path to Ivy settings file
      */
     void ivySettingsFile(String ivySettingsFile) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('ivySettingsFile', ivySettingsFile)
             project / node
         }
@@ -91,7 +90,7 @@ class IvyJob extends Job {
      * @param ivySettingsPropertyFiles property files to load before parsing
      */
     void ivySettingsPropertyFiles(String ivySettingsPropertyFiles) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('ivySettingsPropertyFiles', ivySettingsPropertyFiles)
             project / node
         }
@@ -103,7 +102,7 @@ class IvyJob extends Job {
      * @param perModuleBuild if each module should be built as a separate sub-project
      */
     void perModuleBuild(boolean perModuleBuild = true) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('aggregatorStyleBuild', !perModuleBuild)
             project / node
         }
@@ -116,7 +115,7 @@ class IvyJob extends Job {
      * @param incrementalBuild if only changed modules should be triggered
      */
     void incrementalBuild(boolean incrementalBuild = true) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('incrementalBuild', incrementalBuild)
             project / node
         }
@@ -132,7 +131,7 @@ class IvyJob extends Job {
         if (!context.ivyBuilderNodes.empty) {
             checkState(context.ivyBuilderNodes.size() == 1, 'Only one Ivy builder can be specified')
 
-            withXmlActions << WithXmlAction.create { Node project ->
+            configure { Node project ->
                 Node ivyBuilderType = project / ivyBuilderType
                 if (ivyBuilderType) {
                     // There can only be only one Ivy builder, so remove if there

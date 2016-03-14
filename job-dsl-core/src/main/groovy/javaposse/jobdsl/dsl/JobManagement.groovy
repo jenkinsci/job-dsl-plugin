@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.helpers.ExtensibleContext
 
 /**
  * Interface to manage jobs, which the DSL needs to do.
@@ -23,20 +22,6 @@ interface JobManagement {
      * @throws JobConfigurationNotFoundException
      */
     String getConfig(String jobName) throws JobConfigurationNotFoundException
-
-    /**
-     * Creates or updates the job config for the named Jenkins job with the config provided.
-     *
-     * @param jobName the name of the new / updated job
-     * @param config the new / updated job config
-     * @param ignoreExisting do not update existing jobs
-     * @throws NameNotProvidedException if the jobName is null or blank
-     * @throws ConfigurationMissingException if the config xml is null or blank
-     * @deprecated use {@link #createOrUpdateConfig(javaposse.jobdsl.dsl.Item, boolean)} instead
-     */
-    @Deprecated
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting)
-            throws NameNotProvidedException, ConfigurationMissingException
 
     /**
      * Creates or updates the Jenkins job or folder with the provided configuration.
@@ -144,16 +129,6 @@ interface JobManagement {
     Map<String, String> getParameters()
 
     /**
-     * Returns the id of a Credentials object.
-     *
-     * @param credentialsDescription the description of the credentials to lookup
-     * @return id of Credentials or <code>null</code> if no credentials could be found
-     * @since 1.17
-     */
-    @Deprecated
-    String getCredentialsId(String credentialsDescription)
-
-    /**
      * Logs a deprecation warning for the calling method.
      *
      * @since 1.23
@@ -217,8 +192,15 @@ interface JobManagement {
     void requireMinimumCoreVersion(String version)
 
     /**
+     * Returns {@code true} if the currently installed version of the given plugin is equal to or greater than the
+     * specified version.
+     */
+    boolean isMinimumPluginVersionInstalled(String pluginShortName, String version)
+
+    /**
      * Returns the currently installed version of the given plugin or <code>null<code> if the plugin is not installed.
      */
+    @Deprecated
     VersionNumber getPluginVersion(String pluginShortName)
 
     /**
@@ -226,6 +208,7 @@ interface JobManagement {
      *
      * @since 1.33
      */
+    @Deprecated
     VersionNumber getJenkinsVersion()
 
     /**

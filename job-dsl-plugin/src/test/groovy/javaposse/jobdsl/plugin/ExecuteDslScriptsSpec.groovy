@@ -1082,6 +1082,72 @@ class ExecuteDslScriptsSpec extends Specification {
         freeStyleBuild.getLog(25).join('\n') =~ /Warning: \(script, line 4\) job is deprecated/
     }
 
+    @WithPlugin('cloudbees-folder.hpi')
+    def 'JENKINS-32995'() {
+        setup:
+        jenkinsRule.instance.createProject(Folder, 'Foo')
+        Folder folder = jenkinsRule.instance.createProject(Folder, 'Bar')
+        FreeStyleProject job = folder.createProject(FreeStyleProject, 'seed')
+        job.buildersList.add(new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation(null, null, 'job("Foo")'),
+                false,
+                RemovedJobAction.DISABLE,
+                LookupStrategy.SEED_JOB
+        ))
+        job.onCreatedFromScratch()
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+    }
+
+    def 'JENKINS-32628 script name which collides with package name'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.scheduleBuild2(0).get() // run a build to create a workspace
+        job.someWorkspace.child('jenkins.dsl').write('job("test")', 'UTF-8')
+        job.buildersList.add(new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('false', 'jenkins.dsl', null),
+                true,
+                RemovedJobAction.IGNORE
+        ))
+        job.onCreatedFromScratch()
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        freeStyleBuild.getLog(25).join('\n') =~ /identical to a package name/
+        freeStyleBuild.getLog(25).join('\n') =~ /jenkins.dsl/
+    }
+
+    def 'classpath per script'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.scheduleBuild2(0).get() // run a build to create a workspace
+        job.someWorkspace.child('projectA/Utils.groovy').write('class Utils { static NAME = "projectA" }', 'UTF-8')
+        job.someWorkspace.child('projectA/script.groovy').write('job(Utils.NAME)', 'UTF-8')
+        job.someWorkspace.child('projectB/Utils.groovy').write('class Utils { static NAME = "projectB" }', 'UTF-8')
+        job.someWorkspace.child('projectB/script.groovy').write('job(Utils.NAME)', 'UTF-8')
+        job.buildersList.add(new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation('false', 'projectA/script.groovy\nprojectB/script.groovy', null),
+                true,
+                RemovedJobAction.IGNORE
+        ))
+        job.onCreatedFromScratch()
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        jenkinsRule.jenkins.getItem('projectA') != null
+        jenkinsRule.jenkins.getItem('projectB') != null
+    }
+
     private static final String SCRIPT = """job('test-job') {
 }"""
 

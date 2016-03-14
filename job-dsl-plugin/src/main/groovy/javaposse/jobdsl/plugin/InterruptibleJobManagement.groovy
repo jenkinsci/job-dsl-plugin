@@ -10,7 +10,7 @@ import javaposse.jobdsl.dsl.JobConfigurationNotFoundException
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import javaposse.jobdsl.dsl.UserContent
-import javaposse.jobdsl.dsl.helpers.ExtensibleContext
+import javaposse.jobdsl.dsl.ExtensibleContext
 
 /**
  * Checks the thread's {@link Thread#interrupted() interrupted} flag before delegating each call and throws an
@@ -31,12 +31,6 @@ class InterruptibleJobManagement implements JobManagement {
     @Override
     String getConfig(String jobName) throws JobConfigurationNotFoundException {
         delegate.getConfig(jobName)
-    }
-
-    @Override
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws NameNotProvidedException,
-            ConfigurationMissingException {
-        delegate.createOrUpdateConfig(jobName, config, ignoreExisting)
     }
 
     @Override
@@ -96,11 +90,6 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
-    String getCredentialsId(String credentialsDescription) {
-        delegate.getCredentialsId(credentialsDescription)
-    }
-
-    @Override
     void logDeprecationWarning() {
         delegate.logDeprecationWarning()
     }
@@ -146,11 +135,18 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
+    boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
+        delegate.isMinimumPluginVersionInstalled(pluginShortName, version)
+    }
+
+    @Override
+    @Deprecated
     VersionNumber getPluginVersion(String pluginShortName) {
         delegate.getPluginVersion(pluginShortName)
     }
 
     @Override
+    @Deprecated
     VersionNumber getJenkinsVersion() {
         delegate.jenkinsVersion
     }

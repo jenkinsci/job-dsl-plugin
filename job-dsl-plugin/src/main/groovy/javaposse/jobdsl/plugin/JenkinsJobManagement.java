@@ -1,8 +1,6 @@
 package javaposse.jobdsl.plugin;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
-import com.cloudbees.plugins.credentials.CredentialsProvider;
-import com.cloudbees.plugins.credentials.common.StandardCredentials;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
@@ -35,7 +33,7 @@ import javaposse.jobdsl.dsl.DslScriptException;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import javaposse.jobdsl.dsl.UserContent;
-import javaposse.jobdsl.dsl.helpers.ExtensibleContext;
+import javaposse.jobdsl.dsl.ExtensibleContext;
 import javaposse.jobdsl.plugin.ExtensionPointHelper.ExtensionPointMethod;
 import jenkins.model.DirectlyModifiableTopLevelItemGroup;
 import jenkins.model.Jenkins;
@@ -66,7 +64,6 @@ import java.util.logging.Logger;
 
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
-import static hudson.security.ACL.SYSTEM;
 import static java.lang.String.format;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.createNewConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfig;
@@ -231,23 +228,6 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    @Deprecated
-    public String getCredentialsId(String credentialsDescription) {
-        Jenkins jenkins = Jenkins.getInstance();
-        Plugin credentialsPlugin = jenkins.getPlugin("credentials");
-        if (credentialsPlugin != null && !credentialsPlugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber("1.6"))) {
-            for (CredentialsProvider credentialsProvider : jenkins.getExtensionList(CredentialsProvider.class)) {
-                for (StandardCredentials credentials : credentialsProvider.getCredentials(StandardCredentials.class, jenkins, SYSTEM)) {
-                    if (credentials.getId().equals(credentialsDescription)) {
-                        return credentials.getId();
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
     public void queueJob(String path) throws NameNotProvidedException {
         validateNameArg(path);
 
@@ -342,12 +322,20 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    public boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
+        Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
+        return plugin != null && !plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(version));
+    }
+
+    @Override
+    @Deprecated
     public VersionNumber getPluginVersion(String pluginShortName) {
         Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
         return plugin == null ? null : plugin.getWrapper().getVersionNumber();
     }
 
     @Override
+    @Deprecated
     public VersionNumber getJenkinsVersion() {
         return Jenkins.getVersion();
     }
@@ -559,7 +547,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     private DslEnvironment getSession(javaposse.jobdsl.dsl.Item item) {
         DslEnvironment session = environments.get(item);
         if (session == null) {
-            session = new DslEnvironmentImpl();
+            session = new DslEnvironmentImpl(this, item);
             environments.put(item, session);
         }
         return session;

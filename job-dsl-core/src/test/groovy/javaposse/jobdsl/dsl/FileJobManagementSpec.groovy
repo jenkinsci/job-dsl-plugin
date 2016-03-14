@@ -52,8 +52,12 @@ class FileJobManagementSpec extends Specification {
     }
 
     def 'createOrUpdateConfig complains about missing name'(String name) {
+        setup:
+        Item item = Mock(Item)
+        item.name >> name
+
         when:
-        jobManagement.createOrUpdateConfig(name, 'bar', false)
+        jobManagement.createOrUpdateConfig(item, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -63,8 +67,13 @@ class FileJobManagementSpec extends Specification {
     }
 
     def 'createOrUpdateConfig complains about missing config'(String config) {
+        setup:
+        Item item = Mock(Item)
+        item.name >> 'foo'
+        item.xml >> config
+
         when:
-        jobManagement.createOrUpdateConfig('foo', config, false)
+        jobManagement.createOrUpdateConfig(item, false)
 
         then:
         thrown(ConfigurationMissingException)
@@ -74,8 +83,13 @@ class FileJobManagementSpec extends Specification {
     }
 
     def 'createOrUpdateConfig creates config'() {
+        setup:
+        Item item = Mock(Item)
+        item.name >> 'foo'
+        item.xml >> 'bar'
+
         when:
-        boolean result = jobManagement.createOrUpdateConfig('foo', 'bar', false)
+        boolean result = jobManagement.createOrUpdateConfig(item, false)
 
         then:
         result
@@ -83,8 +97,13 @@ class FileJobManagementSpec extends Specification {
     }
 
     def 'createOrUpdateConfig creates config in folder'() {
+        setup:
+        Item item = Mock(Item)
+        item.name >> 'foo/bar'
+        item.xml >> 'baz'
+
         when:
-        boolean result = jobManagement.createOrUpdateConfig('foo/bar', 'baz', false)
+        boolean result = jobManagement.createOrUpdateConfig(item, false)
 
         then:
         result
@@ -177,12 +196,12 @@ class FileJobManagementSpec extends Specification {
         e.message.contains('foo')
     }
 
-    def 'getCredentialsId returns null'() {
+    def 'isMinimumPluginVersionInstalled returns null'() {
         when:
-        String id = jobManagement.getCredentialsId('foo')
+        boolean result = jobManagement.isMinimumPluginVersionInstalled('foo', '1.0')
 
         then:
-        id == null
+        !result
     }
 
     def 'getPluginVersion returns null'() {

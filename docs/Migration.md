@@ -1,3 +1,314 @@
+## Migrating to 1.44
+
+### Git
+
+DSL support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin) has been changed to reflect the
+configuration style of version 2.0 of the Git plugin.
+
+DSL prior to 1.44
+```groovy
+job('example') {
+    scm {
+        git {
+            strategy {
+                inverse()
+            }
+            mergeOptions {
+                remote('origin')
+                branch('feature')
+            }
+            createTag()
+            clean()
+            wipeOutWorkspace()
+            remotePoll(false)
+            shallowClone()
+            reference('/git/repo.git')
+            cloneTimeout(10)
+            recursiveSubmodules()
+            trackingSubmodules()
+            pruneBranches()
+            localBranch('ci')
+            relativeTargetDir('ws')
+            ignoreNotifyCommit()
+        }
+    }
+}
+```
+
+DSL since 1.44
+```groovy
+job('example') {
+    scm {
+        git {
+            extensions {
+                choosingStrategy {
+                    inverse()
+                }
+                mergeOptions {
+                    remote('origin')
+                    branch('feature')
+                }
+                perBuildTag()
+                cleanAfterCheckout()
+                wipeOutWorkspace()
+                disableRemotePoll()
+                cloneOptions {
+                    shallow()
+                    reference('/git/repo.git')
+                    timeout(10)
+                }
+                submoduleOptions {
+                    recursive()
+                    tracking()
+                }
+                pruneBranches()
+                localBranch('ci')
+                relativeTargetDirectory('ws')
+                ignoreNotifyCommit()
+            }
+        }
+    }
+}
+```
+
+### Lockable Resources
+
+Support for versions older than 1.7 of the
+[Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### IRC
+
+Support for versions older than 2.27 of the [IRC Plugin](https://wiki.jenkins-ci.org/display/JENKINS/IRC+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### JobManagement
+
+The method `JobManagement#createOrUpdateConfig(String path, String config, boolean ignoreExisting)` has been
+[[deprecated|Deprecation-Policy]] since 1.33 and has been removed. Use
+`JobManagement#createOrUpdateConfig(Item item, boolean ignoreExisting)` instead.
+
+### Moved Classes
+
+The classes `javaposse.jobdsl.dsl.helpers.WorkflowDefinitionContext` and `javaposse.jobdsl.dsl.helpers.CpsContext` have
+been moved to the `javaposse.jobdsl.dsl.helpers.workflow` package.
+
+### WithXmlAction
+
+The class `javaposse.jobdsl.dsl.WithXmlAction` is [[deprecated|Deprecation-Policy]] and will be removed. Use
+`javaposse.jobdsl.dsl.ContextHelper#executeConfigureBlock` to evaluate a configure block.
+
+### Perforce
+
+The method `p4(String viewSpec, Closure closure)` in the SCM context is [[deprecated|Deprecation-Policy]] and will be
+removed.
+
+DSL prior to 1.44
+```groovy
+job('example') {
+    scm {
+        p4('//depot/example/... //workspace/...')
+    }
+}
+```
+
+DSL since 1.44
+```groovy
+job('example') {
+    scm {
+        p4('//depot/example/... //workspace/...', 'rolem')
+    }
+}
+```
+
+## Migrating to 1.43
+
+### Extended Email
+
+The DSL support for the [Email-ext Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin) has changed to
+address several issues.
+
+DSL prior to 1.43
+```groovy
+job('example') {
+    publishers {
+        extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
+            trigger('PreBuild')
+            trigger(triggerName: 'StillUnstable', subject: 'Subject', body: 'Body', recipientList: 'RecipientList',
+                    sendToDevelopers: true, sendToRequester: true, includeCulprits: true, sendToRecipientList: false)
+            configure { node ->
+                node / contentType << 'text/html'
+            }
+        }
+    }
+}
+```
+
+DSL since 1.43
+```groovy
+job('example') {
+    publishers {
+        extendedEmail {
+            recipientList('me@halfempty.org')
+            defaultSubject('Oops')
+            defaultContent('Something broken')
+            contentType('text/html')
+            triggers {
+                beforeBuild()
+                stillUnstable {
+                    subject('Subject')
+                    content('Body')
+                    sendTo {
+                        developers()
+                        requester()
+                        culprits()
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### GitHub Pull Request Builder
+
+Built-in support for the
+[GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed. The GitHub Pull Request Builder Plugin implements the Job DSL
+extension point and provides it's own Job DSL syntax since version 1.29.7.
+
+DSL prior to 1.43
+```groovy
+job('example') {
+    triggers {
+        pullRequest {
+        }
+    }
+    publishers {
+        mergePullRequest {
+        }
+    }
+}
+```
+
+DSL since 1.43
+```groovy
+job('example') {
+    triggers {
+        githubPullRequest {
+        }
+    }
+    publishers {
+        mergeGithubPullRequest {
+        }
+    }
+}
+```
+
+### Docker Custom Build Environment
+
+Support for versions older than 1.6.2 of the [CloudBees Docker Custom Build Environment
+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### Rundeck
+
+Support for versions older than 3.4 of the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
+is [[deprecated|Deprecation-Policy]] and will be removed.
+
+### JUnit
+
+Support for versions older than 1.10 of the [JUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin)
+is [[deprecated|Deprecation-Policy]] and will be removed.
+
+### Notification
+
+Support for versions older than 1.8 of the
+[Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### JobManagement
+
+Two methods in the `JobManagement` interface, `getPluginVersion` and `getJenkinsVersion`, are
+[[deprecated|Deprecation-Policy]] and will be removed to get rid of the `org.jenkins-ci:version-number` dependency in
+`job-dsl-core`. Use `isMinimumPluginVersionInstalled` as a replacement for `getPluginVersion`.
+
+API prior to 1.43
+```groovy
+if (!jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.4.0'))) {
+}
+```
+
+API since 1.43
+```groovy
+if (jobManagement.isMinimumPluginVersionInstalled('git', '2.4.0')) {
+}
+```
+
+### ExtensibleContext
+
+The classes `ExtensibleContext` and `AbstractExtensibleContext` have been moved from the `javaposse.jobdsl.dsl.helpers`
+package to `javaposse.jobdsl.dsl`. This should not affect DSL scripts.
+
+## Migrating to 1.42
+
+### Task Scanner
+
+Support for versions older than 4.41 of the
+[Task Scanner Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Task+Scanner+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### PostBuildScript
+
+Support for versions older than 0.17 of the
+[PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### Flexible Publish
+
+The DSL syntax of the `flexiblePublish` context has been changed to fix
+([JENKINS-30010](https://issues.jenkins-ci.org/browse/JENKINS-30010)).
+
+DSL prior to 1.42
+```groovy
+job('example') {
+    publishers {
+        flexiblePublish {
+            condition {
+                status('ABORTED', 'FAILURE')
+            }
+            publisher {
+                wsCleanup()
+            }
+            step {
+                shell('echo hello!')
+            }
+        }
+    }
+}
+```
+
+DSL since 1.42
+```groovy
+job('example') {
+    publishers {
+        flexiblePublish {
+            conditionalAction {
+                condition {
+                    status('ABORTED', 'FAILURE')
+                }
+                publishers {
+                    wsCleanup()
+                }
+                steps {
+                    shell('echo hello!')
+                }
+            }
+        }
+    }
+}
+```
+
 ## Migrating to 1.41
 
 ### Folders
@@ -5,6 +316,11 @@
 Support for versions older than 5.0 of the
 [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
+
+### Jabber
+
+Support for versions older than 1.35 of the [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin)
+is [[deprecated|Deprecation-Policy]] and will be removed.
 
 ## Migrating to 1.40
 

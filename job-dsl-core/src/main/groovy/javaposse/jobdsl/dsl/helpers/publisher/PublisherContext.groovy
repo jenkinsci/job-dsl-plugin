@@ -1,14 +1,12 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
@@ -31,8 +29,52 @@ class PublisherContext extends AbstractExtensibleContext {
 
     /**
      * Sends customizable email notifications.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'email-ext', minimumVersion = '2.40.5')
+    void extendedEmail(@DslContext(ExtendedEmailContext) Closure closure) {
+        ExtendedEmailContext context = new ExtendedEmailContext()
+        ContextHelper.executeInContext(closure, context)
+
+        if (!context.triggersContext.configuredTriggers) {
+            context.triggers {
+                failure()
+            }
+        }
+
+        Node emailNode = new NodeBuilder().'hudson.plugins.emailext.ExtendedEmailPublisher' {
+            recipientList(context.recipientList ? context.recipientList.join(', ') : '$DEFAULT_RECIPIENTS')
+            configuredTriggers(context.triggersContext.configuredTriggers)
+            contentType(context.contentType)
+            defaultSubject(context.defaultSubject ?: '')
+            defaultContent(context.defaultContent ?: '')
+            attachmentsPattern(context.attachmentPatterns.join(', '))
+            presendScript(context.preSendScript ?: '')
+            classpath {
+                context.additionalGroovyClasspath.each { classpath ->
+                    'hudson.plugins.emailext.GroovyScriptPath' {
+                        path(classpath ?: '')
+                    }
+                }
+            }
+            attachBuildLog(context.attachBuildLog)
+            compressBuildLog(context.compressBuildLog)
+            replyTo(context.replyToList ? context.replyToList.join(', ') : '$DEFAULT_REPLYTO')
+            saveOutput(context.saveToWorkspace)
+            disabled(context.disabled)
+        }
+
+        ContextHelper.executeConfigureBlock(emailNode, context.configureBlock)
+
+        publisherNodes << emailNode
+    }
+
+    /**
+     * Sends customizable email notifications.
      */
     @RequiresPlugin(id = 'email-ext')
+    @Deprecated
     void extendedEmail(String recipients = null, @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, null, emailClosure)
     }
@@ -41,6 +83,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * Sends customizable email notifications.
      */
     @RequiresPlugin(id = 'email-ext')
+    @Deprecated
     void extendedEmail(String recipients, String subjectTemplate,
                        @DslContext(EmailContext) Closure emailClosure = null) {
         extendedEmail(recipients, subjectTemplate, null, emailClosure)
@@ -50,8 +93,11 @@ class PublisherContext extends AbstractExtensibleContext {
      * Sends customizable email notifications.
      */
     @RequiresPlugin(id = 'email-ext')
+    @Deprecated
     void extendedEmail(String recipients, String subjectTemplate, String contentTemplate,
                        @DslContext(EmailContext) Closure emailClosure = null) {
+        jobManagement.logDeprecationWarning()
+
         EmailContext emailContext = new EmailContext()
         ContextHelper.executeInContext(emailClosure, emailContext)
 
@@ -86,11 +132,7 @@ class PublisherContext extends AbstractExtensibleContext {
             }
         }
 
-        // Apply their overrides
-        if (emailContext.configureClosure) {
-            WithXmlAction action = new WithXmlAction(emailContext.configureClosure)
-            action.execute(emailNode)
-        }
+        ContextHelper.executeConfigureBlock(emailNode, emailContext.configureBlock)
 
         publisherNodes << emailNode
     }
@@ -147,6 +189,8 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'junit')
     void archiveJunit(String glob, @DslContext(ArchiveJUnitContext) Closure junitClosure = null) {
+        jobManagement.logPluginDeprecationWarning('junit', '1.10')
+
         ArchiveJUnitContext junitContext = new ArchiveJUnitContext(jobManagement)
         ContextHelper.executeInContext(junitClosure, junitContext)
 
@@ -154,6 +198,9 @@ class PublisherContext extends AbstractExtensibleContext {
             testResults(glob)
             keepLongStdio(junitContext.retainLongStdout)
             testDataPublishers(junitContext.testDataPublishersContext.testDataPublishers)
+            if (jobManagement.isMinimumPluginVersionInstalled('junit', '1.10')) {
+                allowEmptyResults(junitContext.allowEmptyResults)
+            }
         }
     }
 
@@ -221,6 +268,21 @@ class PublisherContext extends AbstractExtensibleContext {
             showFailedBuilds(testNGContext.showFailedBuildsInTrendGraph)
             unstableOnSkippedTests(testNGContext.markBuildAsUnstableOnSkippedTests)
             failureOnFailedTestConfig(testNGContext.markBuildAsFailureOnFailedConfiguration)
+        }
+    }
+
+    /**
+     * Publishes Gatling load simulation reports.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'gatling', minimumVersion = '1.1.1')
+    void archiveGatling(@DslContext(ArchiveGatlingContext) Closure gatlingClosure = null) {
+        ArchiveGatlingContext gatlingContext = new ArchiveGatlingContext(jobManagement)
+        ContextHelper.executeInContext(gatlingClosure, gatlingContext)
+
+        publisherNodes << new NodeBuilder().'io.gatling.jenkins.GatlingPublisher' {
+            enabled(gatlingContext.enabled)
         }
     }
 
@@ -347,13 +409,13 @@ class PublisherContext extends AbstractExtensibleContext {
                         reportDir(target.reportDir)
                         reportFiles(target.reportFiles)
                         keepAll(target.keepAll)
-                        if (!jobManagement.getPluginVersion('htmlpublisher')?.isOlderThan(new VersionNumber('1.3'))) {
+                        if (jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.3')) {
                             allowMissing(target.allowMissing)
                         }
-                        if (!jobManagement.getPluginVersion('htmlpublisher')?.isOlderThan(new VersionNumber('1.4'))) {
+                        if (jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.4')) {
                             alwaysLinkToLastBuild(target.alwaysLinkToLastBuild)
                         }
-                        if (jobManagement.getPluginVersion('htmlpublisher')?.isOlderThan(new VersionNumber('1.5'))) {
+                        if (!jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.5')) {
                             wrapperName('htmlpublisher-wrapper.html')
                         }
                     }
@@ -367,36 +429,36 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'jabber')
     void publishJabber(String targets, @DslContext(JabberContext) Closure jabberClosure = null) {
-        JabberContext jabberContext = new JabberContext()
+        jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+
+        JabberContext jabberContext = new JabberContext(jobManagement)
         ContextHelper.executeInContext(jabberClosure, jabberContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.jabber.im.transport.JabberPublisher' {
             delegate.targets {
                 targets.split().each { target ->
-                    boolean isGroup = target.startsWith('*')
-                    if (isGroup) {
-                        String targetClean = target[1..-1]
+                    if (target.startsWith('*') || target.contains('@conference.')) {
                         'hudson.plugins.im.GroupChatIMMessageTarget' {
-                            delegate.createNode('name', targetClean)
-                            notificationOnly 'false'
+                            name(target.startsWith('*') ? target[1..-1] : target)
+                            notificationOnly(false)
                         }
                     } else {
                         'hudson.plugins.im.DefaultIMMessageTarget' {
-                            delegate.createNode('value', target)
+                            value(target)
                         }
                     }
                 }
             }
-            strategy jabberContext.strategyName
-            notifyOnBuildStart jabberContext.notifyOnBuildStart
-            notifySuspects jabberContext.notifySuspects
-            notifyCulprits jabberContext.notifyCulprits
-            notifyFixers jabberContext.notifyFixers
-            notifyUpstreamCommitters jabberContext.notifyUpstreamCommitters
+            strategy(jabberContext.strategyName)
+            notifyOnBuildStart(jabberContext.notifyOnBuildStart)
+            notifySuspects(jabberContext.notifySuspects)
+            notifyCulprits(jabberContext.notifyCulprits)
+            notifyFixers(jabberContext.notifyFixers)
+            notifyUpstreamCommitters(jabberContext.notifyUpstreamCommitters)
             buildToChatNotifier(
                     class: "hudson.plugins.im.build_notify.${jabberContext.channelNotificationName}BuildToChatNotifier"
             )
-            matrixMultiplier 'ONLY_CONFIGURATIONS'
+            matrixMultiplier('ONLY_CONFIGURATIONS')
         }
     }
 
@@ -526,7 +588,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Triggers parameterized builds on other projects.
      */
-    @RequiresPlugin(id = 'parameterized-trigger')
+    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.25')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
@@ -603,7 +665,9 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'ircbot')
     void irc(@DslContext(IrcContext) Closure ircClosure) {
-        IrcContext ircContext = new IrcContext()
+        jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+
+        IrcContext ircContext = new IrcContext(jobManagement)
         ContextHelper.executeInContext(ircClosure, ircContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.ircbot.IrcPublisher' {
@@ -611,20 +675,20 @@ class PublisherContext extends AbstractExtensibleContext {
                 ircContext.channels.each { IrcContext.IrcPublisherChannel channel ->
                     'hudson.plugins.im.GroupChatIMMessageTarget' {
                         delegate.createNode('name', channel.name)
-                        password channel.password
-                        notificationOnly channel.notificationOnly ? 'true' : 'false'
+                        password(channel.password)
+                        notificationOnly(channel.notificationOnly)
                     }
                 }
             }
-            strategy ircContext.strategy
-            notifyOnBuildStart ircContext.notifyOnBuildStarts ? 'true' : 'false'
-            notifySuspects ircContext.notifyScmCommitters ? 'true' : 'false'
-            notifyCulprits ircContext.notifyScmCulprits ? 'true' : 'false'
-            notifyFixers ircContext.notifyScmFixers ? 'true' : 'false'
-            notifyUpstreamCommitters ircContext.notifyUpstreamCommitters ? 'true' : 'false'
-
-            String className = "hudson.plugins.im.build_notify.${ircContext.notificationMessage}BuildToChatNotifier"
-            buildToChatNotifier(class: className)
+            strategy(ircContext.strategy)
+            notifyOnBuildStart(ircContext.notifyOnBuildStarts)
+            notifySuspects(ircContext.notifyScmCommitters)
+            notifyCulprits(ircContext.notifyScmCulprits)
+            notifyFixers(ircContext.notifyScmFixers)
+            notifyUpstreamCommitters(ircContext.notifyUpstreamCommitters)
+            buildToChatNotifier(
+                    class: "hudson.plugins.im.build_notify.${ircContext.notificationMessage}BuildToChatNotifier"
+            )
         }
     }
 
@@ -785,7 +849,7 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.19
      */
-    @RequiresPlugin(id = 'groovy-postbuild')
+    @RequiresPlugin(id = 'groovy-postbuild', minimumVersion = '2.2')
     void groovyPostBuild(String script, Behavior behavior = Behavior.DoNothing) {
         groovyPostBuild {
             delegate.script(script)
@@ -798,21 +862,15 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.37
      */
-    @RequiresPlugin(id = 'groovy-postbuild')
+    @RequiresPlugin(id = 'groovy-postbuild', minimumVersion = '2.2')
     void groovyPostBuild(@DslContext(GroovyPostbuildContext) Closure groovyPostbuildClosure) {
-        jobManagement.logPluginDeprecationWarning('groovy-postbuild', '2.2')
-
         GroovyPostbuildContext groovyPostbuildContext = new GroovyPostbuildContext(jobManagement)
         ContextHelper.executeInContext(groovyPostbuildClosure, groovyPostbuildContext)
 
         publisherNodes << new NodeBuilder().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
-            if (jobManagement.getPluginVersion('groovy-postbuild')?.isOlderThan(new VersionNumber('2.2'))) {
-                groovyScript(groovyPostbuildContext.script ?: '')
-            } else {
-                script {
-                    script(groovyPostbuildContext.script ?: '')
-                    sandbox(groovyPostbuildContext.sandbox)
-                }
+            script {
+                script(groovyPostbuildContext.script ?: '')
+                sandbox(groovyPostbuildContext.sandbox)
             }
             behavior(groovyPostbuildContext.behavior.value)
         }
@@ -933,10 +991,8 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.22
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void git(@DslContext(GitPublisherContext) Closure gitPublisherClosure) {
-        jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-
         GitPublisherContext context = new GitPublisherContext(jobManagement)
         ContextHelper.executeInContext(gitPublisherClosure, context)
 
@@ -944,9 +1000,7 @@ class PublisherContext extends AbstractExtensibleContext {
             configVersion(2)
             pushMerge(context.pushMerge)
             pushOnlyIfSuccess(context.pushOnlyIfSuccess)
-            if (!jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.2.6'))) {
-                forcePush(context.forcePush)
-            }
+            forcePush(context.forcePush)
             tagsToPush(context.tags)
             branchesToPush(context.branches)
         }
@@ -1055,16 +1109,25 @@ class PublisherContext extends AbstractExtensibleContext {
         FlexiblePublisherContext context = new FlexiblePublisherContext(jobManagement, item)
         ContextHelper.executeInContext(flexiblePublishClosure, context)
 
-        checkArgument(!context.actions.empty, 'no publisher or build step specified')
-
         publisherNodes << new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
             delegate.publishers {
-                'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-                    condition(class: context.condition.conditionClass) {
-                        context.condition.addArgs(delegate)
+                if (context.actions) {
+                    'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+                        condition(class: context.condition.conditionClass) {
+                            context.condition.addArgs(delegate)
+                        }
+                        publisherList(context.actions)
+                        runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
                     }
-                    publisherList(context.actions)
-                    runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
+                }
+                context.conditionalActions.each { ConditionalActionsContext conditionalActionsContext ->
+                    'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
+                        condition(class: conditionalActionsContext.runCondition.conditionClass) {
+                            conditionalActionsContext.runCondition.addArgs(delegate)
+                        }
+                        publisherList(conditionalActionsContext.actions)
+                        runner(class: conditionalActionsContext.runnerClass)
+                    }
                 }
             }
         }
@@ -1112,18 +1175,23 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'rundeck')
     void rundeck(String jobIdentifier, @DslContext(RundeckContext) Closure rundeckClosure = null) {
+        jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
+
         checkNotNullOrEmpty(jobIdentifier, 'jobIdentifier cannot be null or empty')
 
-        RundeckContext rundeckContext = new RundeckContext()
+        RundeckContext rundeckContext = new RundeckContext(jobManagement)
         ContextHelper.executeInContext(rundeckClosure, rundeckContext)
 
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.rundeck.RundeckNotifier' {
-            jobId jobIdentifier
-            options rundeckContext.options.collect { key, value -> "${key}=${value}" }.join('\n')
-            nodeFilters rundeckContext.nodeFilters.collect { key, value -> "${key}=${value}" }.join('\n')
-            tag rundeckContext.tag
-            shouldWaitForRundeckJob rundeckContext.shouldWaitForRundeckJob
-            shouldFailTheBuild rundeckContext.shouldFailTheBuild
+            jobId(jobIdentifier)
+            options(rundeckContext.options.collect { key, value -> "${key}=${value}" }.join('\n'))
+            nodeFilters(rundeckContext.nodeFilters.collect { key, value -> "${key}=${value}" }.join('\n'))
+            tag(rundeckContext.tag ?: '')
+            shouldWaitForRundeckJob(rundeckContext.shouldWaitForRundeckJob)
+            shouldFailTheBuild(rundeckContext.shouldFailTheBuild)
+            if (jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.4')) {
+                includeRundeckLogs(rundeckContext.includeRundeckLogs)
+            }
         }
     }
 
@@ -1132,10 +1200,8 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.26
      */
-    @RequiresPlugin(id = 's3')
+    @RequiresPlugin(id = 's3', minimumVersion = '0.7')
     void s3(String profile, @DslContext(S3BucketPublisherContext) Closure s3PublisherClosure) {
-        jobManagement.logPluginDeprecationWarning('s3', '0.7')
-
         checkNotNullOrEmpty(profile, 'profile must be specified')
 
         S3BucketPublisherContext context = new S3BucketPublisherContext(jobManagement)
@@ -1236,17 +1302,22 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'tasks')
     void tasks(String pattern, excludePattern = '', high = '', normal = '', low = '', ignoreCase = false,
-               @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
-        StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
-        ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
+               @DslContext(TaskScannerContext) Closure closure = null) {
+        jobManagement.logPluginDeprecationWarning('tasks', '4.41')
+
+        TaskScannerContext context = new TaskScannerContext(jobManagement)
+        ContextHelper.executeInContext(closure, context)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.tasks.TasksPublisher' {
-            addStaticAnalysisContextAndPattern(delegate, staticAnalysisContext, pattern)
+            addStaticAnalysisContextAndPattern(delegate, context, pattern)
             delegate.high(high)
             delegate.normal(normal)
             delegate.low(low)
             delegate.ignoreCase(ignoreCase)
             delegate.excludePattern(excludePattern)
+            if (jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41')) {
+                asRegexp(context.regularExpression)
+            }
         }
     }
 
@@ -1358,12 +1429,18 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'postbuildscript')
     void postBuildScripts(@DslContext(PostBuildScriptsContext) Closure closure) {
+        jobManagement.logPluginDeprecationWarning('postbuildscript', '0.17')
+
         PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement, item)
         ContextHelper.executeInContext(closure, context)
 
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.postbuildscript.PostBuildScript' {
             buildSteps(context.stepContext.stepNodes)
             scriptOnlyIfSuccess(context.onlyIfBuildSucceeds)
+            if (jobManagement.isMinimumPluginVersionInstalled('postbuildscript', '0.17')) {
+                scriptOnlyIfFailure(context.onlyIfBuildFails)
+                markBuildUnstable(context.markBuildUnstable)
+            }
         }
     }
 
@@ -1378,6 +1455,9 @@ class PublisherContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(sonarClosure, sonarContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.sonar.SonarPublisher' {
+            if (sonarContext.installationName) {
+                installationName(sonarContext.installationName)
+            }
             jdk('(Inherit From Job)')
             branch(sonarContext.branch ?: '')
             language()
@@ -1425,9 +1505,10 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.33
      */
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.17')
+    @Deprecated
+    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26')
     void mergePullRequest(@DslContext(PullRequestPublisherContext) Closure contextClosure = null) {
-        jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
+        jobManagement.logDeprecationWarning()
 
         PullRequestPublisherContext pullRequestPublisherContext = new PullRequestPublisherContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestPublisherContext)
@@ -1437,10 +1518,8 @@ class PublisherContext extends AbstractExtensibleContext {
             disallowOwnCode(pullRequestPublisherContext.disallowOwnCode)
             onlyTriggerPhrase(pullRequestPublisherContext.onlyTriggerPhrase)
             mergeComment(pullRequestPublisherContext.mergeComment ?: '')
-            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.26'))) {
-                failOnNonMerge(pullRequestPublisherContext.failOnNonMerge)
-                deleteOnMerge(pullRequestPublisherContext.deleteOnMerge)
-            }
+            failOnNonMerge(pullRequestPublisherContext.failOnNonMerge)
+            deleteOnMerge(pullRequestPublisherContext.deleteOnMerge)
         }
     }
 
@@ -1490,6 +1569,35 @@ class PublisherContext extends AbstractExtensibleContext {
             notifyBackToNormal(hipChatContext.notifyBackToNormal)
             startJobMessage(hipChatContext.startJobMessage ?: '')
             completeJobMessage(hipChatContext.completeJobMessage ?: '')
+        }
+    }
+
+    /**
+     * Sends notifications to Mattermost.
+     *
+     * @since 1.44
+     */
+    @RequiresPlugin(id = 'mattermost', minimumVersion = '1.5.0')
+    void mattermost(@DslContext(MattermostPublisherContext) Closure mattermostClosure = null) {
+        MattermostPublisherContext mattermostContext = new MattermostPublisherContext()
+        ContextHelper.executeInContext(mattermostClosure, mattermostContext)
+
+        publisherNodes << new NodeBuilder().'jenkins.plugins.mattermost.MattermostNotifier' {
+            startNotification(mattermostContext.notifyBuildStart)
+            notifySuccess(mattermostContext.notifySuccess)
+            notifyAborted(mattermostContext.notifyAborted)
+            notifyNotBuilt(mattermostContext.notifyNotBuilt)
+            notifyUnstable(mattermostContext.notifyUnstable)
+            notifyFailure(mattermostContext.notifyFailure)
+            notifyBackToNormal(mattermostContext.notifyBackToNormal)
+            notifyRepeatedFailure(mattermostContext.notifyRepeatedFailure)
+            includeTestSummary(mattermostContext.includeTestSummary)
+            showCommitList(mattermostContext.showCommitList)
+            includeCustomMessage(mattermostContext.customMessage as boolean)
+            endpoint(mattermostContext.endpoint ?: '')
+            room(mattermostContext.room ?: '')
+            icon(mattermostContext.icon ?: '')
+            customMessage(mattermostContext.customMessage ?: '')
         }
     }
 
@@ -1661,57 +1769,306 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Updating JIRA issues.
+     * Generates trend report for SLOCCount and cloc.
      *
      * @since 1.41
      */
-    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
-    void jira(@DslContext(JiraContext) Closure closure) {
-        JiraContext context = new JiraContext()
+    @RequiresPlugin(id = 'sloccount', minimumVersion = '1.20')
+    void slocCount(@DslContext(SlocCountContext) Closure closure) {
+        SlocCountContext context = new SlocCountContext()
         ContextHelper.executeInContext(closure, context)
 
-        if (context.jiraIssueUpdater) {
-            publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueUpdater'()
+        publisherNodes << new NodeBuilder().'hudson.plugins.sloccount.SloccountPublisher' {
+            pattern(context.pattern ?: '')
+            encoding(context.encoding ?: '')
+            numBuildsInGraph(context.buildsInGraph)
+            commentIsCode(context.commentIsCode)
+            ignoreBuildFailure(context.ignoreBuildFailure)
         }
+    }
 
-        if (context.jiraReleaseVersionUpdater) {
-            publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraReleaseVersionUpdater' {
-                jiraProjectKey(context.jiraReleaseVersionUpdaterContext.jiraProjectKey ?: '')
-                jiraRelease(context.jiraReleaseVersionUpdaterContext.jiraRelease ?: '')
+    /**
+     * Performs subversion tagging (technically speaking svn copy) on successful builds.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'svn-tag', minimumVersion = '1.18')
+    void svnTag(@DslContext(SubversionTagContext) Closure closure) {
+        SubversionTagContext context = new SubversionTagContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.svn__tag.SvnTagPublisher' {
+            tagBaseURL(context.baseUrl)
+            tagComment(context.comment)
+            tagDeleteComment(context.deleteComment)
+        }
+    }
+
+    /**
+     * Publishes Cucumber results as HTML reports.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'cucumber-reports', minimumVersion = '0.6.0')
+    void cucumberReports(@DslContext(CucumberReportsContext) Closure closure) {
+        CucumberReportsContext context = new CucumberReportsContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'net.masterthought.jenkins.CucumberReportPublisher' {
+            jsonReportDirectory(context.jsonReportPath ?: '')
+            pluginUrlPath(context.pluginUrlPath ?: '')
+            fileIncludePattern(context.fileIncludePattern ?: '')
+            fileExcludePattern(context.fileExcludePattern ?: '')
+            skippedFails(context.failOnSkippedSteps)
+            pendingFails(context.failOnPendingSteps)
+            undefinedFails(context.failOnUndefinedSteps)
+            missingFails(context.failOnMissingSteps)
+            noFlashCharts(context.turnOffFlashCharts)
+            ignoreFailedTests(context.ignoreFailedTests)
+            parallelTesting(context.parallelTesting)
+        }
+    }
+
+    /**
+     * Publishes Cucumber test results.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'cucumber-testresult-plugin', minimumVersion = '0.8.2')
+    void cucumberTestResults(@DslContext(CucumberTestResultContext) Closure closure) {
+        CucumberTestResultContext context = new CucumberTestResultContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().
+                'org.jenkinsci.plugins.cucumber.jsontestsupport.CucumberTestResultArchiver' {
+            testResults(context.jsonReportFiles ?: '')
+            ignoreBadSteps(context.ignoreBadSteps)
+        }
+    }
+
+    /**
+     * Updates relevant Mantis issues.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'mantis', minimumVersion = '0.26')
+    void mantis(@DslContext(MantisContext) Closure closure) {
+        MantisContext context = new MantisContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.mantis.MantisIssueUpdater' {
+            keepNotePrivate(context.keepNotePrivate)
+            recordChangelog(context.recordChangelogToNote)
+        }
+    }
+
+    /**
+     * Deploys artifacts to Weblogic environments.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'weblogic-deployer-plugin', minimumVersion = '2.9.1')
+    void deployToWeblogic(@DslContext(WeblogicDeployerContext) Closure weblogicClosure) {
+        WeblogicDeployerContext context = new WeblogicDeployerContext()
+        ContextHelper.executeInContext(weblogicClosure, context)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.deploy.weblogic.WeblogicDeploymentPlugin' {
+            mustExitOnFailure(context.mustExitOnFailure)
+            forceStopOnFirstFailure(context.forceStopOnFirstFailure)
+            selectedDeploymentStrategyIds {
+                context.weblogicDeployerPolicyContext.deploymentPolicies.each { strategyId ->
+                    string(strategyId)
+                }
+            }
+            isDeployingOnlyWhenUpdates(context.deployingOnlyWhenUpdates)
+            deployedProjectsDependencies(context.deployedProjectsDependencies ?: '')
+            delegate.tasks(context.taskNodes)
+        }
+    }
+
+    /**
+     * Measures Ruby code complexity.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'rubyMetrics', minimumVersion = '1.6.3')
+    void flog(@DslContext(FlogContext) Closure closure = null) {
+        FlogContext context = new FlogContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.rubyMetrics.flog.FlogPublisher' {
+            rbDirectories(context.rubyDirectories.join('\n'))
+            splittedDirectories {
+                (context.rubyDirectories ?: ['.']).each {
+                    delegate.string(it)
+                }
             }
         }
+    }
 
-        if (context.jiraIssueMigrator) {
-            publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueMigrator' {
-                jiraProjectKey(context.jiraIssueMigratorContext.jiraProjectKey ?: '')
-                jiraRelease(context.jiraIssueMigratorContext.jiraRelease ?: '')
-                jiraReplaceVersion(context.jiraIssueMigratorContext.jiraReplaceVersion ?: '')
-                jiraQuery(context.jiraIssueMigratorContext.jiraQuery ?: '')
+    /**
+     * Publishes Rails notes.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'rubyMetrics', minimumVersion = '1.6.3')
+    void railsNotes(@DslContext(RailsTaskContext) Closure closure = null) {
+        RailsTaskContext context = new RailsTaskContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes <<
+                createRailsTaskNode('hudson.plugins.rubyMetrics.railsNotes.RailsNotesPublisher', 'notes', context)
+    }
+
+    /**
+     * Publishes Rails stats.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'rubyMetrics', minimumVersion = '1.6.3')
+    void railsStats(@DslContext(RailsTaskContext) Closure closure) {
+        RailsTaskContext context = new RailsTaskContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes <<
+                createRailsTaskNode('hudson.plugins.rubyMetrics.railsStats.RailsStatsPublisher', 'stats', context)
+    }
+
+    private Node createRailsTaskNode(String publisherName, String task, RailsTaskContext context) {
+        new NodeBuilder()."$publisherName" {
+            rakeInstallation(context.rakeVersion ?: '')
+            rakeWorkingDir(context.rakeWorkingDirectory ?: '')
+            delegate.task(task)
+            rake {
+                rakeInstallation(context.rakeVersion ?: '')
+                rakeWorkingDir(context.rakeWorkingDirectory ?: '')
+                delegate.tasks(task)
+                silent(true)
+                bundleExec(true)
             }
         }
+    }
 
-        if (context.jiraVersionCreator) {
-            publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraVersionCreator' {
-                jiraProjectKey(context.jiraVersionCreatorContext.jiraProjectKey ?: '')
-                jiraVersion(context.jiraVersionCreatorContext.jiraVersion ?: '')
+    /**
+     * Publishes Selenium reports.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'seleniumhq', minimumVersion = '0.4')
+    void seleniumReport(String testReportPattern = null, @DslContext(SeleniumReportContext) Closure closure = null) {
+        SeleniumReportContext context = new SeleniumReportContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.seleniumhq.SeleniumhqPublisher' {
+            testResults(testReportPattern ?: '')
+            useTestCommands(context.useTestCommands)
+        }
+    }
+
+    /**
+     * Publishes Selenium HTML reports.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'seleniumhtmlreport', minimumVersion = '1.0')
+    void seleniumHtmlReport(String testResultLocation = 'target',
+                            @DslContext(SeleniumHtmlReportContext) Closure closure = null) {
+        SeleniumHtmlReportContext context = new SeleniumHtmlReportContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'org.jvnet.hudson.plugins.seleniumhtmlreport.SeleniumHtmlReportPublisher' {
+            SELENIUM__REPORTS__TARGET('seleniumReports')
+            testResultsDir(testResultLocation ?: '')
+            failureIfExceptionOnParsingResultFiles(context.failOnExceptions)
+        }
+    }
+
+    /**
+     * Parses RCov HTML report files and shows them in Jenkins with a trend graph.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'rubyMetrics', minimumVersion = '1.6.3')
+    void rcov(@DslContext(RcovContext) Closure closure) {
+        RcovContext context = new RcovContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.rubyMetrics.rcov.RcovPublisher' {
+            reportDir(context.reportDirectory ?: '')
+            targets {
+                context.entries.each { String key, RcovContext.MetricEntry entry ->
+                    'hudson.plugins.rubyMetrics.rcov.model.MetricTarget' {
+                        metric(key)
+                        healthy(entry.healthy)
+                        unhealthy(entry.unhealthy)
+                        unstable(entry.unstable)
+                    }
+                }
             }
         }
+    }
 
-        if (context.jiraCreateIssueNotifier) {
-            publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraCreateIssueNotifier' {
-                projectKey(context.jiraCreateIssueNotifierContext.projectKey ?: '')
-                testDescription(context.jiraCreateIssueNotifierContext.testDescription ?: '')
-                assignee(context.jiraCreateIssueNotifierContext.assignee ?: '')
-                component(context.jiraCreateIssueNotifierContext.component ?: '')
+    /**
+     * Publishes Clover PHP coverage reports.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'cloverphp', minimumVersion = '0.5')
+    void cloverPHP(String xmlLocation, @DslContext(CloverPhpContext) Closure closure = null) {
+        checkNotNullOrEmpty(xmlLocation, 'xmlLocation must be specified')
+
+        CloverPhpContext context = new CloverPhpContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.cloverphp.CloverPHPPublisher' {
+            delegate.xmlLocation(xmlLocation)
+            publishHtmlReport(context.publishHtmlReport)
+            if (context.reportDirectory) {
+                reportDir(context.reportDirectory)
+            }
+            disableArchiving(context.publishHtmlReportContext.disableArchiving)
+            healthyTarget {
+                if (context.healthyMethodCoverage != null) {
+                    methodCoverage(context.healthyMethodCoverage)
+                }
+                if (context.healthyStatementCoverage != null) {
+                    statementCoverage(context.healthyStatementCoverage)
+                }
+            }
+            unhealthyTarget {
+                if (context.unhealthyMethodCoverage != null) {
+                    methodCoverage(context.unhealthyMethodCoverage)
+                }
+                if (context.unhealthyStatementCoverage != null) {
+                    statementCoverage(context.unhealthyStatementCoverage)
+                }
+            }
+            failingTarget {
+                if (context.unstableMethodCoverage != null) {
+                    methodCoverage(context.unstableMethodCoverage)
+                }
+                if (context.unstableStatementCoverage != null) {
+                    statementCoverage(context.unstableStatementCoverage)
+                }
             }
         }
+    }
+
+    /**
+     * Changes the expression of Mr. Jenkins in the background when your builds fail.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'emotional-jenkins-plugin', minimumVersion = '1.2')
+    void emotional() {
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.emotional__jenkins.EmotionalJenkinsPublisher'()
     }
 
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
-            healthy(context.healthy)
-            unHealthy(context.unHealthy)
+            healthy(context.healthy ?: '')
+            unHealthy(context.unHealthy ?: '')
             thresholdLimit(context.thresholdLimit)
             defaultEncoding(context.defaultEncoding)
             canRunOnFailed(context.canRunOnFailed)
@@ -1740,5 +2097,4 @@ class PublisherContext extends AbstractExtensibleContext {
         addStaticAnalysisContext(nodeBuilder, context)
         addStaticAnalysisPattern(nodeBuilder, pattern)
     }
-
 }

@@ -1,12 +1,10 @@
 package javaposse.jobdsl.plugin;
 
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import hudson.Extension;
 import hudson.Util;
 import hudson.XmlFile;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
 import hudson.model.Saveable;
@@ -25,9 +23,6 @@ import static com.google.common.collect.Collections2.transform;
 @Extension(dynamicLoadable = YesNoMaybe.YES)
 public class MonitorTemplateJobs extends SaveableListener {
     private static final Logger LOGGER = Logger.getLogger(MonitorTemplateJobs.class.getName());
-
-    public MonitorTemplateJobs() {
-    }
 
     @SuppressWarnings("rawtypes")
     @Override
@@ -74,11 +69,6 @@ public class MonitorTemplateJobs extends SaveableListener {
         }
 
         @Override
-        public void onAddedTo(AbstractBuild build) {
-            LOGGER.info("TemplateTriggerCause.onAddedTo");
-        }
-
-        @Override
         public String getShortDescription() {
             return "Template has changed";
         }
@@ -95,7 +85,6 @@ public class MonitorTemplateJobs extends SaveableListener {
     }
 
     private static class LookupProjectFunction implements Function<SeedReference, AbstractProject> {
-
         @Override
         public AbstractProject apply(SeedReference input) {
             return (AbstractProject) Jenkins.getInstance().getItem(input.getSeedJobName());

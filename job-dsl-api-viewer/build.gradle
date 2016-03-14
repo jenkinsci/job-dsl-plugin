@@ -28,7 +28,7 @@ task copyData(type: Copy) {
     into "${project.buildDir}/data"
 }
 
-(38..40).each { minorVersion ->
+(38..44).each { minorVersion ->
     def version = "1.${minorVersion}"
     task "downloadData-${version}"(type: Download) {
         src "http://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/job-dsl-core/${version}/job-dsl-core-${version}-apidoc.json"

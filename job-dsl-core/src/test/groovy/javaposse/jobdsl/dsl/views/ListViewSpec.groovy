@@ -16,9 +16,9 @@ import static javaposse.jobdsl.dsl.views.jobfilter.MatchType.INCLUDE_UNMATCHED
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
-class ListViewSpec extends Specification {
+class ListViewSpec<T extends ListView> extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    ListView view = new ListView(jobManagement)
+    T view = new ListView(jobManagement)
 
     def 'defaults'() {
         when:
@@ -415,6 +415,20 @@ class ListViewSpec extends Specification {
         root.columns[0].value().size() == 1
         root.columns[0].value()[0].name() == 'jenkins.plugins.jobicon.CustomIconColumn'
         1 * jobManagement.requireMinimumPluginVersion('custom-job-icon', '0.2')
+    }
+
+    def 'jacoco column'() {
+        when:
+        view.columns {
+            jacoco()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'hudson.plugins.jacococoveragecolumn.JaCoCoColumn'
+        1 * jobManagement.requireMinimumPluginVersion('jacoco', '1.0.10')
     }
 
     protected String getDefaultXml() {

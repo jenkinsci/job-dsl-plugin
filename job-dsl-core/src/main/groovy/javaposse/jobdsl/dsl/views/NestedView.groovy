@@ -18,7 +18,7 @@ class NestedView extends View {
         NestedViewsContext context = new NestedViewsContext(jobManagement)
         executeInContext(viewsClosure, context)
 
-        execute {
+        configure {
             for (View view : context.views) {
                 Node viewNode = view.node
                 viewNode.appendNode('name', view.name)
@@ -35,7 +35,7 @@ class NestedView extends View {
         NestedViewColumnsContext context = new NestedViewColumnsContext()
         executeInContext(columnsClosure, context)
 
-        execute {
+        configure {
             for (Node columnNode : context.columnNodes) {
                 it / 'columns' / 'columns' << columnNode
             }

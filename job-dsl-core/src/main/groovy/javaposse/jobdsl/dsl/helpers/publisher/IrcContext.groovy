@@ -1,15 +1,16 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import groovy.transform.Canonical
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
-class IrcContext implements Context {
+class IrcContext extends AbstractContext {
     List<IrcPublisherChannel> channels = []
 
-    List<String> strategies = ['ALL', 'ANY_FAILURE', 'FAILURE_AND_FIXED', 'STATECHANGE_ONLY']
+    List<String> strategies = ['ALL', 'ANY_FAILURE', 'FAILURE_AND_FIXED', 'NEW_FAILURE_AND_FIXED', 'STATECHANGE_ONLY']
 
     List<String> notificationMessages = ['Default', 'SummaryOnly', 'BuildParameters', 'PrintFailingTests']
 
@@ -27,7 +28,8 @@ class IrcContext implements Context {
 
     boolean notifyScmFixers = false
 
-    IrcContext() {
+    IrcContext(JobManagement jobManagement) {
+        super(jobManagement)
         strategy = strategies[0]
         notificationMessage = notificationMessages[0]
     }
@@ -65,10 +67,13 @@ class IrcContext implements Context {
 
     /**
      * Specifies when to send notifications. Must be one of {@code 'ALL'}, {@code 'FAILURE_AND_FIXED'},
-     * {@code 'ANY_FAILURE'} or {@code 'STATECHANGE_ONLY'}.
+     * {@code 'ANY_FAILURE'}, {@code 'NEW_FAILURE_AND_FIXED'} or {@code 'STATECHANGE_ONLY'}.
      */
     void strategy(String strategy) {
         checkArgument(strategies.contains(strategy), "Possible values: ${strategies.join(',')}")
+        if (strategy == 'NEW_FAILURE_AND_FIXED') {
+            jobManagement.requireMinimumPluginVersion('instant-messaging', '1.26')
+        }
 
         this.strategy = strategy
     }

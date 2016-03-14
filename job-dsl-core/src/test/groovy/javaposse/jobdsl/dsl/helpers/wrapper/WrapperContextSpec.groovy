@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
@@ -334,7 +333,7 @@ class WrapperContextSpec extends Specification {
 
     def 'xvnc'() {
         setup:
-        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
+        mockJobManagement.isMinimumPluginVersionInstalled('xvnc', '1.16') >> true
 
         when:
         context.xvnc()
@@ -350,7 +349,7 @@ class WrapperContextSpec extends Specification {
 
     def 'xvnc with closure'() {
         setup:
-        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.16')
+        mockJobManagement.isMinimumPluginVersionInstalled('xvnc', '1.16') >> true
 
         when:
         context.xvnc {
@@ -367,9 +366,6 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'xvnc with older plugin'() {
-        setup:
-        mockJobManagement.getPluginVersion('xvnc') >> new VersionNumber('1.15')
-
         when:
         context.xvnc()
 
@@ -1257,6 +1253,132 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'buildInDocker with no options'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2') >> true
+
+        when:
+        context.buildInDocker {
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper'
+            children().size() == 9
+            selector[0].children().size() == 2
+            selector[0].attribute('class') == 'com.cloudbees.jenkins.plugins.okidocki.DockerfileImageSelector'
+            selector[0].contextPath[0].value() == '.'
+            selector[0].dockerfile[0].value() == 'Dockerfile'
+            dockerHost[0].value().empty
+            dockerRegistryCredentials[0].value().empty
+            verbose[0].value() == false
+            volumes[0].value().empty
+            privileged[0].value() == false
+            forcePull[0].value() == false
+            group[0].value().empty
+            command[0].value() == '/bin/cat'
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.5.1')
+        1 * mockJobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
+    }
+
+    def 'buildInDocker with dockerfile selector and all options'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2') >> true
+
+        when:
+        context.buildInDocker {
+            dockerfile('test1', 'test2')
+            dockerHostURI('test3')
+            serverCredentials('test4')
+            registryCredentials('test5')
+            volume('test6', 'test7')
+            volume('test8', 'test9')
+            privilegedMode()
+            forcePull()
+            verbose()
+            userGroup('test10')
+            startCommand('test11')
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper'
+            children().size() == 9
+            selector[0].children().size() == 2
+            selector[0].attribute('class') == 'com.cloudbees.jenkins.plugins.okidocki.DockerfileImageSelector'
+            selector[0].contextPath[0].value() == 'test1'
+            selector[0].dockerfile[0].value() == 'test2'
+            dockerHost[0].children().size() == 2
+            dockerHost[0].uri[0].value() == 'test3'
+            dockerHost[0].credentialsId[0].value() == 'test4'
+            dockerRegistryCredentials[0].value() == 'test5'
+            verbose[0].value() == true
+            volumes[0].children().size() == 2
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].children().size() == 2
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].hostPath[0].value() == 'test6'
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].path[0].value() == 'test7'
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].children().size() == 2
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].hostPath[0].value() == 'test8'
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].path[0].value() == 'test9'
+            privileged[0].value() == true
+            forcePull[0].value() == true
+            group[0].value() == 'test10'
+            command[0].value() == 'test11'
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.5.1')
+        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.6.2')
+        1 * mockJobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
+    }
+
+    def 'buildInDocker with image selector and all options'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2') >> true
+
+        when:
+        context.buildInDocker {
+            image('test1')
+            dockerHostURI('test3')
+            serverCredentials('test4')
+            registryCredentials('test5')
+            volume('test6', 'test7')
+            volume('test8', 'test9')
+            privilegedMode()
+            forcePull()
+            verbose()
+            userGroup('test10')
+            startCommand('test11')
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper'
+            children().size() == 9
+            selector[0].children().size() == 1
+            selector[0].attribute('class') == 'com.cloudbees.jenkins.plugins.okidocki.PullDockerImageSelector'
+            selector[0].image[0].value() == 'test1'
+            dockerHost[0].children().size() == 2
+            dockerHost[0].uri[0].value() == 'test3'
+            dockerHost[0].credentialsId[0].value() == 'test4'
+            dockerRegistryCredentials[0].value() == 'test5'
+            verbose[0].value() == true
+            volumes[0].children().size() == 2
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].children().size() == 2
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].hostPath[0].value() == 'test6'
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].path[0].value() == 'test7'
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].children().size() == 2
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].hostPath[0].value() == 'test8'
+            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].path[0].value() == 'test9'
+            privileged[0].value() == true
+            forcePull[0].value() == true
+            group[0].value() == 'test10'
+            command[0].value() == 'test11'
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.5.1')
+        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.6.2')
+        1 * mockJobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
+    }
+
+    def 'buildInDocker with no options with 1.6.1'() {
         when:
         context.buildInDocker {
         }
@@ -1278,89 +1400,7 @@ class WrapperContextSpec extends Specification {
             command[0].value() == '/bin/cat'
         }
         1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.5.1')
-    }
-
-    def 'buildInDocker with dockerfile selector and all options'() {
-        when:
-        context.buildInDocker {
-            dockerfile('test1', 'test2')
-            dockerHostURI('test3')
-            serverCredentials('test4')
-            registryCredentials('test5')
-            volume('test6', 'test7')
-            volume('test8', 'test9')
-            privilegedMode()
-            verbose()
-            userGroup('test10')
-            startCommand('test11')
-        }
-
-        then:
-        with(context.wrapperNodes[0]) {
-            name() == 'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper'
-            children().size() == 8
-            selector[0].children().size() == 2
-            selector[0].attribute('class') == 'com.cloudbees.jenkins.plugins.okidocki.DockerfileImageSelector'
-            selector[0].contextPath[0].value() == 'test1'
-            selector[0].dockerfile[0].value() == 'test2'
-            dockerHost[0].children().size() == 2
-            dockerHost[0].uri[0].value() == 'test3'
-            dockerHost[0].credentialsId[0].value() == 'test4'
-            dockerRegistryCredentials[0].value() == 'test5'
-            verbose[0].value() == true
-            volumes[0].children().size() == 2
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].children().size() == 2
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].hostPath[0].value() == 'test6'
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].path[0].value() == 'test7'
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].children().size() == 2
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].hostPath[0].value() == 'test8'
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].path[0].value() == 'test9'
-            privileged[0].value() == true
-            group[0].value() == 'test10'
-            command[0].value() == 'test11'
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.5.1')
-    }
-
-    def 'buildInDocker with image selector and all options'() {
-        when:
-        context.buildInDocker {
-            image('test1')
-            dockerHostURI('test3')
-            serverCredentials('test4')
-            registryCredentials('test5')
-            volume('test6', 'test7')
-            volume('test8', 'test9')
-            privilegedMode()
-            verbose()
-            userGroup('test10')
-            startCommand('test11')
-        }
-
-        then:
-        with(context.wrapperNodes[0]) {
-            name() == 'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper'
-            children().size() == 8
-            selector[0].children().size() == 1
-            selector[0].attribute('class') == 'com.cloudbees.jenkins.plugins.okidocki.PullDockerImageSelector'
-            selector[0].image[0].value() == 'test1'
-            dockerHost[0].children().size() == 2
-            dockerHost[0].uri[0].value() == 'test3'
-            dockerHost[0].credentialsId[0].value() == 'test4'
-            dockerRegistryCredentials[0].value() == 'test5'
-            verbose[0].value() == true
-            volumes[0].children().size() == 2
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].children().size() == 2
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].hostPath[0].value() == 'test6'
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[0].path[0].value() == 'test7'
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].children().size() == 2
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].hostPath[0].value() == 'test8'
-            volumes[0].'com.cloudbees.jenkins.plugins.okidocki.Volume'[1].path[0].value() == 'test9'
-            privileged[0].value() == true
-            group[0].value() == 'test10'
-            command[0].value() == 'test11'
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.5.1')
+        1 * mockJobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
     }
 
     def 'call jiraCreateReleaseNotes with all options'() {

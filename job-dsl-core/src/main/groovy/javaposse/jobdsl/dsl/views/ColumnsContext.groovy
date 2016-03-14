@@ -148,4 +148,14 @@ class ColumnsContext extends AbstractContext {
     void progressBar() {
         columnNodes << new Node(null, 'org.jenkins.ci.plugins.progress__bar.ProgressBarColumn')
     }
+
+    /**
+     * Adds a column showing JaCoCo line coverage.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'jacoco', minimumVersion = '1.0.10')
+    void jacoco() {
+        columnNodes << new Node(null, 'hudson.plugins.jacococoveragecolumn.JaCoCoColumn')
+    }
 }

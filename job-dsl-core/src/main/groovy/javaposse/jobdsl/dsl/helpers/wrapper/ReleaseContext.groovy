@@ -88,15 +88,15 @@ class ReleaseContext extends AbstractContext {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure closure) {
-        this.configureBlock = closure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 
     /**
      * Add parameters for the release.
      */
     void parameters(@DslContext(BuildParametersContext) Closure parametersClosure) {
-        BuildParametersContext parametersContext = new BuildParametersContext(jobManagement)
+        BuildParametersContext parametersContext = new BuildParametersContext(jobManagement, item)
         ContextHelper.executeInContext(parametersClosure, parametersContext)
         params.addAll(parametersContext.buildParameterNodes.values())
     }

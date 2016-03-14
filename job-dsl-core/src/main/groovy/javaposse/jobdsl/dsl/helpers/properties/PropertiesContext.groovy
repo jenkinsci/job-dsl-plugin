@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
 
 class PropertiesContext extends AbstractExtensibleContext {
     List<Node> propertiesNodes = []
@@ -88,6 +88,29 @@ class PropertiesContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Allows to configure job ownership.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'ownership', minimumVersion = '0.8')
+    void ownership(@DslContext(OwnershipContext) Closure ownershipClosure) {
+        OwnershipContext ownershipContext = new OwnershipContext()
+        ContextHelper.executeInContext(ownershipClosure, ownershipContext)
+
+        propertiesNodes << new NodeBuilder().'com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty' {
+            delegate.ownership {
+                ownershipEnabled(true)
+                primaryOwnerId(ownershipContext.primaryOwnerId ?: '')
+                coownersIds(class: 'sorted-set') {
+                    ownershipContext.coOwnerIds.each { String coOwnerId ->
+                        string(coOwnerId ?: '')
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Configures the GitHub project URL.
      *
      * The URL will be set automatically when using the
@@ -100,6 +123,18 @@ class PropertiesContext extends AbstractExtensibleContext {
     void githubProjectUrl(String projectUrl) {
         propertiesNodes << new NodeBuilder().'com.coravy.hudson.plugins.github.GithubProjectProperty' {
             delegate.projectUrl(projectUrl ?: '')
+        }
+    }
+
+    /**
+     * Analyzes the causes of failed builds and presents the causes on the build page.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'build-failure-analyzer', minimumVersion = '1.13.2')
+    void buildFailureAnalyzer(boolean scan = true) {
+        propertiesNodes << new NodeBuilder().'com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty' {
+            doNotScan(!scan)
         }
     }
 }

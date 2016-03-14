@@ -155,4 +155,81 @@ class PropertiesContextSpec extends Specification {
         ''                                            || ''
         null                                          || ''
     }
+
+    def 'ownership with no options'() {
+        when:
+        context.ownership {}
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty'
+            children().size() == 1
+            with(ownership[0]) {
+                children().size() == 3
+                ownershipEnabled[0].value() == true
+                primaryOwnerId[0].value() == ''
+                coownersIds[0].'@class' == 'sorted-set'
+                coownersIds[0].value().empty
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ownership', '0.8')
+    }
+
+    def 'ownership with all options'() {
+        when:
+        context.ownership {
+            primaryOwnerId('user')
+            coOwnerIds('user1', 'user2')
+            coOwnerIds(['user3', 'user4'])
+        }
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty'
+            children().size() == 1
+            with(ownership[0]) {
+                children().size() == 3
+                ownershipEnabled[0].value() == true
+                primaryOwnerId[0].value() == 'user'
+                coownersIds[0].'@class' == 'sorted-set'
+                with(coownersIds[0]) {
+                    children().size() == 4
+                    string[0].value() == 'user1'
+                    string[1].value() == 'user2'
+                    string[2].value() == 'user3'
+                    string[3].value() == 'user4'
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ownership', '0.8')
+    }
+
+    def 'buildFailureAnalyzer'() {
+        when:
+        context.buildFailureAnalyzer()
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty'
+            children().size() == 1
+            doNotScan[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('build-failure-analyzer', '1.13.2')
+    }
+
+    def 'buildFailureAnalyzer with value'() {
+        when:
+        context.buildFailureAnalyzer(scan)
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'com.sonyericsson.jenkins.plugins.bfa.model.ScannerJobProperty'
+            children().size() == 1
+            doNotScan[0].value() == !scan
+        }
+        1 * jobManagement.requireMinimumPluginVersion('build-failure-analyzer', '1.13.2')
+
+        where:
+        scan << [true, false]
+    }
 }

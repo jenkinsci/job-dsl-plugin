@@ -1,14 +1,12 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
 
 class WrapperContext extends AbstractExtensibleContext {
     List<Node> wrapperNodes = []
@@ -201,7 +199,7 @@ class WrapperContext extends AbstractExtensibleContext {
 
         wrapperNodes << new NodeBuilder().'hudson.plugins.xvnc.Xvnc' {
             takeScreenshot(xvncContext.takeScreenshot)
-            if (!jobManagement.getPluginVersion('xvnc')?.isOlderThan(new VersionNumber('1.16'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('xvnc', '1.16')) {
                 useXauthority(xvncContext.useXauthority)
             }
         }
@@ -297,10 +295,7 @@ class WrapperContext extends AbstractExtensibleContext {
             postFailedBuildSteps(releaseContext.postFailedBuildSteps)
         }
 
-        if (releaseContext.configureBlock) {
-            WithXmlAction action = new WithXmlAction(releaseContext.configureBlock)
-            action.execute(releaseNode)
-        }
+        ContextHelper.executeConfigureBlock(releaseNode, releaseContext.configureBlock)
 
         wrapperNodes << releaseNode
     }
@@ -564,7 +559,9 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'docker-custom-build-environment', minimumVersion = '1.5.1')
     void buildInDocker(@DslContext(BuildInDockerContext) Closure closure) {
-        BuildInDockerContext context = new BuildInDockerContext()
+        jobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
+
+        BuildInDockerContext context = new BuildInDockerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         Node node = new NodeBuilder().'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper' {
@@ -580,6 +577,9 @@ class WrapperContext extends AbstractExtensibleContext {
             verbose(context.verbose)
             volumes(context.volumes)
             privileged(context.privilegedMode)
+            if (jobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2')) {
+                forcePull(context.forcePull)
+            }
             group(context.userGroup ?: '')
             command(context.startCommand ?: '')
         }

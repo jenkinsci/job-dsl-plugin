@@ -17,7 +17,7 @@ class Folder extends Item {
      * Sets the name to display instead of the actual folder name.
      */
     void displayName(String displayName) {
-        execute {
+        configure {
             it / methodMissing('displayName', displayName)
         }
     }
@@ -26,7 +26,7 @@ class Folder extends Item {
      * Sets a description for the folder.
      */
     void description(String description) {
-        execute {
+        configure {
             it / methodMissing('description', description)
         }
     }
@@ -37,7 +37,7 @@ class Folder extends Item {
      * @since 1.36
      */
     void primaryView(String primaryViewArg) {
-        execute {
+        configure {
             it / methodMissing('primaryView', primaryViewArg)
         }
     }
@@ -51,7 +51,7 @@ class Folder extends Item {
         AuthorizationContext context = new AuthorizationContext(jobManagement, AUTHORIZATION_MATRIX_PROPERTY_NAME)
         ContextHelper.executeInContext(closure, context)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node authorizationMatrixProperty = project / 'properties' / AUTHORIZATION_MATRIX_PROPERTY_NAME
             context.permissions.each { String perm ->
                 authorizationMatrixProperty.appendNode('permission', perm)
@@ -59,13 +59,9 @@ class Folder extends Item {
         }
     }
 
-    Node getNode() {
-        Node root = new XmlParser().parse(this.class.getResourceAsStream('Folder-template.xml'))
-        withXmlActions.each { it.execute(root) }
-        root
-    }
-
+    @Deprecated
     protected void execute(Closure rootClosure) {
-        withXmlActions << new WithXmlAction(rootClosure)
+        jobManagement.logDeprecationWarning()
+        configure(rootClosure)
     }
 }

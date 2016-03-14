@@ -31,9 +31,12 @@ class JobManagementSpec extends Specification {
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
         JobManagement jm = new MemoryJobManagement()
+        Item item = Mock(Item)
+        item.name >> null
+        item.xml >> minimalXml
 
         when:
-        jm.createOrUpdateConfig(null, minimalXml, false)
+        jm.createOrUpdateConfig(item, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -43,9 +46,12 @@ class JobManagementSpec extends Specification {
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
         JobManagement jm = new MemoryJobManagement()
+        Item item = Mock(Item)
+        item.name >> ''
+        item.xml >> minimalXml
 
         when:
-        jm.createOrUpdateConfig('', minimalXml, false)
+        jm.createOrUpdateConfig(item, false)
 
         then:
         thrown(NameNotProvidedException)
@@ -55,9 +61,12 @@ class JobManagementSpec extends Specification {
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
         JobManagement jm = new MemoryJobManagement()
+        Item item = Mock(Item)
+        item.name >> 'NEW-JOB-NAME'
+        item.xml >> null
 
         when:
-        jm.createOrUpdateConfig('NEW-JOB-NAME', null, false)
+        jm.createOrUpdateConfig(item, false)
 
         then:
         thrown(ConfigurationMissingException)
@@ -67,9 +76,12 @@ class JobManagementSpec extends Specification {
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
         JobManagement jm = new MemoryJobManagement()
+        Item item = Mock(Item)
+        item.name >> 'NEW-JOB-NAME'
+        item.xml >> ''
 
         when:
-        jm.createOrUpdateConfig('NEW-JOB-NAME', '', false)
+        jm.createOrUpdateConfig(item, false)
 
         then:
         thrown(ConfigurationMissingException)

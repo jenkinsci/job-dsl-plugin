@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class GroovyPostbuildContext extends AbstractContext {
     String script
@@ -31,7 +30,6 @@ class GroovyPostbuildContext extends AbstractContext {
     /**
      * If set, executes the the script in a sandbox environment. Defaults to {@code false}.
      */
-    @RequiresPlugin(id = 'groovy-postbuild', minimumVersion = '2.2')
     void sandbox(boolean sandbox = true) {
         this.sandbox = sandbox
     }

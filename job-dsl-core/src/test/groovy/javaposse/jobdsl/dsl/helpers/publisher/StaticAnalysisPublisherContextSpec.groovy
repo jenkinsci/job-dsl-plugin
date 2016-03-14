@@ -12,6 +12,9 @@ class StaticAnalysisPublisherContextSpec extends Specification {
 
     @Unroll
     def 'add #analysisTool with default values'(String analysisTool, Map extraNodes, String pluginId) {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
+
         when:
         context."${analysisTool}"('somewhere')
 
@@ -20,8 +23,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         def pmdNode = context.publisherNodes[0]
         assertValues(pmdNode, [], extraNodes,
                 pattern: 'somewhere',
-                healthy: null,
-                unHealthy: null,
+                healthy: '',
+                unHealthy: '',
                 thresholdLimit: 'low',
                 defaultEncoding: '',
                 canRunOnFailed: false,
@@ -44,7 +47,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         'checkstyle'      | [:]                                                                    | 'checkstyle'
         'jshint'          | [:]                                                                    | 'jshint-checkstyle'
         'dry'             | [highThreshold: 50, normalThreshold: 25]                               | 'dry'
-        'tasks'           | [excludePattern: '', high: '', normal: '', low: '', ignoreCase: false] | 'tasks'
+        'tasks'           | [excludePattern: '', high: '', normal: '', low: '', ignoreCase: false,
+                             asRegexp: false]                                                      | 'tasks'
     }
 
     def 'add warnings with default values'() {
@@ -55,8 +59,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         def warningsNode = context.publisherNodes[0]
         assertValues(warningsNode, ['consoleParsers'], [:],
-                healthy: null,
-                unHealthy: null,
+                healthy: '',
+                unHealthy: '',
                 thresholdLimit: 'low',
                 defaultEncoding: '',
                 canRunOnFailed: false,
@@ -79,6 +83,9 @@ class StaticAnalysisPublisherContextSpec extends Specification {
 
     @Unroll
     def 'add #analysisTool with all values'(String analysisTool, String nodeName, List extraArgs, Map extraValues) {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
+
         when:
         context."${analysisTool}"('somewhere', *extraArgs) {
             healthLimits 3, 20
@@ -136,7 +143,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
                 [highThreshold: 60, normalThreshold: 37]
         'tasks'           | 'hudson.plugins.tasks.TasksPublisher'                            |
                 ['**/*.xml', 'FIXME', 'TODO', 'LOW', true]                                               |
-                [excludePattern: '**/*.xml', high: 'FIXME', normal: 'TODO', low: 'LOW', ignoreCase: true]
+                [excludePattern: '**/*.xml', high: 'FIXME', normal: 'TODO', low: 'LOW', ignoreCase: true,
+                 asRegexp: false]
     }
 
     def 'add warnings with all values'() {
@@ -206,8 +214,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         def analysisCollectorNode = context.publisherNodes[0]
         assertValues(
                 analysisCollectorNode,
-                healthy: null,
-                unHealthy: null,
+                healthy: '',
+                unHealthy: '',
                 thresholdLimit: 'low',
                 defaultEncoding: '',
                 canRunOnFailed: false,
@@ -283,6 +291,100 @@ class StaticAnalysisPublisherContextSpec extends Specification {
                 failedNewAll: 13, failedNewHigh: 14, failedNewNormal: 15, failedNewLow: 16,
         )
         1 * jobManagement.requirePlugin('analysis-collector')
+    }
+
+    def 'task scanner with minimal options and older plugin version'() {
+        when:
+        context.tasks('foo')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            children().size() == 17
+            pattern[0].value() == 'foo'
+            high[0].value().empty
+            normal[0].value().empty
+            low[0].value().empty
+            ignoreCase[0].value() == false
+            excludePattern[0].value().empty
+            healthy[0].value() == ''
+            unHealthy[0].value() == ''
+            thresholdLimit[0].value() == 'low'
+            defaultEncoding[0].value().empty
+            thresholds[0].value().empty
+            canRunOnFailed[0].value() == false
+            useStableBuildAsReference[0].value() == false
+            useDeltaValues[0].value() == false
+            shouldDetectModules[0].value() == false
+            dontComputeNew[0].value() == true
+            doNotResolveRelativePaths[0].value() == true
+        }
+    }
+
+    def 'task scanner with minimal options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
+
+        when:
+        context.tasks('foo')
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            children().size() == 18
+            pattern[0].value() == 'foo'
+            high[0].value().empty
+            normal[0].value().empty
+            low[0].value().empty
+            ignoreCase[0].value() == false
+            excludePattern[0].value().empty
+            healthy[0].value() == ''
+            unHealthy[0].value() == ''
+            thresholdLimit[0].value() == 'low'
+            defaultEncoding[0].value().empty
+            thresholds[0].value().empty
+            canRunOnFailed[0].value() == false
+            useStableBuildAsReference[0].value() == false
+            useDeltaValues[0].value() == false
+            shouldDetectModules[0].value() == false
+            dontComputeNew[0].value() == true
+            doNotResolveRelativePaths[0].value() == true
+            asRegexp[0].value() == false
+        }
+    }
+
+    def 'task scanner with extra options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
+
+        when:
+        context.tasks('foo', 'bar', 'one', 'two', 'three', true) {
+            regularExpression()
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            children().size() == 18
+            pattern[0].value() == 'foo'
+            high[0].value() == 'one'
+            normal[0].value() == 'two'
+            low[0].value() == 'three'
+            ignoreCase[0].value() == true
+            excludePattern[0].value() == 'bar'
+            healthy[0].value() == ''
+            unHealthy[0].value() == ''
+            thresholdLimit[0].value() == 'low'
+            defaultEncoding[0].value().empty
+            thresholds[0].value().empty
+            canRunOnFailed[0].value() == false
+            useStableBuildAsReference[0].value() == false
+            useDeltaValues[0].value() == false
+            shouldDetectModules[0].value() == false
+            dontComputeNew[0].value() == true
+            doNotResolveRelativePaths[0].value() == true
+            asRegexp[0].value() == true
+        }
     }
 
     private static void assertValues(Map map, baseNode, List notCheckedNodes = [], Map extraNodes = [:]) {

@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers
 
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
@@ -101,8 +102,8 @@ class AxisContext extends AbstractExtensibleContext {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure closure) {
-        configureBlocks << closure
+    void configure(Closure configureBlock) {
+        configureBlocks << configureBlock
     }
 
     private simpleAxis(String axisType, String axisName, Iterable<String> axisValues) {

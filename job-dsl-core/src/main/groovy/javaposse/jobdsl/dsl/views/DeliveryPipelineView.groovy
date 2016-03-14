@@ -35,7 +35,7 @@ class DeliveryPipelineView extends View {
      * Sets the number of pipelines instances shown for each pipeline. Defaults to 3.
      */
     void pipelineInstances(int number) {
-        execute {
+        configure {
             it / noOfPipelines(number)
         }
     }
@@ -44,7 +44,7 @@ class DeliveryPipelineView extends View {
      * Show a aggregated view where each stage shows the latest version being executed. Defaults to {@code false}.
      */
     void showAggregatedPipeline(boolean value = true) {
-        execute {
+        configure {
             it / methodMissing('showAggregatedPipeline', value)
         }
     }
@@ -53,7 +53,7 @@ class DeliveryPipelineView extends View {
      * Sets the number of columns used for showing pipelines. Defaults to 1.
      */
     void columns(int number) {
-        execute {
+        configure {
             it / noOfColumns(number)
         }
     }
@@ -63,7 +63,7 @@ class DeliveryPipelineView extends View {
      * {@code Sorting.NONE}.
      */
     void sorting(Sorting sorting) {
-        execute {
+        configure {
             it / methodMissing('sorting', (sorting ?: Sorting.NONE).value)
         }
     }
@@ -72,7 +72,7 @@ class DeliveryPipelineView extends View {
      * Show avatar pictures instead of user names. Defaults to {@code false}.
      */
     void showAvatars(boolean value = true) {
-        execute {
+        configure {
             it / methodMissing('showAvatars', value)
         }
     }
@@ -81,7 +81,7 @@ class DeliveryPipelineView extends View {
      * Specifies how often the view will be updated. Defaults to 2.
      */
     void updateInterval(int seconds) {
-        execute {
+        configure {
             it / methodMissing('updateInterval', seconds)
         }
     }
@@ -90,7 +90,7 @@ class DeliveryPipelineView extends View {
      * Show SCM change log for the first job in the pipeline. Defaults to {@code false}.
      */
     void showChangeLog(boolean value = true) {
-        execute {
+        configure {
             it / methodMissing('showChanges', value)
         }
     }
@@ -99,7 +99,7 @@ class DeliveryPipelineView extends View {
      * Show a button if a task is manual. Defaults to {@code false}.
      */
     void enableManualTriggers(boolean value = true) {
-        execute {
+        configure {
             it / methodMissing('allowManualTriggers', value)
         }
     }
@@ -111,7 +111,7 @@ class DeliveryPipelineView extends View {
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.5')
     void showTotalBuildTime(boolean value = true) {
-        execute {
+        configure {
             it / methodMissing('showTotalBuildTime', value)
         }
     }
@@ -123,7 +123,7 @@ class DeliveryPipelineView extends View {
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.0')
     void allowRebuild(boolean value = true) {
-        execute {
+        configure {
             it / methodMissing('allowRebuild', value)
         }
     }
@@ -135,7 +135,7 @@ class DeliveryPipelineView extends View {
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.0')
     void allowPipelineStart(boolean value = true) {
-        execute {
+        configure {
             it / methodMissing('allowPipelineStart', value)
         }
     }
@@ -147,7 +147,7 @@ class DeliveryPipelineView extends View {
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.5')
     void showDescription(boolean value = true) {
-        execute {
+        configure {
             it / methodMissing('showDescription', value)
         }
     }
@@ -161,7 +161,7 @@ class DeliveryPipelineView extends View {
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.5')
     void showPromotions(boolean value = true) {
-        execute {
+        configure {
             it / methodMissing('showPromotions', value)
         }
     }
@@ -174,7 +174,7 @@ class DeliveryPipelineView extends View {
         DeliveryPipelinesContext context = new DeliveryPipelinesContext()
         executeInContext(pipelinesClosure, context)
 
-        execute {
+        configure {
             context.components.each { String name, String firstJob ->
                 it / 'componentSpecs' << 'se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec' {
                     delegate.name(name)

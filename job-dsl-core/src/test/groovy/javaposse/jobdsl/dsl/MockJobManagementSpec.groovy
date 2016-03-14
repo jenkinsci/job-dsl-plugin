@@ -26,6 +26,15 @@ class MockJobManagementSpec extends Specification {
         'hudson.scm.SCM.Tag' in permissions
     }
 
+    def 'job permissions are never null'() {
+        when:
+        Set<String> permissions = mockJobManagement.getPermissions('someClass')
+
+        then:
+        permissions != null
+        permissions.empty
+    }
+
     def 'queueJob validates name argument'() {
         when:
         mockJobManagement.queueJob(name)

@@ -2,6 +2,7 @@ package javaposse.jobdsl.plugin;
 
 import hudson.Extension;
 import hudson.model.Item;
+import hudson.model.Job;
 import hudson.model.JobProperty;
 import javaposse.jobdsl.dsl.helpers.properties.PropertiesContext;
 import org.apache.commons.io.FileUtils;
@@ -43,7 +44,7 @@ public class ExampleJobDslExtension extends ContextExtensionPoint {
         }
     }
 
-    public static class SomeValueObject extends JobProperty {
+    public static class SomeValueObject extends JobProperty<Job<?, ?>> {
         private String value;
 
         public SomeValueObject(String value) {

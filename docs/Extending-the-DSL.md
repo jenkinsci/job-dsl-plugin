@@ -30,7 +30,7 @@ Gradle:
     ...
     dependencies {
         ...
-        optionalJenkinsPlugins 'org.jenkins-ci.plugins:job-dsl:1.40@jar'
+        optionalJenkinsPlugins 'org.jenkins-ci.plugins:job-dsl:1.44@jar'
         ...
     }
     ...
@@ -47,9 +47,12 @@ contexts:
 * `javaposse.jobdsl.dsl.helpers.ScmContext` for the `scm` and `multiscm` contexts
 * `javaposse.jobdsl.dsl.helpers.step.StepsContext` for the `steps` context
 * `javaposse.jobdsl.dsl.helpers.triggers.TriggerContext` for the `triggers` context
+* `javaposse.jobdsl.dsl.helpers.triggers.MultibranchWorkflowTriggerContext` for the `triggers` context, but only for
+  multibranch workflow jobs
 * `javaposse.jobdsl.dsl.helpers.properties.PropertiesContext` for the `properties` context
 * `javaposse.jobdsl.dsl.helpers.publisher.PublisherContext` for the `publisher` context
 * `javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext` for the `wrappers` context
+* `javaposse.jobdsl.dsl.helpers.BuildParametersContext` for the `parameters` context
 * `javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext` for the `publishers` context, but only for Maven jobs
 * `javaposse.jobdsl.dsl.helpers.triggers.MavenTriggerContext` for the `triggers` context, but only for Maven jobs
 * `javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext` for the `wrappers` context, but only for Maven jobs 

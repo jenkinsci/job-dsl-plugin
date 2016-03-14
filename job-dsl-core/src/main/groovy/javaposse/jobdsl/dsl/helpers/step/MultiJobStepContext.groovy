@@ -1,15 +1,15 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
-import javaposse.jobdsl.dsl.WithXmlAction
 
 class MultiJobStepContext extends StepContext {
-    private static final List<String> VALID_CONTINUATION_CONDITIONS = ['SUCCESSFUL', 'UNSTABLE', 'COMPLETED', 'FAILURE']
+    private static final List<String> VALID_CONTINUATION_CONDITIONS = [
+            'SUCCESSFUL', 'UNSTABLE', 'COMPLETED', 'FAILURE', 'ALWAYS'
+    ]
 
     MultiJobStepContext(JobManagement jobManagement, Item item) {
         super(jobManagement, item)
@@ -40,17 +40,10 @@ class MultiJobStepContext extends StepContext {
         PhaseContext phaseContext = new PhaseContext(jobManagement, item, name, continuationCondition)
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
-        VersionNumber multiJobPluginVersion = jobManagement.getPluginVersion('jenkins-multijob-plugin')
-
-        Set<String> validContinuationConditions = new HashSet<String>(VALID_CONTINUATION_CONDITIONS)
-        if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.15'))) {
-            validContinuationConditions << 'ALWAYS'
-        }
-
         Preconditions.checkNotNullOrEmpty(phaseContext.phaseName, 'A phase needs a name')
         Preconditions.checkArgument(
-                validContinuationConditions.contains(phaseContext.continuationCondition),
-                "Continuation Condition needs to be one of these values: ${validContinuationConditions.join(', ')}"
+                VALID_CONTINUATION_CONDITIONS.contains(phaseContext.continuationCondition),
+                "Continuation Condition needs to be one of these values: ${VALID_CONTINUATION_CONDITIONS.join(', ')}"
         )
 
         stepNodes << new NodeBuilder().'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
@@ -64,16 +57,11 @@ class MultiJobStepContext extends StepContext {
                         exposedSCM jobInPhase.exposedScm
                         disableJob jobInPhase.disableJob
                         killPhaseOnJobResultCondition jobInPhase.killPhaseCondition
-                        if (multiJobPluginVersion?.isNewerThan(new VersionNumber('1.13'))) {
-                            abortAllJob jobInPhase.abortAllJobs
-                        }
+                        abortAllJob jobInPhase.abortAllJobs
                         configs(jobInPhase.paramTrigger.configs ?: [class: 'java.util.Collections$EmptyList'])
                     }
 
-                    if (jobInPhase.configureClosure) {
-                        WithXmlAction action = new WithXmlAction(jobInPhase.configureClosure)
-                        action.execute(phaseJobNode)
-                    }
+                    ContextHelper.executeConfigureBlock(phaseJobNode, jobInPhase.configureBlock)
                 }
             }
         }

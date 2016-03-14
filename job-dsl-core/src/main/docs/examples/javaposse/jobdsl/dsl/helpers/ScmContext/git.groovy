@@ -6,8 +6,10 @@ job('example-1') {
                 name('remoteB')
                 url('git@server:account/repo1.git')
             }
-            clean()
-            relativeTargetDir('repo1')
+            extensions {
+                cleanAfterCheckout()
+                relativeTargetDirectory('repo1')
+            }
         }
     }
 }
@@ -26,7 +28,12 @@ job('example-2') {
                 url('git@serverB:account/repo1.git')
             }
             branch('featureA')
-            mergeOptions('upstream', 'master')
+            extensions {
+                mergeOptions {
+                    remote('upstream')
+                    branch('master')
+                }
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
@@ -61,6 +60,42 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('ssh', '1.3')
     }
 
+    def 'call xshell method with defaults'() {
+        when:
+        context.xShell()
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.xshell.XShellBuilder'
+            children().size() == 3
+            commandLine[0].value() == ''
+            executeFromWorkingDir[0].value() == false
+            regexToKill[0].value() == ''
+        }
+        1 * jobManagement.requireMinimumPluginVersion('xshell', '0.10')
+    }
+
+    def 'call xshell method with all options'() {
+        when:
+        context.xShell {
+            commandLine('echo "Hello"')
+            executableInWorkspaceDir()
+            regexToKill('.*regexp.*')
+            timeAllocated(10)
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.xshell.XShellBuilder'
+            children().size() == 4
+            commandLine[0].value() == 'echo "Hello"'
+            executeFromWorkingDir[0].value() == true
+            regexToKill[0].value() == '.*regexp.*'
+            timeAllocated[0].value() == 10
+        }
+        1 * jobManagement.requireMinimumPluginVersion('xshell', '0.10')
+    }
+
     def 'call batchFile method'() {
         when:
         context.batchFile('echo "Hello from Windows"')
@@ -115,6 +150,9 @@ class StepContextSpec extends Specification {
     }
 
     def 'call gradle methods'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.23') >> true
+
         when:
         context.gradle('build')
 
@@ -150,6 +188,9 @@ class StepContextSpec extends Specification {
     }
 
     def 'call gradle methods with defaults'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.23') >> true
+
         when:
         context.gradle()
 
@@ -193,6 +234,9 @@ class StepContextSpec extends Specification {
     }
 
     def 'call gradle methods with context'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.23') >> true
+
         when:
         context.gradle {
             tasks 'clean'
@@ -230,9 +274,6 @@ class StepContextSpec extends Specification {
     }
 
     def 'call gradle with old plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('gradle') >> new VersionNumber('1.22')
-
         when:
         context.gradle {
             tasks 'clean'
@@ -412,7 +453,7 @@ class StepContextSpec extends Specification {
         mavenStep.name() == 'hudson.tasks.Maven'
         mavenStep.targets[0].value() == 'install'
         mavenStep.pom[0] == null
-        (1.._) * jobManagement.requirePlugin('maven-plugin')
+        (1.._) * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
 
         when:
         context.maven('install', 'pom.xml') { mavenNode ->
@@ -425,7 +466,7 @@ class StepContextSpec extends Specification {
         def mavenStep2 = context.stepNodes[1]
         mavenStep2.pom[0].value() == 'pom.xml'
         mavenStep2.mavenName[0].value() == 'Maven 2.0.1'
-        (1.._) * jobManagement.requirePlugin('maven-plugin')
+        (1.._) * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call maven method with full context'() {
@@ -458,7 +499,7 @@ class StepContextSpec extends Specification {
         mavenStep.mavenName[0].value() == 'Maven 3.0.5'
         mavenStep.settingsConfigId[0].value() == 'foo-bar'
         mavenStep.properties[0].value() == 'skipTests=true\nother=some\nevenAnother=One'
-        1 * jobManagement.requirePlugin('maven-plugin')
+        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call maven method with minimal context'() {
@@ -476,7 +517,7 @@ class StepContextSpec extends Specification {
         mavenStep.jvmOptions[0].value() == ''
         mavenStep.usePrivateRepository[0].value() == false
         mavenStep.mavenName[0].value() == '(Default)'
-        1 * jobManagement.requirePlugin('maven-plugin')
+        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call maven method with unknown provided settings'() {
@@ -543,27 +584,7 @@ class StepContextSpec extends Specification {
                 settingsConfigId[0].value() == globalSettingsId
             }
         }
-        1 * jobManagement.requirePlugin('maven-plugin')
-    }
-
-    def 'call maven with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('maven-plugin') >> new VersionNumber('2.2')
-
-        when:
-        context.maven('install')
-
-        then:
-        with(context.stepNodes[0]) {
-            name() == 'hudson.tasks.Maven'
-            children().size() == 4
-            targets[0].value() == 'install'
-            mavenName[0].value() == '(Default)'
-            jvmOptions[0].value() == ''
-            usePrivateRepository[0].value() == false
-        }
-        (1.._) * jobManagement.requirePlugin('maven-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('maven-plugin', '2.3')
+        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call ant methods'() {
@@ -1688,94 +1709,6 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('publish-over-ssh')
     }
 
-    def 'call downstream build step with all args with deprecated methods'() {
-        when:
-        context.downstreamParameterized {
-            trigger('Project1, Project2', 'UNSTABLE_OR_BETTER', true,
-                    [buildStepFailure: 'FAILURE', failure: 'FAILURE', unstable: 'UNSTABLE']) {
-                currentBuild() // Current build parameters
-                propertiesFile('dir/my.properties') // Parameters from properties file
-                gitRevision(false) // Pass-through Git commit that was built
-                predefinedProp('key1', 'value1') // Predefined properties
-                predefinedProps([key2: 'value2', key3: 'value3'])
-                predefinedProps('key4=value4\nkey5=value5') // Newline separated
-                matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
-                subversionRevision() // Subversion Revision
-                nodeLabel('nodeParam', 'node_label') // Limit to node label selection
-            }
-            trigger('Project2') {
-                currentBuild()
-            }
-        }
-
-        then:
-        Node stepNode = context.stepNodes[0]
-        stepNode.name() == 'hudson.plugins.parameterizedtrigger.TriggerBuilder'
-        stepNode.configs[0].children().size() == 2
-        with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
-            projects[0].value() == 'Project1, Project2'
-            condition[0].value() == 'ALWAYS'
-            triggerWithNoParameters[0].value() == true
-            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
-            configs[0].'hudson.plugins.parameterizedtrigger.FileBuildParameters'[0].propertiesFile[0].value() ==
-                    'dir/my.properties'
-            configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
-            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
-            configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
-                    'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
-            configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() ==
-                    'label=="${TARGET}"'
-            configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
-            configs[0].'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0].
-                    name[0].value() == 'nodeParam'
-            configs[0].'org.jvnet.jenkins.plugins.nodelabelparameter.parameterizedtrigger.NodeLabelBuildParameter'[0].
-                    nodeLabel[0].value() == 'node_label'
-
-            block.size() == 1
-            Node thresholds = block[0]
-            thresholds.children().size() == 3
-            Node unstableThreshold = thresholds.unstableThreshold[0]
-            unstableThreshold.name[0].value() == 'UNSTABLE'
-            unstableThreshold.ordinal[0].value() == 1
-            unstableThreshold.completeBuild[0].value() == true
-            Node failureThreshold = thresholds.failureThreshold[0]
-            failureThreshold.name[0].value() == 'FAILURE'
-            failureThreshold.ordinal[0].value() == 2
-            failureThreshold.completeBuild[0].value() == true
-            Node buildStepFailureThreshold = thresholds.buildStepFailureThreshold[0]
-            buildStepFailureThreshold.name[0].value() == 'FAILURE'
-        }
-
-        with(stepNode.configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[1]) {
-            projects[0].value() == 'Project2'
-            condition[0].value() == 'ALWAYS'
-            triggerWithNoParameters[0].value() == false
-            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
-            block.isEmpty()
-        }
-        1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.requirePlugin('git')
-        1 * jobManagement.requirePlugin('nodelabelparameter')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-
-        when:
-        context.downstreamParameterized {
-            trigger('Project3') {
-            }
-        }
-
-        then:
-        with(context.stepNodes[1].configs[0].'hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig'[0]) {
-            projects[0].value() == 'Project3'
-            condition[0].value() == 'ALWAYS'
-            triggerWithNoParameters[0].value() == false
-            configs[0].attribute('class') == 'java.util.Collections$EmptyList'
-        }
-        1 * jobManagement.requirePlugin('parameterized-trigger')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-    }
-
     def 'call downstream build step with all args'() {
         when:
         context.downstreamParameterized {
@@ -1791,7 +1724,6 @@ class StepContextSpec extends Specification {
                     gitRevision(false) // Pass-through Git commit that was built
                     predefinedProp('key1', 'value1') // Predefined properties
                     predefinedProps([key2: 'value2', key3: 'value3'])
-                    predefinedProps('key4=value4\nkey5=value5') // Newline separated
                     matrixSubset('label=="${TARGET}"') // Restrict matrix execution to a subset
                     subversionRevision() // Subversion Revision
                     nodeLabel('nodeParam', 'node_label') // Limit to node label selection
@@ -1822,7 +1754,7 @@ class StepContextSpec extends Specification {
             configs[0].'hudson.plugins.git.GitRevisionBuildParameters'[0].combineQueuedCommits[0].value() == false
             configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
             configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
-                    'key1=value1\nkey2=value2\nkey3=value3\nkey4=value4\nkey5=value5'
+                    'key1=value1\nkey2=value2\nkey3=value3'
             configs[0].'hudson.plugins.parameterizedtrigger.matrix.MatrixSubsetBuildParameters'[0].filter[0].value() ==
                     'label=="${TARGET}"'
             configs[0].'hudson.plugins.parameterizedtrigger.SubversionRevisionBuildParameters'[0] instanceof Node
@@ -1859,11 +1791,9 @@ class StepContextSpec extends Specification {
             configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
             block.isEmpty()
         }
-        1 * jobManagement.requirePlugin('parameterized-trigger')
         1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
-        1 * jobManagement.requirePlugin('git')
         1 * jobManagement.requirePlugin('nodelabelparameter')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
@@ -1881,7 +1811,7 @@ class StepContextSpec extends Specification {
             triggerWithNoParameters[0].value() == false
             configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         }
-        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
@@ -1899,14 +1829,11 @@ class StepContextSpec extends Specification {
             triggerWithNoParameters[0].value() == false
             configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         }
-        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
     def 'call downstream build step with no args and older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('parameterized-trigger') >> new VersionNumber('2.24')
-
         when:
         context.downstreamParameterized {
             trigger('Project3') {
@@ -1921,7 +1848,7 @@ class StepContextSpec extends Specification {
             triggerWithNoParameters[0].value() == false
             configs[0].attribute('class') == 'java.util.Collections$EmptyList'
         }
-        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
     }
 
@@ -1949,7 +1876,7 @@ class StepContextSpec extends Specification {
                 block[0].children().size() == 0
             }
         }
-        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
     }
 
     def 'call downstream build step with blocking options'() {
@@ -2006,7 +1933,7 @@ class StepContextSpec extends Specification {
                 }
             }
         }
-        1 * jobManagement.requirePlugin('parameterized-trigger')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
         1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         where:
@@ -2098,7 +2025,7 @@ class StepContextSpec extends Specification {
         ]
         testConditionArgs << [
                 ['arg1': 'foo', 'arg2': 'bar', 'ignoreCase': false], [:], [:],
-                ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCondition': true],
+                ['token': 'foo'], ['buildCause': 'foo', 'exclusiveCause': true],
                 ['expression': 'some-expression', 'label': 'some-label'],
                 ['earliestHours': 9, 'earliestMinutes': 10,
                  'latestHours': 14, 'latestMinutes': 45,
@@ -2108,6 +2035,40 @@ class StepContextSpec extends Specification {
                 'StringsMatchCondition', 'AlwaysRun', 'NeverRun', 'BooleanCondition', 'CauseCondition',
                 'ExpressionCondition', 'TimeCondition'
         ]
+    }
+
+    def 'call conditional steps with nodes condition'() {
+        when:
+        context.conditionalSteps {
+            condition {
+                nodes(['foo', 'bar'])
+            }
+            steps {
+                shell('look at me')
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
+            children().size() == 3
+            with(runCondition[0]) {
+                attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.NodeCondition'
+                children().size() == 1
+                allowedNodes[0].children().size() == 2
+                allowedNodes[0].string[0].value() == 'foo'
+                allowedNodes[0].string[1].value() == 'bar'
+            }
+            runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+            conditionalbuilders[0].children().size() == 1
+            with(conditionalbuilders[0].children()[0]) {
+                name() == 'hudson.tasks.Shell'
+                children().size() == 1
+                command[0].value() == 'look at me'
+            }
+        }
+        1 * jobManagement.requirePlugin('conditional-buildstep')
+        1 * jobManagement.requireMinimumPluginVersion('run-condition', '1.0')
     }
 
     @Unroll
@@ -2443,8 +2404,8 @@ class StepContextSpec extends Specification {
         'alwaysRun'        | []                       | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'                 | [:]
         'neverRun'         | []                       | 'org.jenkins_ci.plugins.run_condition.core.NeverRun'                  | [:]
         'booleanCondition' | ['someToken']            | 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'          | [token: 'someToken']
-        'cause'            | ['userCause', true]      | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause        : 'userCause',
-                                                                                                                                 exclusiveCondition: 'true']
+        'cause'            | ['userCause', true]      | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause    : 'userCause',
+                                                                                                                                 exclusiveCause: 'true']
         'stringsMatch'     | ['some1', 'some2', true] | 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'     | [arg1      : 'some1',
                                                                                                                                  arg2      : 'some2',
                                                                                                                                  ignoreCase: 'true']
@@ -2477,72 +2438,6 @@ class StepContextSpec extends Specification {
         'FOO'       | 'SUCCESS'
         'FAILURE'   | 'BAR'
         'SUCCESS'   | 'ABORTED'
-    }
-
-    def 'call conditional steps for multiple steps in deprecated variant'() {
-        when:
-        context.conditionalSteps {
-            condition {
-                stringsMatch('foo', 'bar', false)
-            }
-            runner('Fail')
-            shell('look at me')
-            groovyCommand('acme.Acme.doSomething()', 'Groovy 2.0') {
-                groovyParam('foo')
-                groovyParams(['bar', 'baz'])
-                classpath('/foo/acme.jar')
-                classpath('/foo/test.jar')
-                scriptParam('alfa')
-                scriptParams(['bravo', 'charlie'])
-                prop('one', 'two')
-                props([three: 'four', five: 'six'])
-                javaOpt('test')
-                javaOpts(['me', 'too'])
-            }
-        }
-
-        then:
-        Node step = context.stepNodes[0]
-        step.name() == 'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder'
-        step.runCondition[0].children().size() == 3
-
-        Node condition = step.runCondition[0]
-        condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
-        condition.arg1[0].value() == 'foo'
-        condition.arg2[0].value() == 'bar'
-        condition.ignoreCase[0].value() == 'false'
-
-        step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
-
-        step.conditionalbuilders[0].children().size() == 2
-
-        Node shellStep = step.conditionalbuilders[0].children()[0]
-        shellStep.name() == 'hudson.tasks.Shell'
-        shellStep.command[0].value() == 'look at me'
-
-        def acmeGroovyNode = step.conditionalbuilders[0].children()[1]
-        acmeGroovyNode.name() == 'hudson.plugins.groovy.Groovy'
-        acmeGroovyNode.groovyName.size() == 1
-        acmeGroovyNode.groovyName[0].value() == 'Groovy 2.0'
-        acmeGroovyNode.parameters.size() == 1
-        acmeGroovyNode.parameters[0].value() == 'foo bar baz'
-        acmeGroovyNode.classPath.size() == 1
-        acmeGroovyNode.classPath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
-        acmeGroovyNode.scriptParameters.size() == 1
-        acmeGroovyNode.scriptParameters[0].value() == 'alfa bravo charlie'
-        acmeGroovyNode.properties.size() == 1
-        acmeGroovyNode.properties[0].value() == 'one=two\nthree=four\nfive=six'
-        acmeGroovyNode.javaOpts.size() == 1
-        acmeGroovyNode.javaOpts[0].value() == 'test me too'
-        acmeGroovyNode.scriptSource.size() == 1
-        def acmeScriptSourceNode = acmeGroovyNode.scriptSource[0]
-        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
-        acmeScriptSourceNode.command.size() == 1
-        acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
-        1 * jobManagement.requirePlugin('conditional-buildstep')
-        2 * jobManagement.logDeprecationWarning(
-                'using build steps outside the nested steps context of conditionalSteps'
-        )
     }
 
     @Unroll
@@ -2966,6 +2861,78 @@ class StepContextSpec extends Specification {
             serverHash[0].value() == 4711
         }
         1 * jobManagement.requirePlugin('vsphere-cloud')
+    }
+
+    def 'vSphere deploy from template'() {
+        setup:
+        jobManagement.getVSphereCloudHash('vsphere.acme.org') >> 4711
+
+        when:
+        context.vSphereDeployFromTemplate {
+            server('vsphere.acme.org')
+            template('template')
+            clone('clone')
+            cluster('cluster')
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer'
+            children().size() == 3
+            with(buildStep[0]) {
+                attribute('class') == 'org.jenkinsci.plugins.vsphere.builders.Deploy'
+                children().size() == 6
+                template[0].value() == 'template'
+                clone[0].value() == 'clone'
+                cluster[0].value() == 'cluster'
+                datastore[0].value().empty
+                resourcePool[0].value().empty
+                linkedClone[0].value() == false
+            }
+            serverName[0].value() == 'vsphere.acme.org'
+            serverHash[0].value() == 4711
+        }
+        1 * jobManagement.requireMinimumPluginVersion('vsphere-cloud', '2.7')
+    }
+
+    def 'vSphere deploy from template without template'() {
+        when:
+        context.vSphereDeployFromTemplate {
+            server('vsphere.acme.org')
+            clone('clone')
+            cluster('cluster')
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'template must be specified'
+    }
+
+    def 'vSphere deploy from template without clone'() {
+        when:
+        context.vSphereDeployFromTemplate {
+            server('vsphere.acme.org')
+            template('template')
+            cluster('cluster')
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'clone must be specified'
+    }
+
+    def 'vSphere deploy from template without cluster'() {
+        when:
+        context.vSphereDeployFromTemplate {
+            server('vsphere.acme.org')
+            template('template')
+            clone('clone')
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'cluster must be specified'
     }
 
     def 'vSphere server not found'() {
@@ -3440,34 +3407,101 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1')
     }
 
-    def 'call jiraIssueUpdateBuilder with all options'() {
+    def 'call ruby method'() {
         when:
-        context.jira {
-            jiraIssueUpdateBuilder {
-                jqlSearch(jql)
-                workflowActionName(work)
-                comment(com)
-            }
+        context.ruby('puts \'Hello\'')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.ruby.Ruby'
+            children().size() == 1
+            command[0].value() == "puts 'Hello'"
+        }
+        1 * jobManagement.requireMinimumPluginVersion('ruby', '1.2')
+    }
+
+    def 'call nant with no options'() {
+        when:
+        context.nant {
         }
 
         then:
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
-            name() == 'hudson.plugins.jira.JiraIssueUpdateBuilder'
+            name() == 'hudson.plugins.nant.NantBuilder'
             children().size() == 3
-            with(entries[0]) {
-                jqlSearch[0].value() == expectedJql
-                workflowActionName[0].value() == expectedWork
-                comment[0].value() == expectedCom
-            }
+            targets[0].value().empty
+            nantBuildFile[0].value().empty
+            nantName[0].value() == '(Default)'
         }
-        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
+        1 * jobManagement.requireMinimumPluginVersion('nant', '1.4.3')
 
-        where:
-        jql    | work   | com    | expectedJql | expectedWork | expectedCom
-        null   | null   | null   | ''          | ''           | ''
-        'key'  | null   | null   | 'key'       | ''           | ''
-        'key1' | 'key2' | null   | 'key1'      | 'key2'       | ''
-        'key1' | 'key2' | 'key3' | 'key1'      | 'key2'       | 'key3'
+    }
+
+    def 'call nant with all options'() {
+        when:
+        context.nant {
+            target('test')
+            target('integTest')
+            targets(['publish', 'deploy'])
+            prop('test.size', 4)
+            prop('logging', 'info')
+            props('test.threads': 10, 'input.status': 'release')
+            buildFile('dir1/nant.build')
+            nantInstallation('NAnt 1.7')
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with (context.stepNodes[0]) {
+            name() == 'hudson.plugins.nant.NantBuilder'
+            children().size() == 4
+            nantBuildFile[0].value() == 'dir1/nant.build'
+            nantName[0].value() == 'NAnt 1.7'
+            targets[0].value() == 'test integTest publish deploy'
+            properties[0].value() == 'test.size=4\nlogging=info\ntest.threads=10\ninput.status=release'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('nant', '1.4.3')
+    }
+
+    def 'call jsLint with no options'() {
+        when:
+        context.jsLint {
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'com.boxuk.jenkins.jslint.JSLintBuilder'
+            children().size() == 4
+            includePattern[0].value().empty
+            excludePattern[0].value().empty
+            logfile[0].value().empty
+            arguments[0].value().empty
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jslint', '0.8.2')
+    }
+
+    def 'call jsLint with all options'() {
+        when:
+        context.jsLint {
+            includePattern('**/*.js')
+            excludePattern('**/*Tests.js')
+            logFile('target/jslint.xml')
+            arguments('-Dadsafe=true, -Dcontinue=true')
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'com.boxuk.jenkins.jslint.JSLintBuilder'
+            children().size() == 4
+            includePattern[0].value() == '**/*.js'
+            excludePattern[0].value() == '**/*Tests.js'
+            logfile[0].value() == 'target/jslint.xml'
+            arguments[0].value() == '-Dadsafe=true, -Dcontinue=true'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jslint', '0.8.2')
     }
 }

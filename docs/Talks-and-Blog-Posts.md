@@ -1,9 +1,32 @@
 This is a collection of talks, presentations and blog posts about the Job DSL plugin.
 
+* January 2016
+    * FOSDEM:
+      [Jenkins as a Code](https://fosdem.org/2016/schedule/event/jenkins_as_code/)
+      by [Łukasz Szczęsny](https://twitter.com/wybczu) and [Marcin Zajączkowski](https://twitter.com/SolidSoftBlog)
+* December 2015
+    * Under the hood blog:
+      [Jenkins job DSL](http://kamilszymanski.github.io/jenkins-job-dsl/)
+      by [Kamil Szymanski](https://twitter.com/kszdev)
+* November 2015
+    * eBay Dev Blog: Taming the Hydra ([part 3](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-3.html))
+      by [Marc Günther](https://github.com/marc-guenther)
+* October 2015
+    * codecentric Blog:
+      [Using Jenkins Job DSL for Job Lifecycle Management](https://blog.codecentric.de/en/2015/10/using-jenkins-job-dsl-for-job-lifecycle-management/)
+      by [Marcel Birkner](https://github.com/MarcelBirkner)
 * August 2015
+    * Gradle Summit 2015:
+      [Managing Jenkins with Gradle](http://gradle.org/managing-jenkins-with-gradle/)
+      ([Video](https://www.youtube.com/watch?v=uV8XG3sX_is))
+      by [Gary Hale](https://github.com/ghale)
+    * Gradle Summit 2015:
+      [Leveraging Gradle and the Jenkins Groovy DSL for a CI Pipeline at Mutual of Omaha](http://gradle.org/leveraging-gradle-and-the-jenkins-groovy-dsl-for-a-ci-pipeline-at-mutual-of-omaha/)
+      ([Video](https://www.youtube.com/watch?v=1mTve31Svh8))
+      by [Scott Hickey](https://twitter.com/jshickey)
     * eBay Dev Blog: Taming the Hydra ([part 1](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-1.html)
       and [part 2](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-2.html))
-      by [Marc G�nther](https://github.com/marc-guenther)
+      by [Marc Günther](https://github.com/marc-guenther)
     * JUES 15: [Configuration as code and JobDSL](http://www.code-conf.com/jues15/program/#configuration-as-code-and-jobdsl)
       by [Niels Bech Nielsen](https://twitter.com/nielsbech)
       ([Slides](https://drive.google.com/file/d/0B7COmBHPVvgEcGdsY1dXMFgtNUE/view?usp=sharing))
@@ -16,6 +39,14 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
 * June 2015
     * JUC Europe: [Configuration as Code: The Job DSL Plugin](https://www.cloudbees.com/jenkins/juc-2015/abstracts/europe/01-01-1500-spilker)
       by [Daniel Spilker](https://github.com/daspilker)
+* April 2015
+    * codecentric Blog:
+      [Generated Jenkins Jobs and automatic Branch Merging for Feature Branches](https://blog.codecentric.de/en/2015/04/generated-jenkins-jobs-and-automatic-branch-merging-for-feature-branches/)
+      by [Daniel Reuter](https://github.com/ReuDa)
+* January 2015
+    * codecentric Blog:
+      [Continuous Delivery for Microservices with Jenkins and the Job DSL Plugin](https://blog.codecentric.de/en/2015/01/continuous-delivery-microservices-jenkins-job-dsl-plugin/)
+      by [Dennis Schulte](https://github.com/denschu)
 * June 2014
     * JUC Berlin: [Configuration as Code: The Job DSL Plugin](https://www.cloudbees.com/event/topic/lightning-talk-2-configuration-code-job-dsl-plugin)
       by [Daniel Spilker](https://github.com/daspilker)

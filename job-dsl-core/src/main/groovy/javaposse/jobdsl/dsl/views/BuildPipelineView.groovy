@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.views
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.View
@@ -19,7 +18,7 @@ class BuildPipelineView extends View {
     void displayedBuilds(int displayedBuilds) {
         checkArgument(displayedBuilds > 0, 'displayedBuilds must be greater than zero')
 
-        execute {
+        configure {
             it / noOfDisplayedBuilds(displayedBuilds)
         }
     }
@@ -28,7 +27,7 @@ class BuildPipelineView extends View {
      * Sets a title for the pipeline.
      */
     void title(String title) {
-        execute {
+        configure {
             it / buildViewTitle(title ?: '')
         }
     }
@@ -39,9 +38,9 @@ class BuildPipelineView extends View {
     void selectedJob(String selectedJob) {
         checkNotNull(selectedJob, 'selectedJob must not be null')
 
-        execute {
+        configure {
             it / methodMissing('selectedJob', selectedJob)
-            if (!jobManagement.getPluginVersion('build-pipeline-plugin')?.isOlderThan(new VersionNumber('1.3.4'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('build-pipeline-plugin', '1.3.4')) {
                 it / gridBuilder(
                         class: 'au.com.centrumsystems.hudson.plugin.buildpipeline.DownstreamProjectGridBuilder',
                 ) {
@@ -57,7 +56,7 @@ class BuildPipelineView extends View {
     void consoleOutputLinkStyle(OutputStyle outputStyle) {
         checkNotNull(outputStyle, 'consoleOutputLinkStyle must not be null')
 
-        execute {
+        configure {
             it / methodMissing('consoleOutputLinkStyle', outputStyle.value)
         }
     }
@@ -66,7 +65,7 @@ class BuildPipelineView extends View {
      * Sets a URL for custom CSS files.
      */
     void customCssUrl(String customCssUrl) {
-        execute {
+        configure {
             it / cssUrl(customCssUrl ?: '')
         }
     }
@@ -77,7 +76,7 @@ class BuildPipelineView extends View {
      * {@code false}.
      */
     void triggerOnlyLatestJob(boolean triggerOnlyLatestJob = true) {
-        execute {
+        configure {
             it / methodMissing('triggerOnlyLatestJob', triggerOnlyLatestJob)
         }
     }
@@ -86,7 +85,7 @@ class BuildPipelineView extends View {
      * Use this method if you want to be able to execute a successful pipeline step again. Defaults to {@code false}.
      */
     void alwaysAllowManualTrigger(boolean alwaysAllowManualTrigger = true) {
-        execute {
+        configure {
             it / methodMissing('alwaysAllowManualTrigger', alwaysAllowManualTrigger)
         }
     }
@@ -96,7 +95,7 @@ class BuildPipelineView extends View {
      * Defaults to {@code false}.
      */
     void showPipelineParameters(boolean showPipelineParameters = true) {
-        execute {
+        configure {
             it / methodMissing('showPipelineParameters', showPipelineParameters)
         }
     }
@@ -106,7 +105,7 @@ class BuildPipelineView extends View {
      * project headers. Defaults to {@code false}.
      */
     void showPipelineParametersInHeaders(boolean showPipelineParametersInHeaders = true) {
-        execute {
+        configure {
             it / methodMissing('showPipelineParametersInHeaders', showPipelineParametersInHeaders)
         }
     }
@@ -117,7 +116,7 @@ class BuildPipelineView extends View {
     void refreshFrequency(int refreshFrequency) {
         checkArgument(refreshFrequency > 0, 'refreshFrequency must be greater than zero')
 
-        execute {
+        configure {
             it / methodMissing('refreshFrequency', refreshFrequency)
         }
     }
@@ -127,7 +126,7 @@ class BuildPipelineView extends View {
      * {@code false}.
      */
     void showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true) {
-        execute {
+        configure {
             it / methodMissing('showPipelineDefinitionHeader', showPipelineDefinitionHeader)
         }
     }
@@ -140,7 +139,7 @@ class BuildPipelineView extends View {
      */
     @RequiresPlugin(id = 'build-pipeline-plugin', minimumVersion = '1.4.3')
     void startsWithParameters(boolean startsWithParameters = true) {
-        execute {
+        configure {
             it / methodMissing('startsWithParameters', startsWithParameters)
         }
     }

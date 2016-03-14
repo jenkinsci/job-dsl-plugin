@@ -1,28 +1,25 @@
-job('example-1') {
+job('example') {
     publishers {
         flexiblePublish {
-            condition {
-                status('ABORTED', 'FAILURE')
-            }
-            publisher {
-                wsCleanup()
-            }
-        }
-    }
-}
-
-job('example-2') {
-    publishers {
-        flexiblePublish {
-            condition {
-                and {
-                    stringsMatch('foo', 'bar', false)
-                } {
-                    status('SUCCESS', 'SUCCESS')
+            conditionalAction {
+                condition {
+                    status('ABORTED', 'FAILURE')
+                }
+                publishers {
+                    wsCleanup()
                 }
             }
-            step {
-                shell('echo hello!')
+            conditionalAction {
+                condition {
+                    and {
+                        stringsMatch('foo', 'bar', false)
+                    } {
+                        status('SUCCESS', 'SUCCESS')
+                    }
+                }
+                steps {
+                    shell('echo hello!')
+                }
             }
         }
     }

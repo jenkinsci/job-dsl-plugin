@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.jobs
 
+import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
@@ -48,5 +49,78 @@ class WorkflowJobSpec extends Specification {
             script[0].value() == 'foo'
             sandbox[0].value() == true
         }
+    }
+
+    def 'minimal cps scm workflow'() {
+        when:
+        job.definition {
+            cpsScm {
+                scm {
+                    git('https://github.com/jenkinsci/job-dsl-plugin.git')
+                }
+            }
+        }
+
+        then:
+        with(job.node.definition[0]) {
+            attribute('class') == 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition'
+            children().size() == 2
+            scm[0].attribute('class') == 'hudson.plugins.git.GitSCM'
+            scm[0].children().size() == 15
+            scriptPath[0].value() == 'JenkinsFile'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
+    }
+
+    def 'full cps scm workflow'() {
+        when:
+        job.definition {
+            cpsScm {
+                scm {
+                    git('https://github.com/jenkinsci/job-dsl-plugin.git')
+                }
+                scriptPath('.jenkins/Jenkinsfile')
+            }
+        }
+
+        then:
+        with(job.node.definition[0]) {
+            attribute('class') == 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition'
+            children().size() == 2
+            scm[0].attribute('class') == 'hudson.plugins.git.GitSCM'
+            scm[0].children().size() == 15
+            scriptPath[0].value() == '.jenkins/Jenkinsfile'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
+    }
+
+    def 'cps scm workflow without scm'() {
+        when:
+        job.definition {
+            cpsScm {
+                scriptPath('.jenkins/Jenkinsfile')
+            }
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'SCM must be specified'
+    }
+
+    def 'cps scm workflow with multiple SCMs'() {
+        when:
+        job.definition {
+            cpsScm {
+                scm {
+                    github('foo/bar')
+                    github('foo/baz')
+                }
+                scriptPath('.jenkins/Jenkinsfile')
+            }
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'only one SCM can be specified'
     }
 }

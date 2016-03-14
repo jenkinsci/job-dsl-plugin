@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 class MavenWrapperContext extends WrapperContext {
     MavenWrapperContext(JobManagement jobManagement, Item item) {
@@ -16,6 +17,7 @@ class MavenWrapperContext extends WrapperContext {
      *
      * @since 1.25
      */
+    @RequiresPlugin(id = 'm2release')
     void mavenRelease(@DslContext(MavenReleaseContext) Closure releaseClosure = null) {
         MavenReleaseContext context = new MavenReleaseContext()
         ContextHelper.executeInContext(releaseClosure, context)

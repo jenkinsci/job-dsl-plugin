@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.13.1'
+        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.15.0'
     }
 }
 
@@ -22,8 +22,9 @@ jenkinsPlugin {
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
-    compatibleSinceVersion = '1.40'
+    compatibleSinceVersion = '1.44'
     localizerOutputDir = "$generatedSourcesDir/localizer"
+    disabledTestInjection = false
     developers {
         developer {
             id 'quidryan'
@@ -52,10 +53,14 @@ clean {
     delete generatedSourcesDir
 }
 
+configurations {
+    // workaround for JENKINS-32978
+    compile.exclude group: 'org.kohsuke', module: 'windows-package-checker'
+}
+
 dependencies {
     compile project(':job-dsl-core')
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.4@jar'
-    optionalJenkinsPlugins 'org.jenkins-ci.plugins:credentials:1.9.4@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:vsphere-cloud:1.1.11@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:config-file-provider:2.8.1@jar'
     optionalJenkinsPlugins 'org.jenkinsci.plugins:managed-scripts:1.2.1@jar'

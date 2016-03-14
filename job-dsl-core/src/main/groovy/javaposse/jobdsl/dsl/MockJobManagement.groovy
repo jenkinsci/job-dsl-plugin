@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.helpers.ExtensibleContext
 
 /**
  * Abstract base class for all non-Jenkins implementations of {@link JobManagement}.
@@ -69,17 +68,18 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    @Deprecated
-    String getCredentialsId(String credentialsDescription) {
-        null
+    boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
+        false
     }
 
     @Override
+    @Deprecated
     VersionNumber getPluginVersion(String pluginShortName) {
         null
     }
 
     @Override
+    @Deprecated
     VersionNumber getJenkinsVersion() {
         new VersionNumber('1.565')
     }
@@ -96,7 +96,7 @@ abstract class MockJobManagement extends AbstractJobManagement {
 
     @Override
     Set<String> getPermissions(String authorizationMatrixPropertyClassName) {
-        permissions[authorizationMatrixPropertyClassName]
+        permissions[authorizationMatrixPropertyClassName] ?: []
     }
 
     @Override

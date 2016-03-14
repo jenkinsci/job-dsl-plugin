@@ -1,6 +1,6 @@
 job('example') {
     steps {
-        systemGroovyCommand('disconnect-slave.groovy') {
+        systemGroovyScriptFile('disconnect-slave.groovy') {
             binding('computerName', 'ubuntu-04')
         }
     }

@@ -283,9 +283,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'create job with nonexisting parent'() {
         when:
-        jobManagement.createOrUpdateConfig(
-                'nonexistingfolder/project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true
-        )
+        jobManagement.createOrUpdateConfig(createItem('nonexistingfolder/project', '/minimal-job.xml'), true)
 
         then:
         DslException e = thrown()
@@ -387,7 +385,7 @@ class JenkinsJobManagementSpec extends Specification {
         )
 
         when:
-        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true)
+        jobManagement.createOrUpdateConfig(createItem('project', ('/minimal-job.xml')), true)
 
         then:
         jenkinsRule.jenkins.getItemByFullName('/folder/project') != null
@@ -403,7 +401,7 @@ class JenkinsJobManagementSpec extends Specification {
         )
 
         when:
-        jobManagement.createOrUpdateConfig('/project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true)
+        jobManagement.createOrUpdateConfig(createItem('/project', ('/minimal-job.xml')), true)
 
         then:
         jenkinsRule.jenkins.getItemByFullName('/project') != null
@@ -447,14 +445,14 @@ class JenkinsJobManagementSpec extends Specification {
         SaveableListener saveableListener = Mock(SaveableListener)
 
         when:
-        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('config.xml'), UTF_8), false)
+        jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
 
         then:
         FreeStyleProject job = jenkinsRule.jenkins.getItemByFullName('project') as FreeStyleProject
         SaveableListener.all().add(0, saveableListener)
 
         when:
-        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('config.xml'), UTF_8), false)
+        jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
 
         then:
         0 * saveableListener.onChange(job, _)
@@ -470,6 +468,26 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         Exception e = thrown(DslException)
         e.message == 'Type of item "my-job" does not match existing type, item type can not be changed'
+    }
+
+    def isMinimumPluginVersionInstalled() {
+        when:
+        boolean result = jobManagement.isMinimumPluginVersionInstalled('cvs', '0.1')
+
+        then:
+        result
+
+        when:
+        result = jobManagement.isMinimumPluginVersionInstalled('cvs', '10.0')
+
+        then:
+        !result
+
+        when:
+        result = jobManagement.isMinimumPluginVersionInstalled('foo', '0.1')
+
+        then:
+        !result
     }
 
     def 'get plugin version'() {
@@ -582,14 +600,6 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         thrown(NameNotProvidedException)
-    }
-
-    def 'getCredentialsId without Credentials Plugin'() {
-        when:
-        String id = jobManagement.getCredentialsId('test')
-
-        then:
-        id == null
     }
 
     def 'create view'() {

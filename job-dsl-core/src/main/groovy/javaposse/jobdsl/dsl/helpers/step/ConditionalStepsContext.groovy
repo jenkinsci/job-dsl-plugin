@@ -22,22 +22,11 @@ class ConditionalStepsContext extends AbstractContext {
         runner('Fail')
     }
 
-    Object methodMissing(String name, args) {
-        Object result
-        if (stepContext.respondsTo(name)) {
-            result = stepContext."$name"(*args)
-        } else {
-            result = stepContext.methodMissing(name, args)
-        }
-        jobManagement.logDeprecationWarning('using build steps outside the nested steps context of conditionalSteps')
-        result
-    }
-
     /**
      * Specifies the condition to evaluate before executing the build steps.
      */
     void condition(@DslContext(RunConditionContext) Closure conditionClosure) {
-        this.runCondition = RunConditionFactory.of(conditionClosure)
+        this.runCondition = RunConditionFactory.of(jobManagement, conditionClosure)
     }
 
     /**

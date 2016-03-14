@@ -7,6 +7,7 @@ job('example-1') {
 job('example-2') {
     publishers {
         archiveJunit('**/minitest-reports/*.xml') {
+            allowEmptyResults()
             retainLongStdout()
             testDataPublishers {
                 publishTestStabilityData()

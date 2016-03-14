@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import hudson.util.VersionNumber
 import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -77,23 +76,8 @@ class JobSpec extends Specification {
         job.node.canRoam[0].value() == false
     }
 
-    def 'create withXml blocks'() {
-        when:
-        job.configure { Node node ->
-            // Not going to actually execute this
-        }
-
-        job.configure { Node node ->
-            // Not going to actually execute this
-        }
-
-        then:
-        !job.withXmlActions.empty
-    }
-
     def 'update Node using withXml'() {
         setup:
-        Node project = new XmlParser().parse(new StringReader('<test><foo/><bar/><baz/></test>'))
         TestJob job = new TestJob(null)
         AtomicBoolean boolOutside = new AtomicBoolean(true)
 
@@ -101,7 +85,7 @@ class JobSpec extends Specification {
         job.configure { Node node ->
             node.foo[0].value = 'Test'
         }
-        job.executeWithXmlActions(project)
+        Node project = job.node
 
         then:
         project.foo[0].text() == 'Test'
@@ -110,7 +94,7 @@ class JobSpec extends Specification {
         job.configure { Node node ->
             node.bar[0].value = boolOutside.get()
         }
-        job.executeWithXmlActions(project)
+        project = job.node
 
         then:
         project.bar[0].text() == 'true'
@@ -120,7 +104,7 @@ class JobSpec extends Specification {
 
         when: 'Change value on outside scope variable to ensure closure is being run again'
         boolOutside.set(false)
-        job.executeWithXmlActions(project)
+        project = job.node
 
         then:
         project.bar[0].text() == 'false'
@@ -130,16 +114,16 @@ class JobSpec extends Specification {
             def baz = node.baz[0]
             baz.appendNode('some', 'value')
         }
-        job.executeWithXmlActions(project)
+        project = job.node
 
         then:
         project.baz[0].children().size() == 1
 
         when: 'Execute withXmlActions again'
-        job.executeWithXmlActions(project)
+        project = job.node
 
         then:
-        project.baz[0].children().size() == 2
+        project.baz[0].children().size() == 1
     }
 
     def 'call authorization'() {
@@ -166,7 +150,7 @@ class JobSpec extends Specification {
             permission[1].text() == 'hudson.model.Item.Configure:jack'
             permission[2].text() == 'hudson.model.Run.Update:joe'
         }
-        1 * jobManagement.requirePlugin('matrix-auth')
+        1 * jobManagement.requireMinimumPluginVersion('matrix-auth', '1.2')
     }
 
     def 'call authorization with blocksInheritance'() {
@@ -190,32 +174,7 @@ class JobSpec extends Specification {
             permission[0].text() == 'hudson.model.Item.Configure:jill'
             permission[1].text() == 'hudson.model.Item.Configure:jack'
         }
-        1 * jobManagement.requirePlugin('matrix-auth')
         1 * jobManagement.requireMinimumPluginVersion('matrix-auth', '1.2')
-    }
-
-    def 'call authorization with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('matrix-auth') >> new VersionNumber('1.1')
-        jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [
-                'hudson.model.Item.Configure',
-        ]
-
-        when:
-        job.authorization {
-            permission('hudson.model.Item.Configure:jill')
-            permission('hudson.model.Item.Configure:jack')
-        }
-
-        then:
-        with(job.node.properties[0].'hudson.security.AuthorizationMatrixProperty'[0]) {
-            children().size() == 2
-            permission.size() == 2
-            permission[0].text() == 'hudson.model.Item.Configure:jill'
-            permission[1].text() == 'hudson.model.Item.Configure:jack'
-        }
-        1 * jobManagement.requirePlugin('matrix-auth')
-        1 * jobManagement.logPluginDeprecationWarning('matrix-auth', '1.2')
     }
 
     def 'call parameters via helper'() {
@@ -236,12 +195,11 @@ class JobSpec extends Specification {
         when:
         job.scm {
             git {
-                wipeOutWorkspace()
             }
         }
 
         then:
-        job.node.scm[0].wipeOutWorkspace[0].text() == 'true'
+        job.node.scm[0].configVersion[0].text() == '2'
     }
 
     def 'duplicate scm calls allowed with multiscm'() {
@@ -557,9 +515,6 @@ class JobSpec extends Specification {
         then:
         with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
             children().size() == 1
-            resourceNames.size() == 1
-            resourceNamesVar.size() == 0
-            resourceNumber.size() == 0
             resourceNames[0].value() == 'lock-resource'
         }
         1 * jobManagement.requirePlugin('lockable-resources')
@@ -570,19 +525,45 @@ class JobSpec extends Specification {
         job.lockableResources('res0 res1 res2') {
             resourcesVariable('RESOURCES')
             resourceNumber(1)
+            label('foo')
         }
 
         then:
         with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
-            children().size() == 3
-            resourceNames.size() == 1
-            resourceNamesVar.size() == 1
-            resourceNumber.size() == 1
+            children().size() == 4
             resourceNames[0].value() == 'res0 res1 res2'
             resourceNamesVar[0].value() == 'RESOURCES'
             resourceNumber[0].value() == 1
+            labelName[0].value() == 'foo'
         }
         1 * jobManagement.requirePlugin('lockable-resources')
+        1 * jobManagement.requireMinimumPluginVersion('lockable-resources', '1.7')
+        1 * jobManagement.logPluginDeprecationWarning('lockable-resources', '1.7')
+    }
+
+    def 'lockable resources with label only'() {
+        when:
+        job.lockableResources {
+            label('HEAVY_RESOURCE')
+        }
+
+        then:
+        with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
+            children().size() == 1
+            labelName[0].value() == 'HEAVY_RESOURCE'
+        }
+        1 * jobManagement.requirePlugin('lockable-resources')
+        1 * jobManagement.logPluginDeprecationWarning('lockable-resources', '1.7')
+    }
+
+    def 'lockable resources resource or label have to be defined'() {
+        when:
+        job.lockableResources {
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ /Either resource or label have to be specified/
     }
 
     def 'compress build log'() {
@@ -646,6 +627,9 @@ class JobSpec extends Specification {
     }
 
     def 'build blocker'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('build-blocker-plugin', '1.7.1') >> true
+
         when:
         job.blockOn('MyProject')
 
@@ -657,11 +641,13 @@ class JobSpec extends Specification {
             blockLevel[0].value() == 'NODE'
             scanQueueFor[0].value() == 'DISABLED'
         }
-        1 * jobManagement.requirePlugin('build-blocker-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
+        1 * jobManagement.requireMinimumPluginVersion('build-blocker-plugin', '1.7.1')
     }
 
     def 'build blocker with all options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('build-blocker-plugin', '1.7.1') >> true
+
         when:
         job.blockOn('MyProject2') {
             blockLevel(level)
@@ -676,9 +662,7 @@ class JobSpec extends Specification {
             blockLevel[0].value() == level
             scanQueueFor[0].value() == queue
         }
-        1 * jobManagement.requirePlugin('build-blocker-plugin')
-        2 * jobManagement.requireMinimumPluginVersion('build-blocker-plugin', '1.7.1')
-        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
+        1 * jobManagement.requireMinimumPluginVersion('build-blocker-plugin', '1.7.1')
 
         where:
         level    | queue
@@ -691,6 +675,9 @@ class JobSpec extends Specification {
     }
 
     def 'build blocker with invalid options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('build-blocker-plugin', '1.7.1') >> true
+
         when:
         job.blockOn('MyProject2') {
             blockLevel(level)
@@ -711,6 +698,9 @@ class JobSpec extends Specification {
     }
 
     def 'build blocker with iterator'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('build-blocker-plugin', '1.7.1') >> true
+
         when:
         job.blockOn(['MyProject', 'MyProject2', 'MyProject3']) {
             blockLevel('GLOBAL')
@@ -725,25 +715,7 @@ class JobSpec extends Specification {
             blockLevel[0].value() == 'GLOBAL'
             scanQueueFor[0].value() == 'ALL'
         }
-        1 * jobManagement.requirePlugin('build-blocker-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
-    }
-
-    def 'build blocker with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('build-blocker-plugin') >> new VersionNumber('1.7.0')
-
-        when:
-        job.blockOn('MyProject')
-
-        then:
-        with(job.node.properties[0].'hudson.plugins.buildblocker.BuildBlockerProperty'[0]) {
-            children().size() == 2
-            useBuildBlocker[0].value() == true
-            blockingJobs[0].value() == 'MyProject'
-        }
-        1 * jobManagement.requirePlugin('build-blocker-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('build-blocker-plugin', '1.7.1')
+        1 * jobManagement.requireMinimumPluginVersion('build-blocker-plugin', '1.7.1')
     }
 
     def 'can run jdk'() {
@@ -964,6 +936,7 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
         }
         1 * jobManagement.requirePlugin('notification')
+        1 * jobManagement.logPluginDeprecationWarning('notification', '1.8')
     }
 
     def 'set notification with all required properties'() {
@@ -981,11 +954,12 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'XML'
         }
         1 * jobManagement.requirePlugin('notification')
+        1 * jobManagement.logPluginDeprecationWarning('notification', '1.8')
     }
 
     def 'set notification with invalid parameters'(String url, String protocol, String format, String event) {
         setup:
-        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
+        jobManagement.isMinimumPluginVersionInstalled('notification', '1.6') >> true
 
         when:
         job.notifications {
@@ -993,7 +967,6 @@ class JobSpec extends Specification {
                 delegate.event(event)
             }
         }
-        1 * jobManagement.requirePlugin('notification')
 
         then:
         thrown(DslScriptException)
@@ -1015,7 +988,7 @@ class JobSpec extends Specification {
 
     def 'set notification with default properties and using a closure'() {
         setup:
-        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
+        jobManagement.isMinimumPluginVersionInstalled('notification', '1.6') >> true
 
         when:
         job.notifications {
@@ -1036,11 +1009,12 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 10000
         }
         1 * jobManagement.requirePlugin('notification')
+        1 * jobManagement.logPluginDeprecationWarning('notification', '1.8')
     }
 
     def 'set notification with all required properties and using a closure'() {
         setup:
-        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
+        jobManagement.isMinimumPluginVersionInstalled('notification', '1.6') >> true
 
         when:
         job.notifications {
@@ -1061,11 +1035,12 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 10000
         }
         1 * jobManagement.requirePlugin('notification')
+        1 * jobManagement.logPluginDeprecationWarning('notification', '1.8')
     }
 
     def 'set notification with multiple endpoints'() {
         setup:
-        jobManagement.getPluginVersion('notification') >> new VersionNumber('1.6')
+        jobManagement.isMinimumPluginVersionInstalled('notification', '1.6') >> true
 
         when:
         job.notifications {
@@ -1092,5 +1067,36 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].timeout[0].value() == 30000
         }
         1 * jobManagement.requirePlugin('notification')
+        1 * jobManagement.logPluginDeprecationWarning('notification', '1.8')
+    }
+
+    def 'set notification with default properties and using a closure (for 1.8 version)'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('notification', '1.6') >> true
+        jobManagement.isMinimumPluginVersionInstalled('notification', '1.8') >> true
+
+        when:
+        job.notifications {
+            endpoint('http://endpoint.com') {
+                event('started')
+                timeout(10000)
+                logLines(10)
+            }
+        }
+
+        then:
+        with(job.node.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty') {
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].children().size() == 6
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].url[0].text() == 'http://endpoint.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'HTTP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'started'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 10000
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].loglines[0].value() == 10
+        }
+        1 * jobManagement.requirePlugin('notification')
+        1 * jobManagement.requireMinimumPluginVersion('notification', '1.8')
+        1 * jobManagement.logPluginDeprecationWarning('notification', '1.8')
     }
 }

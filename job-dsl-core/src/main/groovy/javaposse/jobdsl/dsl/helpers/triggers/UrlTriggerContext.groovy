@@ -8,7 +8,7 @@ import javaposse.jobdsl.dsl.DslContext
  * Top level context for configuring the URL trigger functionality.
  */
 class UrlTriggerContext implements Context {
-    Closure configureClosure
+    Closure configureBlock
     String label
     List<UrlTriggerEntryContext> entries = []
     String crontab = 'H/5 * * * *'
@@ -24,8 +24,8 @@ class UrlTriggerContext implements Context {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure configureClosure) {
-        this.configureClosure = configureClosure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 
     /**

@@ -97,6 +97,76 @@ To ease navigation, two key operators have been overridden. Try to use them as m
 * `<<` - appends as a child. If a Node is provided, it is directly added. A string is created as a node. A closure is
   processed like a NodeBuilder, allowing many nodes to be appended.
 
+# Reusable Configure Blocks
+
+To reuse an configure block for many jobs, the configure block can be refactored into a helper function.
+
+```groovy
+def switchOn = {
+    it / 'properties' / 'com.example.Test' {
+        'switch'('on')
+    }
+}
+               
+job('example-1') {
+    configure switchOn
+}
+
+job('example-2') {
+    configure switchOn
+}
+```
+
+To create a reusable, parametrized configure block, the configure block can be recreated in a parametrized function.
+
+```groovy
+Closure switchOnOrOff(String value) {
+    return {
+        it / 'properties' / 'com.example.Test' {
+            'switch'(value)
+        }
+    }
+}
+               
+job('example-1') {
+    configure switchOnOrOff('on')
+}
+
+job('example-2') {
+    configure switchOnOrOff('off')
+}
+```
+
+To reuse an configure block for many scripts, the configure block can be moved to a helper class.
+
+```groovy
+package helpers
+
+class JobHelper {
+    static Closure switchOnOrOff(String value) {
+        return {
+            it / 'properties' / 'com.example.Test' {
+                'switch'(value)
+            }
+        }
+    }
+}
+```
+
+In the job script you can then import the helper method and use it create several matrix jobs.
+
+```groovy
+import static helpers.JobHelper.switchOnOrOff
+
+job('example-1') {
+    configure switchOnOrOff('on')
+}
+
+job('example-2') {
+    configure switchOnOrOff('off')
+}
+```
+
 # Troubleshooting
 
 ## ConcurrentModificationException
@@ -502,7 +572,6 @@ Result:
 
 DSL:
 ```groovy
-// this creates XML for version 1.x of the Git Plugin, but version 2.x is backwards compatible
 job('example') {
     scm {
         git {
@@ -510,8 +579,10 @@ job('example') {
                 name 'remoteB'
                 url 'git@server:account/repo1.git'
             }
-            clean()
-            relativeTargetDir('repo1')
+            extensions {
+                relativeTargetDirectory('repo1')
+                cleanAfterCheckout()
+            }
         }
     }
 }
@@ -801,45 +872,65 @@ Result:
 </project>
 ```
 
-# Reusable Configure Blocks
+## Configure Post Build Confluence Publisher
 
-To reuse an configure block for many jobs, the configure block can be moved to a helper class.
+In order to update Confluence Pages, you can use the Confluence Publisher.
+The requirements are:
 
-The following example shows how to refactor the Matrix job sample above into a reusable helper class.
+* Have a Confluence Wiki installed.
+* Install Confluence Publisher plugin in Jenkins.
+* Configure access to Confluence in Jenkins (Jenkins >> Manage Jenkins >> configure >> Confluence Publisher)
 
+Configure block:
 ```groovy
-package helpers
-
-class MatrixProjectHelper {
-    static Closure matrixProject(Iterable<String> labels) {
-        return { project ->
-            project.name = 'matrix-project'
-            project / axes / 'hudson.matrix.LabelAxis' {
-                name 'label'
-                values {
-                     labels.each { string it }
+job('example') {
+    configure { project ->
+        project / publishers << 'com.myyearbook.hudson.plugins.confluence.ConfluencePublisher' {
+            siteName('confluence.company.com')
+            attachArchivedArtifacts(false)
+            buildIfUnstable(false)
+            spaceName('TEST')
+            pageName('Jenkins Confluence Publisher Integration Test')
+            editors {
+                'com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor' {
+                    generator(class: 'com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator') {
+                        text('Jenkins Publisher Job Build Number: $BUILD_NUMBER')
+                    }                
                 }
-            }
-            project / executionStrategy(class: 'hudson.matrix.DefaultMatrixExecutionStrategyImpl') {
-                runSequentially false
+                'com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor' {
+                    generator(class: 'com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator') {
+                        text('Jenkins Publisher Job Build Number: $BUILD_NUMBER')
+                    }                
+                }
             }
         }
     }
 }
 ```
 
-In the job script you can then import the helper method and use it create several matrix jobs.
-
-```groovy
-import static helpers.MatrixProjectHelper.matrixProject
-
-job('example-1') {
-    name 'matrix-job-A'
-    configure matrixProject(['label-1', 'label-2'])
-}
-
-job('example-2') {
-    name 'matrix-job-B'
-    configure matrixProject(['label-3', 'label-4'])
-}
+Result:
+```xml
+<project>
+    <publishers>
+        <com.myyearbook.hudson.plugins.confluence.ConfluencePublisher>
+            <siteName>confluence.company.com</siteName>
+            <attachArchivedArtifacts>false</attachArchivedArtifacts>
+            <buildIfUnstable>false</buildIfUnstable>
+            <spaceName>TEST</spaceName>
+            <pageName>Jenkins Confluence Publisher Integration Test</pageName>
+            <editors>
+                <com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor>
+                    <generator class='com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator'>
+                        <text>Jenkins Publisher Job Build Number: $BUILD_NUMBER</text>
+                    </generator>
+                </com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor>
+                <com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor>
+                    <generator class='com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator'>
+                        <text>Jenkins Publisher Job Build Number: $BUILD_NUMBER</text>
+                    </generator>
+                </com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor>
+            </editors>
+        </com.myyearbook.hudson.plugins.confluence.ConfluencePublisher>
+    </publishers>
+</project>
 ```

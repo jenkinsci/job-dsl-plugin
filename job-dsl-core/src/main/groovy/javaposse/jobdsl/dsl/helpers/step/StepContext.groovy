@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
@@ -8,8 +7,7 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
@@ -38,6 +36,26 @@ class StepContext extends AbstractExtensibleContext {
     void shell(String command) {
         stepNodes << new NodeBuilder().'hudson.tasks.Shell' {
             delegate.command(command)
+        }
+    }
+
+    /**
+     * Runs a XShell command.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'xshell', minimumVersion = '0.10')
+    void xShell(@DslContext(XShellContext) Closure xShellClosure) {
+        XShellContext xShellContext = new XShellContext(jobManagement)
+        ContextHelper.executeInContext(xShellClosure, xShellContext)
+
+        stepNodes << new NodeBuilder().'hudson.plugins.xshell.XShellBuilder' {
+            executeFromWorkingDir(xShellContext.executableInWorkspaceDir)
+            commandLine(xShellContext.commandLine ?: '')
+            regexToKill(xShellContext.regexToKill ?: '')
+            if (xShellContext.timeAllocated > 0) {
+                timeAllocated(xShellContext.timeAllocated)
+            }
         }
     }
 
@@ -118,15 +136,12 @@ class StepContext extends AbstractExtensibleContext {
             useWrapper gradleContext.useWrapper
             makeExecutable gradleContext.makeExecutable
             fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir
-            if (!jobManagement.getPluginVersion('gradle')?.isOlderThan(new VersionNumber('1.23'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('gradle', '1.23')) {
                 useWorkspaceAsHome gradleContext.useWorkspaceAsHome
             }
         }
 
-        if (gradleContext.configureBlock) {
-            WithXmlAction action = new WithXmlAction(gradleContext.configureBlock)
-            action.execute(gradleNode)
-        }
+        ContextHelper.executeConfigureBlock(gradleNode, gradleContext.configureBlock)
 
         stepNodes << gradleNode
     }
@@ -163,7 +178,7 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'sbt')
     void sbt(String sbtName, String actions = null, String sbtFlags = null, String jvmFlags = null,
-             String subdirPath = null, Closure configure = null) {
+             String subdirPath = null, Closure configureBlock = null) {
         Preconditions.checkNotNull(sbtName, 'Please provide the name of the SBT to use')
 
         Node sbtNode = new NodeBuilder().'org.jvnet.hudson.plugins.SbtPluginBuilder' {
@@ -174,10 +189,7 @@ class StepContext extends AbstractExtensibleContext {
             delegate.subdirPath(subdirPath ?: '')
         }
 
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
-            action.execute(sbtNode)
-        }
+        ContextHelper.executeConfigureBlock(sbtNode, configureBlock)
 
         stepNodes << sbtNode
     }
@@ -392,10 +404,8 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.20
      */
-    @RequiresPlugin(id = 'maven-plugin')
+    @RequiresPlugin(id = 'maven-plugin', minimumVersion = '2.3')
     void maven(@DslContext(MavenContext) Closure closure) {
-        jobManagement.logPluginDeprecationWarning('maven-plugin', '2.3')
-
         MavenContext mavenContext = new MavenContext(jobManagement)
         ContextHelper.executeInContext(closure, mavenContext)
 
@@ -422,10 +432,7 @@ class StepContext extends AbstractExtensibleContext {
             }
         }
 
-        if (mavenContext.configureBlock) {
-            WithXmlAction action = new WithXmlAction(mavenContext.configureBlock)
-            action.execute(mavenNode)
-        }
+        ContextHelper.executeConfigureBlock(mavenNode, mavenContext.configureBlock)
 
         stepNodes << mavenNode
     }
@@ -436,7 +443,7 @@ class StepContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The
      * {@code hudson.tasks.Maven} node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'maven-plugin')
+    @RequiresPlugin(id = 'maven-plugin', minimumVersion = '2.3')
     void maven(String targets = null, String pom = null, Closure configure = null) {
         maven {
             delegate.goals(targets)
@@ -578,7 +585,7 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.20
      */
-    @RequiresPlugin(id = 'parameterized-trigger')
+    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.25')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
         jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
@@ -790,6 +797,30 @@ class StepContext extends AbstractExtensibleContext {
         vSphereBuildStep(server, 'RevertToSnapshot') {
             delegate.vm(vm)
             snapshotName(snapshot)
+        }
+    }
+
+    /**
+     * This build step will create a VM from the specified template.
+     *
+     * @since 1.41
+     */
+    @RequiresPlugin(id = 'vsphere-cloud', minimumVersion = '2.7')
+    void vSphereDeployFromTemplate(@DslContext(VSphereDeployFromTemplateContext) Closure closure) {
+        VSphereDeployFromTemplateContext context = new VSphereDeployFromTemplateContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Preconditions.checkNotNullOrEmpty(context.template, 'template must be specified')
+        Preconditions.checkNotNullOrEmpty(context.clone, 'clone must be specified')
+        Preconditions.checkNotNullOrEmpty(context.cluster, 'cluster must be specified')
+
+        vSphereBuildStep(context.server, 'Deploy') {
+            template(context.template)
+            clone(context.clone)
+            cluster(context.cluster)
+            linkedClone(false)
+            resourcePool()
+            datastore()
         }
     }
 
@@ -1027,21 +1058,55 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Executes a jira builder.
+     * Runs a Ruby command.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
      *
      * @since 1.41
      */
-    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
-    void jira(@DslContext(JiraContext) Closure closure) {
-        JiraContext context = new JiraContext()
+    @RequiresPlugin(id = 'ruby', minimumVersion = '1.2')
+    void ruby(String command) {
+        stepNodes << new NodeBuilder().'hudson.plugins.ruby.Ruby' {
+            delegate.command(command ?: '')
+        }
+    }
+
+    /**
+     * Invokes a NAnt build script.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'nant', minimumVersion = '1.4.3')
+    void nant(@DslContext(NAntContext) Closure closure = null) {
+        NAntContext context = new NAntContext()
         ContextHelper.executeInContext(closure, context)
 
-        if (context.jiraIssueUpdateBuilder) {
-            stepNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueUpdateBuilder' {
-                jqlSearch(context.jiraIssueUpdateBuilderContext.jqlSearch ?: '')
-                workflowActionName(context.jiraIssueUpdateBuilderContext.workflowActionName ?: '')
-                comment(context.jiraIssueUpdateBuilderContext.comment ?: '')
+        stepNodes << new NodeBuilder().'hudson.plugins.nant.NantBuilder' {
+            targets(context.targets.join(' '))
+            nantName(context.nantInstallation ?: '')
+            nantBuildFile(context.buildFile ?: '')
+            if (context.props) {
+                properties(context.props.join('\n'))
             }
+        }
+    }
+
+    /**
+     * Lints JavaScript files.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'jslint', minimumVersion = '0.8.2')
+    void jsLint(@DslContext(JSLintContext) Closure closure = null) {
+        JSLintContext context = new JSLintContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'com.boxuk.jenkins.jslint.JSLintBuilder' {
+            includePattern(context.includePattern ?: '')
+            excludePattern(context.excludePattern ?: '')
+            logfile(context.logFile ?: '')
+            arguments(context.arguments ?: '')
         }
     }
 

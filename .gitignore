@@ -27,5 +27,6 @@ generated
 
 #Vagrant
 .vagrant
+.bundle
 
 node_modules

@@ -4,6 +4,7 @@ import hudson.EnvVars
 import hudson.model.AbstractBuild
 import hudson.model.FreeStyleProject
 import hudson.model.Label
+import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.ScriptRequest
 import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
@@ -286,7 +287,7 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         when:
         List<ScriptRequest> requests = generator.getScriptRequests(
-                'a.groovy\nb.groovy', false, null, false, 'lib/*.jar'
+                'a.groovy', false, null, false, 'lib/*.jar'
         ).toList()
 
         then:
@@ -308,5 +309,31 @@ class ScriptRequestGeneratorSpec extends Specification {
         then:
         !(new File(requests[0].urlRoots[1].toURI()).exists())
         !(new File(requests[0].urlRoots[2].toURI()).exists())
+    }
+
+    def 'file not found'() {
+        setup:
+        EnvVars env = new EnvVars()
+        ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
+
+        when:
+        generator.getScriptRequests('x.groovy', false, null, false, null).toList()
+
+        then:
+        Exception e = thrown(DslException)
+        e.message == 'no Job DSL script(s) found at x.groovy'
+    }
+
+    def 'pattern does not match anything'() {
+        setup:
+        EnvVars env = new EnvVars()
+        ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env)
+
+        when:
+        generator.getScriptRequests('*.foo', false, null, false, null).toList()
+
+        then:
+        Exception e = thrown(DslException)
+        e.message == 'no Job DSL script(s) found at *.foo'
     }
 }
