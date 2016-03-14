@@ -1403,15 +1403,13 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
     }
 
-    def 'call jiraCreateReleaseNotes with all options'() {
+    def 'call generateJiraReleaseNotes with all options'() {
         when:
-        context.jira {
-            jiraCreateReleaseNotes {
-                jiraEnvironmentVariable(env)
-                jiraProjectKey(key)
-                jiraRelease(release)
-                jiraFilter(filter)
-            }
+        context.generateJiraReleaseNotes {
+            environmentVariable(env)
+            projectKey(key)
+            delegate.release(release)
+            delegate.filter(filter)
         }
 
         then:

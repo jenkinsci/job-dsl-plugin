@@ -1,27 +1,25 @@
 job('example') {
     publishers {
-        jira {
-            jiraIssueUpdater()
-            jiraReleaseVersionUpdater {
-                jiraProjectKey('bla')
-                jiraRelease('bla')
-            }
-            jiraIssueMigrator {
-                jiraProjectKey('bla')
-                jiraRelease('bla')
-                jiraReplaceVersion('bla')
-                jiraQuery('bla')
-            }
-            jiraCreateIssueNotifier {
-                projectKey('bla')
-                testDescription('bla')
-                assignee('bla')
-                component('bla')
-            }
-            jiraVersionCreator {
-                jiraVersion('bla')
-                jiraProjectKey('bla')
-            }
+        jiraIssueUpdater()
+        releaseJiraVersion {
+            projectKey('PROJECT')
+            release('$JiraBuild')
+        }
+        moveJiraIssues {
+            projectKey('PROJECT')
+            release('$JiraBuild')
+            replaceVersion('PROJECT-01')
+            query('status in (Resolved, Closed)')
+        }
+        createJiraIssue {
+            projectKey('PROJECT')
+            testDescription('bla')
+            assignee('Bob')
+            component('ComponentA')
+        }
+        createJiraVersion {
+            projectKey('PROJECT')
+            version('VersionA')
         }
     }
 }

@@ -1,11 +1,9 @@
 job('example') {
     steps {
-        jira {
-            jiraIssueUpdateBuilder {
-                jqlSearch('bla')
-                workflowActionName('bla')
-                comment('bla')
-            }
+        progressJiraIssues {
+            jqlSearch('project = PROJECT and fixVersion = "$JiraBuild"')
+            workflowActionName('Closed')
+            comment('Comment')
         }
     }
 }

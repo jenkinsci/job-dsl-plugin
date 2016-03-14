@@ -625,22 +625,19 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Allows to run Jira steps.
+     * Generates Jira release notes.
      *
-     * @since 1.41
+     * @since 1.45
      */
     @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
-    void jira(@DslContext(JiraContext) Closure closure) {
-        JiraContext context = new JiraContext()
+    void generateJiraReleaseNotes(@DslContext(GenerateJiraReleaseNotesContext) Closure closure) {
+        GenerateJiraReleaseNotesContext context = new GenerateJiraReleaseNotesContext()
         ContextHelper.executeInContext(closure, context)
-
-        if (context.jiraCreateReleaseNotes) {
-            wrapperNodes << new NodeBuilder().'hudson.plugins.jira.JiraCreateReleaseNotes' {
-                jiraEnvironmentVariable(context.jiraCreateReleaseNotesContext.jiraEnvironmentVariable ?: '')
-                jiraProjectKey(context.jiraCreateReleaseNotesContext.jiraProjectKey ?: '')
-                jiraRelease(context.jiraCreateReleaseNotesContext.jiraRelease ?: '')
-                jiraFilter(context.jiraCreateReleaseNotesContext.jiraFilter ?: '')
-            }
+        wrapperNodes << new NodeBuilder().'hudson.plugins.jira.JiraCreateReleaseNotes' {
+            jiraEnvironmentVariable(context.environmentVariable ?: '')
+            jiraProjectKey(context.projectKey ?: '')
+            jiraRelease(context.release ?: '')
+            jiraFilter(context.filter ?: '')
         }
     }
 }

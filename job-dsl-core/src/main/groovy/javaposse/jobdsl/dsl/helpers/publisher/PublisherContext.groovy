@@ -2070,44 +2070,75 @@ class PublisherContext extends AbstractExtensibleContext {
     * @since 1.45
     */
     @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
-    void jira(@DslContext(JiraContext) Closure closure) {
-       JiraContext context = new JiraContext()
+    void jiraIssueUpdater() {
+       publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueUpdater'()
+    }
+
+     /**
+     * Updating JIRA release Version.
+     *
+     * @since 1.45
+     */
+     @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+     void releaseJiraVersion(@DslContext(ReleaseJiraVersionContext) Closure closure) {
+        ReleaseJiraVersionContext context = new ReleaseJiraVersionContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraReleaseVersionUpdater' {
+            jiraProjectKey(context.projectKey ?: '')
+            jiraRelease(context.release ?: '')
+        }
+     }
+
+      /**
+      * Moves a set of JIRA Issues that match a JQL query to a new fix version.
+      *
+      * @since 1.45
+      */
+      @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+      void moveJiraIssues(@DslContext(MoveJiraIssuesContext) Closure closure) {
+         MoveJiraIssuesContext context = new MoveJiraIssuesContext()
+         ContextHelper.executeInContext(closure, context)
+
+         publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueMigrator' {
+             jiraProjectKey(context.projectKey ?: '')
+             jiraRelease(context.release ?: '')
+             jiraReplaceVersion(context.replaceVersion ?: '')
+             jiraQuery(context.query ?: '')
+         }
+     }
+
+    /**
+    * Creates a Jira version.
+    *
+    * @since 1.45
+    */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void createJiraVersion(@DslContext(CreateJiraVersionContext) Closure closure) {
+       CreateJiraVersionContext context = new CreateJiraVersionContext()
        ContextHelper.executeInContext(closure, context)
 
-       if (context.jiraIssueUpdater) {
-           publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueUpdater'()
+       publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraVersionCreator' {
+           jiraProjectKey(context.projectKey ?: '')
+           jiraVersion(context.version ?: '')
        }
+    }
 
-       if (context.jiraReleaseVersionUpdater) {
-           publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraReleaseVersionUpdater' {
-               jiraProjectKey(context.jiraReleaseVersionUpdaterContext.jiraProjectKey ?: '')
-               jiraRelease(context.jiraReleaseVersionUpdaterContext.jiraRelease ?: '')
-           }
-       }
+    /**
+    * Creates a Jira issue.
+    *
+    * @since 1.45
+    */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void createJiraIssue(@DslContext(CreateJiraIssueContext) Closure closure) {
+       CreateJiraIssueContext context = new CreateJiraIssueContext()
+       ContextHelper.executeInContext(closure, context)
 
-       if (context.jiraIssueMigrator) {
-           publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueMigrator' {
-               jiraProjectKey(context.jiraIssueMigratorContext.jiraProjectKey ?: '')
-               jiraRelease(context.jiraIssueMigratorContext.jiraRelease ?: '')
-               jiraReplaceVersion(context.jiraIssueMigratorContext.jiraReplaceVersion ?: '')
-               jiraQuery(context.jiraIssueMigratorContext.jiraQuery ?: '')
-           }
-       }
-
-       if (context.jiraVersionCreator) {
-           publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraVersionCreator' {
-               jiraProjectKey(context.jiraVersionCreatorContext.jiraProjectKey ?: '')
-               jiraVersion(context.jiraVersionCreatorContext.jiraVersion ?: '')
-           }
-       }
-
-       if (context.jiraCreateIssueNotifier) {
-           publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraCreateIssueNotifier' {
-               projectKey(context.jiraCreateIssueNotifierContext.projectKey ?: '')
-               testDescription(context.jiraCreateIssueNotifierContext.testDescription ?: '')
-               assignee(context.jiraCreateIssueNotifierContext.assignee ?: '')
-               component(context.jiraCreateIssueNotifierContext.component ?: '')
-           }
+       publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraCreateIssueNotifier' {
+           projectKey(context.projectKey ?: '')
+           testDescription(context.testDescription ?: '')
+           assignee(context.assignee ?: '')
+           component(context.component ?: '')
        }
     }
 
