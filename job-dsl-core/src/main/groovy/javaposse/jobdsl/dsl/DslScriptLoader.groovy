@@ -43,17 +43,30 @@ class DslScriptLoader {
 
         // Otherwise baseScript won't take effect
         GroovyClassLoader groovyClassLoader = new GroovyClassLoader(parentClassLoader, config)
-        GroovyScriptEngine engine
+
         try {
-            URL[] urlRoots = scriptRequests*.urlRoots.flatten().unique()
-            engine = new GroovyScriptEngine(urlRoots, groovyClassLoader)
-            engine.config = config
+            runScriptsWithClassLoader(scriptRequests, groovyClassLoader, config)
+        } finally {
+            if (groovyClassLoader instanceof Closeable) {
+                ((Closeable) groovyClassLoader).close()
+            }
+        }
+    }
 
-                Binding binding = createBinding()
+    private GeneratedItems runScriptsWithClassLoader(Collection<ScriptRequest> scriptRequests,
+                                                     GroovyClassLoader groovyClassLoader,
+                                                     CompilerConfiguration config) {
+        GeneratedItems generatedItems = new GeneratedItems()
 
-                GeneratedItems generatedItems = new GeneratedItems()
-                scriptRequests.each { ScriptRequest scriptRequest ->
-                    JobParent jobParent = runScript(scriptRequest, engine, binding)
+        // group requests that share the same classpath
+        scriptRequests.groupBy { it.urlRoots*.toString().sort() }.values().each { List<ScriptRequest> requestSet ->
+            GroovyScriptEngine engine
+            try {
+                engine = new GroovyScriptEngine(requestSet.first().urlRoots, groovyClassLoader)
+                engine.config = config
+
+                requestSet.each { ScriptRequest scriptRequest ->
+                    JobParent jobParent = runScript(scriptRequest, engine)
 
                     boolean ignoreExisting = scriptRequest.ignoreExisting
                     generatedItems.configFiles.addAll(extractGeneratedConfigFiles(jobParent, ignoreExisting))
@@ -64,19 +77,19 @@ class DslScriptLoader {
                     scheduleJobsToRun(jobParent.queueToBuild)
                 }
 
-                return generatedItems
-        } finally {
-            if (engine?.groovyClassLoader instanceof Closeable) {
-                ((Closeable) engine.groovyClassLoader).close()
-            }
-            if (groovyClassLoader instanceof Closeable) {
-                ((Closeable) groovyClassLoader).close()
+            } finally {
+                if (engine?.groovyClassLoader instanceof Closeable) {
+                    ((Closeable) engine.groovyClassLoader).close()
+                }
             }
         }
+        generatedItems
     }
 
-    private JobParent runScript(ScriptRequest scriptRequest, GroovyScriptEngine engine, Binding binding) {
+    private JobParent runScript(ScriptRequest scriptRequest, GroovyScriptEngine engine) {
         LOGGER.log(Level.FINE, String.format("Request for ${scriptRequest.location}"))
+
+        Binding binding = createBinding()
         try {
             Script script
             if (scriptRequest.body != null) {
