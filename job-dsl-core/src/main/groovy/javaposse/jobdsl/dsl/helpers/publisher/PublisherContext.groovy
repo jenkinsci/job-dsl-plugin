@@ -2064,6 +2064,53 @@ class PublisherContext extends AbstractExtensibleContext {
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.emotional__jenkins.EmotionalJenkinsPublisher'()
     }
 
+    /**
+    * Updating JIRA issues.
+    *
+    * @since 1.45
+    */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void jira(@DslContext(JiraContext) Closure closure) {
+       JiraContext context = new JiraContext()
+       ContextHelper.executeInContext(closure, context)
+
+       if (context.jiraIssueUpdater) {
+           publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueUpdater'()
+       }
+
+       if (context.jiraReleaseVersionUpdater) {
+           publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraReleaseVersionUpdater' {
+               jiraProjectKey(context.jiraReleaseVersionUpdaterContext.jiraProjectKey ?: '')
+               jiraRelease(context.jiraReleaseVersionUpdaterContext.jiraRelease ?: '')
+           }
+       }
+
+       if (context.jiraIssueMigrator) {
+           publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueMigrator' {
+               jiraProjectKey(context.jiraIssueMigratorContext.jiraProjectKey ?: '')
+               jiraRelease(context.jiraIssueMigratorContext.jiraRelease ?: '')
+               jiraReplaceVersion(context.jiraIssueMigratorContext.jiraReplaceVersion ?: '')
+               jiraQuery(context.jiraIssueMigratorContext.jiraQuery ?: '')
+           }
+       }
+
+       if (context.jiraVersionCreator) {
+           publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraVersionCreator' {
+               jiraProjectKey(context.jiraVersionCreatorContext.jiraProjectKey ?: '')
+               jiraVersion(context.jiraVersionCreatorContext.jiraVersion ?: '')
+           }
+       }
+
+       if (context.jiraCreateIssueNotifier) {
+           publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraCreateIssueNotifier' {
+               projectKey(context.jiraCreateIssueNotifierContext.projectKey ?: '')
+               testDescription(context.jiraCreateIssueNotifierContext.testDescription ?: '')
+               assignee(context.jiraCreateIssueNotifierContext.assignee ?: '')
+               component(context.jiraCreateIssueNotifierContext.component ?: '')
+           }
+       }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {

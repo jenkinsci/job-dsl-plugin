@@ -1111,6 +1111,25 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Executes a jira builder.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void jira(@DslContext(JiraContext) Closure closure) {
+        JiraContext context = new JiraContext()
+        ContextHelper.executeInContext(closure, context)
+
+        if (context.jiraIssueUpdateBuilder) {
+            stepNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueUpdateBuilder' {
+                jqlSearch(context.jiraIssueUpdateBuilderContext.jqlSearch ?: '')
+                workflowActionName(context.jiraIssueUpdateBuilderContext.workflowActionName ?: '')
+                comment(context.jiraIssueUpdateBuilderContext.comment ?: '')
+            }
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
