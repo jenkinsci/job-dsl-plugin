@@ -363,6 +363,75 @@ class ListViewSpec<T extends ListView> extends Specification {
         ]
     }
 
+    def 'most recent jobs filter'(Closure filter, Map children) {
+        when:
+        view.jobFilters(filter)
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node mostRecentJobsFilter = filters[0]
+        mostRecentJobsFilter.name() == 'hudson.views.MostRecentJobsFilter'
+        mostRecentJobsFilter.children().size() == children.size()
+        children.eachWithIndex { name, value, idx ->
+            assert mostRecentJobsFilter.children()[idx].name() == name
+            assert mostRecentJobsFilter.children()[idx].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('view-job-filters', '1.27')
+
+        where:
+        filter || children
+                { ->
+                    mostRecent()
+                } | [
+                maxToInclude  : 0,
+                checkStartTime: false
+        ]
+                { ->
+                    mostRecent {
+                        maxToInclude(5)
+                        checkStartTime()
+                    }
+                } | [
+                maxToInclude  : 5,
+                checkStartTime: true
+        ]
+    }
+
+    def 'unclassified jobs filter'(Closure filter, Map children) {
+        when:
+        view.jobFilters(filter)
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node unclassifiedJobsFilter = filters[0]
+        unclassifiedJobsFilter.name() == 'hudson.views.UnclassifiedJobsFilter'
+        unclassifiedJobsFilter.children().size() == children.size()
+        children.eachWithIndex { name, value, idx ->
+            assert unclassifiedJobsFilter.children()[idx].name() == name
+            assert unclassifiedJobsFilter.children()[idx].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('view-job-filters', '1.27')
+
+        where:
+        filter || children
+                { ->
+                    unclassified()
+                } | [
+                includeExcludeTypeString: 'includeMatched'
+        ]
+                { ->
+                    unclassified {
+                        matchType(INCLUDE_UNMATCHED)
+                    }
+                } | [
+                includeExcludeTypeString: 'includeUnmatched'
+        ]
+    }
+
     def 'regex job filter'(RegexMatchValue regexType, String regexString) {
         when:
         view.jobFilters {

@@ -25,6 +25,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-33482](https://issues.jenkins-ci.org/browse/JENKINS-33482))
  * Enhanced support for [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
    ([#725](https://github.com/jenkinsci/job-dsl-plugin/pull/725))
+ * Enhanced support for the [View Job Filters Plugin](https://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters)
+   ([JENKINS-33416](https://issues.jenkins-ci.org/browse/JENKINS-33416))
 * 1.44 (March 11 2016)
  * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))
