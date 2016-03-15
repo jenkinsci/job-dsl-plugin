@@ -14,23 +14,23 @@ class PhaseContext extends AbstractContext {
     String executionType
     Boolean enableGroovyScript
     Boolean isUseScriptFile
-    String groovyScript
-    String scriptFileSource
+    String scriptText
+    String scriptPath
 
     List<PhaseJobContext> jobsInPhase = []
 
     PhaseContext(JobManagement jobManagement, Item item, String phaseName, String continuationCondition,
-                 String executionType, Boolean enableGroovyScript, String groovyScript, Boolean isUseScriptFile,
-                 String scriptFileSource) {
+                 String executionType, Boolean enableGroovyScript, String scriptText, Boolean isUseScriptFile,
+                 String scriptPath) {
         super(jobManagement)
         this.item = item
         this.phaseName = phaseName
         this.continuationCondition = continuationCondition
         this.executionType = executionType
         this.enableGroovyScript = enableGroovyScript
-        this.groovyScript = groovyScript
+        this.scriptText = scriptText
         this.isUseScriptFile = isUseScriptFile
-        this.scriptFileSource = scriptFileSource
+        this.scriptPath = scriptPath
     }
 
     /**
@@ -75,10 +75,10 @@ class PhaseContext extends AbstractContext {
             this.enableGroovyScript = true
         }
         if ('FILE' == source) {
-            this.scriptFileSource = script
+            this.scriptPath = script
             this.isUseScriptFile = true
         } else if ('SCRIPT' == source) {
-            this.groovyScript = script
+            this.scriptText = script
             this.isUseScriptFile = false
         } else {
             this.enableGroovyScript = false

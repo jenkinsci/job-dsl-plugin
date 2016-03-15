@@ -19,6 +19,10 @@ class PhaseJobContext extends AbstractContext {
     boolean disableJob = false
     boolean abortAllJobs = false
     String killPhaseCondition = 'FAILURE'
+    Boolean enableJobScript = null
+    boolean isUseScriptFile = false
+    String jobScript
+    String scriptPath
     Closure configureClosure
 
     PhaseJobContext(JobManagement jobManagement, Item item, String jobName) {
@@ -43,6 +47,27 @@ class PhaseJobContext extends AbstractContext {
         jobManagement.logDeprecationWarning()
 
         this.jobName = jobName
+    }
+
+    void enableGroovyScript(boolean enableJobScript) {
+        this.enableJobScript = enableJobScript
+    }
+
+    void groovyScript(String type, String source) {
+        if (null == enableJobScript) {
+            enableJobScript = true
+        }
+        isUseScriptFile = false
+        if ('FILE' == type) {
+            isUseScriptFile = true
+            scriptPath = source
+            jobScript = ''
+        } else if ('SCRIPT' == type) {
+            jobScript = source
+            isUseScriptFile = ''
+        } else {
+            enableJobScript = false
+        }
     }
 
     /**

@@ -69,9 +69,9 @@ class MultiJobStepContext extends StepContext {
             delegate.continuationCondition(phaseContext.continuationCondition)
             delegate.executionType(phaseContext.executionType)
             delegate.enableGroovyScript(phaseContext.enableGroovyScript)
-            delegate.groovyScript(phaseContext.groovyScript)
+            delegate.scriptText(phaseContext.scriptText)
             delegate.isUseScriptFile(phaseContext.isUseScriptFile)
-            delegate.scriptFileSource(phaseContext.scriptFileSource)
+            delegate.scriptPath(phaseContext.scriptPath)
             phaseJobs {
                 phaseContext.jobsInPhase.each { PhaseJobContext jobInPhase ->
                     Node phaseJobNode = 'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {
@@ -81,6 +81,10 @@ class MultiJobStepContext extends StepContext {
                         disableJob jobInPhase.disableJob
                         killPhaseOnJobResultCondition jobInPhase.killPhaseCondition
                         abortAllJob jobInPhase.abortAllJobs
+                        enableJobScript jobInPhase.enableJobScript
+                        jobScript jobInPhase.jobScript
+                        isUseScriptFile jobInPhase.isUseScriptFile
+                        scriptPath jobInPhase.scriptPath
                         configs(jobInPhase.paramTrigger.configs ?: [class: 'java.util.Collections$EmptyList'])
                     }
 

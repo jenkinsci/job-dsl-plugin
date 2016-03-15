@@ -112,7 +112,7 @@ class CopyArtifactSelectorContext extends AbstractContext {
      *
      * @since 1.40
      */
-    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.28')
+    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.30')
     void multiJobBuild() {
         selector = new NodeBuilder().'selector'(class: 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector')
     }

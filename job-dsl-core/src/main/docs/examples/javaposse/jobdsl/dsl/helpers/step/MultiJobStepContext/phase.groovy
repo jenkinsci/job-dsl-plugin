@@ -15,6 +15,8 @@ multiJob('example') {
         phase('Fourth') {
             phaseJob('JobD') {
                 currentJobParameters(false)
+                enableGroovyScript(false)
+                groovyScript('FILE', '/Users/sshelomentsev/example.groovy')
                 parameters {
                     booleanParam('cParam', true)
                     propertiesFile('my.properties')
@@ -30,8 +32,6 @@ multiJob('example') {
                     phaseJobConfig / condition << '${RUN_JOB} == "true"'
                     phaseJobConfig / resumeCondition << 'SKIP'
                     phaseJobConfig / resumeExpression << '1 == 1'
-                    phaseJobConfig / enableJobScript << 'true'
-                    phaseJobConfig / jobScript << 'return true'
                 }
             }
         }
