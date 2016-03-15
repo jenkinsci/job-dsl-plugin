@@ -19,19 +19,6 @@ class DslScriptLoader {
     private final JobManagement jobManagement
     private final PrintStream logger
 
-    /**
-     * For testing a string directly.
-     */
-    static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
-        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File('.').toURI().toURL())
-        runDslEngine(scriptRequest, jobManagement)
-    }
-
-    static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
-        DslScriptLoader loader = new DslScriptLoader(jobManagement)
-        loader.runScripts([scriptRequest])
-    }
-
     DslScriptLoader(JobManagement jobManagement) {
         this.jobManagement = jobManagement
         this.logger = jobManagement.outputStream
@@ -57,32 +44,37 @@ class DslScriptLoader {
                                                      GroovyClassLoader groovyClassLoader,
                                                      CompilerConfiguration config) {
         GeneratedItems generatedItems = new GeneratedItems()
+        Map<String, GroovyScriptEngine> engineCache = [:]
 
-        // group requests that share the same classpath
-        scriptRequests.groupBy { it.urlRoots*.toString().sort() }.values().each { List<ScriptRequest> requestSet ->
-            GroovyScriptEngine engine
-            try {
-                engine = new GroovyScriptEngine(requestSet.first().urlRoots, groovyClassLoader)
-                engine.config = config
+        try {
+            scriptRequests.each { ScriptRequest scriptRequest ->
+                String key = scriptRequest.urlRoots*.toString().sort().join(',')
 
-                requestSet.each { ScriptRequest scriptRequest ->
-                    JobParent jobParent = runScript(scriptRequest, engine)
-
-                    boolean ignoreExisting = scriptRequest.ignoreExisting
-                    generatedItems.configFiles.addAll(extractGeneratedConfigFiles(jobParent, ignoreExisting))
-                    generatedItems.jobs.addAll(extractGeneratedJobs(jobParent, ignoreExisting))
-                    generatedItems.views.addAll(extractGeneratedViews(jobParent, ignoreExisting))
-                    generatedItems.userContents.addAll(extractGeneratedUserContents(jobParent, ignoreExisting))
-
-                    scheduleJobsToRun(jobParent.queueToBuild)
+                GroovyScriptEngine engine = engineCache[key]
+                if (!engine) {
+                    engine = new GroovyScriptEngine(scriptRequest.urlRoots, groovyClassLoader)
+                    engine.config = config
+                    engineCache[key] = engine
                 }
 
-            } finally {
+                JobParent jobParent = runScript(scriptRequest, engine)
+
+                boolean ignoreExisting = scriptRequest.ignoreExisting
+                generatedItems.configFiles.addAll(extractGeneratedConfigFiles(jobParent, ignoreExisting))
+                generatedItems.jobs.addAll(extractGeneratedJobs(jobParent, ignoreExisting))
+                generatedItems.views.addAll(extractGeneratedViews(jobParent, ignoreExisting))
+                generatedItems.userContents.addAll(extractGeneratedUserContents(jobParent, ignoreExisting))
+
+                scheduleJobsToRun(jobParent.queueToBuild)
+            }
+        } finally {
+            engineCache.values().each { GroovyScriptEngine engine ->
                 if (engine?.groovyClassLoader instanceof Closeable) {
                     ((Closeable) engine.groovyClassLoader).close()
                 }
             }
         }
+
         generatedItems
     }
 
@@ -154,6 +146,26 @@ class DslScriptLoader {
                             'script name to avoid problems'
             )
         }
+    }
+
+    /**
+     * For testing a string directly.
+     *
+     * @Deprecated use {@link #runScripts(java.util.Collection)}
+     */
+    @Deprecated
+    static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
+        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File('.').toURI().toURL())
+        runDslEngine(scriptRequest, jobManagement)
+    }
+
+    /**
+     * @Deprecated use {@link #runScripts(java.util.Collection)}
+     */
+    @Deprecated
+    static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
+        DslScriptLoader loader = new DslScriptLoader(jobManagement)
+        loader.runScripts([scriptRequest])
     }
 
     private static String getScriptName(String scriptFile) {
