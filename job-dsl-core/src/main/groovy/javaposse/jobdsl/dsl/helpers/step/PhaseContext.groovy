@@ -37,39 +37,6 @@ class PhaseContext extends AbstractContext {
 
     /**
      * Adds a job to the phase.
-     */
-    @Deprecated
-    void job(String jobName, @DslContext(PhaseJobContext) Closure phaseJobClosure = null) {
-        job(jobName, true, true, phaseJobClosure)
-    }
-
-    /**
-     * Adds a job to the phase.
-     */
-    @Deprecated
-    void job(String jobName, boolean currentJobParameters,
-             @DslContext(PhaseJobContext) Closure phaseJobClosure = null) {
-        job(jobName, currentJobParameters, true, phaseJobClosure)
-    }
-
-    /**
-     * Adds a job to the phase.
-     */
-    @Deprecated
-    void job(String jobName, boolean currentJobParameters, boolean exposedScm,
-             @DslContext(PhaseJobContext) Closure phaseJobClosure = null) {
-        jobManagement.logDeprecationWarning()
-
-        PhaseJobContext phaseJobContext = new PhaseJobContext(
-                jobManagement, item, jobName, currentJobParameters, exposedScm
-        )
-        ContextHelper.executeInContext(phaseJobClosure, phaseJobContext)
-
-        jobsInPhase << phaseJobContext
-    }
-
-    /**
-     * Adds a job to the phase.
      *
      * @since 1.39
      */

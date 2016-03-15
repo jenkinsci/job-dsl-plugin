@@ -585,10 +585,8 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.20
      */
-    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.25')
+    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.26')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
-        jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-
         DownstreamContext downstreamContext = new DownstreamContext(jobManagement, item)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 

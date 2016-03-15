@@ -45,7 +45,6 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         'dependencyCheck' | [:]                                                      | 'dependency-check-jenkins-plugin'
         'androidLint'     | [:]                                                                    | 'android-lint'
         'checkstyle'      | [:]                                                                    | 'checkstyle'
-        'jshint'          | [:]                                                                    | 'jshint-checkstyle'
         'dry'             | [highThreshold: 50, normalThreshold: 25]                               | 'dry'
         'tasks'           | [excludePattern: '', high: '', normal: '', low: '', ignoreCase: false,
                              asRegexp: false]                                                      | 'tasks'
@@ -134,7 +133,6 @@ class StaticAnalysisPublisherContextSpec extends Specification {
                 [true]                                                                                   |
                 [isRankActivated: true]
         'checkstyle'      | 'hudson.plugins.checkstyle.CheckStylePublisher'                  | []        | [:]
-        'jshint'          | 'hudson.plugins.jshint.CheckStylePublisher'                      | []        | [:]
         'ccm'             | 'hudson.plugins.ccm.CcmPublisher'                                | []        | [:]
         'dependencyCheck' | 'org.jenkinsci.plugins.DependencyCheck.DependencyCheckPublisher' | []        | [:]
         'androidLint'     | 'org.jenkinsci.plugins.android__lint.LintPublisher'              | []        | [:]

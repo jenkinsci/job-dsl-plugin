@@ -1682,7 +1682,7 @@ class ScmContextSpec extends Specification {
                 'http://svn.apache.org/repos/asf/xml/crimson/trunk/'
         context.scmNodes[0].excludedRegions.size() == 1
         context.scmNodes[0].excludedRegions[0].value() == '/trunk/.*'
-        (1.._) * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with remote and local'() {
@@ -1693,7 +1693,7 @@ class ScmContextSpec extends Specification {
         with(context.scmNodes[0]) {
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '/mydir/mycode'
         }
-        (1.._) * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with browser - Fisheye example'() {
@@ -1710,7 +1710,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].browser[0].attributes()['class'] == 'hudson.scm.browsers.FishEyeSVN'
         context.scmNodes[0].browser[0].url[0].value() == 'http://mycompany.com/fisheye/repo_name'
         context.scmNodes[0].browser[0].rootModule[0].value() == 'my_root_module'
-        (1.._) * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with browser - ViewSVN example'() {
@@ -1723,7 +1723,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0] != null
         context.scmNodes[0].browser[0].attributes()['class'] == 'hudson.scm.browsers.ViewSVN'
         context.scmNodes[0].browser[0].url[0].value() == 'http://mycompany.com/viewsvn/repo_name'
-        (1.._) * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with no locations'() {
@@ -1752,7 +1752,7 @@ class ScmContextSpec extends Specification {
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir'
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].depthOption[0].value() == 'infinity'
         }
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with credentials'() {
@@ -1771,8 +1771,7 @@ class ScmContextSpec extends Specification {
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].credentialsId[0].value() == 'foo'
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('subversion', '2.0')
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with multiple locations'() {
@@ -1791,7 +1790,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
         context.scmNodes[0].locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[1].remote[0].value() == 'url2'
         context.scmNodes[0].locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[1].local[0].value() == 'dir2'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn without specifying a local dir for the location'() {
@@ -1805,7 +1804,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
         context.scmNodes[0].locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
         context.scmNodes[0].locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     @Unroll
@@ -1822,7 +1821,7 @@ class ScmContextSpec extends Specification {
         with(context.scmNodes[0]) {
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].depthOption[0].value() == xmlValue
         }
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
 
         where:
         depth              || xmlValue
@@ -1842,7 +1841,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].workspaceUpdater[0].attributes()['class'] == 'hudson.scm.subversion.UpdateUpdater'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with checkout strategy'() {
@@ -1855,7 +1854,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].workspaceUpdater[0].attributes()['class'] == workspaceUpdaterClass
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
 
         where:
         strategy                               | workspaceUpdaterClass
@@ -1874,7 +1873,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedRegions[0].value() == ''
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with single excluded region'() {
@@ -1887,7 +1886,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedRegions[0].value() == 'exreg'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with multiple excluded regions'() {
@@ -1901,7 +1900,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedRegions[0].value() == 'exreg1\nexreg2'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with a list of excluded regions'() {
@@ -1915,7 +1914,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedRegions[0].value() == 'exreg1\nexreg2\nexreg3\nexreg4'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn without included regions'() {
@@ -1927,7 +1926,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].includedRegions[0].value() == ''
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with single included region'() {
@@ -1940,7 +1939,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].includedRegions[0].value() == 'increg'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with multiple included regions'() {
@@ -1954,7 +1953,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].includedRegions[0].value() == 'increg1\nincreg2'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with a list of included regions'() {
@@ -1968,7 +1967,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].includedRegions[0].value() == 'increg1\nincreg2\nincreg3\nincreg4'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn without excluded users'() {
@@ -1980,7 +1979,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedUsers[0].value() == ''
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with single excluded user'() {
@@ -1993,7 +1992,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedUsers[0].value() == 'user'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with multiple excluded users'() {
@@ -2007,7 +2006,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedUsers[0].value() == 'user1\nuser2'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with a list of excluded users'() {
@@ -2021,7 +2020,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedUsers[0].value() == 'user1\nuser2\nuser3\nuser4'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn without excluded commit messages'() {
@@ -2033,7 +2032,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedCommitMessages[0].value() == ''
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with single excluded commit message'() {
@@ -2046,7 +2045,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedCommitMessages[0].value() == 'commit'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with multiple excluded commit messages'() {
@@ -2060,7 +2059,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedCommitMessages[0].value() == 'commit1\ncommit2'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with a list of excluded commit messages'() {
@@ -2074,7 +2073,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedCommitMessages[0].value() == 'commit1\ncommit2\ncommit3\ncommit4'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with a mix of excluded commit message specifications'() {
@@ -2088,7 +2087,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedCommitMessages[0].value() == 'commit1\ncommit2\ncommit3'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn without excluded revprop'() {
@@ -2100,7 +2099,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedRevprop[0].value() == ''
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with an excluded revprop'() {
@@ -2113,7 +2112,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].excludedRevprop[0].value() == 'revprop'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'call svn with configure'() {
@@ -2128,7 +2127,7 @@ class ScmContextSpec extends Specification {
         then:
         isValidSvnScmNode(context.scmNodes[0])
         context.scmNodes[0].testNode[0].value() == 'testValue'
-        1 * mockJobManagement.requirePlugin('subversion')
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     private static void isValidSvnScmNode(scmNode) {

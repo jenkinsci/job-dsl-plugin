@@ -28,6 +28,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the [View Job Filters Plugin](https://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters) and
    the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin)
    ([JENKINS-33416](https://issues.jenkins-ci.org/browse/JENKINS-33416))
+ * Removed anything that has been deprecated in 1.39, see [Migration](Migration#migrating-to-139)
 * 1.44 (March 11 2016)
  * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))

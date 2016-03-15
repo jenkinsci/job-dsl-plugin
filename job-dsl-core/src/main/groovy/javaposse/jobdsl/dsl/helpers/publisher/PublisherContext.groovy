@@ -596,10 +596,8 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Triggers parameterized builds on other projects.
      */
-    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.25')
+    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.26')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
-        jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-
         DownstreamContext downstreamContext = new DownstreamContext(jobManagement, item)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
@@ -1262,24 +1260,6 @@ class PublisherContext extends AbstractExtensibleContext {
     void checkstyle(String pattern, @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
         publisherNodes << createDefaultStaticAnalysisNode(
                 'hudson.plugins.checkstyle.CheckStylePublisher',
-                staticAnalysisClosure,
-                pattern
-        )
-    }
-
-    /**
-     * Publishes JSHint analysis results.
-     *
-     * @since 1.20
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'jshint-checkstyle')
-    void jshint(String pattern,
-                @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
-        jobManagement.logDeprecationWarning()
-
-        publisherNodes << createDefaultStaticAnalysisNode(
-                'hudson.plugins.jshint.CheckStylePublisher',
                 staticAnalysisClosure,
                 pattern
         )

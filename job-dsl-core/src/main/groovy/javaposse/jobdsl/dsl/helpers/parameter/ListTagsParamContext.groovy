@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.parameter
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class ListTagsParamContext extends AbstractContext {
     String description
@@ -70,7 +69,6 @@ class ListTagsParamContext extends AbstractContext {
     /**
      * Sets credentials for authentication with the remote Subversion server.
      */
-    @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
     void credentialsId(String credentialsId) {
         this.credentialsId = credentialsId
     }
