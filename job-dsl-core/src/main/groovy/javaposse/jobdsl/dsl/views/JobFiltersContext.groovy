@@ -80,4 +80,34 @@ class JobFiltersContext extends AbstractContext {
             includeExcludeTypeString(unclassifiedJobsFilter.matchType.value)
         }
     }
+
+    /**
+     * Adds an all jobs to the view.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'view-job-filters', minimumVersion = '1.27')
+    void all() {
+        filterNodes << new NodeBuilder().'hudson.views.AllJobsFilter'()
+    }
+
+    /**
+     * Adds to the view all the jobs using the 'release' build wrapper.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'release', minimumVersion = '2.5.3')
+    void allRelease() {
+        filterNodes << new NodeBuilder().'hudson.plugins.release.AllReleaseJobsFilter'()
+    }
+
+    /**
+     * Filters the view to only keep the jobs using the 'release' build wrapper.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'release', minimumVersion = '2.5.3')
+    void release() {
+        filterNodes << new NodeBuilder().'hudson.plugins.release.ReleaseJobsFilter'()
+    }
 }
