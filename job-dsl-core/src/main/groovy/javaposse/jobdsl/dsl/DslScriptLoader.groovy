@@ -15,76 +15,119 @@ class DslScriptLoader {
     private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.name)
     private static final Comparator<? super Item> ITEM_COMPARATOR = new ItemProcessingOrderComparator()
 
-    private static GeneratedItems runDslEngineForParent(ScriptRequest scriptRequest,
-                                                        JobManagement jobManagement) throws IOException {
-        PrintStream logger = jobManagement.outputStream
+    private final JobManagement jobManagement
+    private final PrintStream logger
 
+    /**
+     * Creates a new {@link DslScriptLoader} which will use the given {@link JobManagement} instance.
+     *
+     * @since 1.45
+     */
+    DslScriptLoader(JobManagement jobManagement) {
+        this.jobManagement = jobManagement
+        this.logger = jobManagement.outputStream
+    }
+
+    /**
+     * Executes the script requests and returns the generated items.
+     *
+     * @since 1.45
+     */
+    GeneratedItems runScripts(Collection<ScriptRequest> scriptRequests) throws IOException {
         ClassLoader parentClassLoader = DslScriptLoader.classLoader
-        CompilerConfiguration config = createCompilerConfiguration(jobManagement)
+        CompilerConfiguration config = createCompilerConfiguration()
 
         // Otherwise baseScript won't take effect
         GroovyClassLoader groovyClassLoader = new GroovyClassLoader(parentClassLoader, config)
+
         try {
-            GroovyScriptEngine engine = new GroovyScriptEngine(scriptRequest.urlRoots, groovyClassLoader)
-            try {
-                engine.config = config
-
-                Binding binding = createBinding(jobManagement)
-
-                JobParent jobParent
-                try {
-                    Script script
-                    if (scriptRequest.body != null) {
-                        logger.println('Processing provided DSL script')
-                        Class cls = engine.groovyClassLoader.parseClass(scriptRequest.body, 'script')
-                        script = InvokerHelper.createScript(cls, binding)
-                    } else {
-                        logger.println("Processing DSL script ${scriptRequest.location}")
-                        if (!isValidScriptName(scriptRequest.location)) {
-                            throw new DslException(
-                                    "invalid script name '${scriptRequest.location}; script names may only contain " +
-                                            'letters, digits and underscores, but may not start with a digit'
-                            )
-                        }
-                        checkCollidingScriptName(scriptRequest.location, engine.groovyClassLoader, logger)
-                        script = engine.createScript(scriptRequest.location, binding)
-                    }
-                    assert script instanceof JobParent
-
-                    jobParent = (JobParent) script
-                    jobParent.setJm(jobManagement)
-
-                    binding.setVariable('jobFactory', jobParent)
-
-                    script.run()
-                } catch (CompilationFailedException e) {
-                    throw new DslException(e.message, e)
-                } catch (GroovyRuntimeException e) {
-                    throw new DslScriptException(e.message, e)
-                } catch (ResourceException e) {
-                    throw new IOException('Unable to run script', e)
-                } catch (ScriptException e) {
-                    throw new IOException('Unable to run script', e)
-                }
-
-                GeneratedItems generatedItems = new GeneratedItems()
-                generatedItems.configFiles = extractGeneratedConfigFiles(jobParent, scriptRequest.ignoreExisting)
-                generatedItems.jobs = extractGeneratedJobs(jobParent, scriptRequest.ignoreExisting)
-                generatedItems.views = extractGeneratedViews(jobParent, scriptRequest.ignoreExisting)
-                generatedItems.userContents = extractGeneratedUserContents(jobParent, scriptRequest.ignoreExisting)
-
-                scheduleJobsToRun(jobParent.queueToBuild, jobManagement)
-
-                return generatedItems
-            } finally {
-                if (engine.groovyClassLoader instanceof Closeable) {
-                    ((Closeable) engine.groovyClassLoader).close()
-                }
-            }
+            runScriptsWithClassLoader(scriptRequests, groovyClassLoader, config)
         } finally {
             if (groovyClassLoader instanceof Closeable) {
                 ((Closeable) groovyClassLoader).close()
             }
+        }
+    }
+
+    private GeneratedItems runScriptsWithClassLoader(Collection<ScriptRequest> scriptRequests,
+                                                     GroovyClassLoader groovyClassLoader,
+                                                     CompilerConfiguration config) {
+        GeneratedItems generatedItems = new GeneratedItems()
+        Map<String, GroovyScriptEngine> engineCache = [:]
+
+        try {
+            scriptRequests.each { ScriptRequest scriptRequest ->
+                String key = scriptRequest.urlRoots*.toString().sort().join(',')
+
+                GroovyScriptEngine engine = engineCache[key]
+                if (!engine) {
+                    engine = new GroovyScriptEngine(scriptRequest.urlRoots, groovyClassLoader)
+                    engine.config = config
+                    engineCache[key] = engine
+                }
+
+                JobParent jobParent = runScript(scriptRequest, engine)
+
+                generatedItems.configFiles.addAll(
+                        extractGeneratedConfigFiles(jobParent.referencedConfigFiles, scriptRequest.ignoreExisting)
+                )
+                generatedItems.jobs.addAll(
+                        extractGeneratedJobs(jobParent.referencedJobs, scriptRequest.ignoreExisting)
+                )
+                generatedItems.views.addAll(
+                        extractGeneratedViews(jobParent.referencedViews, scriptRequest.ignoreExisting)
+                )
+                generatedItems.userContents.addAll(
+                        extractGeneratedUserContents(jobParent.referencedUserContents, scriptRequest.ignoreExisting)
+                )
+
+                scheduleJobsToRun(jobParent.queueToBuild)
+            }
+        } finally {
+            engineCache.values().each { GroovyScriptEngine engine ->
+                if (engine?.groovyClassLoader instanceof Closeable) {
+                    ((Closeable) engine.groovyClassLoader).close()
+                }
+            }
+        }
+
+        generatedItems
+    }
+
+    private JobParent runScript(ScriptRequest scriptRequest, GroovyScriptEngine engine) {
+        LOGGER.log(Level.FINE, String.format("Request for ${scriptRequest.location}"))
+
+        Binding binding = createBinding()
+        try {
+            Script script
+            if (scriptRequest.body != null) {
+                logger.println('Processing provided DSL script')
+                Class cls = engine.groovyClassLoader.parseClass(scriptRequest.body, 'script')
+                script = InvokerHelper.createScript(cls, binding)
+            } else {
+                logger.println("Processing DSL script ${scriptRequest.location}")
+                checkValidScriptName(scriptRequest.location)
+                checkCollidingScriptName(scriptRequest.location, engine.groovyClassLoader, logger)
+                script = engine.createScript(scriptRequest.location, binding)
+            }
+            assert script instanceof JobParent
+
+            JobParent jobParent = (JobParent) script
+            jobParent.setJm(jobManagement)
+
+            binding.setVariable('jobFactory', jobParent)
+
+            script.run()
+
+            return jobParent
+        } catch (CompilationFailedException e) {
+            throw new DslException(e.message, e)
+        } catch (GroovyRuntimeException e) {
+            throw new DslScriptException(e.message, e)
+        } catch (ResourceException e) {
+            throw new IOException('Unable to run script', e)
+        } catch (ScriptException e) {
+            throw new IOException('Unable to run script', e)
         }
     }
 
@@ -101,6 +144,15 @@ class DslScriptLoader {
         true
     }
 
+    private static void checkValidScriptName(String scriptName) {
+        if (!isValidScriptName(scriptName)) {
+            throw new DslException(
+                "invalid script name '${scriptName}; script names may only contain " +
+                    'letters, digits and underscores, but may not start with a digit'
+            )
+        }
+    }
+
     private static void checkCollidingScriptName(String scriptFile, ClassLoader classLoader, PrintStream logger) {
         String scriptName = getScriptName(scriptFile)
         Package[] packages = new SnitchingClassLoader(classLoader).packages
@@ -112,81 +164,84 @@ class DslScriptLoader {
         }
     }
 
+    /**
+     * @Deprecated use {@link #runScripts(java.util.Collection)}
+     */
+    @Deprecated
+    static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
+        ScriptRequest scriptRequest = new ScriptRequest(scriptBody)
+        runDslEngine(scriptRequest, jobManagement)
+    }
+
+    /**
+     * @Deprecated use {@link #runScripts(java.util.Collection)}
+     */
+    @Deprecated
+    static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
+        DslScriptLoader loader = new DslScriptLoader(jobManagement)
+        loader.runScripts([scriptRequest])
+    }
+
     private static String getScriptName(String scriptFile) {
         String fileName = new File(scriptFile).name
         int idx = fileName.lastIndexOf('.')
         idx > -1 ? fileName[0..idx - 1] : fileName
     }
 
-    /**
-     * For testing a string directly.
-     */
-    static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
-        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File('.').toURI().toURL())
-        runDslEngine(scriptRequest, jobManagement)
-    }
-
-    static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
-        runDslEngineForParent(scriptRequest, jobManagement)
-    }
-
-    private static Set<GeneratedJob> extractGeneratedJobs(JobParent jobParent,
-                                                          boolean ignoreExisting) throws IOException {
-        // Iterate jobs which were setup, save them, and convert to a serializable form
+    private Set<GeneratedJob> extractGeneratedJobs(Set<Item> referencedItems,
+                                                   boolean ignoreExisting) throws IOException {
         Set<GeneratedJob> generatedJobs = new LinkedHashSet<GeneratedJob>()
-        if (jobParent != null) {
-            List<Item> referencedItems = new ArrayList<Item>(jobParent.referencedJobs) // As List
-            Collections.sort(referencedItems, ITEM_COMPARATOR)
-            referencedItems.each { Item item ->
-                String xml = item.xml
-                LOGGER.log(Level.FINE, "Saving item ${item.name} as ${xml}")
-                if (item instanceof Job) {
-                    Job job = (Job) item
-                    if (job.previousNamesRegex != null) {
-                        jobParent.jm.renameJobMatching(job.previousNamesRegex, job.name)
-                    }
+        referencedItems.sort(false, ITEM_COMPARATOR).each { Item item ->
+            String xml = item.xml
+            LOGGER.log(Level.FINE, "Saving item ${item.name} as ${xml}")
+            if (item instanceof Job) {
+                Job job = (Job) item
+                if (job.previousNamesRegex != null) {
+                    jobManagement.renameJobMatching(job.previousNamesRegex, job.name)
                 }
-                jobParent.jm.createOrUpdateConfig(item, ignoreExisting)
-                String templateName = item instanceof Job ? ((Job) item).templateName : null
-                generatedJobs << new GeneratedJob(templateName, item.name)
             }
+            jobManagement.createOrUpdateConfig(item, ignoreExisting)
+            String templateName = item instanceof Job ? ((Job) item).templateName : null
+            generatedJobs << new GeneratedJob(templateName, item.name)
         }
         generatedJobs
     }
 
-    private static Set<GeneratedView> extractGeneratedViews(JobParent jobParent, boolean ignoreExisting) {
+    private Set<GeneratedView> extractGeneratedViews(Set<View> referencedViews, boolean ignoreExisting) {
         Set<GeneratedView> generatedViews = new LinkedHashSet<GeneratedView>()
-        jobParent.referencedViews.each { View view ->
+        referencedViews.each { View view ->
             String xml = view.xml
             LOGGER.log(Level.FINE, "Saving view ${view.name} as ${xml}")
-            jobParent.jm.createOrUpdateView(view.name, xml, ignoreExisting)
+            jobManagement.createOrUpdateView(view.name, xml, ignoreExisting)
             generatedViews << new GeneratedView(view.name)
         }
         generatedViews
     }
 
-    private static Set<GeneratedConfigFile> extractGeneratedConfigFiles(JobParent jobParent, boolean ignoreExisting) {
+    private Set<GeneratedConfigFile> extractGeneratedConfigFiles(Set<ConfigFile> referencedConfigFiles,
+                                                                 boolean ignoreExisting) {
         Set<GeneratedConfigFile> generatedConfigFiles = new LinkedHashSet<GeneratedConfigFile>()
-        jobParent.referencedConfigFiles.each { ConfigFile configFile ->
+        referencedConfigFiles.each { ConfigFile configFile ->
             LOGGER.log(Level.FINE, "Saving config file ${configFile.name}")
-            String id = jobParent.jm.createOrUpdateConfigFile(configFile, ignoreExisting)
+            String id = jobManagement.createOrUpdateConfigFile(configFile, ignoreExisting)
             generatedConfigFiles << new GeneratedConfigFile(id, configFile.name)
         }
         generatedConfigFiles
     }
 
-    private static Set<GeneratedUserContent> extractGeneratedUserContents(JobParent jobParent, boolean ignoreExisting) {
+    private Set<GeneratedUserContent> extractGeneratedUserContents(Set<UserContent> referencedUserContents,
+                                                                   boolean ignoreExisting) {
         Set<GeneratedUserContent> generatedUserContents = new LinkedHashSet<GeneratedUserContent>()
-        jobParent.referencedUserContents.each { UserContent userContent ->
+        referencedUserContents.each { UserContent userContent ->
             LOGGER.log(Level.FINE, "Saving user content ${userContent.path}")
-            jobParent.jm.createOrUpdateUserContent(userContent, ignoreExisting)
+            jobManagement.createOrUpdateUserContent(userContent, ignoreExisting)
             generatedUserContents << new GeneratedUserContent(userContent.path)
         }
         generatedUserContents
     }
 
     @SuppressWarnings('CatchException')
-    static void scheduleJobsToRun(List<String> jobNames, JobManagement jobManagement) {
+    private void scheduleJobsToRun(List<String> jobNames) {
         Map<String, Throwable> exceptions = [:]
         jobNames.each { String jobName ->
             try {
@@ -203,7 +258,7 @@ class DslScriptLoader {
         }
     }
 
-    private static Binding createBinding(JobManagement jobManagement) {
+    private Binding createBinding() {
         Binding binding = new Binding()
         binding.setVariable('out', jobManagement.outputStream) // Works for println, but not System.out
 
@@ -214,7 +269,7 @@ class DslScriptLoader {
         binding
     }
 
-    private static CompilerConfiguration createCompilerConfiguration(JobManagement jobManagement) {
+    private CompilerConfiguration createCompilerConfiguration() {
         CompilerConfiguration config = new CompilerConfiguration(CompilerConfiguration.DEFAULT)
         config.scriptBaseClass = 'javaposse.jobdsl.dsl.JobParent'
 

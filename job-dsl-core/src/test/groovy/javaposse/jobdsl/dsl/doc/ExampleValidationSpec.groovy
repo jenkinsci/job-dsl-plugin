@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.doc
 import groovy.io.FileType
 import javaposse.jobdsl.dsl.DslScriptLoader
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.ScriptRequest
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -24,7 +25,7 @@ class ExampleValidationSpec extends Specification {
         ]
 
         when:
-        DslScriptLoader.runDslEngine(file.text, jobManagement)
+        new DslScriptLoader(jobManagement).runScripts([new ScriptRequest(file.text)])
 
         then:
         noExceptionThrown()
