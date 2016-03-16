@@ -970,7 +970,7 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.39
      */
-    @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.0')
+    @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.2')
     void dockerBuildAndPublish(@DslContext(DockerBuildAndPublishContext) Closure closure) {
         DockerBuildAndPublishContext context = new DockerBuildAndPublishContext()
         ContextHelper.executeInContext(closure, context)
@@ -995,6 +995,7 @@ class StepContext extends AbstractExtensibleContext {
             repoName(context.repositoryName ?: '')
             noCache(context.noCache)
             forcePull(context.forcePull)
+            buildContext(context.buildContext ?: '')
             dockerfilePath(context.dockerfileDirectory ?: '')
             skipBuild(context.skipBuild)
             skipDecorate(context.skipDecorate)
@@ -1002,6 +1003,8 @@ class StepContext extends AbstractExtensibleContext {
             skipPush(context.skipPush)
             createFingerprint(context.createFingerprints)
             skipTagLatest(context.skipTagAsLatest)
+            buildAdditionalArgs(context.buildAdditionalArgs ?: '')
+            forceTag(context.forceTag)
         }
     }
 
