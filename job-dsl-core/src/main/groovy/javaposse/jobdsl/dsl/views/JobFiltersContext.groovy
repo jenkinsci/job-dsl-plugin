@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
+import javaposse.jobdsl.dsl.views.jobfilter.BuildTrendFilter
 import javaposse.jobdsl.dsl.views.jobfilter.JobStatusesFilter
 import javaposse.jobdsl.dsl.views.jobfilter.MostRecentJobsFilter
 import javaposse.jobdsl.dsl.views.jobfilter.RegexFilter
@@ -32,6 +33,25 @@ class JobFiltersContext extends AbstractContext {
             Status.values().each { status ->
                 "${status.name().toLowerCase()}"(statusesFilter.status.contains(status))
             }
+        }
+    }
+
+    /**
+     * Adds a build trend job filter.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'view-job-filters', minimumVersion = '1.27')
+    void buildTrend(@DslContext(BuildTrendFilter) Closure buildTrendFilterClosure) {
+        BuildTrendFilter buildTrendFilter = new BuildTrendFilter()
+        executeInContext(buildTrendFilterClosure, buildTrendFilter)
+
+        filterNodes << new NodeBuilder().'hudson.views.BuildTrendFilter' {
+            includeExcludeTypeString(buildTrendFilter.matchType.value)
+            buildCountTypeString(buildTrendFilter.buildCountType.value)
+            amountTypeString(buildTrendFilter.amountType.value)
+            amount(buildTrendFilter.amount)
+            statusTypeString(buildTrendFilter.status.value)
         }
     }
 

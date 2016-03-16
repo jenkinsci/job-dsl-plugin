@@ -2,6 +2,9 @@ package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.views.jobfilter.AmountType
+import javaposse.jobdsl.dsl.views.jobfilter.BuildCountType
+import javaposse.jobdsl.dsl.views.jobfilter.BuildStatusType
 import javaposse.jobdsl.dsl.views.jobfilter.RegexMatchValue
 import javaposse.jobdsl.dsl.views.jobfilter.Status
 import spock.lang.Specification
@@ -429,6 +432,51 @@ class ListViewSpec<T extends ListView> extends Specification {
                     }
                 } | [
                 includeExcludeTypeString: 'includeUnmatched'
+        ]
+    }
+
+    def 'build trend filter'(Closure filter, Map children) {
+        when:
+        view.jobFilters(filter)
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node buildTrendFilter = filters[0]
+        buildTrendFilter.name() == 'hudson.views.BuildTrendFilter'
+        buildTrendFilter.children().size() == children.size()
+        children.eachWithIndex { name, value, idx ->
+            assert buildTrendFilter.children()[idx].name() == name
+            assert buildTrendFilter.children()[idx].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('view-job-filters', '1.27')
+
+        where:
+        filter || children
+                { ->
+                    buildTrend()
+                } | [
+                includeExcludeTypeString: 'includeMatched',
+                buildCountTypeString    : 'Latest',
+                amountTypeString        : 'Hours',
+                amount                  : 0.0,
+                statusTypeString        : 'Completed'
+        ]
+                { ->
+                    buildTrend {
+                        matchType(INCLUDE_UNMATCHED)
+                        buildCountType(BuildCountType.AT_LEAST_ONE)
+                        amountType(AmountType.DAYS)
+                        amount(2.5)
+                        status(BuildStatusType.TRIGGERED_BY_REMOTE)
+                    }
+                } | [
+                includeExcludeTypeString: 'includeUnmatched',
+                buildCountTypeString    : 'AtLeastOne',
+                amountTypeString        : 'Days',
+                amount                  : 2.5,
+                statusTypeString        : 'TriggeredByRemote'
         ]
     }
 
