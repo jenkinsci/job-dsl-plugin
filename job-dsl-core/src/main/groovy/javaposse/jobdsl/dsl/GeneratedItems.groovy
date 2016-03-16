@@ -1,8 +1,8 @@
 package javaposse.jobdsl.dsl
 
 class GeneratedItems {
-    Set<GeneratedJob> jobs = []
-    Set<GeneratedView> views = []
-    Set<GeneratedConfigFile> configFiles = []
-    Set<GeneratedUserContent> userContents = []
+    final Set<GeneratedJob> jobs = []
+    final Set<GeneratedView> views = []
+    final Set<GeneratedConfigFile> configFiles = []
+    final Set<GeneratedUserContent> userContents = []
 }

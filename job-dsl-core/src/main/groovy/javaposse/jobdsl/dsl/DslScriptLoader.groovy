@@ -12,7 +12,6 @@ import java.util.logging.Logger
  * Runs provided DSL scripts via an external {@link JobManagement}.
  */
 class DslScriptLoader {
-
     private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.name)
     private static final Comparator<? super Item> ITEM_COMPARATOR = new ItemProcessingOrderComparator()
 
@@ -26,7 +25,7 @@ class DslScriptLoader {
 
     GeneratedItems runScripts(Collection<ScriptRequest> scriptRequests) throws IOException {
         ClassLoader parentClassLoader = DslScriptLoader.classLoader
-        CompilerConfiguration config = createCompilerConfiguration(jobManagement)
+        CompilerConfiguration config = createCompilerConfiguration()
 
         // Otherwise baseScript won't take effect
         GroovyClassLoader groovyClassLoader = new GroovyClassLoader(parentClassLoader, config)
@@ -59,11 +58,18 @@ class DslScriptLoader {
 
                 JobParent jobParent = runScript(scriptRequest, engine)
 
-                boolean ignoreExisting = scriptRequest.ignoreExisting
-                generatedItems.configFiles.addAll(extractGeneratedConfigFiles(jobParent, ignoreExisting))
-                generatedItems.jobs.addAll(extractGeneratedJobs(jobParent, ignoreExisting))
-                generatedItems.views.addAll(extractGeneratedViews(jobParent, ignoreExisting))
-                generatedItems.userContents.addAll(extractGeneratedUserContents(jobParent, ignoreExisting))
+                generatedItems.configFiles.addAll(
+                        extractGeneratedConfigFiles(jobParent.referencedConfigFiles, scriptRequest.ignoreExisting)
+                )
+                generatedItems.jobs.addAll(
+                        extractGeneratedJobs(jobParent.referencedJobs, scriptRequest.ignoreExisting)
+                )
+                generatedItems.views.addAll(
+                        extractGeneratedViews(jobParent.referencedViews, scriptRequest.ignoreExisting)
+                )
+                generatedItems.userContents.addAll(
+                        extractGeneratedUserContents(jobParent.referencedUserContents, scriptRequest.ignoreExisting)
+                )
 
                 scheduleJobsToRun(jobParent.queueToBuild)
             }
@@ -172,56 +178,53 @@ class DslScriptLoader {
         idx > -1 ? fileName[0..idx - 1] : fileName
     }
 
-    private static Set<GeneratedJob> extractGeneratedJobs(JobParent jobParent,
-                                                          boolean ignoreExisting) throws IOException {
-        // Iterate jobs which were setup, save them, and convert to a serializable form
+    private Set<GeneratedJob> extractGeneratedJobs(Set<Item> referencedItems,
+                                                   boolean ignoreExisting) throws IOException {
         Set<GeneratedJob> generatedJobs = new LinkedHashSet<GeneratedJob>()
-        if (jobParent != null) {
-            List<Item> referencedItems = new ArrayList<Item>(jobParent.referencedJobs) // As List
-            Collections.sort(referencedItems, ITEM_COMPARATOR)
-            referencedItems.each { Item item ->
-                String xml = item.xml
-                LOGGER.log(Level.FINE, "Saving item ${item.name} as ${xml}")
-                if (item instanceof Job) {
-                    Job job = (Job) item
-                    if (job.previousNamesRegex != null) {
-                        jobParent.jm.renameJobMatching(job.previousNamesRegex, job.name)
-                    }
+        referencedItems.sort(false, ITEM_COMPARATOR).each { Item item ->
+            String xml = item.xml
+            LOGGER.log(Level.FINE, "Saving item ${item.name} as ${xml}")
+            if (item instanceof Job) {
+                Job job = (Job) item
+                if (job.previousNamesRegex != null) {
+                    jobManagement.renameJobMatching(job.previousNamesRegex, job.name)
                 }
-                jobParent.jm.createOrUpdateConfig(item, ignoreExisting)
-                String templateName = item instanceof Job ? ((Job) item).templateName : null
-                generatedJobs << new GeneratedJob(templateName, item.name)
             }
+            jobManagement.createOrUpdateConfig(item, ignoreExisting)
+            String templateName = item instanceof Job ? ((Job) item).templateName : null
+            generatedJobs << new GeneratedJob(templateName, item.name)
         }
         generatedJobs
     }
 
-    private static Set<GeneratedView> extractGeneratedViews(JobParent jobParent, boolean ignoreExisting) {
+    private Set<GeneratedView> extractGeneratedViews(Set<View> referencedViews, boolean ignoreExisting) {
         Set<GeneratedView> generatedViews = new LinkedHashSet<GeneratedView>()
-        jobParent.referencedViews.each { View view ->
+        referencedViews.each { View view ->
             String xml = view.xml
             LOGGER.log(Level.FINE, "Saving view ${view.name} as ${xml}")
-            jobParent.jm.createOrUpdateView(view.name, xml, ignoreExisting)
+            jobManagement.createOrUpdateView(view.name, xml, ignoreExisting)
             generatedViews << new GeneratedView(view.name)
         }
         generatedViews
     }
 
-    private static Set<GeneratedConfigFile> extractGeneratedConfigFiles(JobParent jobParent, boolean ignoreExisting) {
+    private Set<GeneratedConfigFile> extractGeneratedConfigFiles(Set<ConfigFile> referencedConfigFiles,
+                                                                 boolean ignoreExisting) {
         Set<GeneratedConfigFile> generatedConfigFiles = new LinkedHashSet<GeneratedConfigFile>()
-        jobParent.referencedConfigFiles.each { ConfigFile configFile ->
+        referencedConfigFiles.each { ConfigFile configFile ->
             LOGGER.log(Level.FINE, "Saving config file ${configFile.name}")
-            String id = jobParent.jm.createOrUpdateConfigFile(configFile, ignoreExisting)
+            String id = jobManagement.createOrUpdateConfigFile(configFile, ignoreExisting)
             generatedConfigFiles << new GeneratedConfigFile(id, configFile.name)
         }
         generatedConfigFiles
     }
 
-    private static Set<GeneratedUserContent> extractGeneratedUserContents(JobParent jobParent, boolean ignoreExisting) {
+    private Set<GeneratedUserContent> extractGeneratedUserContents(Set<UserContent> referencedUserContents,
+                                                                   boolean ignoreExisting) {
         Set<GeneratedUserContent> generatedUserContents = new LinkedHashSet<GeneratedUserContent>()
-        jobParent.referencedUserContents.each { UserContent userContent ->
+        referencedUserContents.each { UserContent userContent ->
             LOGGER.log(Level.FINE, "Saving user content ${userContent.path}")
-            jobParent.jm.createOrUpdateUserContent(userContent, ignoreExisting)
+            jobManagement.createOrUpdateUserContent(userContent, ignoreExisting)
             generatedUserContents << new GeneratedUserContent(userContent.path)
         }
         generatedUserContents
@@ -256,7 +259,7 @@ class DslScriptLoader {
         binding
     }
 
-    private static CompilerConfiguration createCompilerConfiguration(JobManagement jobManagement) {
+    private CompilerConfiguration createCompilerConfiguration() {
         CompilerConfiguration config = new CompilerConfiguration(CompilerConfiguration.DEFAULT)
         config.scriptBaseClass = 'javaposse.jobdsl.dsl.JobParent'
 
