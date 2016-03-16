@@ -48,6 +48,8 @@ Try to focus. It's not required to add all options for a certain plugin to get t
 even delay the merge until someone finds time to review a huge change. Only implement the options you really need and
 leave room so that the remaining options can be added when needed.
 
+If the author of a pull request does not respond to comments within 4 weeks, the pull request will be closed. 
+
 ## Our Basic Design Decisions / Conventions
 
 * When creating new classes, use Groovy.
