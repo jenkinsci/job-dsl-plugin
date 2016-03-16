@@ -180,7 +180,7 @@ println content
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine(request, sm)
+        new DslScriptLoader(sm).runScripts([request])
 
         then:
         noExceptionThrown()
@@ -199,7 +199,7 @@ readFileFromWorkspace('bar.txt')
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine(request, sm)
+        new DslScriptLoader(sm).runScripts([request])
 
         then:
         thrown(IOException)
@@ -214,7 +214,7 @@ listView('view-b') {
 '''
 
         when:
-        def views = DslScriptLoader.runDslEngine(scriptStr, jm).views
+        def views = new DslScriptLoader(jm).runScripts([new ScriptRequest(scriptStr)]).views
 
         then:
         views.size() == 2
@@ -231,7 +231,7 @@ folder('folder-b') {
 '''
 
         when:
-        def jobs = DslScriptLoader.runDslEngine(scriptStr, jm).jobs
+        def jobs = new DslScriptLoader(jm).runScripts([new ScriptRequest(scriptStr)]).jobs
 
         then:
         jobs.size() == 2
@@ -336,7 +336,7 @@ folder('folder-b') {
         ScriptRequest request = new ScriptRequest(null, script, resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine request, jm
+        new DslScriptLoader(jm).runScripts([request])
 
         then:
         thrown UnsupportedOperationException

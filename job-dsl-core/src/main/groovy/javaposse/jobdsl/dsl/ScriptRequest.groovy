@@ -16,6 +16,10 @@ class ScriptRequest {
     // Ignore existing jobs
     final boolean ignoreExisting
 
+    ScriptRequest(String body) {
+        this(null, body, new File('.').toURI().toURL())
+    }
+
     ScriptRequest(String location, String body, URL urlRoot) {
         this(location, body, [urlRoot] as URL[])
     }

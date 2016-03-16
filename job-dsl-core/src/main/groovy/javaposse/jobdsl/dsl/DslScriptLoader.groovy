@@ -149,13 +149,11 @@ class DslScriptLoader {
     }
 
     /**
-     * For testing a string directly.
-     *
      * @Deprecated use {@link #runScripts(java.util.Collection)}
      */
     @Deprecated
     static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
-        ScriptRequest scriptRequest = new ScriptRequest(null, scriptBody, new File('.').toURI().toURL())
+        ScriptRequest scriptRequest = new ScriptRequest(scriptBody)
         runDslEngine(scriptRequest, jobManagement)
     }
 

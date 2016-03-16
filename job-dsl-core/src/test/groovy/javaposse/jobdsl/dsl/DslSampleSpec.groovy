@@ -15,7 +15,7 @@ class DslSampleSpec extends Specification {
         jm.availableConfigs['TMPL-test-maven'] = sampleMavenTemplate
 
         when:
-        Set<GeneratedJob> results = DslScriptLoader.runDslEngine(sampleDsl, jm).jobs
+        Set<GeneratedJob> results = new DslScriptLoader(jm).runScripts([new ScriptRequest(sampleDsl)]).jobs
 
         then:
         results != null
@@ -37,7 +37,7 @@ class DslSampleSpec extends Specification {
         jm.parameters.REPO = 'JavaPosseRoundup'
 
         when:
-        Set<GeneratedJob> results = DslScriptLoader.runDslEngine(sampleVarDsl, jm).jobs
+        Set<GeneratedJob> results = new DslScriptLoader(jm).runScripts([new ScriptRequest(sampleVarDsl)]).jobs
 
         then:
         results != null
