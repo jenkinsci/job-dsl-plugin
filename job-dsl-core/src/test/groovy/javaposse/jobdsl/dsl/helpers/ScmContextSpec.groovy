@@ -9,6 +9,8 @@ import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import static javaposse.jobdsl.dsl.helpers.scm.GitMergeOptionsContext.FastForwardMergeMode.FF_ONLY
+
 class ScmContextSpec extends Specification {
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
 
@@ -926,6 +928,40 @@ class ScmContextSpec extends Specification {
     }
 
     def 'call git scm with minimal mergeOptions'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('git', '2.3.5') >> true
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            extensions {
+                mergeOptions {
+                }
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].extensions.size() == 1
+        context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 1
+        with(context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
+            options.size() == 1
+            options[0].children().size() == 4
+            options[0].mergeRemote.size() == 1
+            options[0].mergeRemote[0].text() == ''
+            options[0].mergeTarget.size() == 1
+            options[0].mergeTarget[0].text() == ''
+            options[0].mergeStrategy.size() == 1
+            options[0].mergeStrategy[0].text() == 'default'
+            options[0].fastForwardMode.size() == 1
+            options[0].fastForwardMode[0].text() == 'FF'
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+    }
+
+    def 'call git scm with minimal mergeOptions, plugin version older than 2.3.5'() {
         when:
         context.git {
             remote {
@@ -952,9 +988,13 @@ class ScmContextSpec extends Specification {
             options[0].mergeStrategy[0].text() == 'default'
         }
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * mockJobManagement.isMinimumPluginVersionInstalled('git', '2.3.5')
     }
 
     def 'call git scm with full mergeOptions'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('git', '2.3.5') >> true
+
         when:
         context.git {
             remote {
@@ -964,7 +1004,42 @@ class ScmContextSpec extends Specification {
                 mergeOptions {
                     remote('other')
                     branch('acme-plugin')
-                    strategy(mergeStrategy)
+                    strategy('default')
+                    fastForwardMode(FF_ONLY)
+                }
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].extensions.size() == 1
+        context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 1
+        with(context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
+            options.size() == 1
+            options[0].children().size() == 4
+            options[0].mergeRemote.size() == 1
+            options[0].mergeRemote[0].text() == 'other'
+            options[0].mergeTarget.size() == 1
+            options[0].mergeTarget[0].text() == 'acme-plugin'
+            options[0].mergeStrategy.size() == 1
+            options[0].mergeStrategy[0].text() == 'default'
+            options[0].fastForwardMode.size() == 1
+            options[0].fastForwardMode[0].text() == 'FF_ONLY'
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+    }
+
+    def 'call git scm with full mergeOptions, plugin version older than 2.3.5'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            extensions {
+                mergeOptions {
+                    remote('other')
+                    branch('acme-plugin')
+                    strategy('default')
                 }
             }
         }
@@ -980,6 +1055,25 @@ class ScmContextSpec extends Specification {
             options[0].mergeRemote[0].text() == 'other'
             options[0].mergeTarget.size() == 1
             options[0].mergeTarget[0].text() == 'acme-plugin'
+            options[0].mergeStrategy.size() == 1
+            options[0].mergeStrategy[0].text() == 'default'
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * mockJobManagement.isMinimumPluginVersionInstalled('git', '2.3.5')
+    }
+
+    def 'call git scm with valid merge strategy'() {
+        when:
+        context.git {
+             extensions {
+                mergeOptions {
+                    strategy(mergeStrategy)
+                }
+            }
+        }
+
+        then:
+        with(context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
             options[0].mergeStrategy.size() == 1
             options[0].mergeStrategy[0].text() == mergeStrategy
         }

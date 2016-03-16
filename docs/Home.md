@@ -30,6 +30,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-33416](https://issues.jenkins-ci.org/browse/JENKINS-33416))
  * Improved script execution performance by re-using script engines
    ([#782](https://github.com/jenkinsci/job-dsl-plugin/pull/782))
+ * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
 * 1.44 (March 11 2016)
  * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))

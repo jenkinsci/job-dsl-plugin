@@ -26,6 +26,9 @@ class GitExtensionContext extends AbstractContext {
                 mergeRemote(gitMergeOptionsContext.remote ?: '')
                 mergeTarget(gitMergeOptionsContext.branch ?: '')
                 mergeStrategy(gitMergeOptionsContext.strategy)
+                if (jobManagement.isMinimumPluginVersionInstalled('git', '2.3.5')) {
+                    fastForwardMode(gitMergeOptionsContext.fastForwardMode.name())
+                }
             }
         }
     }
