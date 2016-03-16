@@ -289,6 +289,7 @@ class DslScriptLoader {
         icz.addImports('javaposse.jobdsl.dsl.views.jobfilter.RegexMatchValue')
         icz.addImports('javaposse.jobdsl.dsl.helpers.scm.SvnCheckoutStrategy')
         icz.addImports('javaposse.jobdsl.dsl.helpers.scm.SvnDepth')
+        icz.addImports('javaposse.jobdsl.dsl.helpers.scm.GitMergeOptionsContext.FastForwardMergeMode')
         icz.addImports('javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation')
         icz.addImports('javaposse.jobdsl.dsl.helpers.publisher.WeblogicDeployerContext.WeblogicDeploymentStageModes')
         config.addCompilationCustomizers(icz)
