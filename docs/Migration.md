@@ -1,3 +1,10 @@
+## Migrating to 1.45
+
+### DslScriptLoader
+
+The `runDslEngine` methods in `DslScriptLoader` are [[deprecated|Deprecation-Policy]] and will be removed. Use the new
+`runScripts` method instead.
+
 ## Migrating to 1.44
 
 ### Git

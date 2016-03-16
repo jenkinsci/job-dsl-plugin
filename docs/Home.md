@@ -21,6 +21,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.45 (unreleased)
+ * Improved script execution performance by re-using script engines
+   ([#782](https://github.com/jenkinsci/job-dsl-plugin/pull/782))
 * 1.44 (March 11 2016)
  * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))

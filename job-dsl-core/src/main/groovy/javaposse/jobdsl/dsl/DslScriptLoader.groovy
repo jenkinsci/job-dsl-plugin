@@ -18,11 +18,21 @@ class DslScriptLoader {
     private final JobManagement jobManagement
     private final PrintStream logger
 
+    /**
+     * Creates a new {@link DslScriptLoader} which will use the given {@link JobManagement} instance.
+     *
+     * @since 1.45
+     */
     DslScriptLoader(JobManagement jobManagement) {
         this.jobManagement = jobManagement
         this.logger = jobManagement.outputStream
     }
 
+    /**
+     * Executes the script requests and returns the generated items.
+     *
+     * @since 1.45
+     */
     GeneratedItems runScripts(Collection<ScriptRequest> scriptRequests) throws IOException {
         ClassLoader parentClassLoader = DslScriptLoader.classLoader
         CompilerConfiguration config = createCompilerConfiguration()
