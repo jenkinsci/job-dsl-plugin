@@ -158,7 +158,8 @@ class FooContext {
 ## Compatibility
 
 Any DSL changes should be compatible with release Job DSL Plugin versions. It is possible to introduce incompatible
-changes or remove feature, but only after a deprecation phase. See [[Deprecation-Policy]] for details.
+changes or remove feature, but only after a deprecation phase. See
+[Deprecation Policy](docs/Deprecation-Policy.md) for details.
 
 Commit [5f14949](https://github.com/jenkinsci/job-dsl-plugin/commit/5f14949d386314691270645eb85513254f010400) shows how
 to introduce new configuration options in a backwards-compatible way. A new DSL method must have a
@@ -170,8 +171,8 @@ version. Separate tests for feature requiring a new plugin version must be added
 
 To deprecate support for older plugin versions,
 `JobManagement#logPluginDeprecationWarning(String pluginShortName, String minimumVersion)` must be used to print a
-warning to the console log during the deprecation phase. A section on the [[Migration]] page gives users a hint about
-what to expect when upgrading. See commit
+warning to the console log during the deprecation phase. A section on the [Migration](docs/Migration.md) page gives
+users a hint about what to expect when upgrading. See commit
 [bc64d98](https://github.com/jenkinsci/job-dsl-plugin/commit/bc64d9831c34350d36552727a5dead572d24b70e) for an example.   
 
 ## Code Style
