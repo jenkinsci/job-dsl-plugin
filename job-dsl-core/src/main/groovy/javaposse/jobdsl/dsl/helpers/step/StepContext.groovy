@@ -972,6 +972,8 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.0')
     void dockerBuildAndPublish(@DslContext(DockerBuildAndPublishContext) Closure closure) {
+        jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
+
         DockerBuildAndPublishContext context = new DockerBuildAndPublishContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 

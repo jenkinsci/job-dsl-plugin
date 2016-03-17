@@ -3252,6 +3252,7 @@ class StepContextSpec extends Specification {
             skipTagLatest[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
+        1 * jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
     }
 
     def 'call dockerBuildAndPublish with all options'() {
@@ -3296,6 +3297,7 @@ class StepContextSpec extends Specification {
             skipTagLatest[0].value() == true
         }
         1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
+        1 * jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
     }
 
     def 'call dockerBuildAndPublish with no options and version 1.2'() {
@@ -3327,6 +3329,7 @@ class StepContextSpec extends Specification {
             forceTag[0].value() == true
         }
         1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
+        1 * jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
     }
 
     def 'call dockerBuildAndPublish with all options and version 1.2'() {
@@ -3381,6 +3384,7 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
         3 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.2')
+        1 * jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
     }
 
     def 'call artifactDeployer with no options'() {

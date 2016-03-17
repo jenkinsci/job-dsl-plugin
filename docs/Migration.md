@@ -1,5 +1,11 @@
 ## Migrating to 1.45
 
+### Docker Build and Publish
+
+Support for versions older than 1.2 of the [CloudBees Docker Build and Publish
+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Build+and+Publish+plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ### DslScriptLoader
 
 The `runDslEngine` methods in `DslScriptLoader` are [[deprecated|Deprecation-Policy]] and will be removed. Use the new
