@@ -1,8 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
-class DockerBuildAndPublishContext implements Context {
+class DockerBuildAndPublishContext extends AbstractContext {
     String repositoryName
     String tag
     String dockerHostURI
@@ -17,6 +19,13 @@ class DockerBuildAndPublishContext implements Context {
     boolean skipDecorate
     boolean skipTagAsLatest
     String dockerfileDirectory
+    String buildContext
+    String additionalBuildArgs
+    boolean forceTag = true
+
+    DockerBuildAndPublishContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Specifies the name of the repository to build.
@@ -114,5 +123,35 @@ class DockerBuildAndPublishContext implements Context {
      */
     void dockerfileDirectory(String dockerfileDirectory) {
         this.dockerfileDirectory = dockerfileDirectory
+    }
+
+    /**
+     * Specifies the project root path for the build. Defaults to the workspace root if not specified.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.2')
+    void buildContext(String buildContext) {
+        this.buildContext = buildContext
+    }
+
+    /**
+     * Specifies additional build arguments passed to docker build.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.2')
+    void additionalBuildArgs(String additionalBuildArgs) {
+        this.additionalBuildArgs = additionalBuildArgs
+    }
+
+    /**
+     * If set, forces tag replacement when tag already exists. Defaults to {@code true}.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.2')
+    void forceTag(boolean forceTag = true) {
+        this.forceTag = forceTag
     }
 }

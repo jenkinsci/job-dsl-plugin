@@ -32,6 +32,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#782](https://github.com/jenkinsci/job-dsl-plugin/pull/782))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([#790](https://github.com/jenkinsci/job-dsl-plugin/pull/790))
+ * Enhanced support for the [CloudBees Docker Build and Publish
+   Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Build+and+Publish+plugin)
+   ([JENKINS-33439](https://issues.jenkins-ci.org/browse/JENKINS-33439))
 * 1.44 (March 11 2016)
  * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))
