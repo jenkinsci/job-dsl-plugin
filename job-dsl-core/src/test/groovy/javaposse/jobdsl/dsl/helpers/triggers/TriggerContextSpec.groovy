@@ -5,6 +5,12 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
+import static javaposse.jobdsl.dsl.helpers.triggers.BuildResultTriggerContext.BuildResult.ABORTED
+import static javaposse.jobdsl.dsl.helpers.triggers.BuildResultTriggerContext.BuildResult.FAILURE
+import static javaposse.jobdsl.dsl.helpers.triggers.BuildResultTriggerContext.BuildResult.NOT_BUILT
+import static javaposse.jobdsl.dsl.helpers.triggers.BuildResultTriggerContext.BuildResult.SUCCESS
+import static javaposse.jobdsl.dsl.helpers.triggers.BuildResultTriggerContext.BuildResult.UNSTABLE
+
 class TriggerContextSpec extends Specification {
     JobManagement mockJobManagement = Mock(JobManagement)
     Item item = Mock(Item)
@@ -421,5 +427,197 @@ class TriggerContextSpec extends Specification {
 
         then:
         thrown(DslScriptException)
+    }
+
+    def 'call build result trigger without job trigger'() {
+        when:
+        context.buildResult('H/10 * * * *') {
+            combinedJobs()
+        }
+
+        then:
+        context.triggerNodes.size() == 1
+        with(context.triggerNodes[0]) {
+            name() == 'org.jenkinsci.plugins.buildresulttrigger.BuildResultTrigger'
+            children().size() == 3
+            spec[0].value() == 'H/10 * * * *'
+            combinedJobs[0].value() == true
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('buildresult-trigger', '0.17')
+    }
+
+    def 'call build result trigger with multiple job triggers'() {
+        when:
+        context.buildResult('H/10 * * * *') {
+            combinedJobs()
+            triggerInfo('My job 1', SUCCESS, UNSTABLE, FAILURE, NOT_BUILT, ABORTED)
+            triggerInfo('My job 2', SUCCESS, UNSTABLE, FAILURE, NOT_BUILT)
+            triggerInfo('My job 3', SUCCESS, UNSTABLE, FAILURE)
+            triggerInfo('My job 4', SUCCESS, UNSTABLE)
+        }
+
+        then:
+        context.triggerNodes.size() == 1
+        with(context.triggerNodes[0]) {
+            name() == 'org.jenkinsci.plugins.buildresulttrigger.BuildResultTrigger'
+            children().size() == 3
+            spec[0].value() == 'H/10 * * * *'
+            combinedJobs[0].value() == true
+            with(jobsInfo[0]) {
+                name() == 'jobsInfo'
+                children().size() == 4
+                with(children()[0]) {
+                    name() == 'org.jenkinsci.plugins.buildresulttrigger.model.BuildResultTriggerInfo'
+                    children().size() == 2
+                    jobNames[0].value() == 'My job 1'
+                    with(checkedResults[0]) {
+                        children().size() == 5
+                        with(children()[0]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'SUCCESS'
+                        }
+                        with(children()[1]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'UNSTABLE'
+                        }
+                        with(children()[2]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'FAILURE'
+                        }
+                        with(children()[3]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'NOT_BUILT'
+                        }
+                        with(children()[4]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'ABORTED'
+                        }
+                    }
+                }
+                with(children()[1]) {
+                    name() == 'org.jenkinsci.plugins.buildresulttrigger.model.BuildResultTriggerInfo'
+                    children().size() == 2
+                    jobNames[0].value() == 'My job 2'
+                    with(checkedResults[0]) {
+                        children().size() == 4
+                        with(children()[0]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'SUCCESS'
+                        }
+                        with(children()[1]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'UNSTABLE'
+                        }
+                        with(children()[2]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'FAILURE'
+                        }
+                        with(children()[3]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'NOT_BUILT'
+                        }
+                    }
+                }
+                with(children()[2]) {
+                    name() == 'org.jenkinsci.plugins.buildresulttrigger.model.BuildResultTriggerInfo'
+                    children().size() == 2
+                    jobNames[0].value() == 'My job 3'
+                    with(checkedResults[0]) {
+                        children().size() == 3
+                        with(children()[0]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'SUCCESS'
+                        }
+                        with(children()[1]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'UNSTABLE'
+                        }
+                        with(children()[2]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'FAILURE'
+                        }
+                    }
+                }
+                with(children()[3]) {
+                    name() == 'org.jenkinsci.plugins.buildresulttrigger.model.BuildResultTriggerInfo'
+                    children().size() == 2
+                    jobNames[0].value() == 'My job 4'
+                    with(checkedResults[0]) {
+                        children().size() == 2
+                        with(children()[0]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'SUCCESS'
+                        }
+                        with(children()[1]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'UNSTABLE'
+                        }
+                    }
+                }
+            }
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('buildresult-trigger', '0.17')
+    }
+
+    def 'call build result trigger with default build result'() {
+        when:
+        context.buildResult('H/10 * * * *') {
+            combinedJobs()
+            triggerInfo('My job 1')
+        }
+
+        then:
+        context.triggerNodes.size() == 1
+        with(context.triggerNodes[0]) {
+            name() == 'org.jenkinsci.plugins.buildresulttrigger.BuildResultTrigger'
+            children().size() == 3
+            spec[0].value() == 'H/10 * * * *'
+            combinedJobs[0].value() == true
+            with(jobsInfo[0]) {
+                name() == 'jobsInfo'
+                children().size() == 1
+                with(children()[0]) {
+                    name() == 'org.jenkinsci.plugins.buildresulttrigger.model.BuildResultTriggerInfo'
+                    children().size() == 2
+                    jobNames[0].value() == 'My job 1'
+                    with(checkedResults[0]) {
+                        children().size() == 1
+                        with(children()[0]) {
+                            name() == 'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult'
+                            children().size() == 1
+                            checked[0].value() == 'SUCCESS'
+                        }
+                    }
+                }
+            }
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('buildresult-trigger', '0.17')
+    }
+
+    def 'call build result trigger without jobs names'() {
+        when:
+        context.buildResult('H/10 * * * *') {
+            combinedJobs()
+            triggerInfo('')
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'Jobs names are required!'
+        1 * mockJobManagement.requireMinimumPluginVersion('buildresult-trigger', '0.17')
     }
 }
