@@ -7,6 +7,8 @@ import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode
+import static javaposse.jobdsl.dsl.helpers.publisher.HipChatPublisherContext.NotificationType
+import static javaposse.jobdsl.dsl.helpers.publisher.HipChatPublisherContext.NotificationColor
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.MarkUnstable
 import static javaposse.jobdsl.dsl.helpers.publisher.WeblogicDeployerContext.WeblogicDeploymentStageModes
 
@@ -4944,34 +4946,31 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'jenkins.plugins.hipchat.HipChatNotifier'
-            children().size() == 11
+            children().size() == 5
             token[0].value() == ''
             room[0].value() == ''
-            startNotification[0].value() == false
-            notifySuccess[0].value() == false
-            notifyAborted[0].value() == false
-            notifyNotBuilt[0].value() == false
-            notifyUnstable[0].value() == false
-            notifyFailure[0].value() == false
-            notifyBackToNormal[0].value() == false
+            notifications[0].children().size() == 0
             startJobMessage[0].value() == ''
             completeJobMessage[0].value() == ''
         }
-        1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
+        1 * jobManagement.requireMinimumPluginVersion('hipchat', '1.0.0')
     }
 
-    def 'hipChat notification with all options'() {
+    def 'hipChat notification with multiple options'() {
         when:
         context.hipChat {
             rooms('foo', 'bar')
             token('abcd')
-            notifyBuildStart()
-            notifySuccess()
-            notifyAborted()
-            notifyNotBuilt()
-            notifyUnstable()
-            notifyFailure()
-            notifyBackToNormal()
+            notification(NotificationType.STARTED, NotificationColor.GRAY) {
+                messageTemplate('Custom format 1')
+                notifyEnabled(false)
+                textFormat(false)
+            }
+            notification(notificationTypeEnum, notificationColorEnum) {
+                messageTemplate('Custom format 2')
+                notifyEnabled(true)
+                textFormat(true)
+            }
             startJobMessage('JOB AT $URL')
             completeJobMessage('JOB DONE! $URL')
         }
@@ -4979,20 +4978,42 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'jenkins.plugins.hipchat.HipChatNotifier'
-            children().size() == 11
+            children().size() == 5
             token[0].value() == 'abcd'
             room[0].value() == 'foo,bar'
-            startNotification[0].value() == true
-            notifySuccess[0].value() == true
-            notifyAborted[0].value() == true
-            notifyNotBuilt[0].value() == true
-            notifyUnstable[0].value() == true
-            notifyFailure[0].value() == true
-            notifyBackToNormal[0].value() == true
             startJobMessage[0].value() == 'JOB AT $URL'
             completeJobMessage[0].value() == 'JOB DONE! $URL'
+            notifications[0].children().size() == 2
+            with(notifications[0].children()[0]) {
+                name() == 'jenkins.plugins.hipchat.model.NotificationConfig'
+                children().size() == 5
+                notificationType[0].value() == 'STARTED'
+                color[0].value() == 'GRAY'
+                notifyEnabled[0].value() == false
+                textFormat[0].value() == false
+                messageTemplate[0].value() == 'Custom format 1'
+            }
+            with(notifications[0].children()[1]) {
+                name() == 'jenkins.plugins.hipchat.model.NotificationConfig'
+                children().size() == 5
+                notificationType[0].value() == notificationTypeString
+                color[0].value() == notificationColorString
+                notifyEnabled[0].value() == true
+                textFormat[0].value() == true
+                messageTemplate[0].value() == 'Custom format 2'
+            }
         }
-        1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
+        1 * jobManagement.requireMinimumPluginVersion('hipchat', '1.0.0')
+
+        where:
+        notificationTypeEnum            | notificationColorEnum    || notificationTypeString    | notificationColorString
+        NotificationType.SUCCESS        | NotificationColor.GREEN  || 'SUCCESS'                 | 'GREEN'
+        NotificationType.BACK_TO_NORMAL | NotificationColor.RED    || 'BACK_TO_NORMAL'          | 'RED'
+        NotificationType.FAILURE        | NotificationColor.PURPLE || 'FAILURE'                 | 'PURPLE'
+        NotificationType.NOT_BUILT      | NotificationColor.RANDOM || 'NOT_BUILT'               | 'RANDOM'
+        NotificationType.ABORTED        | NotificationColor.GRAY   || 'ABORTED'                 | 'GRAY'
+        NotificationType.UNSTABLE       | NotificationColor.YELLOW || 'UNSTABLE'                | 'YELLOW'
+
     }
 
     def 'mattermost notification with no options'() {

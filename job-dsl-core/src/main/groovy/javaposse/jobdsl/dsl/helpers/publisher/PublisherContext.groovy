@@ -1560,7 +1560,7 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.33
      */
-    @RequiresPlugin(id = 'hipchat', minimumVersion = '0.1.9')
+    @RequiresPlugin(id = 'hipchat', minimumVersion = '1.0.0')
     void hipChat(@DslContext(HipChatPublisherContext) Closure hipChatClosure = null) {
         HipChatPublisherContext hipChatContext = new HipChatPublisherContext()
         ContextHelper.executeInContext(hipChatClosure, hipChatContext)
@@ -1568,15 +1568,9 @@ class PublisherContext extends AbstractExtensibleContext {
         publisherNodes << new NodeBuilder().'jenkins.plugins.hipchat.HipChatNotifier' {
             token(hipChatContext.token ?: '')
             room(hipChatContext.rooms.join(','))
-            startNotification(hipChatContext.notifyBuildStart)
-            notifySuccess(hipChatContext.notifySuccess)
-            notifyAborted(hipChatContext.notifyAborted)
-            notifyNotBuilt(hipChatContext.notifyNotBuilt)
-            notifyUnstable(hipChatContext.notifyUnstable)
-            notifyFailure(hipChatContext.notifyFailure)
-            notifyBackToNormal(hipChatContext.notifyBackToNormal)
             startJobMessage(hipChatContext.startJobMessage ?: '')
             completeJobMessage(hipChatContext.completeJobMessage ?: '')
+            delegate.notifications(hipChatContext.notificationNodes)
         }
     }
 

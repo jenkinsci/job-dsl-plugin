@@ -1,17 +1,17 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
+
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 
 class HipChatPublisherContext implements Context {
+
+    List<Node> notificationNodes = []
+
     String token
     List<String> rooms = []
-    boolean notifyBuildStart
-    boolean notifySuccess
-    boolean notifyAborted
-    boolean notifyNotBuilt
-    boolean notifyUnstable
-    boolean notifyFailure
-    boolean notifyBackToNormal
     String startJobMessage
     String completeJobMessage
 
@@ -34,55 +34,6 @@ class HipChatPublisherContext implements Context {
     }
 
     /**
-     * Sends a notification when the build starts. Defaults to {@code false}.
-     */
-    void notifyBuildStart(boolean notifyBuildStart = true) {
-        this.notifyBuildStart = notifyBuildStart
-    }
-
-    /**
-     * Sends a notification when the build is successful. Defaults to {@code false}.
-     */
-    void notifySuccess(boolean notifySuccess = true) {
-        this.notifySuccess = notifySuccess
-    }
-
-    /**
-     * Sends a notification when the build is aborted. Defaults to {@code false}.
-     */
-    void notifyAborted(boolean notifyAborted = true) {
-        this.notifyAborted = notifyAborted
-    }
-
-    /**
-     * Sends a notification when the build is not run. Defaults to {@code false}.
-     */
-    void notifyNotBuilt(boolean notifyNotBuilt = true) {
-        this.notifyNotBuilt = notifyNotBuilt
-    }
-
-    /**
-     * Sends a notification when the build is unstable. Defaults to {@code false}.
-     */
-    void notifyUnstable(boolean notifyUnstable = true) {
-        this.notifyUnstable = notifyUnstable
-    }
-
-    /**
-     * Sends a notification when the build is failed. Defaults to {@code false}.
-     */
-    void notifyFailure(boolean notifyFailure = true) {
-        this.notifyFailure = notifyFailure
-    }
-
-    /**
-     * Sends a notification when the build is back to normal. Defaults to {@code false}.
-     */
-    void notifyBackToNormal(boolean notifyBackToNormal = true) {
-        this.notifyBackToNormal = notifyBackToNormal
-    }
-
-    /**
      * Configures the message that will be displayed in the room when the build starts.
      */
     void startJobMessage(String startJobMessage) {
@@ -94,5 +45,64 @@ class HipChatPublisherContext implements Context {
      */
     void completeJobMessage(String completeJobMessage) {
         this.completeJobMessage = completeJobMessage
+    }
+
+    /**
+     * Adds a notification. Can be called multiple times to add more notifications.
+     */
+    void notification(NotificationType notificationType, NotificationColor notificationColor,
+                      @DslContext(HipChatPublisherNotificationContext) Closure notifyClosure) {
+        checkNotNull(notificationType, 'Notification type must be specified')
+        checkNotNull(notificationType, 'Notification color must be specified')
+
+        HipChatPublisherNotificationContext context = new HipChatPublisherNotificationContext()
+        ContextHelper.executeInContext(notifyClosure, context)
+
+        def notifyTypes = NotificationType.FAILURE..NotificationType.UNSTABLE
+        def notifyEnable = context.notifyEnabled ?: notifyTypes.contains(notificationType) ? true : false
+        this.notificationNodes << new NodeBuilder().'jenkins.plugins.hipchat.model.NotificationConfig' {
+            notifyEnabled(notifyEnable)
+            textFormat(context.textFormat)
+            delegate.notificationType(notificationType.type)
+            color(notificationColor.color)
+            messageTemplate(context.messageTemplate ?: '')
+        }
+    }
+
+    /**
+     * Valid notification types.
+     */
+    static enum NotificationType {
+        STARTED('STARTED'),
+        SUCCESS('SUCCESS'),
+        BACK_TO_NORMAL('BACK_TO_NORMAL'),
+        FAILURE('FAILURE'),
+        NOT_BUILT('NOT_BUILT'),
+        ABORTED('ABORTED'),
+        UNSTABLE('UNSTABLE')
+
+        final String type
+
+        NotificationType(String type) {
+            this.type = type
+        }
+    }
+
+    /**
+     * Valid notification colors.
+     */
+    static enum NotificationColor {
+        YELLOW('YELLOW'),
+        GREEN('GREEN'),
+        RED('RED'),
+        PURPLE('PURPLE'),
+        GRAY('GRAY'),
+        RANDOM('RANDOM')
+
+        final String color
+
+        NotificationColor(String color) {
+            this.color = color
+        }
     }
 }

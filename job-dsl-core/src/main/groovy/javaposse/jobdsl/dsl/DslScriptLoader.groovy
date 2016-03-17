@@ -292,6 +292,8 @@ class DslScriptLoader {
         icz.addImports('javaposse.jobdsl.dsl.helpers.scm.GitMergeOptionsContext.FastForwardMergeMode')
         icz.addImports('javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation')
         icz.addImports('javaposse.jobdsl.dsl.helpers.publisher.WeblogicDeployerContext.WeblogicDeploymentStageModes')
+        icz.addImports('javaposse.jobdsl.dsl.helpers.publisher.HipChatPublisherContext.NotificationType')
+        icz.addImports('javaposse.jobdsl.dsl.helpers.publisher.HipChatPublisherContext.NotificationColor')
         config.addCompilationCustomizers(icz)
 
         config.output = new PrintWriter(jobManagement.outputStream) // This seems to do nothing
