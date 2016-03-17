@@ -17,7 +17,7 @@ Maven:
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>job-dsl</artifactId>
-                <version>1.40</version>
+                <version>1.44</version>
                 <optional>true</optional>
             </dependency>
             ...
