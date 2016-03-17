@@ -972,7 +972,9 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.0')
     void dockerBuildAndPublish(@DslContext(DockerBuildAndPublishContext) Closure closure) {
-        DockerBuildAndPublishContext context = new DockerBuildAndPublishContext()
+        jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
+
+        DockerBuildAndPublishContext context = new DockerBuildAndPublishContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         stepNodes << new NodeBuilder().'com.cloudbees.dockerpublish.DockerBuilder' {
@@ -1002,6 +1004,11 @@ class StepContext extends AbstractExtensibleContext {
             skipPush(context.skipPush)
             createFingerprint(context.createFingerprints)
             skipTagLatest(context.skipTagAsLatest)
+            if (jobManagement.isMinimumPluginVersionInstalled('docker-build-publish', '1.2')) {
+                buildContext(context.buildContext ?: '')
+                buildAdditionalArgs(context.additionalBuildArgs ?: '')
+                forceTag(context.forceTag)
+            }
         }
     }
 

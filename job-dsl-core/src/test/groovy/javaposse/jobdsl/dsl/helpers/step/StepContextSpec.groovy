@@ -3252,6 +3252,7 @@ class StepContextSpec extends Specification {
             skipTagLatest[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
+        1 * jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
     }
 
     def 'call dockerBuildAndPublish with all options'() {
@@ -3296,6 +3297,94 @@ class StepContextSpec extends Specification {
             skipTagLatest[0].value() == true
         }
         1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
+        1 * jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
+    }
+
+    def 'call dockerBuildAndPublish with no options and version 1.2'() {
+        jobManagement.isMinimumPluginVersionInstalled('docker-build-publish', '1.2') >> true
+
+        when:
+        context.dockerBuildAndPublish {
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'com.cloudbees.dockerpublish.DockerBuilder'
+            children().size() == 15
+            server[0].value().empty
+            registry[0].value().empty
+            repoName[0].value().empty
+            noCache[0].value() == false
+            forcePull[0].value() == true
+            dockerfilePath[0].value().empty
+            skipBuild[0].value() == false
+            skipDecorate[0].value() == false
+            repoTag[0].value().empty
+            skipPush[0].value() == false
+            createFingerprint[0].value() == true
+            skipTagLatest[0].value() == false
+            buildContext[0].value().empty
+            buildAdditionalArgs[0].value().empty
+            forceTag[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
+        1 * jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
+    }
+
+    def 'call dockerBuildAndPublish with all options and version 1.2'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('docker-build-publish', '1.2') >> true
+
+        when:
+        context.dockerBuildAndPublish {
+            repositoryName('test1')
+            tag('test2')
+            dockerHostURI('test3')
+            serverCredentials('test4')
+            dockerRegistryURL('test5')
+            registryCredentials('test6')
+            skipPush()
+            noCache()
+            forcePull(false)
+            skipBuild()
+            createFingerprints(false)
+            skipDecorate()
+            skipTagAsLatest()
+            dockerfileDirectory('test7')
+            buildContext('test8')
+            additionalBuildArgs('test9')
+            forceTag(false)
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'com.cloudbees.dockerpublish.DockerBuilder'
+            children().size() == 15
+            server[0].children().size() == 2
+            server[0].uri[0].value() == 'test3'
+            server[0].credentialsId[0].value() == 'test4'
+            registry[0].children().size() == 2
+            registry[0].url[0].value() == 'test5'
+            registry[0].credentialsId[0].value() == 'test6'
+            repoName[0].value() == 'test1'
+            noCache[0].value() == true
+            forcePull[0].value() == false
+            dockerfilePath[0].value() == 'test7'
+            skipBuild[0].value() == true
+            skipDecorate[0].value() == true
+            repoTag[0].value() == 'test2'
+            skipPush[0].value() == true
+            createFingerprint[0].value() == false
+            skipTagLatest[0].value() == true
+            buildContext[0].value() == 'test8'
+            buildAdditionalArgs[0].value() == 'test9'
+            forceTag[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
+        3 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.2')
+        1 * jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
     }
 
     def 'call artifactDeployer with no options'() {
