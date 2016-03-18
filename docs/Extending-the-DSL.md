@@ -60,6 +60,8 @@ contexts:
 * `javaposse.jobdsl.dsl.helpers.IvyBuilderContext` for the `ivyBuilder` context of Ivy jobs
 * `javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerParameterContext` for the `parameters` context of parameterized
   triggers
+* `javaposse.jobdsl.dsl.helpers.toplevel.EnvironmentVariableContributorsContext` for the `contributors` context within
+  the `environmentVariables` context
 
 The parameters of the `@DslExtensionMethod` annotated method are the same parameters that will be available in the DSL.
 Have a look at the [DSL Design](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md#dsl-design)

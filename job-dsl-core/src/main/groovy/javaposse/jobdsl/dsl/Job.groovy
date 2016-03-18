@@ -89,7 +89,7 @@ abstract class Job extends Item {
     @RequiresPlugin(id = 'envinject')
     void environmentVariables(Map<Object, Object> vars,
                               @DslContext(EnvironmentVariableContext) Closure envClosure = null) {
-        EnvironmentVariableContext envContext = new EnvironmentVariableContext(jobManagement)
+        EnvironmentVariableContext envContext = new EnvironmentVariableContext(jobManagement, this)
         if (vars) {
             envContext.envs(vars)
         }
