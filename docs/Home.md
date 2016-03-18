@@ -21,6 +21,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.45 (unreleased)
+ * Added support for the
+   [BuildResultTrigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/BuildResultTrigger+Plugin)
+   ([JENKINS-33463](https://issues.jenkins-ci.org/browse/JENKINS-33463))
  * Enhanced documentation for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([JENKINS-33482](https://issues.jenkins-ci.org/browse/JENKINS-33482))
  * Enhanced support for [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)

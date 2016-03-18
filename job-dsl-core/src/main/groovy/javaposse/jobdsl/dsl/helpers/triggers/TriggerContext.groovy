@@ -221,4 +221,38 @@ class TriggerContext extends ItemTriggerContext {
             acceptMergeRequestOnSuccess(context.acceptMergeRequestOnSuccess)
         }
     }
+
+    /**
+     * Trigger that runs jobs on build results of others jobs
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'buildresult-trigger', minimumVersion = '0.17')
+    void buildResult(String crontab, @DslContext(BuildResultTriggerContext) Closure closure) {
+        BuildResultTriggerContext context = new BuildResultTriggerContext()
+        ContextHelper.executeInContext(closure, context)
+
+        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.buildresulttrigger.BuildResultTrigger' {
+            spec(crontab ?: '')
+            combinedJobs(context.combinedJobs)
+            if (context.buildResultInfos) {
+                jobsInfo {
+                    context.buildResultInfos.each { jobsNames, buildResults ->
+                        'org.jenkinsci.plugins.buildresulttrigger.model.BuildResultTriggerInfo' {
+                            jobNames(jobsNames)
+                            if (buildResults) {
+                                checkedResults {
+                                    buildResults.each { buildResult ->
+                                        'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult' {
+                                            checked(buildResult.name())
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
