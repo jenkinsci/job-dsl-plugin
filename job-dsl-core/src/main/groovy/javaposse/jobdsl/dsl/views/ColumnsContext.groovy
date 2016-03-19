@@ -95,9 +95,21 @@ class ColumnsContext extends AbstractContext {
      *
      * @since 1.31
      */
-    @RequiresPlugin(id = 'build-node-column', minimumVersion = '0.1')
     void lastBuildNode() {
-        columnNodes << new Node(null, 'org.jenkins.plugins.column.LastBuildNodeColumn')
+        // TODO after deprecated period, refactor this method
+        boolean extraPlugin = jobManagement.isMinimumPluginVersionInstalled('extra-columns', '1.16')
+
+        if (extraPlugin) {
+            columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastBuildNodeColumn')
+        } else {
+            boolean deprecatedPlugin = jobManagement.isMinimumPluginVersionInstalled('build-node-column', '0.1')
+            if (deprecatedPlugin) {
+                jobManagement.logDeprecationWarning('build-node-column')
+                columnNodes << new Node(null, 'org.jenkins.plugins.column.LastBuildNodeColumn')
+            } else {
+                jobManagement.requireMinimumPluginVersion('extra-columns', '1.16')
+            }
+        }
     }
 
     /**

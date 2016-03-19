@@ -198,7 +198,11 @@ class ListViewSpec<T extends ListView> extends Specification {
         root.columns[0].children.size() == 0
     }
 
-    def 'add all columns'() {
+    def 'add several columns with deprecated build-node-column plugin'() {
+        given:
+        jobManagement.isMinimumPluginVersionInstalled('build-node-column', '0.1') >> true
+        jobManagement.isMinimumPluginVersionInstalled('extra-columns', '1.16') >> false
+
         when:
         view.columns {
             status()
@@ -231,7 +235,49 @@ class ListViewSpec<T extends ListView> extends Specification {
         root.columns[0].value()[9].name() == 'org.jenkinsci.plugins.categorizedview.IndentedJobColumn'
         root.columns[0].value()[10].name() == 'hudson.plugins.CronViewColumn'
         root.columns[0].value()[11].name() == 'org.jenkins.ci.plugins.progress__bar.ProgressBarColumn'
-        1 * jobManagement.requireMinimumPluginVersion('build-node-column', '0.1')
+        1 * jobManagement.logDeprecationWarning('build-node-column')
+        1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
+        1 * jobManagement.requirePlugin('claim')
+    }
+
+    def 'add several columns'() {
+        given:
+        jobManagement.isMinimumPluginVersionInstalled('extra-columns', '1.16') >> true
+
+        when:
+        view.columns {
+            status()
+            weather()
+            name()
+            lastSuccess()
+            lastFailure()
+            lastDuration()
+            buildButton()
+            claim()
+            lastBuildNode()
+            categorizedJob()
+            cronTrigger()
+            progressBar()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        with(root.columns[0]) {
+            value().size() == 12
+            value()[0].name() == 'hudson.views.StatusColumn'
+            value()[1].name() == 'hudson.views.WeatherColumn'
+            value()[2].name() == 'hudson.views.JobColumn'
+            value()[3].name() == 'hudson.views.LastSuccessColumn'
+            value()[4].name() == 'hudson.views.LastFailureColumn'
+            value()[5].name() == 'hudson.views.LastDurationColumn'
+            value()[6].name() == 'hudson.views.BuildButtonColumn'
+            value()[7].name() == 'hudson.plugins.claim.ClaimColumn'
+            value()[8].name() == 'jenkins.plugins.extracolumns.LastBuildNodeColumn'
+            value()[9].name() == 'org.jenkinsci.plugins.categorizedview.IndentedJobColumn'
+            value()[10].name() == 'hudson.plugins.CronViewColumn'
+            value()[11].name() == 'org.jenkins.ci.plugins.progress__bar.ProgressBarColumn'
+        }
         1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
         1 * jobManagement.requirePlugin('claim')
     }
@@ -279,6 +325,22 @@ class ListViewSpec<T extends ListView> extends Specification {
         root.columns[0].value().size() == 1
         root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.ConfigureProjectColumn'
         1 * jobManagement.requirePlugin('extra-columns')
+    }
+
+    def 'last build node column'() {
+        given:
+        jobManagement.isMinimumPluginVersionInstalled('extra-columns', '1.16') >> true
+
+        when:
+        view.columns {
+            lastBuildNode()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.LastBuildNodeColumn'
     }
 
     def 'robotResults column'() {
