@@ -158,4 +158,32 @@ class ColumnsContext extends AbstractContext {
     void jacoco() {
         columnNodes << new Node(null, 'hudson.plugins.jacococoveragecolumn.JaCoCoColumn')
     }
+    /**
+     * Adds a column showing a single build parameter or all build parameters of the current/last build.
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.13')
+    void buildParameters(String parameter = '') {
+        columnNodes << new NodeBuilder().'jenkins.plugins.extracolumns.BuildParametersColumn' {
+            singlePara(parameter != '' && parameter)
+            parameterName(parameter)
+        }
+    }
+
+    /**
+     * Adds a column showing a link to the workspace.
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.15')
+    void workspace() {
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.WorkspaceColumn')
+    }
+
+    /**
+     * Adds a column showing a button or an icon for disabling/enabling a project.
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.7')
+    void disableProject(boolean icon = false) {
+        columnNodes << new NodeBuilder().'jenkins.plugins.extracolumns.DisableProjectColumn' {
+            useIcon(icon)
+        }
+    }
 }
