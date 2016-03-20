@@ -585,6 +585,20 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('custom-job-icon', '0.2')
     }
 
+    def 'release button column'() {
+        when:
+        view.columns {
+            releaseButton()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'hudson.plugins.release.ReleaseButtonColumn'
+        1 * jobManagement.requireMinimumPluginVersion('release', '2.3')
+    }
+
     def 'jacoco column'() {
         when:
         view.columns {

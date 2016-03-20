@@ -130,7 +130,7 @@ class ColumnsContext extends AbstractContext {
     }
 
     /**
-     * Adds a column showing showing job's cron trigger expression.
+     * Adds a column showing job's cron trigger expression.
      *
      * @since 1.39
      */
@@ -147,6 +147,14 @@ class ColumnsContext extends AbstractContext {
     @RequiresPlugin(id = 'progress-bar-column-plugin', minimumVersion = '1.0')
     void progressBar() {
         columnNodes << new Node(null, 'org.jenkins.ci.plugins.progress__bar.ProgressBarColumn')
+    }
+
+    /**
+     * Adds a column showing a release button.
+     */
+    @RequiresPlugin(id = 'release', minimumVersion = '2.3')
+    void releaseButton() {
+        columnNodes << new Node(null, 'hudson.plugins.release.ReleaseButtonColumn')
     }
 
     /**
