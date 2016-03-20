@@ -158,4 +158,29 @@ class ColumnsContext extends AbstractContext {
     void jacoco() {
         columnNodes << new Node(null, 'hudson.plugins.jacococoveragecolumn.JaCoCoColumn')
     }
+
+    /**
+     * Adds a column showing build processor or build processor label restrictions of a job.
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.14')
+    void slaveOrLabel() {
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.SlaveOrLabelColumn')
+    }
+
+    /**
+     * Adds a column showing the name of the user that started the last build.
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.16')
+    void userName() {
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.UserNameColumn')
+    }
+
+    /**
+     * Adds a column showing the date of the last job configuration modification.
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.14')
+    void lastConfigurationModification() {
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastJobConfigurationModificationColumn')
+    }
+
 }
