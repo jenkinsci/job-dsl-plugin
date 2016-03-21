@@ -32,6 +32,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin)
    ([JENKINS-33416](https://issues.jenkins-ci.org/browse/JENKINS-33416),
    [JENKINS-33675](https://issues.jenkins-ci.org/browse/JENKINS-33675))
+ * Enhanced support for the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin)
+   ([JENKINS-33676](https://issues.jenkins-ci.org/browse/JENKINS-33676))
  * Improved script execution performance by re-using script engines
    ([#782](https://github.com/jenkinsci/job-dsl-plugin/pull/782))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)

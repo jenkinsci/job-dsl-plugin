@@ -613,6 +613,48 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('jacoco', '1.0.10')
     }
 
+    def 'slave or label column'() {
+        when:
+        view.columns {
+            slaveOrLabel()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.SlaveOrLabelColumn'
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.14')
+    }
+
+    def 'user name column'() {
+        when:
+        view.columns {
+            userName()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.UserNameColumn'
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.16')
+    }
+
+    def 'last configuration modification column'() {
+        when:
+        view.columns {
+            lastConfigurationModification()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.LastJobConfigurationModificationColumn'
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.14')
+    }
+
     protected String getDefaultXml() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
