@@ -12,6 +12,8 @@ import javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerParameterContext
 class PhaseJobContext extends AbstractContext {
     private static final List<String> VALID_KILL_CONDITIONS = ['FAILURE', 'NEVER', 'UNSTABLE']
 
+    private static final List<String> VALID_RESUME_CONDITIONS = ['SKIP', 'ALWAYS', 'EXPRESSION']
+
     String jobName
     boolean currentJobParameters = true
     boolean exposedScm = true
@@ -19,10 +21,18 @@ class PhaseJobContext extends AbstractContext {
     boolean disableJob = false
     boolean abortAllJobs = false
     String killPhaseCondition = 'FAILURE'
+    String resumeCondition = 'SKIP'
     Boolean enableJobScript = null
     boolean isUseScriptFile = false
     String jobScript
     String scriptPath
+    Boolean isUseResumeScriptFile
+    String resumeScriptText
+    String resumeScriptPath
+    String resumeBindings = ''
+    String jobBindings = ''
+    String resumeConditions = null
+
     Closure configureClosure
 
     PhaseJobContext(JobManagement jobManagement, Item item, String jobName) {
@@ -67,6 +77,59 @@ class PhaseJobContext extends AbstractContext {
             isUseScriptFile = ''
         } else {
             enableJobScript = false
+        }
+    }
+
+    void resumeCondition(String resumeCondition) {
+        Preconditions.checkArgument(
+                VALID_RESUME_CONDITIONS.contains(resumeCondition),
+                "Resume condition needs to be one of these values: ${VALID_RESUME_CONDITIONS.join(',')}"
+        )
+
+        this.resumeCondition = resumeCondition
+    }
+
+    void resumeGroovyScript(String source, String value) {
+        this.isUseResumeScriptFile = false
+        if ('FILE' == source) {
+            this.resumeScriptPath = value
+            this.isUseResumeScriptFile = true
+        } else if ('SCRIPT' == source) {
+            this.resumeScriptText = value
+        }
+    }
+
+    void bindVar(String source, String key, String value) {
+        if ('RESUME' == source) {
+            if (null == resumeBindings) {
+                resumeBindings = ''
+            }
+            resumeBindings += key + '=' + value + '\n'
+            //resumeBindings.concat(key).concat('=').concat(value).concat('\n')
+        } else if ('JOB' == source) {
+            if (null == jobBindings) {
+                jobBindings = ''
+            }
+            jobBindings += key + '=' + value + '\n'
+            //jobBindings.concat(key).concat('=').concat(value).concat('\n')
+        }
+    }
+
+    void bindVarMap(String source, Map<String, String> map) {
+        if ('RESUME' == source) {
+            if (null == resumeBindings) {
+                resumeBindings = ''
+            }
+            map.each { k, v ->
+                this.resumeBindings.concat(k).concat('=').concat(v).concat('\n')
+            }
+        } else if ('JOB' == source) {
+            if (null == jobBindings) {
+                jobBindings = ''
+            }
+            map.each { k, v ->
+                this.jobBindings.concat(k).concat('=').concat(v).concat('\n')
+            }
         }
     }
 

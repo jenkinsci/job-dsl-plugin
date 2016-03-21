@@ -21,7 +21,6 @@ import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslException;
-import javaposse.jobdsl.dsl.DslScriptException;
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
 import javaposse.jobdsl.dsl.GeneratedItems;

@@ -52,7 +52,7 @@ class MultiJobStepContext extends StepContext {
     void phase(String name, String continuationCondition, String executionType,
                @DslContext(PhaseContext) Closure phaseClosure) {
         PhaseContext phaseContext = new PhaseContext(jobManagement, item, name, continuationCondition, executionType,
-                null, '', null, '')
+                null, '', null, '', '')
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
         Preconditions.checkNotNullOrEmpty(phaseContext.phaseName, 'A phase needs a name')
@@ -72,6 +72,7 @@ class MultiJobStepContext extends StepContext {
             delegate.scriptText(phaseContext.scriptText)
             delegate.isUseScriptFile(phaseContext.isUseScriptFile)
             delegate.scriptPath(phaseContext.scriptPath)
+            delegate.bindings(phaseContext.bindings)
             phaseJobs {
                 phaseContext.jobsInPhase.each { PhaseJobContext jobInPhase ->
                     Node phaseJobNode = 'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {
@@ -85,6 +86,13 @@ class MultiJobStepContext extends StepContext {
                         jobScript jobInPhase.jobScript
                         isUseScriptFile jobInPhase.isUseScriptFile
                         scriptPath jobInPhase.scriptPath
+                        resumeCondition jobInPhase.resumeCondition
+                        resumeScriptPath jobInPhase.resumeScriptPath
+                        resumeScriptText jobInPhase.resumeScriptText
+                        isUseResumeScriptFile jobInPhase.isUseResumeScriptFile
+                        jobBindings jobInPhase.jobBindings
+                        resumeBindings jobInPhase.resumeBindings
+                        resumeConditions jobInPhase.resumeConditions
                         configs(jobInPhase.paramTrigger.configs ?: [class: 'java.util.Collections$EmptyList'])
                     }
 

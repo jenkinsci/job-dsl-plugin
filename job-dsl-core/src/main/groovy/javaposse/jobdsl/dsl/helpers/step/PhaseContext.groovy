@@ -16,12 +16,13 @@ class PhaseContext extends AbstractContext {
     Boolean isUseScriptFile
     String scriptText
     String scriptPath
+    String bindings
 
     List<PhaseJobContext> jobsInPhase = []
 
     PhaseContext(JobManagement jobManagement, Item item, String phaseName, String continuationCondition,
                  String executionType, Boolean enableGroovyScript, String scriptText, Boolean isUseScriptFile,
-                 String scriptPath) {
+                 String scriptPath, String bindings) {
         super(jobManagement)
         this.item = item
         this.phaseName = phaseName
@@ -31,6 +32,7 @@ class PhaseContext extends AbstractContext {
         this.scriptText = scriptText
         this.isUseScriptFile = isUseScriptFile
         this.scriptPath = scriptPath
+        this.bindings = bindings
     }
 
     /**
@@ -83,6 +85,16 @@ class PhaseContext extends AbstractContext {
         } else {
             this.enableGroovyScript = false
             this.isUseScriptFile = false
+        }
+    }
+
+    void bindVar(String key, String value) {
+        this.bindings.concat(key).concat('=').concat(value).concat('\n')
+    }
+
+    void bindVarMap(Map<String, String> map) {
+        map.each { k, v ->
+            this.bindings.concat(k).concat('=').concat(v).concat('\n')
         }
     }
 

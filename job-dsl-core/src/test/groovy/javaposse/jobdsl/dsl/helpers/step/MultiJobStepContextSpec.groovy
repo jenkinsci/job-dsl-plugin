@@ -30,7 +30,7 @@ class MultiJobStepContextSpec extends Specification {
         def phaseNode2 = context.stepNodes[1]
         phaseNode2.phaseName[0].value() == 'Second'
         def jobNode = phaseNode2.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
-        jobNode.children().size() == 11
+        jobNode.children().size() == 18
         jobNode.jobName[0].value() == 'JobA'
         jobNode.currParams[0].value() == true
         jobNode.exposedSCM[0].value() == true
@@ -221,7 +221,7 @@ class MultiJobStepContextSpec extends Specification {
 
     def 'call phases with plugin version 1.14 options'() {
         setup:
-        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.30') >> true
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.32') >> true
 
         when:
         context.phase {
@@ -236,7 +236,7 @@ class MultiJobStepContextSpec extends Specification {
         then:
         def phaseNode = context.stepNodes[0]
         def jobNode = phaseNode.phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]
-        jobNode.children().size() == 11
+        jobNode.children().size() == 18
         jobNode.abortAllJob[0].value() == true
         jobNode.disableJob[0].value() == true
     }
@@ -265,7 +265,7 @@ class MultiJobStepContextSpec extends Specification {
 
     def 'call phase with supported condition'(String condition) {
         setup:
-        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.30') >> true
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.32') >> true
 
         when:
         context.phase('test', condition) {
@@ -274,7 +274,7 @@ class MultiJobStepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
-            children().size() == 8
+            children().size() == 9
             phaseName[0].value() == 'test'
             continuationCondition[0].value() == condition
             executionType[0].value() == 'PARALLEL'
@@ -311,7 +311,7 @@ class MultiJobStepContextSpec extends Specification {
                 with(children()[0]) {
                     name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
                     with(phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]) {
-                        children().size() == 11
+                        children().size() == 18
                         jobName[0].value() == 'JobA'
                         abortAllJob[0].value() == false
                     }

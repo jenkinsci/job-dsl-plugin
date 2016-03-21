@@ -8,6 +8,13 @@ multiJob('example') {
             }
         }
         phase('Third') {
+            enableGroovyScript(true)
+            groovyScript('SCRIPT', 'println AAA')
+            bindVar('AAA', '100')
+            bindVarMap(new HashMap<String, String>() { {
+                put('BBB', '200')
+                put('CCC', '300')
+            } })
             phaseJob('JobA')
             phaseJob('JobB')
             phaseJob('JobC')
@@ -17,6 +24,13 @@ multiJob('example') {
                 currentJobParameters(false)
                 enableGroovyScript(false)
                 groovyScript('FILE', '/Users/sshelomentsev/example.groovy')
+                resumeCondition('EXPRESSION')
+                resumeGroovyScript('FILE', '/Users/sshelomentsev/example.groovy')
+                bindVar('RESUME', 'AAA', '100')
+                bindVarMap('JOB', new HashMap<String, String>() { {
+                    put('BBB', '200')
+                    put('CCC', '300')
+                } })
                 parameters {
                     booleanParam('cParam', true)
                     propertiesFile('my.properties')
@@ -30,8 +44,6 @@ multiJob('example') {
                 configure { phaseJobConfig ->
                     phaseJobConfig / enableCondition << 'true'
                     phaseJobConfig / condition << '${RUN_JOB} == "true"'
-                    phaseJobConfig / resumeCondition << 'SKIP'
-                    phaseJobConfig / resumeExpression << '1 == 1'
                 }
             }
         }
