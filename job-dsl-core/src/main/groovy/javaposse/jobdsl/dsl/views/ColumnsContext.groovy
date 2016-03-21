@@ -198,4 +198,39 @@ class ColumnsContext extends AbstractContext {
     void lastConfigurationModification() {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastJobConfigurationModificationColumn')
     }
+
+    /**
+     * Adds a column showing a single build parameter or all build parameters of the current/last build.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.13')
+    void buildParameters(String parameter = null) {
+        columnNodes << new NodeBuilder().'jenkins.plugins.extracolumns.BuildParametersColumn' {
+            singlePara(parameter as boolean)
+            parameterName(parameter ?: '')
+        }
+    }
+
+    /**
+     * Adds a column showing a link to the workspace.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.15')
+    void workspace() {
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.WorkspaceColumn')
+    }
+
+    /**
+     * Adds a column showing a button or an icon for disabling/enabling a project.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.7')
+    void disableProject(boolean icon = false) {
+        columnNodes << new NodeBuilder().'jenkins.plugins.extracolumns.DisableProjectColumn' {
+            useIcon(icon)
+        }
+    }
 }

@@ -655,6 +655,98 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.14')
     }
 
+    def 'build parameters column'() {
+        when:
+        view.columns {
+            buildParameters()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        def columns = root.columns[0].value()
+        columns.size() == 1
+
+        Node column = columns[0]
+        column.name() == 'jenkins.plugins.extracolumns.BuildParametersColumn'
+        column.children().size() == 2
+        column.singlePara[0].value() == false
+        column.parameterName[0].value() == ''
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.13')
+    }
+
+    def 'build parameters column for a single parameter'() {
+        when:
+        view.columns {
+            buildParameters('PARAM')
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        def columns = root.columns[0].value()
+        columns.size() == 1
+
+        Node column = columns[0]
+        column.name() == 'jenkins.plugins.extracolumns.BuildParametersColumn'
+        column.children().size() == 2
+        column.singlePara[0].value() == true
+        column.parameterName[0].value() == 'PARAM'
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.13')
+    }
+
+    def 'workspace column'() {
+        when:
+        view.columns {
+            workspace()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.WorkspaceColumn'
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.15')
+    }
+
+    def 'disable project column with button'() {
+        when:
+        view.columns {
+            disableProject()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        def columns = root.columns[0].value()
+        columns.size() == 1
+
+        Node column = columns[0]
+        column.name() == 'jenkins.plugins.extracolumns.DisableProjectColumn'
+        column.children().size() == 1
+        column.useIcon[0].value() == false
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.7')
+    }
+
+    def 'disable project column with icon'() {
+        when:
+        view.columns {
+            disableProject(true)
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        def columns = root.columns[0].value()
+        columns.size() == 1
+
+        Node column = columns[0]
+        column.name() == 'jenkins.plugins.extracolumns.DisableProjectColumn'
+        column.children().size() == 1
+        column.useIcon[0].value() == true
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.7')
+    }
+
     protected String getDefaultXml() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
