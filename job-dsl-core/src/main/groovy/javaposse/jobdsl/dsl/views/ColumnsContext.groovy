@@ -92,12 +92,18 @@ class ColumnsContext extends AbstractContext {
 
     /**
      * Adds a column for showing the node which executed the last build.
+     * Requires version 1.16 or later of the Extra Columns plugin.
      *
      * @since 1.31
      */
-    @RequiresPlugin(id = 'build-node-column', minimumVersion = '0.1')
     void lastBuildNode() {
-        columnNodes << new Node(null, 'org.jenkins.plugins.column.LastBuildNodeColumn')
+        if (jobManagement.isMinimumPluginVersionInstalled('build-node-column', '0.1')) {
+            jobManagement.logDeprecationWarning('support for build-node-column plugin')
+            columnNodes << new Node(null, 'org.jenkins.plugins.column.LastBuildNodeColumn')
+        } else {
+            jobManagement.requireMinimumPluginVersion('extra-columns', '1.16')
+            columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastBuildNodeColumn')
+        }
     }
 
     /**

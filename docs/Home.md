@@ -33,7 +33,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-33416](https://issues.jenkins-ci.org/browse/JENKINS-33416),
    [JENKINS-33675](https://issues.jenkins-ci.org/browse/JENKINS-33675))
  * Enhanced support for the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin)
-   ([JENKINS-33676](https://issues.jenkins-ci.org/browse/JENKINS-33676),
+   ([JENKINS-32785](https://issues.jenkins-ci.org/browse/JENKINS-32785),
+   [JENKINS-33676](https://issues.jenkins-ci.org/browse/JENKINS-33676),
    [JENKINS-33677](https://issues.jenkins-ci.org/browse/JENKINS-33677))
  * Improved script execution performance by re-using script engines
    ([#782](https://github.com/jenkinsci/job-dsl-plugin/pull/782))
@@ -49,6 +50,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Support for the older versions of the [CloudBees Docker Build and Publish
    Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Build+and+Publish+plugin) is deprecated, see
    [Migration](Migration#migrating-to-145)
+ * Support for [Build Node Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Node+Column+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-145)
  * Enhanced support for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin)
    ([#747](https://github.com/jenkinsci/job-dsl-plugin/pull/747))
  * Deprecated a method for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin), see

@@ -37,6 +37,13 @@ job('example') {
 }
 ```
 
+### Build Node Column
+
+The [Build Node Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Node+Column+Plugin) is deprecated and
+has been replaced by the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin). DSL
+support for the Build Node Column Plugin is [[deprecated|Deprecation-Policy]] as well and will be removed. Use the Extra
+Columns Plugin instead, the DSL syntax stays the same.
+
 ## Migrating to 1.44
 
 ### Git
