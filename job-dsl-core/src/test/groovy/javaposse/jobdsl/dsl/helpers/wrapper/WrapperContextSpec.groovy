@@ -702,7 +702,7 @@ class WrapperContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'call injectPasswords'() {
+    def 'call injectPasswords, deprecated variant'() {
         when:
         context.injectPasswords()
 
@@ -714,6 +714,40 @@ class WrapperContextSpec extends Specification {
             children()[0].value() == true
         }
         1 * mockJobManagement.requirePlugin('envinject')
+        1 * mockJobManagement.logDeprecationWarning()
+    }
+
+    def 'call injectPasswords with minimal args'() {
+        when:
+        context.injectPasswords {}
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'EnvInjectPasswordWrapper'
+            children().size() == 3
+            injectGlobalPasswords[0].value() == false
+            maskPasswordParameters[0].value() == true
+            passwordEntries[0].children().size() == 0
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('envinject', '1.90')
+    }
+
+    def 'call injectPasswords with all args'() {
+        when:
+        context.injectPasswords {
+            injectGlobalPasswords()
+            maskPasswordParameters(false)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'EnvInjectPasswordWrapper'
+            children().size() == 3
+            injectGlobalPasswords[0].value() == true
+            maskPasswordParameters[0].value() == false
+            passwordEntries[0].children().size() == 0
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('envinject', '1.90')
     }
 
     def 'call buildName'() {

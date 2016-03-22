@@ -266,11 +266,31 @@ class WrapperContext extends AbstractExtensibleContext {
      *
      * @since 1.23
      */
+    @Deprecated
     @RequiresPlugin(id = 'envinject')
     void injectPasswords() {
+        jobManagement.logDeprecationWarning()
+
         wrapperNodes << new NodeBuilder().'EnvInjectPasswordWrapper' {
             'injectGlobalPasswords'(true)
             'passwordEntries'()
+        }
+    }
+
+    /**
+     * Injects passwords as environment variables into the job.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'envinject', minimumVersion = '1.90')
+    void injectPasswords(@DslContext(EnvInjectPasswordsContext) Closure injectPasswordsClosure) {
+        EnvInjectPasswordsContext injectPasswordsContext = new EnvInjectPasswordsContext(jobManagement)
+        ContextHelper.executeInContext(injectPasswordsClosure, injectPasswordsContext)
+
+        wrapperNodes << new NodeBuilder().EnvInjectPasswordWrapper {
+            injectGlobalPasswords(injectPasswordsContext.injectGlobalPasswords)
+            maskPasswordParameters(injectPasswordsContext.maskPasswordParameters)
+            passwordEntries()
         }
     }
 

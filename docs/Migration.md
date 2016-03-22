@@ -11,6 +11,32 @@ Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Build+and+P
 The `runDslEngine` methods in `DslScriptLoader` are [[deprecated|Deprecation-Policy]] and will be removed. Use the new
 `runScripts` method instead.
 
+### EnvInject
+
+Support for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin) has changed to enable
+masking passwords and enabling / disabling global passwords injection. Global passwords injection is disabled by default
+to match the plugin's default configuration.
+
+DSL prior to 1.45
+```groovy
+job('example') {
+    wrappers {
+        injectPasswords()
+    }
+}
+```
+
+DSL since 1.45
+```groovy
+job('example') {
+    wrappers {
+        injectPasswords {
+            injectGlobalPasswords()
+        }
+    }
+}
+```
+
 ## Migrating to 1.44
 
 ### Git
