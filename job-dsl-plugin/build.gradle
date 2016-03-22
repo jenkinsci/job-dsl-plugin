@@ -1,16 +1,6 @@
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            url 'http://repo.jenkins-ci.org/releases/'
-        }
-    }
-    dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.15.0'
-    }
+plugins {
+    id 'org.jenkins-ci.jpi' version '0.16.0'
 }
-
-apply plugin: 'org.jenkins-ci.jpi'
 
 description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
 
