@@ -279,3 +279,17 @@ class BuildFramework {
     }
 }
 ```
+
+# Script Location
+
+The absolute path of the executing script file is available as `__FILE__` variable.
+
+```groovy
+println("script directory: ${new File(__FILE__).parent.absolutePath}")
+```
+
+The `__FILE__` variable is available in scripts only, not in any classes used by a script.
+
+Job DSL scripts are executed on the Jenkins master node, but the seed job's workspace which contains the script files
+may reside on a build node. This mean that direct access to the file specified by `__FILE__` may not be possible from a
+DSL script. See [Distributed builds](https://wiki.jenkins-ci.org/display/JENKINS/Distributed+builds) for details.

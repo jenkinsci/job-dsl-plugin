@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.ScriptRequest
 
 import static javaposse.jobdsl.plugin.WorkspaceProtocol.createWorkspaceUrl
+import static javaposse.jobdsl.plugin.WorkspaceProtocol.getAbsolutePath
 
 class ScriptRequestGenerator implements Closeable {
     final AbstractBuild build
@@ -46,7 +47,9 @@ class ScriptRequestGenerator implements Closeable {
                 }
                 for (FilePath filePath : filePaths) {
                     URL[] urlRoots = ([createWorkspaceUrl(build, filePath.parent)] + classpath) as URL[]
-                    ScriptRequest request = new ScriptRequest(filePath.name, null, urlRoots, ignoreExisting)
+                    ScriptRequest request = new ScriptRequest(
+                            filePath.name, null, urlRoots, ignoreExisting, getAbsolutePath(filePath)
+                    )
                     scriptRequests.add(request)
                 }
             }
