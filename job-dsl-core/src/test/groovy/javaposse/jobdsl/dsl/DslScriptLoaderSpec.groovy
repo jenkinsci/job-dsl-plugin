@@ -394,4 +394,16 @@ job('foo') {
         Exception e = thrown(DslScriptException)
         e.message == '(script, line 4) Can only use "using" once'
     }
+
+    def '__FILE__ is set'() {
+        setup:
+        def scriptPath = new File(new URL(resourcesDir, 'file.dsl').toURI()).absolutePath
+        ScriptRequest request = new ScriptRequest('file.dsl', null, resourcesDir, false, scriptPath)
+
+        when:
+        dslScriptLoader.runScripts([request])
+
+        then:
+        content.contains("Script: ${ scriptPath}")
+    }
 }

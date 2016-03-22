@@ -11,6 +11,8 @@ import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Shared
 import spock.lang.Specification
 
+import static javaposse.jobdsl.plugin.WorkspaceProtocol.getAbsolutePath
+
 class ScriptRequestGeneratorSpec extends Specification {
     private static final String SCRIPT = 'my script'
 
@@ -58,6 +60,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
         !requests[0].ignoreExisting
+        requests[0].scriptPath == null
     }
 
     def 'script text ignore existing'() {
@@ -75,6 +78,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
         requests[0].ignoreExisting
+        requests[0].scriptPath == null
     }
 
     def 'script text with additional classpath entry'() {
@@ -93,6 +97,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
         requests[0].urlRoots[1] == new URL(build.workspace.toURI().toURL(), 'classes/')
         !requests[0].ignoreExisting
+        requests[0].scriptPath == null
     }
 
     def 'script text with additional classpath entry with variable expansion'() {
@@ -111,6 +116,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
         requests[0].urlRoots[1] == new URL(build.workspace.toURI().toURL(), 'test/classes/')
         !requests[0].ignoreExisting
+        requests[0].scriptPath == null
     }
 
     def 'script text with additional classpath entries'() {
@@ -132,6 +138,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots[1] == new URL(build.workspace.toURI().toURL(), 'classes/')
         requests[0].urlRoots[2] == new URL(build.workspace.toURI().toURL(), 'output/')
         !requests[0].ignoreExisting
+        requests[0].scriptPath == null
     }
 
     def 'single target'() {
@@ -149,6 +156,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
         !requests[0].ignoreExisting
+        requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
     }
 
     def 'single target with variable'() {
@@ -166,6 +174,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
         !requests[0].ignoreExisting
+        requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
     }
 
     def 'single target ignore existing'() {
@@ -183,6 +192,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
         requests[0].ignoreExisting
+        requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
     }
 
     def 'multiple target'() {
@@ -202,11 +212,13 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
         !requests[0].ignoreExisting
+        requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
         requests[1].location == 'b.groovy'
         requests[1].body == null
         requests[1].urlRoots.length == 1
         requests[1].urlRoots[0].toString() == 'workspace://foo/'
         !requests[1].ignoreExisting
+        requests[1].scriptPath == getAbsolutePath(build.workspace.child('b.groovy'))
     }
 
     def 'multiple target with wildcard'() {
@@ -224,11 +236,13 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace://foo/'
         !requests[0].ignoreExisting
+        requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
         requests[1].location == 'b.groovy'
         requests[1].body == null
         requests[1].urlRoots.length == 1
         requests[1].urlRoots[0].toString() == 'workspace://foo/'
         !requests[1].ignoreExisting
+        requests[1].scriptPath == getAbsolutePath(build.workspace.child('b.groovy'))
     }
 
     def 'multiple target with additional classpath entries'() {
@@ -250,6 +264,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots[1] == new URL(build.workspace.toURI().toURL(), 'classes/')
         requests[0].urlRoots[2] == new URL(build.workspace.toURI().toURL(), 'output/')
         !requests[0].ignoreExisting
+        requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
         requests[1].location == 'b.groovy'
         requests[1].body == null
         requests[1].urlRoots.length == 3
@@ -257,6 +272,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots[1] == new URL(build.workspace.toURI().toURL(), 'classes/')
         requests[0].urlRoots[2] == new URL(build.workspace.toURI().toURL(), 'output/')
         !requests[1].ignoreExisting
+        requests[1].scriptPath == getAbsolutePath(build.workspace.child('b.groovy'))
     }
 
     def 'additional classpath entries with pattern'() {
@@ -278,6 +294,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots[1] == new URL(build.workspace.toURI().toURL(), 'lib/a.jar')
         requests[0].urlRoots[2] == new URL(build.workspace.toURI().toURL(), 'lib/b.jar')
         !requests[0].ignoreExisting
+        requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
     }
 
     def 'additional classpath entries with pattern building on remote'() {
@@ -300,6 +317,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots[1] =~ "${tempDirUrl}jobdsl.*\\.jar"
         requests[0].urlRoots[2] =~ "${tempDirUrl}jobdsl.*\\.jar"
         !requests[0].ignoreExisting
+        requests[0].scriptPath == getAbsolutePath(remoteBuild.workspace.child('a.groovy'))
         new File(requests[0].urlRoots[1].toURI()).exists()
         new File(requests[0].urlRoots[2].toURI()).exists()
 

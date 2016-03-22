@@ -97,7 +97,7 @@ class DslScriptLoader {
     private JobParent runScript(ScriptRequest scriptRequest, GroovyScriptEngine engine) {
         LOGGER.log(Level.FINE, String.format("Request for ${scriptRequest.location}"))
 
-        Binding binding = createBinding()
+        Binding binding = createBinding(scriptRequest)
         try {
             Script script
             if (scriptRequest.body != null) {
@@ -258,9 +258,12 @@ class DslScriptLoader {
         }
     }
 
-    private Binding createBinding() {
+    private Binding createBinding(ScriptRequest scriptRequest) {
         Binding binding = new Binding()
         binding.setVariable('out', jobManagement.outputStream) // Works for println, but not System.out
+        if (scriptRequest.scriptPath) {
+            binding.setVariable('__FILE__', scriptRequest.scriptPath)
+        }
 
         jobManagement.parameters.each { String key, String value ->
             LOGGER.fine("Binding ${key} to ${value}")

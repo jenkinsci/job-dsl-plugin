@@ -44,6 +44,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-33439](https://issues.jenkins-ci.org/browse/JENKINS-33439))
  * Allow `EnvironmentVariableContributorsContext` to be extended
    ([JENKINS-32742](https://issues.jenkins-ci.org/browse/JENKINS-32742))
+ * Added a `__FILE__` script variable containing the script location
+   ([JENKINS-25935](https://issues.jenkins-ci.org/browse/JENKINS-25935))
  * Support for the older versions of the [CloudBees Docker Build and Publish
    Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Build+and+Publish+plugin) is deprecated, see
    [Migration](Migration#migrating-to-145)
