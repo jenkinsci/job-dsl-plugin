@@ -702,7 +702,7 @@ class WrapperContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'call injectPasswords'() {
+    def 'call injectPasswords, deprecated variant'() {
         when:
         context.injectPasswords()
 
@@ -714,6 +714,56 @@ class WrapperContextSpec extends Specification {
             children()[0].value() == true
         }
         1 * mockJobManagement.requirePlugin('envinject')
+    }
+
+    def 'call injectPasswords with minimal args'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('envinject', '1.90') >> true
+
+        when:
+        context.injectPasswords {}
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'EnvInjectPasswordWrapper'
+            children().size() == 3
+            injectGlobalPasswords[0].value() == false
+            maskPasswordParameters[0].value() == true
+            passwordEntries[0].children().size() == 0
+        }
+    }
+
+    def 'call injectPasswords with minimal args, plugin version older than 1.90'() {
+        when:
+        context.injectPasswords {}
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'EnvInjectPasswordWrapper'
+            children().size() == 2
+            injectGlobalPasswords[0].value() == false
+            passwordEntries[0].children().size() == 0
+        }
+    }
+
+    def 'call injectPasswords with all args'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('envinject', '1.90') >> true
+
+        when:
+        context.injectPasswords {
+            injectGlobalPasswords()
+            maskPasswordParameters(false)
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'EnvInjectPasswordWrapper'
+            children().size() == 3
+            injectGlobalPasswords[0].value() == true
+            maskPasswordParameters[0].value() == false
+            passwordEntries[0].children().size() == 0
+        }
     }
 
     def 'call buildName'() {
