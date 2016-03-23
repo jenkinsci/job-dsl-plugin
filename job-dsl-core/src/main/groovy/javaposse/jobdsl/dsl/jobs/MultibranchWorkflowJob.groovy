@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Folder
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.LogRotatorContext
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.triggers.MultibranchWorkflowTriggerContext
 import javaposse.jobdsl.dsl.helpers.workflow.OrphanedItemStrategyContext
 import javaposse.jobdsl.dsl.helpers.workflow.BranchSourcesContext
@@ -64,7 +63,7 @@ class MultibranchWorkflowJob extends Folder {
         }
         Node strategyNode = new NodeBuilder().strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy')
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             project / sources / data / 'jenkins.branch.BranchSource' / strategyNode / propertiesNode
         }
     }
