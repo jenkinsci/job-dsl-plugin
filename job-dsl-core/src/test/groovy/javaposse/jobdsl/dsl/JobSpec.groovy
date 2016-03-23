@@ -748,6 +748,7 @@ class JobSpec extends Specification {
         then:
         job.node.properties.'hudson.queueSorter.PrioritySorterJobProperty'.priority[0].value() == 99
         1 * jobManagement.requirePlugin('PrioritySorter')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'add a quiet period'() {

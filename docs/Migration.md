@@ -37,6 +37,30 @@ job('example') {
 }
 ```
 
+### Priority Sorter
+
+Support for versions older than 3.4 of the
+[Priority Sorter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed. The top-level `priority` method is deprecated and only supports
+plugin version prior to 3.0. A new `priority` method has been added to the `properties` context which will support
+plugin versions starting from 3.4.
+
+DSL prior to 1.45
+```groovy
+job('example') {
+    priority(5)
+}
+```
+
+DSL since 1.45
+```groovy
+job('example') {
+    properties {
+        priority(5)
+    }
+}
+```
+
 ### Build Node Column
 
 The [Build Node Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Node+Column+Plugin) is deprecated and

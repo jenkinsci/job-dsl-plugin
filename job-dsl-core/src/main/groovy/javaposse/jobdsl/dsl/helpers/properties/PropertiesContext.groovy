@@ -137,4 +137,17 @@ class PropertiesContext extends AbstractExtensibleContext {
             doNotScan(!scan)
         }
     }
+
+    /**
+     * Sets the priority of the job.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'PrioritySorter', minimumVersion = '3.4')
+    void priority(int value) {
+        propertiesNodes << new NodeBuilder().'jenkins.advancedqueue.priority.strategy.PriorityJobProperty' {
+            useJobPriority(true)
+            delegate.priority(value)
+        }
+    }
 }
