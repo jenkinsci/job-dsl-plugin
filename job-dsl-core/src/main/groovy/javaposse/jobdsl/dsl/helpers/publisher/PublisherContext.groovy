@@ -2072,6 +2072,84 @@ class PublisherContext extends AbstractExtensibleContext {
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.emotional__jenkins.EmotionalJenkinsPublisher'()
     }
 
+    /**
+    * Updates JIRA issues.
+    *
+    * @since 1.45
+    */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void jiraIssueUpdater() {
+       publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueUpdater'()
+    }
+
+     /**
+     * Marks a JIRA version as released.
+     *
+     * @since 1.45
+     */
+     @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+     void releaseJiraVersion(@DslContext(ReleaseJiraVersionContext) Closure closure) {
+        ReleaseJiraVersionContext context = new ReleaseJiraVersionContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraReleaseVersionUpdater' {
+            jiraProjectKey(context.projectKey ?: '')
+            jiraRelease(context.release ?: '')
+        }
+     }
+
+      /**
+      * Moves a set of JIRA issues to a new version.
+      *
+      * @since 1.45
+      */
+      @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+      void moveJiraIssues(@DslContext(MoveJiraIssuesContext) Closure closure) {
+         MoveJiraIssuesContext context = new MoveJiraIssuesContext()
+         ContextHelper.executeInContext(closure, context)
+
+         publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueMigrator' {
+             jiraProjectKey(context.projectKey ?: '')
+             jiraRelease(context.release ?: '')
+             jiraReplaceVersion(context.replaceVersion ?: '')
+             jiraQuery(context.query ?: '')
+         }
+     }
+
+    /**
+    * Creates a JIRA version.
+    *
+    * @since 1.45
+    */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void createJiraVersion(@DslContext(CreateJiraVersionContext) Closure closure) {
+       CreateJiraVersionContext context = new CreateJiraVersionContext()
+       ContextHelper.executeInContext(closure, context)
+
+       publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraVersionCreator' {
+           jiraProjectKey(context.projectKey ?: '')
+           jiraVersion(context.version ?: '')
+       }
+    }
+
+    /**
+    * Creates a JIRA issue.
+    *
+    * @since 1.45
+    */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void createJiraIssue(@DslContext(CreateJiraIssueContext) Closure closure) {
+       CreateJiraIssueContext context = new CreateJiraIssueContext()
+       ContextHelper.executeInContext(closure, context)
+
+       publisherNodes << new NodeBuilder().'hudson.plugins.jira.JiraCreateIssueNotifier' {
+           projectKey(context.projectKey ?: '')
+           testDescription(context.testDescription ?: '')
+           assignee(context.assignee ?: '')
+           component(context.component ?: '')
+       }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {

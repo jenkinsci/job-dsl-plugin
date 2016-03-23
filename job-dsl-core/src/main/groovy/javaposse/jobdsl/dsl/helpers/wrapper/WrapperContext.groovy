@@ -643,4 +643,22 @@ class WrapperContext extends AbstractExtensibleContext {
             condition(class: 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun')
         }
     }
+
+    /**
+     * Generates JIRA release notes.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void generateJiraReleaseNotes(@DslContext(GenerateJiraReleaseNotesContext) Closure closure) {
+        GenerateJiraReleaseNotesContext context = new GenerateJiraReleaseNotesContext()
+        ContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'hudson.plugins.jira.JiraCreateReleaseNotes' {
+            jiraEnvironmentVariable(context.environmentVariable ?: '')
+            jiraProjectKey(context.projectKey ?: '')
+            jiraRelease(context.release ?: '')
+            jiraFilter(context.filter ?: '')
+        }
+    }
 }

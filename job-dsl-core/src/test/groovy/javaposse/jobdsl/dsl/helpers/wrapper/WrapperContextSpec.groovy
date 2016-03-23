@@ -1436,4 +1436,56 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.5.1')
         1 * mockJobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
     }
+
+    def 'call generateJiraReleaseNotes with no options'() {
+        when:
+        context.generateJiraReleaseNotes {
+        }
+
+        then:
+        context.wrapperNodes.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'hudson.plugins.jira.JiraCreateReleaseNotes'
+            children().size() == 4
+            with(entries[0]) {
+                jiraEnvironmentVariable[0].value().empty
+                jiraProjectKey[0].value().empty
+                jiraRelease[0].value().empty
+                jiraFilter[0].value().empty
+            }
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('jira', '1.39')
+    }
+
+    def 'call generateJiraReleaseNotes with all options'() {
+        when:
+        context.generateJiraReleaseNotes {
+            environmentVariable(env)
+            projectKey(key)
+            delegate.release(release)
+            delegate.filter(filter)
+        }
+
+        then:
+        context.wrapperNodes.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'hudson.plugins.jira.JiraCreateReleaseNotes'
+            children().size() == 4
+            with(entries[0]) {
+                jiraEnvironmentVariable[0].value() == expectedEnv
+                jiraProjectKey[0].value() == expectedKey
+                jiraRelease[0].value() == expectedRel
+                jiraFilter[0].value() == expectedFil
+            }
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('jira', '1.39')
+
+        where:
+        env    | key    | release | filter | expectedEnv | expectedKey | expectedRel | expectedFil
+        null   | null   | null    | null   | ''          | ''          | ''          | ''
+        'key1' | null   | null    | null   | 'key1'      | ''          | ''          | ''
+        'key1' | 'key2' | null    | null   | 'key1'      | 'key2'      | ''          | ''
+        'key1' | 'key2' | 'key3'  | null   | 'key1'      | 'key2'      | 'key3'      | ''
+        'key1' | 'key2' | 'key3'  | 'key4' | 'key1'      | 'key2'      | 'key3'      | 'key4'
+    }
 }

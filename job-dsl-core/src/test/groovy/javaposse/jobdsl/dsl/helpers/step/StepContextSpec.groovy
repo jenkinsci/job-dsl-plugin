@@ -3593,4 +3593,52 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('jslint', '0.8.2')
     }
+
+    def 'call progressJiraIssues with no options'() {
+        when:
+        context.progressJiraIssues {
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.jira.JiraIssueUpdateBuilder'
+            children().size() == 3
+            with(entries[0]) {
+                jqlSearch[0].value().empty
+                workflowActionName[0].value().empty
+                comment[0].value().empty
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
+    }
+
+    def 'call progressJiraIssues with all options'() {
+        when:
+        context.progressJiraIssues {
+            jqlSearch(jql)
+            workflowActionName(work)
+            comment(com)
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.jira.JiraIssueUpdateBuilder'
+            children().size() == 3
+            with(entries[0]) {
+                jqlSearch[0].value() == expectedJql
+                workflowActionName[0].value() == expectedWork
+                comment[0].value() == expectedCom
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
+
+        where:
+        jql    | work   | com    | expectedJql | expectedWork | expectedCom
+        null   | null   | null   | ''          | ''           | ''
+        'key'  | null   | null   | 'key'       | ''           | ''
+        'key1' | 'key2' | null   | 'key1'      | 'key2'       | ''
+        'key1' | 'key2' | 'key3' | 'key1'      | 'key2'       | 'key3'
+    }
 }

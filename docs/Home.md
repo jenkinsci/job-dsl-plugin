@@ -21,6 +21,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.45 (unreleased)
+ * Added support for the [JIRA Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JIRA+Plugin)
  * Added support for the
    [BuildResultTrigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/BuildResultTrigger+Plugin)
    ([JENKINS-33463](https://issues.jenkins-ci.org/browse/JENKINS-33463))

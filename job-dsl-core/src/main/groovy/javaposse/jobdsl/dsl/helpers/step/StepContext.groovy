@@ -1118,6 +1118,23 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Performs a JIRA workflow action for every issue that matches the JQL query.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void progressJiraIssues(@DslContext(ProgressJiraIssuesContext) Closure closure) {
+        ProgressJiraIssuesContext context = new ProgressJiraIssuesContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueUpdateBuilder' {
+            jqlSearch(context.jqlSearch ?: '')
+            workflowActionName(context.workflowActionName ?: '')
+            comment(context.comment ?: '')
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
