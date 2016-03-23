@@ -8,6 +8,9 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class ExampleValidationSpec extends Specification {
+    private static final File EXAMPLES = new File('src/main/docs/examples')
+    private static final String FILE_SEPARATOR = System.properties['file.separator']
+
     @Unroll
     def 'test examples in #file'() {
         setup:
@@ -34,9 +37,27 @@ class ExampleValidationSpec extends Specification {
         file << findAllExamples()
     }
 
+    @Unroll
+    def 'file name matches method name in #file'() {
+        when:
+        String className = (file.parent - EXAMPLES.path).replace(FILE_SEPARATOR, '.')[1..-1]
+
+        then:
+        Class theClass = DslScriptLoader.classLoader.loadClass(className)
+
+        when:
+        String methodName = file.name[0..file.name.indexOf('.') - 1]
+
+        then:
+        theClass.methods.any { it.name == methodName }
+
+        where:
+        file << findAllExamples()
+    }
+
     private static List<File> findAllExamples() {
         List<File> result = []
-        new File('src/main/docs/examples').eachFileRecurse(FileType.FILES) {
+        EXAMPLES.eachFileRecurse(FileType.FILES) {
             result << it
         }
         result
