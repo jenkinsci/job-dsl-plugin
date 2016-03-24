@@ -59,3 +59,21 @@ job('example-4') {
         }
     }
 }
+
+// checkout repo at a specific branch using the alternative build choosing strategy.
+job('example-1') {
+    scm {
+        git {
+            branches('branch-that-may-not-exist', 'master')
+            remote {
+                github('account/repo', 'ssh')
+            }
+            extensions {
+                choosingStrategy {
+                    // Default to "master" if "branch-that-may-not-exist" does not exist.
+                    alternative()
+                }
+            }
+        }
+    }
+}
