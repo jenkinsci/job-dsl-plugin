@@ -9,6 +9,8 @@ class SonarContext implements Context {
     String branch
     String additionalProperties
     boolean overrideTriggers
+    String jdk = '(Inherit From Job)'
+    String mavenInstallation = '(Inherit From Job)'
     final SonarTriggersContext sonarTriggersContext = new SonarTriggersContext()
 
     /**
@@ -42,5 +44,19 @@ class SonarContext implements Context {
     void overrideTriggers(@DslContext(SonarTriggersContext) Closure sonarTriggersClosure) {
         overrideTriggers = true
         ContextHelper.executeInContext(sonarTriggersClosure, sonarTriggersContext)
+    }
+
+    /**
+     * Name of the JDK installation to use for this SonarQube context.
+     */
+    void jdk(String jdk) {
+        this.jdk = jdk
+    }
+
+    /**
+     * Selects which installation of Maven to use.
+     */
+    void mavenInstallation(String mavenInstallation) {
+        this.mavenInstallation = mavenInstallation
     }
 }

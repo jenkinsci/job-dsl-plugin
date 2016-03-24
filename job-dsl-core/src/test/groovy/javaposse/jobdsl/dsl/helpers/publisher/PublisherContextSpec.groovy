@@ -3987,6 +3987,8 @@ class PublisherContextSpec extends Specification {
             installationName('sonarTest')
             branch('test')
             additionalProperties('-Dtest=test')
+            jdk('myJDK')
+            mavenInstallation('myMaven')
             overrideTriggers {
                 skipIfEnvironmentVariable('FOO')
             }
@@ -3997,12 +3999,12 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.sonar.SonarPublisher'
             children().size() == 12
             installationName[0].value() == 'sonarTest'
-            jdk[0].value() == '(Inherit From Job)'
+            jdk[0].value() == 'myJDK'
             branch[0].value() == 'test'
             language[0].value().empty
             mavenOpts[0].value().empty
             jobAdditionalProperties[0].value() == '-Dtest=test'
-            mavenInstallationName[0].value() == '(Inherit From Job)'
+            mavenInstallationName[0].value() == 'myMaven'
             rootPom[0].value().empty
             settings[0].value().empty
             settings[0].@class == 'jenkins.mvn.DefaultSettingsProvider'
