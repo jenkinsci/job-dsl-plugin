@@ -42,6 +42,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#782](https://github.com/jenkinsci/job-dsl-plugin/pull/782))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([#790](https://github.com/jenkinsci/job-dsl-plugin/pull/790))
+ * Enhanced support for the [Priority Sorter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin)
+   ([JENKINS-29678](https://issues.jenkins-ci.org/browse/JENKINS-29678))
  * Enhanced support for the [CloudBees Docker Build and Publish
    Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Build+and+Publish+plugin)
    ([JENKINS-33439](https://issues.jenkins-ci.org/browse/JENKINS-33439))
@@ -54,6 +56,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [Migration](Migration#migrating-to-145)
  * Support for [Build Node Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Node+Column+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-145)
+ * Support for the older versions of the
+   [Priority Sorter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-145)
  * Enhanced support for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin)
    ([#747](https://github.com/jenkinsci/job-dsl-plugin/pull/747))
  * Deprecated a method for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin), see

@@ -232,4 +232,18 @@ class PropertiesContextSpec extends Specification {
         where:
         scan << [true, false]
     }
+
+    def 'priority'() {
+        when:
+        context.priority(5)
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'jenkins.advancedqueue.priority.strategy.PriorityJobProperty'
+            children().size() == 2
+            useJobPriority[0].value() == true
+            priority[0].value() == 5
+        }
+        1 * jobManagement.requireMinimumPluginVersion('PrioritySorter', '3.4')
+    }
 }
