@@ -3641,4 +3641,93 @@ class StepContextSpec extends Specification {
         'key1' | 'key2' | null   | 'key1'      | 'key2'       | ''
         'key1' | 'key2' | 'key3' | 'key1'      | 'key2'       | 'key3'
     }
+
+    def 'call cmake methods with context'() {
+        when:
+        context.cmake {
+            cmakeInstallation('CMake 2.8.0')
+            generator('Unix Makefiles')
+            cleanBuild()
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            children().size() == 3
+            generator[0].value() == 'Unix Makefiles'
+            cleanBuild[0].value() == true
+            installationName[0].value() == 'CMake 2.8.0'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cmake', '2.4.1')
+    }
+
+    def 'call cmake optional methods with context'() {
+        when:
+        context.cmake {
+            cmakeInstallation('CMake 2.8.0')
+            generator('Unix Makefiles')
+            cleanBuild()
+            sourceDir('src')
+            buildDir('target')
+            buildType('Debug')
+            preloadScript('foo')
+            args('bar')
+            args('foo')
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            children().size() == 8
+            generator[0].value() == 'Unix Makefiles'
+            cleanBuild[0].value() == true
+            installationName[0].value() == 'CMake 2.8.0'
+            sourceDir[0].value() == 'src'
+            workingDir[0].value() == 'target'
+            buildType[0].value() == 'Debug'
+            preloadScript[0].value() == 'foo'
+            toolArgs[0].value() == 'bar foo'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cmake', '2.4.1')
+    }
+
+    def 'call cmake methods with toolSteps context'() {
+        when:
+        context.cmake {
+            cmakeInstallation('CMake 2.8.0')
+            generator('Unix Makefiles')
+            args('bar')
+            cleanBuild()
+            buildToolStep {
+                useCmake()
+                args('args1')
+            }
+            buildToolStep {
+                vars('vars')
+                args('args2')
+            }
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            children().size() == 5
+            generator[0].value() == 'Unix Makefiles'
+            cleanBuild[0].value() == true
+            installationName[0].value() == 'CMake 2.8.0'
+            toolArgs[0].value() == 'bar'
+            with(toolSteps[0].'hudson.plugins.cmake.BuildToolStep'[0]) {
+                children().size() == 2
+                withCmake[0].value() == true
+                args[0].value() == 'args1'
+            }
+            with(toolSteps[0].'hudson.plugins.cmake.BuildToolStep'[1]) {
+                children().size() == 3
+                withCmake[0].value() == false
+                args[0].value() == 'args2'
+                vars[0].value() == 'vars'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cmake', '2.4.1')
+    }
 }
