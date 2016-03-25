@@ -6492,4 +6492,82 @@ class PublisherContextSpec extends Specification {
         'key1' | 'key2' | 'key3' | null  | 'key1'      | 'key2'       | 'key3'           | ''
         'key1' | 'key2' | 'key3' | 'key' | 'key1'      | 'key2'       | 'key3'           | 'key'
     }
+
+    def 'call consoleParsing without rules'() {
+        when:
+        context.consoleParsing {
+            unstableOnWarning()
+            failBuildOnError()
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'Only one rule path must be specified'
+    }
+
+    def 'call consoleParsing with all rules'() {
+        when:
+        context.consoleParsing {
+            unstableOnWarning()
+            failBuildOnError()
+            globalRules('/locations')
+            projectRules('/locations')
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'Duplicated rule path, only one rule path must be specified'
+    }
+
+    def 'call consoleParsing with projectRules'() {
+        when:
+        context.consoleParsing {
+            unstableOnWarning()
+            failBuildOnError()
+            showGraphs()
+            projectRules('/locations')
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.logparser.LogParserPublisher'
+            children().size() == 5
+            with(entries[0]) {
+                unstableOnWarning[0].value() == true
+                failBuildOnError[0].value() == true
+                showGraphs[0].value() == true
+                useProjectRule[0].value() == true
+                projectRulePath[0].value() == '/locations'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('log-parser', '2.0')
+    }
+
+    def 'call consoleParsing with globalRules'() {
+        when:
+        context.consoleParsing {
+            unstableOnWarning()
+            failBuildOnError()
+            globalRules('/locations')
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.logparser.LogParserPublisher'
+            children().size() == 5
+            with(entries[0]) {
+                unstableOnWarning[0].value() == true
+                failBuildOnError[0].value() == true
+                showGraphs[0].value() == false
+                useProjectRule[0].value() == false
+                parsingRulesPath[0].value() == '/locations'
+            }
+        }
+
+        1 * jobManagement.requireMinimumPluginVersion('log-parser', '2.0')
+    }
 }
