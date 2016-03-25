@@ -66,6 +66,45 @@ class MavenJobSpec extends Specification {
         job.node.archivingDisabled[0].value() == true
     }
 
+    def 'siteArchivingDisabled constructs xml'() {
+        when:
+        job.siteArchivingDisabled(true)
+
+        then:
+        job.node.siteArchivingDisabled.size() == 1
+        job.node.siteArchivingDisabled[0].value() == true
+    }
+
+    def 'fingerprintingDisabled constructs xml'() {
+        when:
+        job.fingerprintingDisabled(true)
+
+        then:
+        job.node.fingerprintingDisabled.size() == 1
+        job.node.fingerprintingDisabled[0].value() == true
+    }
+
+    def 'resolveDependencies without arg constructs xml'() {
+        when:
+        job.resolveDependencies()
+
+        then:
+        job.node.resolveDependencies.size() == 1
+        job.node.resolveDependencies[0].value() == true
+    }
+
+    def 'resolveDependencies constructs xml'() {
+        when:
+        job.resolveDependencies(value)
+
+        then:
+        job.node.resolveDependencies.size() == 1
+        job.node.resolveDependencies[0].value() == value
+
+        where:
+        value << [true, false]
+    }
+
     def 'runHeadless constructs xml'() {
         when:
         job.runHeadless(true)
