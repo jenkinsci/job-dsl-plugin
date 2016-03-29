@@ -1171,6 +1171,19 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Runs a jython script.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
+      * @since 1.45
+     */
+    void jython(String command) {
+        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.Jython' {
+            delegate.command(command)
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {

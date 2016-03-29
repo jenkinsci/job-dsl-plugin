@@ -3702,4 +3702,17 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('cmakebuilder', '2.4.1')
     }
+
+    def 'call jython method'() {
+        when:
+        context.jython('print "Hello" + "Goodbye"')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.Jython'
+            command[0].value() == 'print "Hello" + "Goodbye"'
+        }
+    }
 }
