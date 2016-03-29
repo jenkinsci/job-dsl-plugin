@@ -1,14 +1,12 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.Context
-import javaposse.jobdsl.dsl.ContextHelper
-import javaposse.jobdsl.dsl.DslContext
 
 class Unity3DContext implements Context {
     String unity3dName
     String returnCodes
     final List<String> args = []
-    
+
     /**
      * Specifies the name of the Unity3D installation to be used for this build step.
      */

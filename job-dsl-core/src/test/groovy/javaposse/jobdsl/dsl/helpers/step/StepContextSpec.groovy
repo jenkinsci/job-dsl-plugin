@@ -3643,6 +3643,7 @@ class StepContextSpec extends Specification {
         }
 
         then:
+        context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             children().size() == 3
             generator[0].value() == 'Unix Makefiles'
