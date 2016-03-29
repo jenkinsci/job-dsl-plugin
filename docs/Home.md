@@ -36,6 +36,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin)
    ([JENKINS-33416](https://issues.jenkins-ci.org/browse/JENKINS-33416),
    [JENKINS-33675](https://issues.jenkins-ci.org/browse/JENKINS-33675))
+ * Enhanced support for [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
+   ([JENKINS-33823](https://issues.jenkins-ci.org/browse/JENKINS-33823))
  * Enhanced support for the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin)
    ([JENKINS-32785](https://issues.jenkins-ci.org/browse/JENKINS-32785),
    [JENKINS-33676](https://issues.jenkins-ci.org/browse/JENKINS-33676),

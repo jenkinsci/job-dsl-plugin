@@ -1,0 +1,3 @@
+mavenJob('example') {
+    siteArchivingDisabled()
+}
