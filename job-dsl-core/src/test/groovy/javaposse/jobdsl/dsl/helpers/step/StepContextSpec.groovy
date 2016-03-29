@@ -3641,4 +3641,70 @@ class StepContextSpec extends Specification {
         'key1' | 'key2' | null   | 'key1'      | 'key2'       | ''
         'key1' | 'key2' | 'key3' | 'key1'      | 'key2'       | 'key3'
     }
+
+    def 'call cmake methods with no options'() {
+        when:
+        context.cmake {
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            children().size() == 3
+            generator[0].value() == 'Unix Makefiles'
+            cleanBuild[0].value() == false
+            installationName[0].value() == 'InSearchPath'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cmakebuilder', '2.4.1')
+    }
+
+    def 'call cmake methods with all options'() {
+        when:
+        context.cmake {
+            cmakeInstallation('CMake 2.8.0')
+            generator('other')
+            cleanBuild()
+            sourceDir('src')
+            buildDir('target')
+            buildType('Debug')
+            preloadScript('foo')
+            args('bar')
+            args('foo')
+            buildToolStep {
+            }
+            buildToolStep {
+                useCmake()
+                vars('A', 'B')
+                vars('C', true)
+                args('args1')
+                args('args2')
+            }
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            children().size() == 9
+            installationName[0].value() == 'CMake 2.8.0'
+            generator[0].value() == 'other'
+            cleanBuild[0].value() == true
+            sourceDir[0].value() == 'src'
+            workingDir[0].value() == 'target'
+            buildType[0].value() == 'Debug'
+            preloadScript[0].value() == 'foo'
+            toolArgs[0].value() == 'bar\nfoo'
+            toolSteps[0].children().size() == 2
+            with(toolSteps[0].'hudson.plugins.cmake.BuildToolStep'[0]) {
+                children().size() == 1
+                withCmake[0].value() == false
+            }
+            with(toolSteps[0].'hudson.plugins.cmake.BuildToolStep'[1]) {
+                children().size() == 3
+                withCmake[0].value() == true
+                args[0].value() == 'args1 args2'
+                vars[0].value() == 'A=B\nC=true'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('cmakebuilder', '2.4.1')
+    }
 }

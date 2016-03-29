@@ -21,6 +21,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.45 (unreleased)
+ * Added support for the [CMake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CMake+Plugin)
+   ([JENKINS-33829](https://issues.jenkins-ci.org/browse/JENKINS-33829))
  * Added support for the [JIRA Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JIRA+Plugin)
    ([JENKINS-31545](https://issues.jenkins-ci.org/browse/JENKINS-31545))
  * Added support for the
@@ -107,7 +109,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Support for the older versions of the [IRC Plugin](https://wiki.jenkins-ci.org/display/JENKINS/IRC+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-144)
  * Deprecated a method for the [Perforce Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Perforce+Plugin), see
-   [Migration](Migration#migrating-to-144) 
+   [Migration](Migration#migrating-to-144)
  * Deprecated several methods for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin), see
    [Migration](Migration#migrating-to-144)
  * Deprecated the `WithXmlAction` class, see [Migration](Migration#migrating-to-144)

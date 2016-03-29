@@ -1135,6 +1135,44 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Invokes a CMake build script.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'cmakebuilder', minimumVersion = '2.4.1')
+    void cmake(@DslContext(CMakeContext) Closure closure) {
+        CMakeContext context = new CMakeContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Node cmakeNode = new NodeBuilder().'hudson.plugins.cmake.CmakeBuilder' {
+            installationName(context.cmakeName ?: '')
+            generator(context.generator)
+            cleanBuild(context.cleanBuild)
+
+            if (context.sourceDir) {
+                sourceDir(context.sourceDir ?: '')
+            }
+            if (context.buildDir) {
+                workingDir(context.buildDir ?: '')
+            }
+            if (context.buildType) {
+                buildType(context.buildType ?: '')
+            }
+            if (context.preloadScript) {
+                preloadScript(context.preloadScript ?: '')
+            }
+            if (context.args) {
+                toolArgs(context.args.join('\n'))
+            }
+            if (context.buildToolStepNodes) {
+                toolSteps(context.buildToolStepNodes)
+            }
+        }
+
+        stepNodes << cmakeNode
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
