@@ -233,7 +233,7 @@ class ScmContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'subversion')
+    @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
     void svn(String svnUrl, Closure configure = null) {
         svn(svnUrl, '.', configure)
     }
@@ -244,7 +244,7 @@ class ScmContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'subversion')
+    @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
     void svn(String svnUrl, String localDir, Closure configure = null) {
         checkNotNull(svnUrl, 'svnUrl must not be null')
         checkNotNull(localDir, 'localDir must not be null')
@@ -262,10 +262,8 @@ class ScmContext extends AbstractExtensibleContext {
      *
      * @since 1.30
      */
-    @RequiresPlugin(id = 'subversion')
+    @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
     void svn(@DslContext(SvnContext) Closure svnClosure) {
-        jobManagement.logPluginDeprecationWarning('subversion', '2.1')
-
         SvnContext svnContext = new SvnContext(jobManagement)
         executeInContext(svnClosure, svnContext)
 

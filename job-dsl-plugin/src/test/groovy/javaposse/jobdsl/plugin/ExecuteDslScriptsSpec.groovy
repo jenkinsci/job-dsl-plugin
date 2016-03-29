@@ -1079,7 +1079,7 @@ class ExecuteDslScriptsSpec extends Specification {
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
 
         then:
-        freeStyleBuild.getLog(25).join('\n') =~ /Warning: \(script, line 4\) job is deprecated/
+        freeStyleBuild.getLog(25).join('\n') =~ /Warning: \(script, line 3\) mergePullRequest is deprecated/
     }
 
     @WithPlugin('cloudbees-folder.hpi')

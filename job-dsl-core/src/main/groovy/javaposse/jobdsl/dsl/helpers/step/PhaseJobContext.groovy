@@ -27,24 +27,6 @@ class PhaseJobContext extends AbstractContext {
         this.paramTrigger = new DownstreamTriggerParameterContext(jobManagement, item)
     }
 
-    @Deprecated
-    PhaseJobContext(JobManagement jobManagement, Item item, String jobName, boolean currentJobParameters,
-                    boolean exposedScm) {
-        this(jobManagement, item, jobName)
-        this.currentJobParameters = currentJobParameters
-        this.exposedScm = exposedScm
-    }
-
-    /**
-     * Defines the name of the job.
-     */
-    @Deprecated
-    void jobName(String jobName) {
-        jobManagement.logDeprecationWarning()
-
-        this.jobName = jobName
-    }
-
     /**
      * Copies parameters from the current build, except for file parameters. Defaults to [@code true}.
      */
@@ -65,10 +47,8 @@ class PhaseJobContext extends AbstractContext {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.25')
+    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.26')
     void parameters(@DslContext(DownstreamTriggerParameterContext) Closure closure) {
-        jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-
         ContextHelper.executeInContext(closure, paramTrigger)
     }
 

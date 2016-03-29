@@ -43,9 +43,9 @@ class MultiJobStepContextSpec extends Specification {
     def 'call phases with multiple jobs'() {
         when:
         context.phase('Third') {
-            job('JobA')
-            job('JobB')
-            job('JobC')
+            phaseJob('JobA')
+            phaseJob('JobB')
+            phaseJob('JobC')
         }
 
         then:
@@ -137,8 +137,7 @@ class MultiJobStepContextSpec extends Specification {
         nodeLabel.nodeLabel[0].value() == 'node_label'
 
         1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.26')
     }
 
     def 'call phases with plugin version 1.14 options'() {

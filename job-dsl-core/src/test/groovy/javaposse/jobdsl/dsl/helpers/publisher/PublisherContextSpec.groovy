@@ -1584,9 +1584,8 @@ class PublisherContextSpec extends Specification {
         second.triggerWithNoParameters[0].value() == false
         second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
 
-        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.26')
         1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
 
         when:
         context.downstreamParameterized {
@@ -1600,8 +1599,7 @@ class PublisherContextSpec extends Specification {
         third.condition[0].value() == 'SUCCESS'
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
-        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.26')
     }
 
     def 'call parametrized downstream with project list'() {
@@ -1617,14 +1615,10 @@ class PublisherContextSpec extends Specification {
         third.condition[0].value() == 'SUCCESS'
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
-        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.26')
     }
 
     def 'call parametrized downstream with FAILED_OR_BETTER condition'() {
-        given:
-        jobManagement.isMinimumPluginVersionInstalled('parameterized-trigger', '2.26') >> true
-
         when:
         context.downstreamParameterized {
             trigger('Project1') {
@@ -1638,20 +1632,7 @@ class PublisherContextSpec extends Specification {
         third.condition[0].value() == 'FAILED_OR_BETTER'
         third.triggerWithNoParameters[0].value() == false
         third.configs[0].attribute('class') == 'java.util.Collections$EmptyList'
-        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-    }
-
-    def 'call parametrized downstream with FAILED_OR_BETTER condition and older plugin version'() {
-        when:
-        context.downstreamParameterized {
-            trigger('Project1') {
-                condition('FAILED_OR_BETTER')
-            }
-        }
-
-        then:
-        thrown(DslScriptException)
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.26')
     }
 
     def 'call violations plugin with no args has correct defaults'() {
@@ -2627,8 +2608,7 @@ class PublisherContextSpec extends Specification {
             configs[0].value().empty
         }
         1 * jobManagement.requirePlugin('build-pipeline-plugin')
-        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.26')
     }
 
     def 'call buildPipelineTrigger with parameters'() {
@@ -2656,8 +2636,7 @@ class PublisherContextSpec extends Specification {
                     'key1=value1'
         }
         1 * jobManagement.requirePlugin('build-pipeline-plugin')
-        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.25')
-        1 * jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
+        1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.26')
     }
 
     def 'call buildPipelineTrigger with null argument'() {
