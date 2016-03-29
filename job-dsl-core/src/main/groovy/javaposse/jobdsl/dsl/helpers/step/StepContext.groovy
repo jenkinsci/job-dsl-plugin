@@ -1171,6 +1171,16 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Exports runtime parameters into a properties file .
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'job-exporter', minimumVersion = '0.4')
+    void exportRuntimeParameters() {
+        stepNodes << new NodeBuilder().'com.meyling.hudson.plugin.job__exporter.ExporterBuilder'()
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
