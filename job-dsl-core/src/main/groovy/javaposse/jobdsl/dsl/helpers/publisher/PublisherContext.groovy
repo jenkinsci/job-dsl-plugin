@@ -1466,7 +1466,7 @@ class PublisherContext extends AbstractExtensibleContext {
             if (sonarContext.installationName) {
                 installationName(sonarContext.installationName)
             }
-            jdk('(Inherit From Job)')
+            jdk(sonarContext.jdk)
             branch(sonarContext.branch ?: '')
             language()
             mavenOpts()
@@ -1478,7 +1478,7 @@ class PublisherContext extends AbstractExtensibleContext {
                     envVar(sonarContext.sonarTriggersContext.skipIfEnvironmentVariable ?: '')
                 }
             }
-            mavenInstallationName('(Inherit From Job)')
+            mavenInstallationName(sonarContext.mavenInstallation)
             rootPom()
             settings(class: 'jenkins.mvn.DefaultSettingsProvider')
             globalSettings(class: 'jenkins.mvn.DefaultGlobalSettingsProvider')

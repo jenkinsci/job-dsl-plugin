@@ -28,6 +28,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-33463](https://issues.jenkins-ci.org/browse/JENKINS-33463))
  * Enhanced documentation for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([JENKINS-33482](https://issues.jenkins-ci.org/browse/JENKINS-33482))
+ * Enhanced support for the [SonarQube Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SonarQube+plugin)
+   ([JENKINS-33792](https://issues.jenkins-ci.org/browse/JENKINS-33792))
  * Enhanced support for [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
    ([#725](https://github.com/jenkinsci/job-dsl-plugin/pull/725))
  * Enhanced support for the [View Job Filters Plugin](https://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters) and
