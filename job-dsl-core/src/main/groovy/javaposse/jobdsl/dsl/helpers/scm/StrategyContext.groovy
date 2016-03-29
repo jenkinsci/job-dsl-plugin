@@ -41,4 +41,16 @@ class StrategyContext extends AbstractContext {
             ancestorCommitSha1(commit)
         }
     }
+
+    /**
+     * Selects branches in priority order based on which branch exists.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'git-chooser-alternative', minimumVersion = '1.1')
+    void alternative() {
+        buildChooser = NodeBuilder.newInstance().buildChooser(
+            class: 'org.jenkinsci.plugins.git.chooser.alternative.AlternativeBuildChooser'
+        )
+    }
 }

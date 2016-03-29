@@ -65,6 +65,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#747](https://github.com/jenkinsci/job-dsl-plugin/pull/747))
  * Deprecated a method for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin), see
    [Migration](Migration#migrating-to-145)
+ * Add support for the
+   [Git Chooser Alternative Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Chooser+Alternative+Plugin)
+   ([JENKINS-33782](https://issues.jenkins-ci.org/browse/JENKINS-33782))
 * 1.44 (March 11 2016)
  * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))
