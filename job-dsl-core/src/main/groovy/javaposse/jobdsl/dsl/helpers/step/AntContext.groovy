@@ -42,7 +42,7 @@ class AntContext implements Context {
     }
 
     /**
-     * Specifies the build file to be invoked. Defaults to {@code build.gradle}.
+     * Specifies the build file to be invoked.
      */
     void buildFile(String buildFile) {
         this.buildFile = buildFile
