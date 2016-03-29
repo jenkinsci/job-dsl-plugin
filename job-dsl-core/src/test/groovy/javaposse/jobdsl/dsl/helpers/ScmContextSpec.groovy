@@ -380,10 +380,12 @@ class ScmContextSpec extends Specification {
             reference.size() == 0
             extensions.size() == 1
             extensions[0].children().size() == 1
-            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].children().size() == 3
-            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].reference[0].value() == ''
-            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].shallow[0].value() == false
-            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].timeout[0].value() == 50
+            with (extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0]) {
+              children().size() == 3
+              reference[0].value() == ''
+              shallow[0].value() == false
+              timeout[0].value() == 50
+            }
         }
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
         1 * mockJobManagement.logDeprecationWarning()
