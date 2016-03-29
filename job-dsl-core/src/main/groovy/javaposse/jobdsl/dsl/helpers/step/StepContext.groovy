@@ -1171,6 +1171,36 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Invokes a Phing build script.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'phing', minimumVersion = '0.13.3')
+    void phing(@DslContext(PhingContext) Closure closure) {
+        PhingContext context = new PhingContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Node phingNode = new NodeBuilder().'hudson.plugins.phing.PhingBuilder' {
+            name(context.phingName ?: '')
+            useModuleRoot(context.useModuleRoot)
+            if (context.buildFile) {
+                buildFile(context.buildFile)
+            }
+            if (context.targets) {
+                targets(context.targets.join('\n'))
+            }
+            if (context.properties) {
+                properties(context.properties.collect { k, v -> "$k=$v" }.join('\n'))
+            }
+            if (context.options) {
+                options(context.options.join('\n'))
+            }
+        }
+
+        stepNodes << phingNode
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
