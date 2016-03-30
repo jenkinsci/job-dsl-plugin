@@ -23,6 +23,7 @@ import javaposse.jobdsl.plugin.actions.GeneratedUserContentsAction
 import javaposse.jobdsl.plugin.actions.GeneratedViewsAction
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction
 import javaposse.jobdsl.plugin.actions.SeedJobAction
+import javaposse.jobdsl.plugin.fixtures.ExampleJobDslExtension
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins

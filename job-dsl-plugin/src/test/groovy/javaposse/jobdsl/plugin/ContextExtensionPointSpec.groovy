@@ -3,6 +3,9 @@ package javaposse.jobdsl.plugin
 import hudson.ExtensionList
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.plugin.fixtures.ExampleJobDslExtension
+import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint
+import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint2
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Specification

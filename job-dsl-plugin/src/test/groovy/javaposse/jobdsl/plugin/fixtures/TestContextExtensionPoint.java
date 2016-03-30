@@ -1,9 +1,12 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin.fixtures;
 
 import hudson.Extension;
 import hudson.model.Item;
 import javaposse.jobdsl.dsl.Context;
 import javaposse.jobdsl.dsl.helpers.step.StepContext;
+import javaposse.jobdsl.plugin.ContextExtensionPoint;
+import javaposse.jobdsl.plugin.DslEnvironment;
+import javaposse.jobdsl.plugin.DslExtensionMethod;
 import org.spockframework.util.Assert;
 
 import java.util.ArrayList;

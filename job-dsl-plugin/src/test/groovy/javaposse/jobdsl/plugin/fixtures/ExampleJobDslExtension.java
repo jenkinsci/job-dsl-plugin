@@ -1,10 +1,13 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin.fixtures;
 
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import javaposse.jobdsl.dsl.helpers.properties.PropertiesContext;
+import javaposse.jobdsl.plugin.ContextExtensionPoint;
+import javaposse.jobdsl.plugin.DslEnvironment;
+import javaposse.jobdsl.plugin.DslExtensionMethod;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

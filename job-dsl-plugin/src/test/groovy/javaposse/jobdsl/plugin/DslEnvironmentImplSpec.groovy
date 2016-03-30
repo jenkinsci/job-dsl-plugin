@@ -6,6 +6,11 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.step.StepContext
+import javaposse.jobdsl.plugin.fixtures.InvalidConstructorCountContext
+import javaposse.jobdsl.plugin.fixtures.NoPublicConstructorContext
+import javaposse.jobdsl.plugin.fixtures.TestAbstractContext
+import javaposse.jobdsl.plugin.fixtures.TestContext
+import javaposse.jobdsl.plugin.fixtures.UnsupportedConstructorArgContext
 import spock.lang.Specification
 
 class DslEnvironmentImplSpec extends Specification {
@@ -64,35 +69,5 @@ class DslEnvironmentImplSpec extends Specification {
         then:
         Exception e = thrown(IllegalArgumentException)
         e.message == 'unsupported constructor parameter type: java.lang.String'
-    }
-
-    @SuppressWarnings('EmptyClass')
-    static class TestContext implements Context {
-    }
-
-    static class TestAbstractContext extends AbstractContext {
-        TestAbstractContext(JobManagement jobManagement) {
-            super(jobManagement)
-        }
-    }
-
-    static class InvalidConstructorCountContext implements Context {
-        InvalidConstructorCountContext() {
-        }
-
-        @SuppressWarnings('GroovyUnusedDeclaration')
-        InvalidConstructorCountContext(JobManagement jobManagement) {
-        }
-    }
-
-    static class NoPublicConstructorContext implements Context {
-        private NoPublicConstructorContext() {
-        }
-    }
-
-    static class UnsupportedConstructorArgContext implements Context {
-        @SuppressWarnings('GroovyUnusedDeclaration')
-        UnsupportedConstructorArgContext(String arg) {
-        }
     }
 }

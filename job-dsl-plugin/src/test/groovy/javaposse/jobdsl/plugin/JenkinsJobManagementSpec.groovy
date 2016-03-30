@@ -23,6 +23,8 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import javaposse.jobdsl.dsl.UserContent
 import javaposse.jobdsl.dsl.helpers.step.StepContext
+import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint
+import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint2
 import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
