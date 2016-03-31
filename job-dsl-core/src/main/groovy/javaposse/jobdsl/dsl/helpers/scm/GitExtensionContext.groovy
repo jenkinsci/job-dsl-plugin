@@ -69,13 +69,16 @@ class GitExtensionContext extends AbstractContext {
      * Specifies behaviors for handling sub-modules.
      */
     void submoduleOptions(@DslContext(GitSubmoduleOptionsContext) Closure closure) {
-        GitSubmoduleOptionsContext context = new GitSubmoduleOptionsContext()
+        GitSubmoduleOptionsContext context = new GitSubmoduleOptionsContext(jobManagement)
         executeInContext(closure, context)
 
         extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.SubmoduleOption' {
             disableSubmodules(context.disable)
             recursiveSubmodules(context.recursive)
             trackingSubmodules(context.tracking)
+            if (jobManagement.isMinimumPluginVersionInstalled('git', '2.4.1')) {
+                reference(context.reference)
+            }
         }
     }
 
