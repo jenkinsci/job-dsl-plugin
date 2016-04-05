@@ -5,7 +5,7 @@ var declare     = require('gulp-declare');
 var concat      = require('gulp-concat');
 var less        = require('gulp-less');
 var path        = require('path');
-var minifyCss   = require('gulp-minify-css');
+var cleanCss    = require('gulp-clean-css');
 var connect     = require('gulp-connect');
 var watch       = require('gulp-watch');
 var del         = require('del');
@@ -32,7 +32,7 @@ gulp.task('templates', function(){
 gulp.task('less', function () {
     return gulp.src('./src/css/**/*.less')
         .pipe(less())
-        .pipe(minifyCss({keepBreaks:true}))
+        .pipe(cleanCss({keepBreaks:true}))
         .pipe(concat('app.css'))
         .pipe(gulp.dest('./build/dist/css/'));
 });
