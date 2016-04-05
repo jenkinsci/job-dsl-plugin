@@ -44,7 +44,7 @@ installation.
     }
 
     dependencies {
-        compile 'org.jenkins-ci.plugins:job-dsl-core:1.44'
+        compile 'org.jenkins-ci.plugins:job-dsl-core:1.45'
     }
 
 In this example, the GroovyDSL script from above must be stored in `src/main/resources/idea.gdsl`.

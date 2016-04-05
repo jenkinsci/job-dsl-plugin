@@ -20,7 +20,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.45 (unreleased)
+* 1.45 (April 05 2016)
  * Added support for the [CMake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CMake+Plugin)
    ([JENKINS-33829](https://issues.jenkins-ci.org/browse/JENKINS-33829))
  * Added support for the [JIRA Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JIRA+Plugin)
