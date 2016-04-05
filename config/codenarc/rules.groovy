@@ -8,6 +8,8 @@ ruleset {
     ruleset('rulesets/convention.xml') {
         // this rule does not necessarily lead to better code
         exclude 'IfStatementCouldBeTernary'
+        // we don't care
+        exclude 'TrailingComma'
     }
 
     ruleset('rulesets/design.xml') {
