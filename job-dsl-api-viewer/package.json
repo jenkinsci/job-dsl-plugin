@@ -1,6 +1,8 @@
 {
   "name": "jenkins-job-dsl-api-viewer",
   "version": "0.0.1",
+  "license" : "Apache-2.0",
+  "repository": "jenkinsci/job-dsl-plugin",
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-handlebars": "^3.0.1",
