@@ -4,6 +4,8 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
     * FOSDEM:
       [Jenkins as a Code](https://fosdem.org/2016/schedule/event/jenkins_as_code/)
       by [Łukasz Szczęsny](https://twitter.com/wybczu) and [Marcin Zajączkowski](https://twitter.com/SolidSoftBlog)
+    * Praqma:
+      [Delving into Job DSL](http://www.praqma.com/stories/delving-into-job-dsl/)
 * December 2015
     * Under the hood blog:
       [Jenkins job DSL](http://kamilszymanski.github.io/jenkins-job-dsl/)
