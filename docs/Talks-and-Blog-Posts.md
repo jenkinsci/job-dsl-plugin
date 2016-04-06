@@ -1,5 +1,8 @@
 This is a collection of talks, presentations and blog posts about the Job DSL plugin.
 
+* April 2016
+    * Mesosphere Documentation:
+      [Using the Jenkins Job DSL plugin](https://docs.mesosphere.com/usage/managing-services/velocity/jenkins-job-dsl-plugin/)
 * January 2016
     * FOSDEM:
       [Jenkins as a Code](https://fosdem.org/2016/schedule/event/jenkins_as_code/)
