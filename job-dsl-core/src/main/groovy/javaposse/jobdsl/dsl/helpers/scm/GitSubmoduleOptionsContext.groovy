@@ -1,11 +1,18 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
-class GitSubmoduleOptionsContext implements Context {
+class GitSubmoduleOptionsContext extends AbstractContext {
     boolean disable
     boolean recursive
     boolean tracking
+    String reference
+
+    protected GitSubmoduleOptionsContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Disables submodules processing. Defaults to {@code false}.
@@ -26,5 +33,15 @@ class GitSubmoduleOptionsContext implements Context {
      */
     void tracking(boolean tracking = true) {
         this.tracking = tracking
+    }
+
+    /**
+     * Specifies a folder containing a repository that will be used by Git as a reference during clone operations.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'git', minimumVersion = '2.4.1')
+    void reference(String reference) {
+        this.reference = reference
     }
 }

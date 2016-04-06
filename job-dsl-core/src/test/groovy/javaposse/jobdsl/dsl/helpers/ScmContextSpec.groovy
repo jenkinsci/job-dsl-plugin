@@ -1583,6 +1583,73 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
+    def 'call git scm with minimal submodule options and plugin version 2.4.1'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('git', '2.4.1') >> true
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            extensions {
+                submoduleOptions {
+                }
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            with(extensions[0].'hudson.plugins.git.extensions.impl.SubmoduleOption'[0]) {
+                children().size() == 4
+                disableSubmodules[0].value() == false
+                recursiveSubmodules[0].value() == false
+                trackingSubmodules[0].value() == false
+                reference[0].value() == ''
+            }
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+    }
+
+    def 'call git scm with full submodule options and plugin version 2.4.1'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('git', '2.4.1') >> true
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            extensions {
+                submoduleOptions {
+                    disable()
+                    recursive()
+                    tracking()
+                    reference('/foo')
+                }
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            with(extensions[0].'hudson.plugins.git.extensions.impl.SubmoduleOption'[0]) {
+                children().size() == 4
+                disableSubmodules[0].value() == true
+                recursiveSubmodules[0].value() == true
+                trackingSubmodules[0].value() == true
+                reference[0].value() == '/foo'
+            }
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.4.1')
+    }
+
     def 'call git scm with configure appending'() {
         when:
         context.git(GIT_REPO_URL, null) { Node gitNode ->
