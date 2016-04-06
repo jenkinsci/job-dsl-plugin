@@ -75,6 +75,10 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
 * June 2014
     * JUC Berlin: [Configuration as Code: The Job DSL Plugin](https://www.cloudbees.com/event/topic/lightning-talk-2-configuration-code-job-dsl-plugin)
       by [Daniel Spilker](https://github.com/daspilker)
+* April 2014
+    * Dan Tehranian's Blog:
+      [Jenkins Job DSL Plugin Saves the Day](https://dantehranian.wordpress.com/2014/04/03/jenkins-job-dsl-plugin-saves-the-day/)
+      by [Dan Tehranian](http://tehranian.net/)
 * January 2014
     * Twitter University: [Adoption of the Job DSL Plugin at Netflix](https://engineering.twitter.com/university/videos/adoption-of-the-job-dsl-plugin-at-netflix)
       by [Justin Ryan](https://github.com/quidryan)
