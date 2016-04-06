@@ -45,6 +45,14 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
     * codecentric Blog:
       [Generated Jenkins Jobs and automatic Branch Merging for Feature Branches](https://blog.codecentric.de/en/2015/04/generated-jenkins-jobs-and-automatic-branch-merging-for-feature-branches/)
       by [Daniel Reuter](https://github.com/ReuDa)
+    * Hard Mock Cafe:
+      Job DSL ([part 3](http://hardmockcafe.blogspot.de/2015/04/job-dsl-part-iii.html))
+      by [Ralf Stuckert](https://www.blogger.com/profile/16798858616821611604)
+* March 2015
+    * Hard Mock Cafe:
+      Job DSL ([part 1](http://hardmockcafe.blogspot.de/2015/03/job-dsl-part-i.html) and
+      [part 2](http://hardmockcafe.blogspot.de/2015/03/job-dsl-part-ii.html))
+      by [Ralf Stuckert](https://www.blogger.com/profile/16798858616821611604)
 * January 2015
     * codecentric Blog:
       [Continuous Delivery for Microservices with Jenkins and the Job DSL Plugin](https://blog.codecentric.de/en/2015/01/continuous-delivery-microservices-jenkins-job-dsl-plugin/)
