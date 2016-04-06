@@ -1244,6 +1244,26 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+    * Invokes an Unity3d build script.
+    *
+    * @since 1.46
+    */
+    @RequiresPlugin(id = 'unity3d-plugin', minimumVersion = '1.3')
+    void unity3d(@DslContext(Unity3DContext) Closure closure) {
+       Unity3DContext context = new Unity3DContext()
+       ContextHelper.executeInContext(closure, context)
+
+       Node cmakeNode = new NodeBuilder().'org.jenkinsci.plugins.unity3d.Unity3dBuilder' {
+           unity3dName(context.unity3dName ?: '')
+           unstableReturnCodes(context.returnCodes)
+           if (context.args && context.args.size > 0) {
+               argLine(context.args.join(' '))
+           }
+       }
+       stepNodes << cmakeNode
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {

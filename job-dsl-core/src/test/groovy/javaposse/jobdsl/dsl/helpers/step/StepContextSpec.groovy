@@ -3643,7 +3643,6 @@ class StepContextSpec extends Specification {
         }
 
         then:
-        context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             children().size() == 3
             generator[0].value() == 'Unix Makefiles'
@@ -3820,5 +3819,25 @@ class StepContextSpec extends Specification {
             options[0].value() == 'options1\noptions2'
         }
         1 * jobManagement.requireMinimumPluginVersion('phing', '0.13.3')
+    }
+
+    def 'call unity3d with all options'() {
+        when:
+        context.unity3d {
+            unity3dInstallation('Unity 5.1')
+            returnCodes('2,3')
+            args('-batchmode')
+            args('-executeMethod')
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            children().size() == 3
+            unstableReturnCodes[0].value() == '2,3'
+            unity3dName[0].value() == 'Unity 5.1'
+            argLine[0].value() == '-batchmode -executeMethod'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('unity3d-plugin', '1.3')
     }
 }
