@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class HtmlReportTargetContext extends AbstractContext {
     final String reportDir
@@ -42,7 +41,6 @@ class HtmlReportTargetContext extends AbstractContext {
     /**
      * If set, allows report to be missing. Defaults to {@code false}.
      */
-    @RequiresPlugin(id = 'htmlpublisher', minimumVersion = '1.3')
     void allowMissing(boolean allowMissing = true) {
         this.allowMissing = allowMissing
     }
@@ -52,7 +50,6 @@ class HtmlReportTargetContext extends AbstractContext {
      *
      * @since 1.35
      */
-    @RequiresPlugin(id = 'htmlpublisher', minimumVersion = '1.4')
     void alwaysLinkToLastBuild(boolean alwaysLinkToLastBuild = true) {
         this.alwaysLinkToLastBuild = alwaysLinkToLastBuild
     }
