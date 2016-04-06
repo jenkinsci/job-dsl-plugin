@@ -3702,4 +3702,17 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('cmakebuilder', '2.4.1')
     }
+
+    def 'call exportRuntimeParameters method'() {
+        when:
+        context.exportRuntimeParameters()
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'com.meyling.hudson.plugin.job__exporter.ExporterBuilder'
+            children().empty
+        }
+        1 * jobManagement.requireMinimumPluginVersion('job-exporter', '0.4')
+    }
 }
