@@ -3776,4 +3776,49 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('msbuild', '1.25')
     }
+
+    def 'call phing methods with no options'() {
+        when:
+        context.phing {
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.phing.PhingBuilder'
+            children().size() == 2
+            useModuleRoot[0].value() == true
+            name[0].value() == '(Default)'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('phing', '0.13.3')
+    }
+
+    def 'call phing with all options'() {
+        when:
+        context.phing {
+            phingInstallation('Phing 2.8.0')
+            useModuleRoot(false)
+            buildFile('src/bf')
+            targets('bar')
+            targets('foo')
+            properties('A', 'B')
+            properties('C', true)
+            options('options1')
+            options('options2')
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.phing.PhingBuilder'
+            children().size() == 6
+            name[0].value() == 'Phing 2.8.0'
+            useModuleRoot[0].value() == false
+            buildFile[0].value() == 'src/bf'
+            targets[0].value() == 'bar\nfoo'
+            properties[0].value() == 'A=B\nC=true'
+            options[0].value() == 'options1\noptions2'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('phing', '0.13.3')
+    }
 }

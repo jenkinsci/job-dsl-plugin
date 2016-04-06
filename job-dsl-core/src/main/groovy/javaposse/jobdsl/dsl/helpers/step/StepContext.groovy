@@ -1205,7 +1205,7 @@ class StepContext extends AbstractExtensibleContext {
         MSBuildContext context = new MSBuildContext()
         ContextHelper.executeInContext(closure, context)
 
-        Node msbuildNode = new NodeBuilder().'hudson.plugins.msbuild.MsBuildBuilder' {
+        stepNodes << new NodeBuilder().'hudson.plugins.msbuild.MsBuildBuilder' {
             msBuildName(context.msBuildName ?: '')
             cmdLineArgs(context.args.join(' '))
             msBuildFile(context.buildFile ?: '')
@@ -1213,8 +1213,34 @@ class StepContext extends AbstractExtensibleContext {
             continueOnBuildFailure(context.continueOnBuildFailure)
             unstableIfWarnings(context.unstableIfWarnings)
         }
+    }
 
-        stepNodes << msbuildNode
+    /**
+     * Invokes a Phing build script.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'phing', minimumVersion = '0.13.3')
+    void phing(@DslContext(PhingContext) Closure closure) {
+        PhingContext context = new PhingContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'hudson.plugins.phing.PhingBuilder' {
+            name(context.phingName ?: '')
+            useModuleRoot(context.useModuleRoot)
+            if (context.buildFile) {
+                buildFile(context.buildFile)
+            }
+            if (context.targets) {
+                targets(context.targets.join('\n'))
+            }
+            if (context.properties) {
+                properties(context.properties.collect { k, v -> "$k=$v" }.join('\n'))
+            }
+            if (context.options) {
+                options(context.options.join('\n'))
+            }
+        }
     }
 
     /**
