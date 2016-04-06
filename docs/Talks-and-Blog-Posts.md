@@ -64,6 +64,14 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
     * codecentric Blog:
       [Continuous Delivery for Microservices with Jenkins and the Job DSL Plugin](https://blog.codecentric.de/en/2015/01/continuous-delivery-microservices-jenkins-job-dsl-plugin/)
       by [Dennis Schulte](https://github.com/denschu)
+* October 2014
+    * Devexp:
+      [Use unsupported Jenkins plugins with Jenkins DSL](http://www.devexp.eu/2014/10/26/use-unsupported-jenkins-plugins-with-jenkins-dsl/)
+      by [Toni Van de Voorde](https://twitter.com/tonivdv)
+* September 2014
+    * Devexp:
+      [Automate Jenkins](http://www.devexp.eu/2014/09/23/automate-jenkins/)
+      by [Toni Van de Voorde](https://twitter.com/tonivdv)
 * June 2014
     * JUC Berlin: [Configuration as Code: The Job DSL Plugin](https://www.cloudbees.com/event/topic/lightning-talk-2-configuration-code-job-dsl-plugin)
       by [Daniel Spilker](https://github.com/daspilker)
