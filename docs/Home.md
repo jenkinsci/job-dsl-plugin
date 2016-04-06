@@ -25,6 +25,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-33881](https://issues.jenkins-ci.org/browse/JENKINS-33881))
  * Added support for the [Job Exporter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Job+Exporter+Plugin)
    ([JENKINS-33882](https://issues.jenkins-ci.org/browse/JENKINS-33882))
+ * Added support for the [MSBuild Plugin](https://wiki.jenkins-ci.org/display/JENKINS/MSBuild+Plugin)
+   ([JENKINS-33825](https://issues.jenkins-ci.org/browse/JENKINS-33825))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([JENKINS-33968](https://issues.jenkins-ci.org/browse/JENKINS-33968))
 * 1.45 (April 05 2016)

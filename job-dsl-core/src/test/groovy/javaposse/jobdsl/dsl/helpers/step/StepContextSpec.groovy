@@ -3729,4 +3729,51 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('jython', '1.9')
     }
+
+    def 'call msbuild methods with no options'() {
+        when:
+        context.msBuild {
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.msbuild.MsBuildBuilder'
+            children().size() == 6
+            cmdLineArgs[0].value() == ''
+            buildVariablesAsProperties[0].value() == false
+            continueOnBuildFailure[0].value() == false
+            unstableIfWarnings[0].value() == false
+            msBuildFile[0].value() == ''
+            msBuildName[0].value() == '(Default)'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('msbuild', '1.25')
+    }
+
+    def 'call msbuild methods with all options'() {
+        when:
+        context.msBuild {
+            args('clean')
+            args('build')
+            buildFile('bf')
+            passBuildVariables()
+            continueOnBuildFailure()
+            unstableIfWarnings()
+            msBuildInstallation('MSBuild')
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.msbuild.MsBuildBuilder'
+            children().size() == 6
+            cmdLineArgs[0].value() == 'clean build'
+            buildVariablesAsProperties[0].value() == true
+            continueOnBuildFailure[0].value() == true
+            unstableIfWarnings[0].value() == true
+            msBuildFile[0].value() == 'bf'
+            msBuildName[0].value() == 'MSBuild'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('msbuild', '1.25')
+    }
 }

@@ -1196,6 +1196,28 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Invokes a MSBuild build script.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'msbuild', minimumVersion = '1.25')
+    void msBuild(@DslContext(MSBuildContext) Closure closure) {
+        MSBuildContext context = new MSBuildContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Node msbuildNode = new NodeBuilder().'hudson.plugins.msbuild.MsBuildBuilder' {
+            msBuildName(context.msBuildName ?: '')
+            cmdLineArgs(context.args.join(' '))
+            msBuildFile(context.buildFile ?: '')
+            buildVariablesAsProperties(context.passBuildVariables)
+            continueOnBuildFailure(context.continueOnBuildFailure)
+            unstableIfWarnings(context.unstableIfWarnings)
+        }
+
+        stepNodes << msbuildNode
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
