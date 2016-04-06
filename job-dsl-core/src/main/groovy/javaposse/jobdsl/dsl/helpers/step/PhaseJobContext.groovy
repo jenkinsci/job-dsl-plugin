@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
+import javaposse.jobdsl.dsl.SlaveFs
 import javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerParameterContext
 
 class PhaseJobContext extends AbstractContext {
@@ -32,6 +33,8 @@ class PhaseJobContext extends AbstractContext {
     String resumeBindings = ''
     String jobBindings = ''
     String resumeConditions = null
+    boolean isJobScriptOnSlave = false
+    boolean isResumeScriptOnSlave = false
 
     Closure configureClosure
 
@@ -59,6 +62,10 @@ class PhaseJobContext extends AbstractContext {
         this.jobName = jobName
     }
 
+    SlaveFs slaveFs(String path) {
+        new SlaveFs(path)
+    }
+
     void enableGroovyScript(boolean enableJobScript) {
         this.enableJobScript = enableJobScript
     }
@@ -80,6 +87,22 @@ class PhaseJobContext extends AbstractContext {
         }
     }
 
+    void groovyScript(String type, SlaveFs slaveFs) {
+        if (null == enableJobScript) {
+            enableJobScript = true
+        }
+        isUseScriptFile = false
+        if ('FILE' == type) {
+            isUseScriptFile = true
+            isJobScriptOnSlave = true
+            scriptPath = slaveFs.path
+            jobScript = ''
+        } else {
+            enableJobScript = false
+            isJobScriptOnSlave = false
+        }
+    }
+
     void resumeCondition(String resumeCondition) {
         Preconditions.checkArgument(
                 VALID_RESUME_CONDITIONS.contains(resumeCondition),
@@ -96,6 +119,15 @@ class PhaseJobContext extends AbstractContext {
             this.isUseResumeScriptFile = true
         } else if ('SCRIPT' == source) {
             this.resumeScriptText = value
+        }
+    }
+
+    void resumeGroovyScript(String source, SlaveFs slaveFs) {
+        this.isUseResumeScriptFile = false
+        if ('FILE' == source) {
+            this.resumeScriptPath = slaveFs.path
+            this.isResumeScriptOnSlave = true
+            this.isUseResumeScriptFile = true
         }
     }
 

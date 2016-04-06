@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.SlaveFs
 
 class PhaseContext extends AbstractContext {
     protected final Item item
@@ -14,6 +15,7 @@ class PhaseContext extends AbstractContext {
     String executionType
     Boolean enableGroovyScript
     Boolean isUseScriptFile
+    Boolean isScriptOnSlave
     String scriptText
     String scriptPath
     String bindings
@@ -22,7 +24,7 @@ class PhaseContext extends AbstractContext {
 
     PhaseContext(JobManagement jobManagement, Item item, String phaseName, String continuationCondition,
                  String executionType, Boolean enableGroovyScript, String scriptText, Boolean isUseScriptFile,
-                 String scriptPath, String bindings) {
+                 String scriptPath, String bindings, Boolean isScriptOnSlave) {
         super(jobManagement)
         this.item = item
         this.phaseName = phaseName
@@ -33,6 +35,7 @@ class PhaseContext extends AbstractContext {
         this.isUseScriptFile = isUseScriptFile
         this.scriptPath = scriptPath
         this.bindings = bindings
+        this.isScriptOnSlave = isScriptOnSlave
     }
 
     /**
@@ -54,13 +57,6 @@ class PhaseContext extends AbstractContext {
      */
     void executionType(String executionType) {
         this.executionType = executionType
-    }
-
-    void groovyScript(String script) {
-        if (null == enableGroovyScript) {
-            this.enableGroovyScript = true
-        }
-        this.groovyScript = script
     }
 
     void enableGroovyScript(boolean enableGroovyScript) {
@@ -86,6 +82,30 @@ class PhaseContext extends AbstractContext {
             this.enableGroovyScript = false
             this.isUseScriptFile = false
         }
+    }
+
+    /**
+     * Defines groovy script
+     * @param source
+     * @param slaveFs
+     */
+    void groovyScript(String source, SlaveFs slaveFs) {
+        if (null == enableGroovyScript) {
+            this.enableGroovyScript = true
+        }
+        if ('FILE' == source) {
+            this.scriptPath = slaveFs.path
+            this.isUseScriptFile = true
+            this.isScriptOnSlave = true
+        } else {
+            this.enableGroovyScript = false
+            this.isUseScriptFile = false
+            this.isScriptOnSlave = false
+        }
+    }
+
+    SlaveFs slaveFs(String path) {
+        new SlaveFs(path)
     }
 
     void bindVar(String key, String value) {

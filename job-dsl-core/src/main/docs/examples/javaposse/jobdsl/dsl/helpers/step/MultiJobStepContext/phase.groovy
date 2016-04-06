@@ -2,6 +2,8 @@ multiJob('example') {
     steps {
         phase('Second') {
             phaseJob('JobZ') {
+                groovyScript('FILE', slaveFs('/Users/sshelomentsev/example.groovy'))
+                resumeGroovyScript('FILE', slaveFs('/Users/sshelomentsev/example.groovy'))
                 parameters {
                     propertiesFile('my1.properties')
                 }
@@ -9,7 +11,7 @@ multiJob('example') {
         }
         phase('Third') {
             enableGroovyScript(true)
-            groovyScript('SCRIPT', 'println AAA')
+            groovyScript('FILE', slaveFs('/Users/sshelomentsev/example.groovy'))
             bindVar('AAA', '100')
             bindVarMap(new HashMap<String, String>() { {
                 put('BBB', '200')

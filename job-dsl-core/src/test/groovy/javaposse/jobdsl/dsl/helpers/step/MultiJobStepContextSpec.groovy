@@ -274,7 +274,7 @@ class MultiJobStepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
-            children().size() == 9
+            children().size() == 10
             phaseName[0].value() == 'test'
             continuationCondition[0].value() == condition
             executionType[0].value() == 'PARALLEL'
