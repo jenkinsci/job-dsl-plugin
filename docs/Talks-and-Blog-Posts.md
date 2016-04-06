@@ -3,6 +3,10 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
 * April 2016
     * Mesosphere Documentation:
       [Using the Jenkins Job DSL plugin](https://docs.mesosphere.com/usage/managing-services/velocity/jenkins-job-dsl-plugin/)
+* February 2016
+    * DZone DevOps:
+      [The Jenkins Job DSL Plugin in Practice](https://dzone.com/articles/the-jenkins-job-dsl-plugin-in-practice)
+      by [Kamil Szymański](https://twitter.com/kszdev)
 * January 2016
     * FOSDEM:
       [Jenkins as a Code](https://fosdem.org/2016/schedule/event/jenkins_as_code/)
@@ -12,7 +16,7 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
 * December 2015
     * Under the hood blog:
       [Jenkins job DSL](http://kamilszymanski.github.io/jenkins-job-dsl/)
-      by [Kamil Szymanski](https://twitter.com/kszdev)
+      by [Kamil Szymański](https://twitter.com/kszdev)
 * November 2015
     * eBay Dev Blog: Taming the Hydra ([part 3](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-3.html))
       by [Marc Günther](https://github.com/marc-guenther)
