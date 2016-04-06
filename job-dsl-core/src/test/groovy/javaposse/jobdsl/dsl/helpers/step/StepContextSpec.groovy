@@ -3715,4 +3715,18 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('job-exporter', '0.4')
     }
+
+    def 'call jython method'() {
+        when:
+        context.jython('print "Hello" + "Goodbye"')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jvnet.hudson.plugins.Jython'
+            children().size() == 1
+            command[0].value() == 'print "Hello" + "Goodbye"'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('jython', '1.9')
+    }
 }
