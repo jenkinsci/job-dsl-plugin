@@ -1488,4 +1488,39 @@ class WrapperContextSpec extends Specification {
         'key1' | 'key2' | 'key3'  | null   | 'key1'      | 'key2'      | 'key3'      | ''
         'key1' | 'key2' | 'key3'  | 'key4' | 'key1'      | 'key2'      | 'key3'      | 'key4'
     }
+
+    def 'call versionNumber'() {
+        when:
+        context.versionNumber {
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jvnet.hudson.tools.versionnumber.VersionNumberBuilder'
+            children().size() == 11
+            children()[0].name() == 'versionNumberString'
+            children()[0].value() == ''
+            children()[1].name() == 'projectStartDate'
+            children()[1].value() != ''
+            children()[2].name() == 'environmentVariableName'
+            children()[2].value() == 'VERSION'
+            children()[3].name() == 'environmentPrefixVariable'
+            children()[3].value() == ''
+            children()[4].name() == 'oBuildsToday'
+            children()[4].value() == ''
+            children()[5].name() == 'oBuildsThisWeek'
+            children()[5].value() == ''
+            children()[6].name() == 'oBuildsThisMonth'
+            children()[6].value() == ''
+            children()[7].name() == 'oBuildsThisYear'
+            children()[7].value() == ''
+            children()[8].name() == 'oBuildsAllTime'
+            children()[8].value() == ''
+            children()[9].name() == 'skipFailedBuilds'
+            children()[9].value() == false
+            children()[10].name() == 'useAsBuildDisplayName'
+            children()[10].value() == true
+        }
+        1 * mockJobManagement.requirePlugin('versionnumber')
+    }
 }

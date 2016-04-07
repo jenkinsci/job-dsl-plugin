@@ -661,4 +661,24 @@ class WrapperContext extends AbstractExtensibleContext {
             jiraFilter(context.filter ?: '')
         }
     }
+
+    @RequiresPlugin(id = 'versionnumber')
+    void versionNumber(@DslContext(VersionNumberContext) Closure closure = null) {
+        VersionNumberContext context = new VersionNumberContext()
+        ContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'org.jvnet.hudson.tools.versionnumber.VersionNumberBuilder' {
+            versionNumberString(context.versionNumberString)
+            projectStartDate(context.projectStartDate)
+            environmentVariableName(context.environmentVariableName)
+            environmentPrefixVariable(context.environmentPrefixVariable)
+            oBuildsToday(context.oBuildsToday)
+            oBuildsThisWeek(context.oBuildsThisWeek)
+            oBuildsThisMonth(context.oBuildsThisMonth)
+            oBuildsThisYear(context.oBuildsThisYear)
+            oBuildsAllTime(context.oBuildsAllTime)
+            skipFailedBuilds(context.skipFailedBuilds)
+            useAsBuildDisplayName(context.useAsBuildDisplayName)
+        }
+    }
 }
