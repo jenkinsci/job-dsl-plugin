@@ -1501,7 +1501,7 @@ class WrapperContextSpec extends Specification {
             children()[0].name() == 'versionNumberString'
             children()[0].value() == ''
             children()[1].name() == 'projectStartDate'
-            children()[1].value() != ''
+            children()[1].value() != null
             children()[2].name() == 'environmentVariableName'
             children()[2].value() == 'VERSION'
             children()[3].name() == 'environmentPrefixVariable'
@@ -1517,7 +1517,7 @@ class WrapperContextSpec extends Specification {
             children()[8].name() == 'oBuildsAllTime'
             children()[8].value() == ''
             children()[9].name() == 'skipFailedBuilds'
-            children()[9].value() == false
+            children()[9].value() == true
             children()[10].name() == 'useAsBuildDisplayName'
             children()[10].value() == true
         }

@@ -4,17 +4,17 @@ import javaposse.jobdsl.dsl.Context
 
 class VersionNumberContext implements Context {
 
-    String environmentVariableName = 'VERSION'
-    String versionNumberString = ''
-    String environmentPrefixVariable = ''
-    boolean skipFailedBuilds = false
-    boolean useAsBuildDisplayName = true
-    String projectStartDate = new Date()
-    String oBuildsToday = ''
-    String oBuildsThisWeek = ''
-    String oBuildsThisMonth = ''
-    String oBuildsThisYear = ''
-    String oBuildsAllTime = ''
+    String environmentVariableName
+    String versionNumberString
+    String environmentPrefixVariable
+    boolean skipFailedBuilds
+    boolean useAsBuildDisplayName
+    String projectStartDate
+    String oBuildsToday
+    String oBuildsThisWeek
+    String oBuildsThisMonth
+    String oBuildsThisYear
+    String oBuildsAllTime
 
     void environmentVariableName(String environmentVariableName) {
         this.environmentVariableName = environmentVariableName
@@ -28,11 +28,11 @@ class VersionNumberContext implements Context {
         this.environmentPrefixVariable = environmentPrefixVariable
     }
 
-    void skipFailedBuilds(boolean skipFailedBuilds) {
+    void skipFailedBuilds(boolean skipFailedBuilds = true) {
         this.skipFailedBuilds = skipFailedBuilds
     }
 
-    void useAsBuildDisplayName(boolean useAsBuildDisplayName) {
+    void useAsBuildDisplayName(boolean useAsBuildDisplayName = true) {
         this.useAsBuildDisplayName = useAsBuildDisplayName
     }
 
@@ -59,5 +59,4 @@ class VersionNumberContext implements Context {
     void oBuildsAllTime(String oBuildsAllTime) {
         this.oBuildsAllTime = oBuildsAllTime
     }
-
 }

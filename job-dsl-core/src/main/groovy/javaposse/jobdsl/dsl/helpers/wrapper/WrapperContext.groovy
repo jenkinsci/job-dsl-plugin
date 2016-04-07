@@ -668,17 +668,17 @@ class WrapperContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'org.jvnet.hudson.tools.versionnumber.VersionNumberBuilder' {
-            versionNumberString(context.versionNumberString)
-            projectStartDate(context.projectStartDate)
-            environmentVariableName(context.environmentVariableName)
-            environmentPrefixVariable(context.environmentPrefixVariable)
-            oBuildsToday(context.oBuildsToday)
-            oBuildsThisWeek(context.oBuildsThisWeek)
-            oBuildsThisMonth(context.oBuildsThisMonth)
-            oBuildsThisYear(context.oBuildsThisYear)
-            oBuildsAllTime(context.oBuildsAllTime)
-            skipFailedBuilds(context.skipFailedBuilds)
-            useAsBuildDisplayName(context.useAsBuildDisplayName)
+            versionNumberString(context.versionNumberString ?: '')
+            projectStartDate(context.projectStartDate ?: new Date())
+            environmentVariableName(context.environmentVariableName ?: 'VERSION')
+            environmentPrefixVariable(context.environmentPrefixVariable ?: '')
+            oBuildsToday(context.oBuildsToday ?: '')
+            oBuildsThisWeek(context.oBuildsThisWeek ?: '')
+            oBuildsThisMonth(context.oBuildsThisMonth ?: '')
+            oBuildsThisYear(context.oBuildsThisYear ?: '')
+            oBuildsAllTime(context.oBuildsAllTime ?: '')
+            skipFailedBuilds(context.skipFailedBuilds ?: true)
+            useAsBuildDisplayName(context.useAsBuildDisplayName ?: true)
         }
     }
 }
