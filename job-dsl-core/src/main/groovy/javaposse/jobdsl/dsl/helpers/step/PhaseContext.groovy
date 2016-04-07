@@ -19,12 +19,13 @@ class PhaseContext extends AbstractContext {
     String scriptText
     String scriptPath
     String bindings
+    Boolean isRunOnSlave
 
     List<PhaseJobContext> jobsInPhase = []
 
     PhaseContext(JobManagement jobManagement, Item item, String phaseName, String continuationCondition,
                  String executionType, Boolean enableGroovyScript, String scriptText, Boolean isUseScriptFile,
-                 String scriptPath, String bindings, Boolean isScriptOnSlave) {
+                 String scriptPath, String bindings, Boolean isScriptOnSlave, Boolean isRunOnSlave) {
         super(jobManagement)
         this.item = item
         this.phaseName = phaseName
@@ -36,6 +37,7 @@ class PhaseContext extends AbstractContext {
         this.scriptPath = scriptPath
         this.bindings = bindings
         this.isScriptOnSlave = isScriptOnSlave
+        this.isRunOnSlave = isRunOnSlave
     }
 
     /**
@@ -64,6 +66,14 @@ class PhaseContext extends AbstractContext {
     }
 
     /**
+     * Defines where's run groovy script (master or slave)
+     * @param isRunOnSlave
+     */
+    void runGroovyOnSlave(boolean isRunOnSlave) {
+        this.isRunOnSlave = isRunOnSlave
+    }
+
+    /**
      * Defines groovy script
      * @param source
      * @param script
@@ -71,6 +81,9 @@ class PhaseContext extends AbstractContext {
     void groovyScript(String source, String script) {
         if (null == enableGroovyScript) {
             this.enableGroovyScript = true
+        }
+        if (null == isRunOnSlave) {
+            this.isRunOnSlave = false
         }
         if ('FILE' == source) {
             this.scriptPath = script

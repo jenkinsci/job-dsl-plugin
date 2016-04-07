@@ -3,6 +3,7 @@ multiJob('example') {
         phase('Second') {
             phaseJob('JobZ') {
                 groovyScript('FILE', slaveFs('/Users/sshelomentsev/example.groovy'))
+                runGroovyOnSlave(true)
                 resumeGroovyScript('FILE', slaveFs('/Users/sshelomentsev/example.groovy'))
                 parameters {
                     propertiesFile('my1.properties')
@@ -25,6 +26,8 @@ multiJob('example') {
             phaseJob('JobD') {
                 currentJobParameters(false)
                 enableGroovyScript(false)
+                runJobScriptOnSlave(true)
+                runResumeScriptOnSlave(true)
                 groovyScript('FILE', slaveFs('/Users/sshelomentsev/example.groovy'))
                 resumeCondition('EXPRESSION')
                 resumeGroovyScript('FILE', '/Users/sshelomentsev/example.groovy')

@@ -35,6 +35,8 @@ class PhaseJobContext extends AbstractContext {
     String resumeConditions = null
     boolean isJobScriptOnSlave = false
     boolean isResumeScriptOnSlave = false
+    boolean isRunJobScriptOnSlave = false
+    boolean isRunResumeScriptOnSlave = false
 
     Closure configureClosure
 
@@ -64,6 +66,14 @@ class PhaseJobContext extends AbstractContext {
 
     SlaveFs slaveFs(String path) {
         new SlaveFs(path)
+    }
+
+    void runResumeScriptOnSlave(boolean isRunResumeScriptOnSlave) {
+        this.isRunResumeScriptOnSlave = isRunResumeScriptOnSlave
+    }
+
+    void runJobScriptOnSlave(boolean isRunJobScriptOnSlave) {
+        this.isRunJobScriptOnSlave = isRunJobScriptOnSlave
     }
 
     void enableGroovyScript(boolean enableJobScript) {
