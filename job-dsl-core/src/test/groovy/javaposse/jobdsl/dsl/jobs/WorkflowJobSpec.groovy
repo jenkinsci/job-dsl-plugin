@@ -67,7 +67,7 @@ class WorkflowJobSpec extends Specification {
             children().size() == 2
             scm[0].attribute('class') == 'hudson.plugins.git.GitSCM'
             scm[0].children().size() == 15
-            scriptPath[0].value() == 'JenkinsFile'
+            scriptPath[0].value() == 'Jenkinsfile'
         }
         1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
     }
