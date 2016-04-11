@@ -42,7 +42,6 @@ class DslEnvironmentImplSpec extends Specification {
         context instanceof StepContext
     }
 
-    @SuppressWarnings('UnnecessaryPublicModifier') // false positive, fixed in CodeNarc 0.25
     def 'createContext with more than one public constructor'() {
         when:
         dslEnvironment.createContext(InvalidConstructorCountContext)
@@ -52,7 +51,6 @@ class DslEnvironmentImplSpec extends Specification {
         e.message == 'the context class must have exactly one public constructor'
     }
 
-    @SuppressWarnings('UnnecessaryPublicModifier') // false positive, fixed in CodeNarc 0.25
     def 'createContext with no public constructor'() {
         when:
         dslEnvironment.createContext(NoPublicConstructorContext)
