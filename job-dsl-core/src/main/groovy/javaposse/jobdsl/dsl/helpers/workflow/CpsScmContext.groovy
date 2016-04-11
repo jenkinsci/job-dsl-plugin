@@ -10,7 +10,7 @@ import javaposse.jobdsl.dsl.helpers.ScmContext
 class CpsScmContext extends AbstractContext {
     protected final Item item
 
-    String scriptPath = 'JenkinsFile'
+    String scriptPath = 'Jenkinsfile'
     ScmContext scmContext = new ScmContext(jobManagement, item)
 
     CpsScmContext(JobManagement jobManagement, Item item) {
