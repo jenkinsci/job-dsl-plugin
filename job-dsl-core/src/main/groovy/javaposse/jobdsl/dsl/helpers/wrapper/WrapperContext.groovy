@@ -662,23 +662,32 @@ class WrapperContext extends AbstractExtensibleContext {
         }
     }
 
-    @RequiresPlugin(id = 'versionnumber')
-    void versionNumber(@DslContext(VersionNumberContext) Closure closure = null) {
-        VersionNumberContext context = new VersionNumberContext()
+    /**
+     * Generate a version number.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'versionnumber', minimumVersion = '1.6')
+    void versionNumber(String format, String nameVariable, @DslContext(VersionNumberContext) Closure closure = null) {
+
+        Preconditions.checkNotNull(format, 'Please specify format')
+        Preconditions.checkNotNull(nameVariable, 'Please specify name variable')
+
+        VersionNumberContext context = new VersionNumberContext(format, nameVariable)
         ContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'org.jvnet.hudson.tools.versionnumber.VersionNumberBuilder' {
-            versionNumberString(context.versionNumberString ?: '')
-            projectStartDate(context.projectStartDate ?: new Date())
-            environmentVariableName(context.environmentVariableName ?: 'VERSION')
-            environmentPrefixVariable(context.environmentPrefixVariable ?: '')
-            oBuildsToday(context.oBuildsToday ?: '')
-            oBuildsThisWeek(context.oBuildsThisWeek ?: '')
-            oBuildsThisMonth(context.oBuildsThisMonth ?: '')
-            oBuildsThisYear(context.oBuildsThisYear ?: '')
-            oBuildsAllTime(context.oBuildsAllTime ?: '')
-            skipFailedBuilds(context.skipFailedBuilds ?: true)
-            useAsBuildDisplayName(context.useAsBuildDisplayName ?: true)
+            versionNumberString(context.format ?: '')
+            projectStartDate(context.startDate ?: '')
+            environmentVariableName(context.nameVariable ?: '')
+            environmentPrefixVariable(context.prefixVariable ?: '')
+            oBuildsToday(context.buildsToday ?: '')
+            oBuildsThisWeek(context.buildsThisWeek ?: '')
+            oBuildsThisMonth(context.buildsThisMonth ?: '')
+            oBuildsThisYear(context.buildsThisYear ?: '')
+            oBuildsAllTime(context.buildsAllTime ?: '')
+            skipFailedBuilds(context.skipFailedBuilds)
+            useAsBuildDisplayName(context.displayBuildName)
         }
     }
 }

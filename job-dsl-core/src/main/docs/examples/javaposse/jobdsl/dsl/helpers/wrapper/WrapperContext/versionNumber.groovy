@@ -1,17 +1,15 @@
 job('example') {
     wrappers {
-        versionNumber {
-            versionNumberString('1.0.0')
-            projectStartDate()
-            environmentVariableName('VERSION')
-            environmentPrefixVariable('')
-            oBuildsToday()
-            oBuildsThisWeek()
-            oBuildsThisMonth()
-            oBuildsThisYear()
-            oBuildsAllTime()
+        versionNumber('1.0.0.${BUILDS_ALL_TIME}', 'VERSION') {
+            startDate()
+            prefixVariable('')
+            buildsToday()
+            buildsThisWeek()
+            buildsThisMonth()
+            buildsThisYear()
+            buildsAllTime()
             skipFailedBuilds(false)
-            useAsBuildDisplayName(true)
+            displayBuildName(true)
         }
     }
 }

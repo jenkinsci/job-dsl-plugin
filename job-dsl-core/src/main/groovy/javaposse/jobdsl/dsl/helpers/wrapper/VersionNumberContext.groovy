@@ -4,59 +4,89 @@ import javaposse.jobdsl.dsl.Context
 
 class VersionNumberContext implements Context {
 
-    String environmentVariableName
-    String versionNumberString
-    String environmentPrefixVariable
+    String format
+    String nameVariable
+    String prefixVariable
     boolean skipFailedBuilds
-    boolean useAsBuildDisplayName
-    String projectStartDate
-    String oBuildsToday
-    String oBuildsThisWeek
-    String oBuildsThisMonth
-    String oBuildsThisYear
-    String oBuildsAllTime
+    boolean displayBuildName
+    String startDate
+    String buildsToday
+    String buildsThisWeek
+    String buildsThisMonth
+    String buildsThisYear
+    String buildsAllTime
 
-    void environmentVariableName(String environmentVariableName) {
-        this.environmentVariableName = environmentVariableName
+    /**
+     * @param format Version Number Format String
+     * @param nameVariable The version number will be stored in the environment variable specified here.
+     */
+    VersionNumberContext(String format, String nameVariable) {
+        this.format = format
+        this.nameVariable = nameVariable
     }
 
-    void versionNumberString(String versionNumberString) {
-        this.versionNumberString = versionNumberString
+    /**
+     * @param prefixVariable The prefix variable name is the environment variable specified here
+     * to allow using the same build numbers for all the release tags.
+     */
+    void prefixVariable(String prefixVariable) {
+        this.prefixVariable = prefixVariable
     }
 
-    void environmentPrefixVariable(String environmentPrefixVariable) {
-        this.environmentPrefixVariable = environmentPrefixVariable
-    }
-
+    /**
+     * @param skipFailedBuilds Don't increment builds today / this month / this year / all time after a failed build.
+     */
     void skipFailedBuilds(boolean skipFailedBuilds = true) {
         this.skipFailedBuilds = skipFailedBuilds
     }
 
-    void useAsBuildDisplayName(boolean useAsBuildDisplayName = true) {
-        this.useAsBuildDisplayName = useAsBuildDisplayName
+    /**
+     * @param displayBuildName Use the formatted version number for build display name.
+     */
+    void displayBuildName(boolean displayBuildName = true) {
+        this.displayBuildName = displayBuildName
     }
 
-    void projectStartDate(String projectStartDate) {
-        this.projectStartDate = projectStartDate
+    /**
+     * @param startDate The date the project began, in the format yyyy-MM-dd. This is used in calculating the
+     *                  number of months and years since the beginning of the project.
+     */
+    void startDate(String startDate) {
+        this.startDate = startDate
     }
 
-    void oBuildsToday(String oBuildsToday) {
-        this.oBuildsToday = oBuildsToday
+    /**
+     * @param buildsToday Number of builds today
+     */
+    void buildsToday(String buildsToday) {
+        this.buildsToday = buildsToday
     }
 
-    void oBuildsThisWeek(String oBuildsThisWeek) {
-        this.oBuildsThisWeek = oBuildsThisWeek
+    /**
+     * @param buildsThisWeek Number of builds this week
+     */
+    void buildsThisWeek(String buildsThisWeek) {
+        this.buildsThisWeek = buildsThisWeek
     }
 
-    void oBuildsThisMonth(String oBuildsThisMonth) {
-        this.oBuildsThisMonth = oBuildsThisMonth
+    /**
+     * @param buildsThisMonth Number of builds this month
+     */
+    void buildsThisMonth(String buildsThisMonth) {
+        this.buildsThisMonth = buildsThisMonth
     }
 
-    void oBuildsThisYear(String oBuildsThisYear) {
-        this.oBuildsThisYear = oBuildsThisYear
+    /**
+     * @param buildsThisYear Number of builds this year
+     */
+    void buildsThisYear(String buildsThisYear) {
+        this.buildsThisYear = buildsThisYear
     }
 
-    void oBuildsAllTime(String oBuildsAllTime) {
-        this.oBuildsAllTime = oBuildsAllTime
+    /**
+     * @param buildsAllTime Number of builds since the start of the project
+     */
+    void buildsAllTime(String buildsAllTime) {
+        this.buildsAllTime = buildsAllTime
     }
 }
