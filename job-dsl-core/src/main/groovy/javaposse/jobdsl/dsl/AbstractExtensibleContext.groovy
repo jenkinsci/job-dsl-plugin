@@ -14,10 +14,11 @@ abstract class AbstractExtensibleContext extends AbstractContext implements Exte
     }
 
     Object methodMissing(String name, args) {
+        Object[] argsArray = (Object[]) args
         Class<? extends ExtensibleContext> contextType = this.class as Class<? extends ExtensibleContext>
-        Node node = jobManagement.callExtension(name, item, contextType, args)
+        Node node = jobManagement.callExtension(name, item, contextType, argsArray)
         if (node == null) {
-            throw new MissingMethodException(name, contextType, args)
+            throw new MissingMethodException(name, contextType, argsArray)
         }
         if (node != JobManagement.NO_VALUE) {
             addExtensionNode(node)

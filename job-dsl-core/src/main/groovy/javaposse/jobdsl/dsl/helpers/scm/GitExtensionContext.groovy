@@ -1,16 +1,24 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
-class GitExtensionContext extends AbstractContext {
+@ContextType('hudson.plugins.git.extensions.GitSCMExtension')
+class GitExtensionContext extends AbstractExtensibleContext {
     final List<Node> extensions = []
 
-    GitExtensionContext(JobManagement jobManagement) {
-        super(jobManagement)
+    GitExtensionContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        extensions << node
     }
 
     /**

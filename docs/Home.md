@@ -13,6 +13,10 @@ Highly recommended starting point is [[the tutorial|Tutorial - Using the Jenkins
 Once you know how to create a "seed" job from the tutorial, start looking at the [[real world examples|Real World Examples]] for examples to steal from.
 After you get familiar with some of the commands, try them out at the [Job DSL Playground](http://job-dsl.herokuapp.com/).
 
+Not all of the 1000+ Jenkins plugins are supported by the built-in DSL. If the
+[API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) does not list support for a certain plugin, the
+[[Automatically Generated DSL]] can be used to fill the gap.
+
 If you want to get fancy you'll want to read up on [[configure block|The Configure Block]], which gives you direct access to the `config.xml`.
 
 Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to organize a SCM repository for Job DSL scripts.
@@ -21,6 +25,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.46 (unreleased)
+ * Added support for [[Automatically Generated DSL]]
+   ([#816](https://github.com/jenkinsci/job-dsl-plugin/pull/816))
  * Added support for the [Jython Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jython+Plugin)
    ([JENKINS-33881](https://issues.jenkins-ci.org/browse/JENKINS-33881))
  * Added support for the [Job Exporter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Job+Exporter+Plugin)

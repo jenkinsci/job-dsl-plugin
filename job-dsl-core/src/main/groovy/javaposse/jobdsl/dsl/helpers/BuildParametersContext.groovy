@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
@@ -19,6 +20,7 @@ import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
+@ContextType('hudson.model.ParameterDefinition')
 class BuildParametersContext extends AbstractExtensibleContext {
     Map<String, Node> buildParameterNodes = [:]
 

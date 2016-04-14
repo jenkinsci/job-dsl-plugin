@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -21,6 +22,7 @@ import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 import static javaposse.jobdsl.dsl.Preconditions.checkState
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
+@ContextType('hudson.scm.SCM')
 class ScmContext extends AbstractExtensibleContext {
     private static final PerforcePasswordEncryptor PERFORCE_ENCRYPTOR = new PerforcePasswordEncryptor()
 

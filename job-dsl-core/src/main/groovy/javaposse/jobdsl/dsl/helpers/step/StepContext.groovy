@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -13,6 +14,7 @@ import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
 import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORKSPACE
 
+@ContextType('hudson.tasks.Builder')
 class StepContext extends AbstractExtensibleContext {
     private final static VALID_BUILD_RESULTS = ['SUCCESS', 'UNSTABLE', 'FAILURE', 'ABORTED', 'CYCLE']
 
