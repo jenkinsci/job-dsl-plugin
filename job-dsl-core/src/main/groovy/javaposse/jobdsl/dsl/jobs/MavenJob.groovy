@@ -9,6 +9,7 @@ import javaposse.jobdsl.dsl.NoDoc
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
+import javaposse.jobdsl.dsl.helpers.properties.MavenPropertiesContext
 import javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.triggers.MavenTriggerContext
@@ -56,6 +57,21 @@ class MavenJob extends Job {
         configure { Node project ->
             context.wrapperNodes.each {
                 project / 'buildWrappers' << it
+            }
+        }
+    }
+
+    /**
+     * @since 1.46
+     */
+    @Override
+    void properties(@DslContext(MavenPropertiesContext) Closure closure) {
+        MavenPropertiesContext context = new MavenPropertiesContext(jobManagement, this)
+        ContextHelper.executeInContext(closure, context)
+
+        configure { Node project ->
+            context.propertiesNodes.each {
+                project / 'properties' << it
             }
         }
     }

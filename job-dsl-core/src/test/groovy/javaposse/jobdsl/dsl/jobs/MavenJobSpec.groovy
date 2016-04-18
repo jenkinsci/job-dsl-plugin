@@ -296,6 +296,16 @@ class MavenJobSpec extends Specification {
         job.node.publishers[0].children()[0].name() == 'hudson.maven.RedeployPublisher'
     }
 
+    def 'call properties'() {
+        when:
+        job.properties {
+            mavenInfo {}
+        }
+
+        then:
+        job.node.properties[0].children()[0].name() == 'jenkins.plugins.maveninfo.config.MavenInfoJobConfig'
+    }
+
     def 'call inherited publishers which use JobManagement, JENKINS-27767'() {
         when:
         job.publishers {
