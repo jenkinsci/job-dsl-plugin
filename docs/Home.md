@@ -23,6 +23,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.46 (unreleased)
  * Added support for the [Maven Info Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Info+Plugin)
    ([JENKINS-32196](https://issues.jenkins-ci.org/browse/JENKINS-32196))
+ * Added support for the [Log Parser Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Log+Parser+Plugin)
+   ([JENKINS-33795](https://issues.jenkins-ci.org/browse/JENKINS-33795))
  * Added support for the [Jython Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jython+Plugin)
    ([JENKINS-33881](https://issues.jenkins-ci.org/browse/JENKINS-33881))
  * Added support for the [Job Exporter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Job+Exporter+Plugin)

@@ -2130,6 +2130,33 @@ class PublisherContext extends AbstractExtensibleContext {
        }
     }
 
+    /**
+     * Parses the console output and highlights error/warning/info lines.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'log-parser', minimumVersion = '2.0')
+    void consoleParsing(@DslContext(LogParserContext) Closure closure) {
+        LogParserContext context = new LogParserContext()
+        ContextHelper.executeInContext(closure, context)
+
+        checkArgument(context.globalRules || context.projectRules, 'No rule path specified')
+        checkArgument(!context.globalRules || !context.projectRules, 'Only one rule path must be specified')
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.logparser.LogParserPublisher' {
+            unstableOnWarning(context.unstableOnWarning)
+            failBuildOnError(context.failBuildOnError)
+            showGraphs(context.showGraphs)
+            if (context.projectRules) {
+                projectRulePath(context.projectRules ?: '')
+                useProjectRule(true)
+            } else {
+                parsingRulesPath(context.globalRules ?: '')
+                useProjectRule(false)
+            }
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
