@@ -1,10 +1,12 @@
 package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
+@ContextType('hudson.matrix.Axis')
 class AxisContext extends AbstractExtensibleContext {
     List<Node> axisNodes = []
     List<Closure> configureBlocks = []

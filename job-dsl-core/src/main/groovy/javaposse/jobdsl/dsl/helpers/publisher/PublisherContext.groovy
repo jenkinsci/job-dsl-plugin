@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -15,6 +16,7 @@ import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COLOR_MAP
 import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_ORDINAL_MAP
 
+@ContextType('hudson.tasks.Publisher')
 class PublisherContext extends AbstractExtensibleContext {
     List<Node> publisherNodes = []
 

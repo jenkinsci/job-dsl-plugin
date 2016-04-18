@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -8,6 +9,7 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 
+@ContextType('hudson.tasks.BuildWrapper')
 class WrapperContext extends AbstractExtensibleContext {
     List<Node> wrapperNodes = []
 

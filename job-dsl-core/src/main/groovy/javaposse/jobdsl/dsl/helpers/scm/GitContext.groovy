@@ -27,7 +27,7 @@ class GitContext extends AbstractContext {
     Closure configureBlock
     final GitBrowserContext gitBrowserContext = new GitBrowserContext(jobManagement)
     Integer cloneTimeout
-    GitExtensionContext extensionContext = new GitExtensionContext(jobManagement)
+    GitExtensionContext extensionContext = new GitExtensionContext(jobManagement, item)
     final StrategyContext strategyContext = new StrategyContext(jobManagement)
 
     GitContext(JobManagement jobManagement, Item item) {

@@ -30,11 +30,11 @@ import javaposse.jobdsl.dsl.ConfigFile;
 import javaposse.jobdsl.dsl.ConfigFileType;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.DslScriptException;
+import javaposse.jobdsl.dsl.ExtensibleContext;
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import javaposse.jobdsl.dsl.UserContent;
-import javaposse.jobdsl.dsl.ExtensibleContext;
-import javaposse.jobdsl.plugin.ExtensionPointHelper.ExtensionPointMethod;
+import javaposse.jobdsl.plugin.ExtensionPointHelper.DslExtension;
 import jenkins.model.DirectlyModifiableTopLevelItemGroup;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
@@ -393,7 +393,7 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     @Override
     public Node callExtension(String name, javaposse.jobdsl.dsl.Item item,
                               Class<? extends ExtensibleContext> contextType, Object... args) throws Throwable {
-        Set<ExtensionPointMethod> candidates = ExtensionPointHelper.findExtensionPoints(name, contextType, args);
+        Set<DslExtension> candidates = ExtensionPointHelper.findExtensionPoints(name, contextType, args);
         if (candidates.isEmpty()) {
             LOGGER.fine(
                     "Found no extension which provides method " + name + " with arguments " + Arrays.toString(args)

@@ -17,10 +17,14 @@ We are always happy for folk to help us out on this project. Please follow these
   component.
 * Feature Implementations - Even better than a JIRA issue is an implementation. If the implementation requires design
   or architectural changes or would need refactoring, send a mail to the
-  [the group](https://groups.google.com/forum/?fromgroups#!forum/job-dsl-plugin) with a proposal. Otherwise simply fork
+  [group](https://groups.google.com/forum/?fromgroups#!forum/job-dsl-plugin) with a proposal. Otherwise simply fork
   the repo, create a branch (named after the JIRA "New Feature" you created earlier), implement it yourself and submit a
   Pull Request.
-    
+* Open a feature request for adding support for a specific plugin only if the plugin is not supported by the
+  [Automatically Generated DSL](docs/Automatically-Generated-DSL.md) and if the plugin does not implement the
+  [Job DSL Extension Point](docs/Extending-the-DSL.md). Contact the
+  [mailing list](https://groups.google.com/forum/?fromgroups#!forum/job-dsl-plugin) if uncertain.
+
 ### Bugs
 
 * Bug Reports - Create a new "Bug" issue on the
