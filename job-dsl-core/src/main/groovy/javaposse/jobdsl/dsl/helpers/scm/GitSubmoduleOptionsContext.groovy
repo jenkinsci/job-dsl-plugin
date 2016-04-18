@@ -9,6 +9,7 @@ class GitSubmoduleOptionsContext extends AbstractContext {
     boolean recursive
     boolean tracking
     String reference
+    Integer timeout
 
     protected GitSubmoduleOptionsContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -43,5 +44,15 @@ class GitSubmoduleOptionsContext extends AbstractContext {
     @RequiresPlugin(id = 'git', minimumVersion = '2.4.1')
     void reference(String reference) {
         this.reference = reference
+    }
+
+    /**
+     * Specifies a timeout (in minutes) for submodules operations.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.8')
+    void timeout(Integer timeout) {
+        this.timeout = timeout
     }
 }

@@ -79,6 +79,9 @@ class GitExtensionContext extends AbstractContext {
             if (jobManagement.isMinimumPluginVersionInstalled('git', '2.4.1')) {
                 reference(context.reference ?: '')
             }
+            if (jobManagement.isMinimumPluginVersionInstalled('git', '2.2.8') && context.timeout != null) {
+                timeout(context.timeout)
+            }
         }
     }
 
