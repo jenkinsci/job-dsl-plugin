@@ -1,6 +1,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-
+    <f:block>
+        <p>See <a href="${rootURL}/plugin/job-dsl/api-viewer" target="_blank">Job DSL API</a> for syntax reference.</p>
+    </f:block>
     <f:radioBlock name="scriptLocation" value="true" title="Use the provided DSL script" checked="${instance.isUsingScriptText()}">
         <f:entry title='DSL Script' field='scriptText'>
             <f:textarea codemirror-mode="groovy"

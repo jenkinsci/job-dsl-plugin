@@ -48,6 +48,17 @@ configurations {
     compile.exclude group: 'org.kohsuke', module: 'windows-package-checker'
 }
 
+jpi {
+    into('api-viewer') {
+        from(project(':job-dsl-api-viewer').projectDir) {
+            include 'index.html'
+            include 'build/dist/**'
+            include "build/data/dsl-${version}.json"
+        }
+    }
+    dependsOn tasks.getByPath(':job-dsl-api-viewer:gulp_build')
+}
+
 dependencies {
     compile project(':job-dsl-core')
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.4@jar'
