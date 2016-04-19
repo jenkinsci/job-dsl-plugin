@@ -46,10 +46,14 @@ App.TreeView = Marionette.ItemView.extend({
 
     loadTreeData: function(node, cb) {
         var contextClass = node.id === '#' ? this.dsl.getRootContextClass() : node.original.methodNode.contextClass;
-        //var methods = this.dsl.getContext(contextClass).methods;
-        var methods = _.filter(this.dsl.getContext(contextClass).methods, function(method) {
-            return !method.plugin || !this.settings.isPluginExcluded(method.plugin.name);
-        }.bind(this));
+        var methods = _.chain(this.dsl.getContext(contextClass).methods)
+            .filter(function (method) {
+                return !method.plugin || !this.settings.isPluginExcluded(method.plugin.name);
+            }.bind(this))
+            .sortBy(function (method) {
+                return method.name.toLowerCase();
+            })
+            .value();
         var treeNodes = methods.map(function(method) {
             return this.buildJstreeNode(method, node);
         }, this);
