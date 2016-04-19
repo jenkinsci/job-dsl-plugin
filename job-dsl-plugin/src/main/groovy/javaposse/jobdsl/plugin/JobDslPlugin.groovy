@@ -1,6 +1,7 @@
 package javaposse.jobdsl.plugin
 
 import hudson.Plugin
+import javaposse.jobdsl.dsl.JobManagement
 import jenkins.model.Jenkins
 import net.sf.json.JSONObject
 import org.kohsuke.stapler.StaplerRequest
@@ -18,8 +19,7 @@ class JobDslPlugin extends Plugin {
     void postInitialize() throws Exception {
         version = wrapper.version.split()[0]
 
-        File baseDir = new File(wrapper.baseResourceURL.toURI())
-        api = JSONObject.fromObject(new File(baseDir, "api-viewer/build/data/dsl-${version}.json").text)
+        api = JSONObject.fromObject(JobManagement.getResource("dsl-${version}.json").text)
         api.element('embedded', true)
     }
 

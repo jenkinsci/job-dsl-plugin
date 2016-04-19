@@ -53,7 +53,6 @@ jpi {
         from(project(':job-dsl-api-viewer').projectDir) {
             include 'index.html'
             include 'build/dist/**'
-            include "build/data/dsl-${version}.json"
         }
     }
     dependsOn tasks.getByPath(':job-dsl-api-viewer:gulp_build')

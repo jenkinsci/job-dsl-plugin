@@ -127,6 +127,12 @@ project(':job-dsl-core') {
         outputs.file apiDocData
     }
 
+    jar {
+        from(tasks.generateApiDoc) {
+            into 'javaposse/jobdsl/dsl'
+        }
+    }
+
     run {
         if (project.hasProperty('args')) {
             args project.args.split('\\s+')
