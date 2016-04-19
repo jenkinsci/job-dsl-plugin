@@ -45,6 +45,10 @@ task downloadUpdateCenter(type: Download) {
     tasks.gulp_build.dependsOn("downloadData-${version}")
 }
 
+tasks.gulp_build.inputs.file('gulpfile.js')
+tasks.gulp_build.inputs.dir('src')
+tasks.gulp_build.inputs.dir('node_modules')
+tasks.gulp_build.outputs.dir('build/dist')
 tasks.gulp_build.dependsOn('downloadUpdateCenter')
 tasks.gulp_build.dependsOn('npmInstall')
 tasks.gulp_build.dependsOn('copyData')
