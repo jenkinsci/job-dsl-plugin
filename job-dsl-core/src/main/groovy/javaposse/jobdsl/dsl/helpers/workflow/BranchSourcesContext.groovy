@@ -28,4 +28,28 @@ class BranchSourcesContext implements Context {
             }
         }
     }
+    /**
+     * Adds a GitHub branch source. Can be called multiple times to add more branch sources.
+     */
+    void github(@DslContext(GitHubBranchSourceContext) Closure branchSourceClosure) {
+        GitHubBranchSourceContext context = new GitHubBranchSourceContext()
+        ContextHelper.executeInContext(branchSourceClosure, context)
+
+        branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
+            source(class: 'org.jenkinsci.plugins.github_branch_source.GitHubSCMSource') {
+                id(UUID.randomUUID())
+                apiUri(context.apiUri ?: '')
+                scanCredentialsId(context.scanCredentialsId ?: '')
+                checkoutCredentialsId(context.checkoutCredentialsId ?: '')
+                repoOwner(context.repoOwner ?: '')
+                repository(context.repository ?: '')
+                includes(context.includes ?: '')
+                excludes(context.excludes ?: '')
+                ignoreOnPushNotifications(context.ignoreOnPushNotifications)
+            }
+            strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
+                properties(class: 'empty-list')
+            }
+        }
+    }
 }
