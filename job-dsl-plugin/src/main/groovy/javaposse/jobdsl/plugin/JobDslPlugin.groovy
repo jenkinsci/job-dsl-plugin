@@ -13,13 +13,10 @@ import static hudson.model.UpdateCenter.ID_DEFAULT
 
 class JobDslPlugin extends Plugin {
     private JSONObject api
-    private String version
 
     @Override
     void postInitialize() throws Exception {
-        version = wrapper.version.split()[0]
-
-        api = JSONObject.fromObject(JobManagement.getResource("dsl-${version}.json").text)
+        api = JSONObject.fromObject(JobManagement.getResource('dsl.json').text)
         api.element('embedded', true)
     }
 
@@ -32,7 +29,7 @@ class JobDslPlugin extends Plugin {
             JSONObject data = Jenkins.instance.updateCenter.getById(ID_DEFAULT).JSONObject
             response.contentType = 'application/javascript'
             response.writer.print("updateCenter.post(${data.toString()})")
-        } else if (path == "/api-viewer/build/data/dsl-${version}.json") {
+        } else if (path == '/api-viewer/build/data/dsl.json') {
             response.contentType = 'application/json'
             response.writer.print(api.toString())
         } else {
