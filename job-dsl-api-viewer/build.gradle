@@ -29,6 +29,12 @@ task copyData(type: Copy) {
     into "${project.buildDir}/data"
 }
 
+task downloadUpdateCenter(type: Download) {
+    src 'http://updates.jenkins-ci.org/update-center.json'
+    dest 'build/data/update-center.jsonp'
+    onlyIfNewer true
+}
+
 (38..45).each { minorVersion ->
     def version = "1.${minorVersion}"
     task "downloadData-${version}"(type: Download) {
@@ -39,6 +45,7 @@ task copyData(type: Copy) {
     tasks.gulp_build.dependsOn("downloadData-${version}")
 }
 
+tasks.gulp_build.dependsOn('downloadUpdateCenter')
 tasks.gulp_build.dependsOn('npmInstall')
 tasks.gulp_build.dependsOn('copyData')
 tasks.publishGhPages.dependsOn('gulp_build')
