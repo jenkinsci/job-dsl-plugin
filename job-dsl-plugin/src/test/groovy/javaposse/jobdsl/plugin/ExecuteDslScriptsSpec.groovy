@@ -16,6 +16,7 @@ import hudson.slaves.DumbSlave
 import hudson.tasks.Shell
 import javaposse.jobdsl.dsl.GeneratedJob
 import javaposse.jobdsl.dsl.GeneratedView
+import javaposse.jobdsl.plugin.actions.ApiViewerAction
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesAction
 import javaposse.jobdsl.plugin.actions.GeneratedJobsAction
 import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction
@@ -49,11 +50,12 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         actions != null
-        actions.size() == 4
+        actions.size() == 5
         actions[0] instanceof GeneratedJobsAction
         actions[1] instanceof GeneratedViewsAction
         actions[2] instanceof GeneratedConfigFilesAction
         actions[3] instanceof GeneratedUserContentsAction
+        actions[4] instanceof ApiViewerAction
     }
 
     def scheduleBuildOnMasterUsingScriptText() {

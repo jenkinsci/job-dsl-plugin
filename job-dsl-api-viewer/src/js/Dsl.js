@@ -32,6 +32,10 @@ _.extend(App.Dsl.prototype, {
         });
     },
 
+    isEmbedded: function() {
+        return this.data.embedded;
+    },
+
     getContext: function(contextClass) {
         return this.data.contexts[contextClass];
     },

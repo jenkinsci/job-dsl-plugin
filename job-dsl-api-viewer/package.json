@@ -14,8 +14,6 @@
     "gulp-clean-css": "^2.0.4",
     "gulp-watch": "^4.1.1",
     "del": "^1.1.1",
-    "vinyl-source-stream": "^1.1.0",
-    "request": "^2.58.0",
     "merge-stream": "^0.1.7"
   }
 }

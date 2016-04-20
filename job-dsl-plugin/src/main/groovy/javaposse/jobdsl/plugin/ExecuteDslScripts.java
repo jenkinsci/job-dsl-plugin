@@ -29,6 +29,7 @@ import javaposse.jobdsl.dsl.GeneratedUserContent;
 import javaposse.jobdsl.dsl.GeneratedView;
 import javaposse.jobdsl.dsl.JobManagement;
 import javaposse.jobdsl.dsl.ScriptRequest;
+import javaposse.jobdsl.plugin.actions.ApiViewerAction;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesAction;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedJobsAction;
@@ -184,7 +185,8 @@ public class ExecuteDslScripts extends Builder {
                 new GeneratedJobsAction(project),
                 new GeneratedViewsAction(project),
                 new GeneratedConfigFilesAction(project),
-                new GeneratedUserContentsAction(project)
+                new GeneratedUserContentsAction(project),
+                new ApiViewerAction()
         );
     }
 

@@ -31,6 +31,9 @@ Marionette.Renderer.render = function(template, data) {
             this.initLayout();
             this.loadSelectedDsl().then(function() {
                 Backbone.history.start({pushState: false});
+                if (!this.dsl.isEmbedded()) {
+                    $('.version-select').show()
+                }
             }.bind(this));
 
             $('.version-select').change(function() {
