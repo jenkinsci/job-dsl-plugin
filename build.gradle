@@ -154,6 +154,15 @@ project(':job-dsl-core') {
 
         repositories {
             maven {
+                name 'xored'
+                if (project.version.toString().endsWith('-SNAPSHOT')) {
+                    url 'http://maven.xored.com/nexus/content/repositories/cisco-snapshots'
+                } else {
+                    url 'http://maven.xored.com/nexus/content/repositories/cisco-releases'
+                }
+            }
+            /*
+            maven {
                 name 'jenkins'
                 if (project.version.toString().endsWith('-SNAPSHOT')) {
                     url 'http://maven.jenkins-ci.org:8081/content/repositories/snapshots'
@@ -161,6 +170,7 @@ project(':job-dsl-core') {
                     url 'http://maven.jenkins-ci.org:8081/content/repositories/releases'
                 }
             }
+            */
         }
     }
 
