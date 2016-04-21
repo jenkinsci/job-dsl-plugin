@@ -34,10 +34,10 @@ Now that we have created our empty Seed Job we need to configure it. We're going
 ```
 job('DSL-Tutorial-1-Test') {
     scm {
-        git('git://github.com/jgritman/aws-sdk-test.git')
+        git('git://github.com/quidryan/aws-sdk-test.git')
     }
     triggers {
-        scm('*/15 * * * *')
+        scm('H/15 * * * *')
     }
     steps {
         maven('-e clean test')
