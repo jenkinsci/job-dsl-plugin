@@ -1,0 +1,95 @@
+{
+  "contexts": {
+    "javaposse.jobdsl.dsl.helpers.triggers.TriggerContext": {
+      "type": "javaposse.jobdsl.dsl.helpers.triggers.TriggerContext",
+      "methods": [
+        {
+          "name": "buildResult",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "crontab",
+                  "type": "String"
+                },
+                {
+                  "name": "closure",
+                  "type": "Closure"
+                }
+              ],
+              "availableSince": "1.45",
+              "plugin": {
+                "id": "buildresult-trigger",
+                "minimumVersion": "0.17"
+              },
+              "html": "Trigger that runs jobs on build results of others jobs\r\n     ",
+              "firstSentenceCommentText": "Trigger that runs jobs on build results of others jobs",
+              "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.BuildResultTriggerContext"
+            }
+          ],
+          "examples": "job('example') {\r\n    triggers {\r\n        buildResult('H/10 * * * *') {\r\n            combinedJobs()\r\n            triggerInfo('job-1, job-2', BuildResult.SUCCESS, BuildResult.UNSTABLE, BuildResult.FAILURE)\r\n            triggerInfo('job-3', BuildResult.SUCCESS, BuildResult.UNSTABLE)\r\n            triggerInfo('job-4, job-5')\r\n        }\r\n    }\r\n}\r\n"
+        },
+        {
+          "name": "cron",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "cronString",
+                  "type": "String"
+                }
+              ],
+              "html": "Triggers the job based on regular intervals.\r\n\r\n To configure a multi-line entry, use a single trigger string with entries separated by <TT>\\n</TT>.",
+              "firstSentenceCommentText": "Triggers the job based on regular intervals."
+            }
+          ],
+          "examples": "job('example') {\r\n    triggers {\r\n        cron('@daily')\r\n    }\r\n}\r\n"
+        },
+        {
+          "name": "scm",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "cronString",
+                  "type": "String"
+                },
+                {
+                  "name": "scmTriggerClosure",
+                  "type": "Closure",
+                  "defaultValue": "null"
+                }
+              ],
+              "html": "Polls source control for changes at regular intervals.\r\n\r\n To configure a multi-line entry, use a single trigger string with entries separated by <TT>\\n</TT>.",
+              "firstSentenceCommentText": "Polls source control for changes at regular intervals.",
+              "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.ScmTriggerContext"
+            }
+          ],
+          "examples": "job('example-1') {\r\n    triggers {\r\n        scm('@daily')\r\n    }\r\n}\r\n\r\njob('example-2') {\r\n    triggers {\r\n        scm('@midnight') {\r\n            ignorePostCommitHooks()\r\n        }\r\n    }\r\n}\r\n"
+        },
+        {
+          "name": "upstream",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "projects",
+                  "type": "String"
+                },
+                {
+                  "name": "threshold",
+                  "type": "String",
+                  "defaultValue": "'SUCCESS'"
+                }
+              ],
+              "availableSince": "1.33",
+              "html": "Starts a build on completion of an upstream job, i.e. adds the \"Build after other projects are built\" trigger.\r\n\r\n Possible thresholds are <TT>'SUCCESS'</TT>, <TT>'UNSTABLE'</TT> or <TT>'FAILURE'</TT>.\r\n     ",
+              "firstSentenceCommentText": "Starts a build on completion of an upstream job, i.e. adds the \"Build after other projects are built\" trigger."
+            }
+          ],
+          "examples": "job('example') {\r\n    triggers {\r\n        upstream('other', 'UNSTABLE')\r\n    }\r\n}\r\n"
+        }
+      ]
+    }
+  }
+}

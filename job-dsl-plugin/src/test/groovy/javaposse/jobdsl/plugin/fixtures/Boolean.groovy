@@ -5,17 +5,15 @@ import hudson.model.Item
 import hudson.model.Job
 import hudson.triggers.Trigger
 import hudson.triggers.TriggerDescriptor
-import org.jenkinsci.Symbol
 import org.kohsuke.stapler.DataBoundConstructor
 
-class FooTrigger extends Trigger<Job> {
+class Boolean extends Trigger<Job> {
     @SuppressWarnings('UnnecessaryConstructor')
     @DataBoundConstructor
-    FooTrigger() {
+    Boolean() {
     }
 
     @Extension
-    @Symbol(['foo', 'bar'])
     static class DescriptorImpl extends TriggerDescriptor {
         final String displayName = null
 

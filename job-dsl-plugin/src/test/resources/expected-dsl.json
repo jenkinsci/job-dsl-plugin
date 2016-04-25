@@ -1,0 +1,642 @@
+{
+  "contexts": {
+    "javaposse.jobdsl.dsl.helpers.triggers.TriggerContext": {
+      "type": "javaposse.jobdsl.dsl.helpers.triggers.TriggerContext",
+      "methods": [
+        {
+          "name": "buildResult",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "crontab",
+                  "type": "String"
+                },
+                {
+                  "name": "closure",
+                  "type": "Closure"
+                }
+              ],
+              "availableSince": "1.45",
+              "plugin": {
+                "id": "buildresult-trigger",
+                "minimumVersion": "0.17"
+              },
+              "html": "Trigger that runs jobs on build results of others jobs\r\n     ",
+              "firstSentenceCommentText": "Trigger that runs jobs on build results of others jobs",
+              "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.BuildResultTriggerContext"
+            }
+          ],
+          "examples": "job('example') {\r\n    triggers {\r\n        buildResult('H/10 * * * *') {\r\n            combinedJobs()\r\n            triggerInfo('job-1, job-2', BuildResult.SUCCESS, BuildResult.UNSTABLE, BuildResult.FAILURE)\r\n            triggerInfo('job-3', BuildResult.SUCCESS, BuildResult.UNSTABLE)\r\n            triggerInfo('job-4, job-5')\r\n        }\r\n    }\r\n}\r\n"
+        },
+        {
+          "name": "cron",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "cronString",
+                  "type": "String"
+                }
+              ],
+              "html": "Triggers the job based on regular intervals.\r\n\r\n To configure a multi-line entry, use a single trigger string with entries separated by <TT>\\n<\/TT>.",
+              "firstSentenceCommentText": "Triggers the job based on regular intervals."
+            }
+          ],
+          "examples": "job('example') {\r\n    triggers {\r\n        cron('@daily')\r\n    }\r\n}\r\n"
+        },
+        {
+          "name": "scm",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "cronString",
+                  "type": "String"
+                },
+                {
+                  "name": "scmTriggerClosure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "html": "Polls source control for changes at regular intervals.\r\n\r\n To configure a multi-line entry, use a single trigger string with entries separated by <TT>\\n<\/TT>.",
+              "firstSentenceCommentText": "Polls source control for changes at regular intervals.",
+              "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.ScmTriggerContext"
+            }
+          ],
+          "examples": "job('example-1') {\r\n    triggers {\r\n        scm('@daily')\r\n    }\r\n}\r\n\r\njob('example-2') {\r\n    triggers {\r\n        scm('@midnight') {\r\n            ignorePostCommitHooks()\r\n        }\r\n    }\r\n}\r\n"
+        },
+        {
+          "name": "upstream",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "projects",
+                  "type": "String"
+                },
+                {
+                  "name": "threshold",
+                  "type": "String",
+                  "defaultValue": "'SUCCESS'"
+                }
+              ],
+              "availableSince": "1.33",
+              "html": "Starts a build on completion of an upstream job, i.e. adds the \"Build after other projects are built\" trigger.\r\n\r\n Possible thresholds are <TT>'SUCCESS'<\/TT>, <TT>'UNSTABLE'<\/TT> or <TT>'FAILURE'<\/TT>.\r\n     ",
+              "firstSentenceCommentText": "Starts a build on completion of an upstream job, i.e. adds the \"Build after other projects are built\" trigger."
+            }
+          ],
+          "examples": "job('example') {\r\n    triggers {\r\n        upstream('other', 'UNSTABLE')\r\n    }\r\n}\r\n"
+        },
+        {
+          "name": "someTrigger",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "foo",
+                  "type": "int"
+                },
+                {
+                  "name": "closure",
+                  "type": "Closure"
+                }
+              ],
+              "extension": true
+            },
+            {
+              "parameters": [
+                {
+                  "name": "foo",
+                  "type": "int"
+                },
+                {
+                  "name": "bar",
+                  "type": "String"
+                },
+                {
+                  "name": "closure",
+                  "type": "Closure"
+                }
+              ],
+              "extension": true
+            }
+          ]
+        },
+        {
+          "name": "bar",
+          "signatures": [
+            {
+              "parameters": [],
+              "generated": true
+            }
+          ]
+        },
+        {
+          "name": "dummy",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "javaposse.jobdsl.plugin.fixtures.DummyTrigger"
+            }
+          ]
+        },
+        {
+          "name": "foo",
+          "signatures": [
+            {
+              "parameters": [],
+              "generated": true
+            }
+          ]
+        },
+        {
+          "name": "integerTrigger",
+          "signatures": [
+            {
+              "parameters": [],
+              "generated": true
+            }
+          ]
+        },
+        {
+          "name": "scmTrigger",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "hudson.triggers.SCMTrigger",
+              "html": "<div>\n  Configure Jenkins to poll changes in SCM.\n\n  <p>\n  Note that this is going to be an expensive operation for CVS, as every polling\n  requires Jenkins to scan the entire workspace and verify it with the server.\n  Consider setting up a \"push\" trigger to avoid this overhead, as described in\n  <a href=\"https://wiki.jenkins-ci.org/display/JENKINS/Building+a+software+project\">this document<\/a>\n<\/div>\n",
+              "firstSentenceCommentText": "Configure Jenkins to poll changes in SCM."
+            }
+          ]
+        },
+        {
+          "name": "timerTrigger",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "hudson.triggers.TimerTrigger",
+              "html": "<div>\n  Provides a <a href=\"http://en.wikipedia.org/wiki/cron\">cron<\/a>-like feature\n  to periodically execute this project.\n\n  <p>\n  This feature is primarily for using Jenkins as a cron replacement,\n  and it is <b>not ideal for continuously building software projects<\/b>.\n\n  When people first start continuous integration, they are often so used to\n  the idea of regularly scheduled builds like nightly/weekly that they use\n  this feature. However, the point of continuous integration is to start\n  a build as soon as a change is made, to provide a quick feedback to the change.\n  To do that you need to\n  <a href=\"https://wiki.jenkins-ci.org/display/JENKINS/Building+a+software+project\">hook up SCM change notification to Jenkins<\/a>.\n\n  <p>\n  So, before using this feature, stop and ask yourself if this is really what you want.\n\n<\/div>\n",
+              "firstSentenceCommentText": "Provides a cron-like feature\n  to periodically execute this project."
+            }
+          ]
+        }
+      ]
+    },
+    "javaposse.jobdsl.plugin.fixtures.DummyTrigger": {
+      "type": "javaposse.jobdsl.plugin.fixtures.DummyTrigger",
+      "methods": [
+        {
+          "name": "aBoolean",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "boolean"
+                }
+              ],
+              "generated": true
+            }
+          ]
+        },
+        {
+          "name": "aHeterogeneous",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "jenkins.mvn.SettingsProvider$$List"
+            }
+          ]
+        },
+        {
+          "name": "aHeterogeneousList",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "jenkins.mvn.SettingsProvider$$List"
+            }
+          ]
+        },
+        {
+          "name": "aHomogeneous",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "javaposse.jobdsl.plugin.fixtures.ADescribable"
+            }
+          ]
+        },
+        {
+          "name": "aHomogeneousBean",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "javaposse.jobdsl.plugin.fixtures.ABean"
+            }
+          ]
+        },
+        {
+          "name": "aHomogeneousBeanList",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "javaposse.jobdsl.plugin.fixtures.ABean$$List"
+            }
+          ]
+        },
+        {
+          "name": "aHomogeneousList",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "javaposse.jobdsl.plugin.fixtures.ADescribable$$List"
+            }
+          ]
+        },
+        {
+          "name": "aString",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "String"
+                }
+              ],
+              "generated": true
+            }
+          ]
+        },
+        {
+          "name": "anEnum",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "String"
+                }
+              ],
+              "generated": true
+            }
+          ]
+        },
+        {
+          "name": "anInteger",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "Integer"
+                }
+              ],
+              "generated": true
+            }
+          ]
+        },
+        {
+          "name": "enumList",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "Iterable<String>"
+                }
+              ],
+              "generated": true
+            }
+          ]
+        },
+        {
+          "name": "stringList",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "Iterable<String>"
+                }
+              ],
+              "generated": true
+            }
+          ]
+        }
+      ]
+    },
+    "hudson.triggers.SCMTrigger": {
+      "type": "hudson.triggers.SCMTrigger",
+      "methods": [
+        {
+          "name": "scmpoll_spec",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "String"
+                }
+              ],
+              "generated": true,
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "ignorePostCommitHooks",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "boolean"
+                }
+              ],
+              "generated": true,
+              "required": true,
+              "html": "<div>\n  Ignore changes notified by SCM post-commit hooks.\n<p>\n  This can be useful if you want to prevent some long-running jobs (e.g. reports) starting because of every commit, but still want to\n  run them periodic if SCM changes have occurred.\n<p>\n  Note that this option needs to be supported by the SCM plugin, too! The subversion-plugin supports this since version 1.44. \n<\/div>",
+              "firstSentenceCommentText": "Ignore changes notified by SCM post-commit hooks."
+            }
+          ]
+        }
+      ]
+    },
+    "hudson.triggers.TimerTrigger": {
+      "type": "hudson.triggers.TimerTrigger",
+      "methods": [
+        {
+          "name": "spec",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "String"
+                }
+              ],
+              "generated": true,
+              "required": true,
+              "html": "<div>\n  This field follows the syntax of cron (with minor differences).\n  Specifically, each line consists of 5 fields separated by TAB or whitespace:\n  <pre>MINUTE HOUR DOM MONTH DOW<\/pre>\n  <table>\n    <tr>\n      <td>MINUTE<\/td>\n      <td>Minutes within the hour (0–59)<\/td>\n    <\/tr>\n    <tr>\n      <td>HOUR<\/td>\n      <td>The hour of the day (0–23)<\/td>\n    <\/tr>\n    <tr>\n      <td>DOM<\/td>\n      <td>The day of the month (1–31)<\/td>\n    <\/tr>\n    <tr>\n      <td>MONTH<\/td>\n      <td>The month (1–12)<\/td>\n    <\/tr>\n    <tr>\n      <td>DOW<\/td>\n      <td>The day of the week (0–7) where 0 and 7 are Sunday.<\/td>\n    <\/tr>\n  <\/table>\n  <p>\n    To specify multiple values for one field, the following operators are\n    available. In the order of precedence,\n  <\/p>\n  <ul>\n    <li><code>*<\/code> specifies all valid values<\/li>\n    <li><code>M-N<\/code> specifies a range of values<\/li>\n    <li><code>M-N/X<\/code> or <code>*/X<\/code> steps by intervals of X through the specified range or whole valid range<\/li>\n    <li><code>A,B,...,Z<\/code> enumerates multiple values<\/li>\n  <\/ul>\n  <p>\n    To allow periodically scheduled tasks to produce even load on the system,\n    the symbol <code>H<\/code> (for “hash”) should be used wherever possible.\n    For example, using <code>0 0 * * *<\/code> for a dozen daily jobs\n    will cause a large spike at midnight.\n    In contrast, using <code>H H * * *<\/code> would still execute each job once a day,\n    but not all at the same time, better using limited resources.\n  <\/p><p>\n    The <code>H<\/code> symbol can be used with a range. For example, <code>H H(0-7) * * *<\/code>\n    means some time between 12:00 AM (midnight) to 7:59 AM.\n    You can also use step intervals with <code>H<\/code>, with or without ranges.\n  <\/p><p>\n    The <code>H<\/code> symbol can be thought of as a random value over a range,\n    but it actually is a hash of the job name, not a random function, so that\n    the value remains stable for any given project.\n  <\/p>\n  <p>\n      Beware that for the day of month field, short cycles such as <code>*/3<\/code> or <code>H/3<\/code> will not work consistently near the end of most months, due to variable month lengths.\n      For example, <code>*/3<\/code> will run on the 1st, 4th, …31st days of a long month, then again the next day of the next month.\n      Hashes are always chosen in the 1-28 range, so <code>H/3<\/code> will produce a gap between runs of between 3 and 6 days at the end of a month.\n      (Longer cycles will also have inconsistent lengths but the effect may be relatively less noticeable.)\n  <\/p>\n  <p>\n    Empty lines and lines that start with <code>#<\/code> will be ignored as comments.\n  <\/p><p>\n    In addition, <code>@yearly<\/code>, <code>@annually<\/code>, <code>@monthly<\/code>,\n    <code>@weekly<\/code>, <code>@daily<\/code>, <code>@midnight<\/code>,\n    and <code>@hourly<\/code> are supported as convenient aliases.\n    These use the hash system for automatic balancing.\n    For example, <code>@hourly<\/code> is the same as <code>H * * * *<\/code> and could mean at any time during the hour.\n    <code>@midnight<\/code> actually means some time between 12:00 AM and 2:59 AM.\n  <\/p><p>\n    Examples:\n  <\/p>\n<pre>\n# every fifteen minutes (perhaps at :07, :22, :37, :52)\nH/15 * * * *\n# every ten minutes in the first half of every hour (three times, perhaps at :04, :14, :24)\nH(0-29)/10 * * * *\n# once every two hours every weekday (perhaps at 10:38 AM, 12:38 PM, 2:38 PM, 4:38 PM)\nH 9-16/2 * * 1-5\n# once a day on the 1st and 15th of every month except December\nH H 1,15 1-11 *\n<\/pre>\n<\/div>\n",
+              "firstSentenceCommentText": "This field follows the syntax of cron (with minor differences)."
+            }
+          ]
+        }
+      ]
+    },
+    "javaposse.jobdsl.plugin.fixtures.ADescribable": {
+      "type": "javaposse.jobdsl.plugin.fixtures.ADescribable",
+      "methods": [
+        {
+          "name": "bar",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "int"
+                }
+              ],
+              "generated": true
+            }
+          ]
+        },
+        {
+          "name": "foo",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "String"
+                }
+              ],
+              "generated": true
+            }
+          ]
+        }
+      ]
+    },
+    "javaposse.jobdsl.plugin.fixtures.ABean": {
+      "type": "javaposse.jobdsl.plugin.fixtures.ABean",
+      "methods": [
+        {
+          "name": "prop",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "String"
+                }
+              ],
+              "generated": true
+            }
+          ]
+        }
+      ]
+    },
+    "jenkins.mvn.SettingsProvider$$List": {
+      "type": "jenkins.mvn.SettingsProvider$$List",
+      "methods": [
+        {
+          "name": "defaultSettingsProvider",
+          "signatures": [
+            {
+              "parameters": [],
+              "generated": true,
+              "html": "<div>\n    Use default maven settings (<tt>$HOME/.m2/settings.xml<\/tt>) as set on build node.\n<\/div>",
+              "firstSentenceCommentText": "Use default maven settings ($HOME/.m2/settings.xml) as set on build node."
+            }
+          ]
+        },
+        {
+          "name": "filePathSettingsProvider",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "jenkins.mvn.FilePathSettingsProvider",
+              "html": "<div>\n    Use a custom <tt>settings.xml<\/tt> file. Such a file is checked out from SCM as part of the job or a well known location.\n<\/div>",
+              "firstSentenceCommentText": "Use a custom settings.xml file."
+            }
+          ]
+        },
+        {
+          "name": "mvnSettingsProvider",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider",
+              "html": "<div>\n    select the provided settings.xml for this project\n<\/div>",
+              "firstSentenceCommentText": "select the provided settings.xml for this project"
+            }
+          ]
+        }
+      ]
+    },
+    "javaposse.jobdsl.plugin.fixtures.ABean$$List": {
+      "type": "javaposse.jobdsl.plugin.fixtures.ABean$$List",
+      "methods": [
+        {
+          "name": "aBean",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "javaposse.jobdsl.plugin.fixtures.ABean"
+            }
+          ]
+        }
+      ]
+    },
+    "javaposse.jobdsl.plugin.fixtures.ADescribable$$List": {
+      "type": "javaposse.jobdsl.plugin.fixtures.ADescribable$$List",
+      "methods": [
+        {
+          "name": "aDescribable",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "javaposse.jobdsl.plugin.fixtures.ADescribable"
+            }
+          ]
+        }
+      ]
+    },
+    "jenkins.mvn.FilePathSettingsProvider": {
+      "type": "jenkins.mvn.FilePathSettingsProvider",
+      "methods": [
+        {
+          "name": "path",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "String"
+                }
+              ],
+              "generated": true,
+              "required": true,
+              "html": "<div>\n    Path to settings.xml file, relative to project workspace or absolute (variables are supported).\n<\/div>",
+              "firstSentenceCommentText": "Path to settings.xml file, relative to project workspace or absolute (variables are supported)."
+            }
+          ]
+        }
+      ]
+    },
+    "org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider": {
+      "type": "org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider",
+      "methods": [
+        {
+          "name": "settingsConfigId",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "String"
+                }
+              ],
+              "generated": true,
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "embedded": true
+}

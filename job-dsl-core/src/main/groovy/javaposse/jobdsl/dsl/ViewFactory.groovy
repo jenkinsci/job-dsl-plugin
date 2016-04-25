@@ -14,7 +14,7 @@ import javaposse.jobdsl.dsl.views.SectionedView
  *
  * @since 1.31
  */
-interface ViewFactory {
+interface ViewFactory extends Context {
     /**
      * Creates or updates a view that shows items in a simple list format.
      *

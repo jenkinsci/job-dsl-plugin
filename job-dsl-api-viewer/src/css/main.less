@@ -3,6 +3,9 @@
 @color3: #FC715B;
 @color4: #E4344A;
 @color5: #FE9D0B;
+@color6: #BC0AFE;
+@color7: #00BCBC;
+@color8: #FFFC19;
 
 .text-ellipsis {
   white-space: nowrap;
@@ -93,6 +96,28 @@
 
 .detail-wrapper {
   overflow: auto;
+
+  // http://stackoverflow.com/questions/396145/how-to-vertically-center-a-div-for-all-browsers
+  .loading-outer {
+    display: table;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in;
+  }
+  .loading-middle {
+    display: table-cell;
+    vertical-align: middle;
+  }
+  .loading-inner {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+  .loading {
+    opacity: 1;
+  }
 }
 
 .title {
@@ -229,6 +254,20 @@ body {
     }
     &.label-deprecated {
       background-color: @color4;
+    }
+    &.label-generated {
+      background-color: @color6;
+    }
+    &.label-required {
+      background-color: @color7;
+    }
+    &.label-extension {
+      background-color: @color8;
+      color: #555;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
     }
   }
   .signature {
