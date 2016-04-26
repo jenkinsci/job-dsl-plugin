@@ -25,6 +25,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.46 (unreleased)
+ * Increased the minimum supported Jenkins version to 1.625
  * Added support for [[Automatically Generated DSL]]
    ([#816](https://github.com/jenkinsci/job-dsl-plugin/pull/816))
  * Integrated the API Viewer into the plugin

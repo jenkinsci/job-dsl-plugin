@@ -7,7 +7,7 @@ sudo apt-get install -y openjdk-7-jdk git
 SCRIPT
 
 $script = <<SCRIPT
-VERSION=1.609
+VERSION=1.625
 sudo apt-get install -y daemon
 wget -N -P /var/cache/wget --progress=dot:giga http://pkg.jenkins-ci.org/debian/binary/jenkins_${VERSION}_all.deb
 sudo dpkg -i /var/cache/wget/jenkins_${VERSION}_all.deb
