@@ -13,7 +13,9 @@
     <builders/>
     <publishers>
         <hudson.tasks.ArtifactArchiver/>
-        <hudson.tasks.test.AggregatedTestResultPublisher/>
+        <hudson.tasks.Fingerprinter>
+            <targets>foo</targets>
+        </hudson.tasks.Fingerprinter>
     </publishers>
     <buildWrappers/>
 </project>

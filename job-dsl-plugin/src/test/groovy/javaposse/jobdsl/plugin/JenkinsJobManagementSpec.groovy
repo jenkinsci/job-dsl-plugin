@@ -3,6 +3,7 @@ package javaposse.jobdsl.plugin
 import com.cloudbees.hudson.plugins.folder.Folder
 import com.google.common.io.Resources
 import hudson.EnvVars
+import hudson.LocalPluginManager
 import hudson.model.AbstractBuild
 import hudson.model.Failure
 import hudson.model.FreeStyleBuild
@@ -11,7 +12,7 @@ import hudson.model.ListView
 import hudson.model.View
 import hudson.model.listeners.SaveableListener
 import hudson.tasks.ArtifactArchiver
-import hudson.tasks.test.AggregatedTestResultPublisher
+import hudson.tasks.Fingerprinter
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
@@ -29,6 +30,7 @@ import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
+import org.jvnet.hudson.test.recipes.WithPluginManager
 import spock.lang.Specification
 
 import static com.google.common.base.Charsets.UTF_8
@@ -432,13 +434,13 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         FreeStyleProject job = jenkinsRule.jenkins.getItemByFullName('project') as FreeStyleProject
         job.publishersList[0] instanceof ArtifactArchiver
-        job.publishersList[1] instanceof AggregatedTestResultPublisher
+        job.publishersList[1] instanceof Fingerprinter
 
         when:
         jobManagement.createOrUpdateConfig(createItem('project', '/order-b.xml'), false)
 
         then:
-        job.publishersList[0] instanceof AggregatedTestResultPublisher
+        job.publishersList[0] instanceof Fingerprinter
         job.publishersList[1] instanceof ArtifactArchiver
     }
 
@@ -462,7 +464,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'createOrUpdateConfig should fail if item type does not match'() {
         setup:
-        jenkinsRule.createMatrixProject('my-job')
+        jenkinsRule.createFolder('my-job')
 
         when:
         jobManagement.createOrUpdateConfig(createItem('my-job', '/minimal-job.xml'), false)
@@ -580,6 +582,7 @@ class JenkinsJobManagementSpec extends Specification {
         id == null
     }
 
+    @WithPluginManager(LocalPluginManager)
     def 'create config file without config files provider plugin'() {
         setup:
         ConfigFile configFile = Mock(ConfigFile)
