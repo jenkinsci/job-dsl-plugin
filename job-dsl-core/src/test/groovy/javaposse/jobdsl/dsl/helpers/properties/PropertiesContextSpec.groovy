@@ -274,4 +274,49 @@ class PropertiesContextSpec extends Specification {
             wallDisplayBgPicture[0].value() == 'https://jenkins.io/images/226px-Jenkins_logo.svg.png'
         }
     }
+
+    def 'discardOldBuilds defaults'() {
+        when:
+        context.discardOldBuilds {}
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'jenkins.model.BuildDiscarderProperty'
+            children().size() == 1
+            with(children()[0]) {
+                name() == 'strategy'
+                attributes() == [class: 'hudson.tasks.LogRotator']
+                children().size() == 4
+                daysToKeep[0].value() == -1
+                numToKeep[0].value() == -1
+                artifactDaysToKeep[0].value() == -1
+                artifactNumToKeep[0].value() == -1
+            }
+        }
+    }
+
+    def 'discardOldBuilds all options'() {
+        when:
+        context.discardOldBuilds {
+            daysToKeep 1
+            numToKeep 2
+            artifactDaysToKeep 3
+            artifactNumToKeep 4
+        }
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'jenkins.model.BuildDiscarderProperty'
+            children().size() == 1
+            with(children()[0]) {
+                name() == 'strategy'
+                attributes() == [class: 'hudson.tasks.LogRotator']
+                children().size() == 4
+                daysToKeep[0].value() == 1
+                numToKeep[0].value() == 2
+                artifactDaysToKeep[0].value() == 3
+                artifactNumToKeep[0].value() == 4
+            }
+        }
+    }
 }
