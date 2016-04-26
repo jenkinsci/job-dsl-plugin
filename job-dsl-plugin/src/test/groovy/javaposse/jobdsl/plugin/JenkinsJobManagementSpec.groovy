@@ -3,6 +3,7 @@ package javaposse.jobdsl.plugin
 import com.cloudbees.hudson.plugins.folder.Folder
 import com.google.common.io.Resources
 import hudson.EnvVars
+import hudson.LocalPluginManager
 import hudson.model.AbstractBuild
 import hudson.model.Failure
 import hudson.model.FreeStyleBuild
@@ -29,6 +30,7 @@ import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
+import org.jvnet.hudson.test.recipes.WithPluginManager
 import spock.lang.Specification
 
 import static com.google.common.base.Charsets.UTF_8
@@ -580,6 +582,7 @@ class JenkinsJobManagementSpec extends Specification {
         id == null
     }
 
+    @WithPluginManager(LocalPluginManager)
     def 'create config file without config files provider plugin'() {
         setup:
         ConfigFile configFile = Mock(ConfigFile)
