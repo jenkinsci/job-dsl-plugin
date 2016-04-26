@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 // this has to be written in Java because of https://jira.codehaus.org/browse/GROOVY-6019
 
 /**
- * Indicates that a method show not be included in the API documentation.
+ * Indicates that a method should not be included in the API documentation.
  *
  * @since 1.38
  */
