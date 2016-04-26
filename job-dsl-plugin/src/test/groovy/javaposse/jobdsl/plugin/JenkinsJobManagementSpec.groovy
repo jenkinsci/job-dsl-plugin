@@ -12,7 +12,7 @@ import hudson.model.ListView
 import hudson.model.View
 import hudson.model.listeners.SaveableListener
 import hudson.tasks.ArtifactArchiver
-import hudson.tasks.test.AggregatedTestResultPublisher
+import hudson.tasks.Fingerprinter
 import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
@@ -434,13 +434,13 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         FreeStyleProject job = jenkinsRule.jenkins.getItemByFullName('project') as FreeStyleProject
         job.publishersList[0] instanceof ArtifactArchiver
-        job.publishersList[1] instanceof AggregatedTestResultPublisher
+        job.publishersList[1] instanceof Fingerprinter
 
         when:
         jobManagement.createOrUpdateConfig(createItem('project', '/order-b.xml'), false)
 
         then:
-        job.publishersList[0] instanceof AggregatedTestResultPublisher
+        job.publishersList[0] instanceof Fingerprinter
         job.publishersList[1] instanceof ArtifactArchiver
     }
 
@@ -464,7 +464,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'createOrUpdateConfig should fail if item type does not match'() {
         setup:
-        jenkinsRule.createMatrixProject('my-job')
+        jenkinsRule.createFolder('my-job')
 
         when:
         jobManagement.createOrUpdateConfig(createItem('my-job', '/minimal-job.xml'), false)

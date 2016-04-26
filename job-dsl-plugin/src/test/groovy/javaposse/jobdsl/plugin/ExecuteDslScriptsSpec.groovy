@@ -2,7 +2,6 @@ package javaposse.jobdsl.plugin
 
 import com.cloudbees.hudson.plugins.folder.Folder
 import hudson.FilePath
-import hudson.maven.MavenModuleSet
 import hudson.model.AbstractItem
 import hudson.model.AbstractProject
 import hudson.model.Action
@@ -13,7 +12,6 @@ import hudson.model.Label
 import hudson.model.ListView
 import hudson.model.View
 import hudson.slaves.DumbSlave
-import hudson.tasks.Shell
 import javaposse.jobdsl.dsl.GeneratedJob
 import javaposse.jobdsl.dsl.GeneratedView
 import javaposse.jobdsl.plugin.actions.ApiViewerAction
@@ -966,36 +964,6 @@ class ExecuteDslScriptsSpec extends Specification {
         then:
         freeStyleBuild.result == SUCCESS
         jenkinsRule.instance.getItem('test-folder') == null
-    }
-
-    def 'maven pre and post build steps'() {
-        setup:
-        String mavenPrePostScript = '''mavenJob('maven-job') {
-    goals('clean install')
-    preBuildSteps {
-        shell('echo first')
-    }
-    postBuildSteps {
-       shell('echo second')
-    }
-}'''
-
-        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
-        job.buildersList.add(new ExecuteDslScripts(
-                new ExecuteDslScripts.ScriptLocation('true', null, mavenPrePostScript), true, RemovedJobAction.IGNORE
-        ))
-
-        when:
-        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
-
-        then:
-        freeStyleBuild.result == SUCCESS
-        jenkinsRule.instance.getItem('maven-job') instanceof MavenModuleSet
-        MavenModuleSet mavenJob = (MavenModuleSet) jenkinsRule.instance.getItem('maven-job')
-        mavenJob.prebuilders.size() == 1
-        mavenJob.postbuilders.size() == 1
-        mavenJob.prebuilders.get(0) instanceof Shell
-        mavenJob.postbuilders.get(0) instanceof Shell
     }
 
     def 'allow empty archive'() {

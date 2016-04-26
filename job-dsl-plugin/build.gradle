@@ -66,4 +66,5 @@ dependencies {
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:structs:1.1@jar'
     optionalJenkinsPlugins 'org.jenkinsci.plugins:managed-scripts:1.2.1@jar'
     testCompile 'org.jenkins-ci:symbol-annotation:1.1'
+    jenkinsTest 'org.jenkins-ci.main:jenkins-test-harness:2.7@jar'
 }
