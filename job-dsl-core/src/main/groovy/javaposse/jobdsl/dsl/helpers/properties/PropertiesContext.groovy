@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.properties
 
-import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
@@ -8,6 +7,8 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
+
+import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 @ContextType('hudson.model.JobProperty')
 class PropertiesContext extends AbstractExtensibleContext {
@@ -35,7 +36,7 @@ class PropertiesContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'sidebar-link', minimumVersion = '1.7')
     void sidebarLinks(@DslContext(SidebarLinkContext) Closure sidebarLinkClosure) {
         SidebarLinkContext sidebarLinkContext = new SidebarLinkContext()
-        ContextHelper.executeInContext(sidebarLinkClosure, sidebarLinkContext)
+        executeInContext(sidebarLinkClosure, sidebarLinkContext)
 
         propertiesNodes << new NodeBuilder().'hudson.plugins.sidebar__link.ProjectLinks' {
             links(sidebarLinkContext.links)
@@ -81,7 +82,7 @@ class PropertiesContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'rebuild', minimumVersion = '1.25')
     void rebuild(@DslContext(RebuildContext) Closure rebuildClosure) {
         RebuildContext rebuildContext = new RebuildContext()
-        ContextHelper.executeInContext(rebuildClosure, rebuildContext)
+        executeInContext(rebuildClosure, rebuildContext)
 
         propertiesNodes << new NodeBuilder().'com.sonyericsson.rebuild.RebuildSettings' {
             autoRebuild(rebuildContext.autoRebuild)
@@ -97,7 +98,7 @@ class PropertiesContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'ownership', minimumVersion = '0.8')
     void ownership(@DslContext(OwnershipContext) Closure ownershipClosure) {
         OwnershipContext ownershipContext = new OwnershipContext()
-        ContextHelper.executeInContext(ownershipClosure, ownershipContext)
+        executeInContext(ownershipClosure, ownershipContext)
 
         propertiesNodes << new NodeBuilder().'com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty' {
             delegate.ownership {
@@ -150,6 +151,26 @@ class PropertiesContext extends AbstractExtensibleContext {
         propertiesNodes << new NodeBuilder().'jenkins.advancedqueue.priority.strategy.PriorityJobProperty' {
             useJobPriority(true)
             delegate.priority(value)
+        }
+    }
+
+    /**
+     * Configures job appearance for wall display.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'jenkinswalldisplay', minimumVersion = '0.6.30')
+    void wallDisplay(@DslContext(WallDisplayContext) Closure wallDisplayClosure) {
+        WallDisplayContext wallDisplayContext = new WallDisplayContext()
+        executeInContext(wallDisplayClosure, wallDisplayContext)
+
+        propertiesNodes << new NodeBuilder().'de.pellepelster.jenkins.walldisplay.WallDisplayJobProperty' {
+            if (wallDisplayContext.name) {
+                wallDisplayName(wallDisplayContext.name)
+            }
+            if (wallDisplayContext.backgroundPicture) {
+                wallDisplayBgPicture(wallDisplayContext.backgroundPicture)
+            }
         }
     }
 }
