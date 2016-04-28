@@ -1135,6 +1135,19 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Extracts JIRA information for the build to environment variables.
+     *
+     * {@code JIRA_ISSUES} - A comma separated list of issues referenced in the version control system changelog
+     * {@code JIRA_URL} - Primary URL for the JIRA server
+     *
+     * @since 1.46
+    */
+    @RequiresPlugin(id = 'jira', minimumVersion = '2.2')
+    void extractJiraEnvironmentVariables() {
+        stepNodes << new NodeBuilder().'hudson.plugins.jira.JiraEnvironmentVariableBuilder'()
+    }
+
+    /**
      * Invokes a CMake build script.
      *
      * @since 1.45

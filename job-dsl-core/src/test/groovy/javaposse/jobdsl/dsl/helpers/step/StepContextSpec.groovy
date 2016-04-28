@@ -3637,6 +3637,17 @@ class StepContextSpec extends Specification {
         'key1' | 'key2' | 'key3' | 'key1'      | 'key2'       | 'key3'
     }
 
+    def 'call extractJiraEnvironmentVariables method'() {
+        when:
+        context.extractJiraEnvironmentVariables()
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        context.stepNodes[0].name() == 'hudson.plugins.jira.JiraEnvironmentVariableBuilder'
+        1 * jobManagement.requireMinimumPluginVersion('jira', '2.2')
+    }
+
     def 'call cmake methods with no options'() {
         when:
         context.cmake {

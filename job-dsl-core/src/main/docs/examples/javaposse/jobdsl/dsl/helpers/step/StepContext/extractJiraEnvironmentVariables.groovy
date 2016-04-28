@@ -1,0 +1,5 @@
+job('example') {
+    steps {
+        extractJiraEnvironmentVariables()
+    }
+}
