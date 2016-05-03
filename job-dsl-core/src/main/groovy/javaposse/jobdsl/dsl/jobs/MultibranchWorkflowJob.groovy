@@ -31,7 +31,7 @@ class MultibranchWorkflowJob extends Folder {
      * Adds branch sources.
      */
     void branchSources(@DslContext(BranchSourcesContext) Closure sourcesClosure) {
-        BranchSourcesContext context = new BranchSourcesContext()
+        BranchSourcesContext context = new BranchSourcesContext(jobManagement)
         ContextHelper.executeInContext(sourcesClosure, context)
 
         configure { Node project ->
