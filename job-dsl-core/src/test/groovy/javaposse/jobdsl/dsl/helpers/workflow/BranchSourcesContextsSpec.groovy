@@ -1,9 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.workflow
 
+import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class BranchSourcesContextsSpec extends Specification {
-    BranchSourcesContext context = new BranchSourcesContext()
+    JobManagement jobManagement = Mock(JobManagement)
+    BranchSourcesContext context = new BranchSourcesContext(jobManagement)
 
     def 'git with minimal options'() {
         when:
@@ -30,6 +32,7 @@ class BranchSourcesContextsSpec extends Specification {
                 properties[0].attribute('class') == 'empty-list'
             }
         }
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
     def 'git with all options'() {
@@ -63,6 +66,7 @@ class BranchSourcesContextsSpec extends Specification {
                 properties[0].attribute('class') == 'empty-list'
             }
         }
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
     def 'github with minimal options'() {
@@ -93,6 +97,7 @@ class BranchSourcesContextsSpec extends Specification {
                 properties[0].attribute('class') == 'empty-list'
             }
         }
+        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.6')
     }
 
     def 'github with all options'() {
@@ -132,5 +137,6 @@ class BranchSourcesContextsSpec extends Specification {
                 properties[0].attribute('class') == 'empty-list'
             }
         }
+        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.6')
     }
 }

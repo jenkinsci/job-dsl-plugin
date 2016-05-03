@@ -1,15 +1,22 @@
 package javaposse.jobdsl.dsl.helpers.workflow
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
-class BranchSourcesContext implements Context {
+class BranchSourcesContext extends AbstractContext {
     List<Node> branchSourceNodes = []
+
+    BranchSourcesContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Adds a Git branch source. Can be called multiple times to add more branch sources.
      */
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void git(@DslContext(GitBranchSourceContext) Closure branchSourceClosure) {
         GitBranchSourceContext context = new GitBranchSourceContext()
         ContextHelper.executeInContext(branchSourceClosure, context)
@@ -28,9 +35,13 @@ class BranchSourcesContext implements Context {
             }
         }
     }
+
     /**
      * Adds a GitHub branch source. Can be called multiple times to add more branch sources.
+     *
+     * @since 1.46
      */
+    @RequiresPlugin(id = 'github-branch-source', minimumVersion = '1.6')
     void github(@DslContext(GitHubBranchSourceContext) Closure branchSourceClosure) {
         GitHubBranchSourceContext context = new GitHubBranchSourceContext()
         ContextHelper.executeInContext(branchSourceClosure, context)

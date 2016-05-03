@@ -13,35 +13,35 @@ class GitHubBranchSourceContext implements Context {
     boolean ignoreOnPushNotifications
 
     /**
-     * Sets the GitHub api Uri
+     * Sets the GitHub API URI. Defaults to {@code 'https://api.github.com'}.
      */
     void apiUri(String apiUri) {
         this.apiUri = apiUri
     }
 
     /**
-     * Sets scan credentials for authentication with Github.
+     * Sets scan credentials for authentication with GitHub.
      */
     void scanCredentialsId(String scanCredentialsId) {
         this.scanCredentialsId = scanCredentialsId
     }
 
     /**
-     * Sets checkout credentials for authentication with Github (defaults to scan credentials).
+     * Sets checkout credentials for authentication with GitHub. Defaults to the scan credentials.
      */
     void checkoutCredentialsId(String checkoutCredentialsId) {
         this.checkoutCredentialsId = checkoutCredentialsId
     }
 
     /**
-     * Sets name of the GitHub Organization or GitHub User Account.
+     * Sets the name of the GitHub Organization or GitHub User Account.
      */
     void repoOwner(String repoOwner) {
         this.repoOwner = repoOwner
     }
 
     /**
-     * Sets name of the GitHub repository.
+     * Sets the name of the GitHub repository.
      */
     void repository(String repository) {
         this.repository = repository
