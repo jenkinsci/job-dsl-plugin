@@ -29,6 +29,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.47 (unreleased)
  * Improved support for [[Testing DSL Scripts]]
    ([JENKINS-29091](https://issues.jenkins-ci.org/browse/JENKINS-29091))
+ * Enhanced support for the [Branch API Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Branch+API+Plugin)
+   ([#846](https://github.com/jenkinsci/job-dsl-plugin/pull/846))
 * 1.46 (May 08 2016)
  * Increased the minimum supported Jenkins version to 1.625
  * Added support for [[Automatically Generated DSL]]
