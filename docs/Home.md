@@ -90,6 +90,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-30323](https://issues.jenkins-ci.org/browse/JENKINS-30323))
  * Enhanced support for the [JIRA Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JIRA+Plugin)
    ([#834](https://github.com/jenkinsci/job-dsl-plugin/pull/834))
+ * Enhanced support for the [Gitlab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin)
+   ([JENKINS-34534](https://issues.jenkins-ci.org/browse/JENKINS-34534))
  * Removed anything that has been deprecated in 1.40, see [Migration](Migration#migrating-to-140)
  * Changed the behavior of the `currentJobParameters` method in the `phaseJob` context, see
    [Migration](Migration#migrating-to-146)

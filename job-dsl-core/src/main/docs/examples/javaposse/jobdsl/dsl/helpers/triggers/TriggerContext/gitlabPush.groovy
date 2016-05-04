@@ -10,7 +10,7 @@ job('example') {
             addVoteOnMergeRequest(false)
             useCiFeatures(false)
             acceptMergeRequestOnSuccess()
-            allowAllBranches(false)
+            branchFilterType('all')
             includeBranches('include1,include2')
             excludeBranches('exclude1,exclude2')
         }
