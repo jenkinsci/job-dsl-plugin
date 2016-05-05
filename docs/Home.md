@@ -44,6 +44,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-33825](https://issues.jenkins-ci.org/browse/JENKINS-33825))
  * Added support for the
    [CloudBees GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+GitHub+Branch+Source+Plugin)
+ * Enhanced support for the [Dashboard View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Dashboard+View)
+   ([#824](https://github.com/jenkinsci/job-dsl-plugin/pull/824))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([JENKINS-33967](https://issues.jenkins-ci.org/browse/JENKINS-33967),
    [JENKINS-33968](https://issues.jenkins-ci.org/browse/JENKINS-33968))

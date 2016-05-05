@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.views.portlets.TestTrendChartContext
+
 class DashboardViewSpec extends ListViewSpec<DashboardView> {
     def setup() {
         view = new DashboardView(jobManagement)
@@ -20,6 +22,111 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
 
         where:
         position << ['topPortlets', 'bottomPortlets', 'leftPortlets', 'rightPortlets']
+    }
+
+    def 'test build statistics with no options'() {
+        when:
+        view.topPortlets {
+            buildStatistics()
+        }
+
+        then:
+        with(view.node.topPortlets[0].children()[0]) {
+            name() == 'hudson.plugins.view.dashboard.stats.StatBuilds'
+            children().size() == 2
+            id[0].value() ==~ /dashboard_portlet_\d+/
+            name[0].value() == 'Build statistics'
+        }
+    }
+
+    def 'test build statistics with all options'() {
+        when:
+        view.topPortlets {
+            buildStatistics {
+                displayName('bar')
+            }
+        }
+
+        then:
+        with(view.node.topPortlets[0].children()[0]) {
+            name() == 'hudson.plugins.view.dashboard.stats.StatBuilds'
+            children().size() == 2
+            id[0].value() ==~ /dashboard_portlet_\d+/
+            name[0].value() == 'bar'
+        }
+    }
+
+    def 'test iframe with no options'() {
+        when:
+        view.topPortlets {
+            iframe()
+        }
+
+        then:
+        with(view.node.topPortlets[0].children()[0]) {
+            name() == 'hudson.plugins.view.dashboard.core.IframePortlet'
+            children().size() == 5
+            id[0].value() ==~ /dashboard_portlet_\d+/
+            name[0].value() == 'Iframe Portlet'
+            iframeSource[0].value() == ''
+            effectiveUrl[0].value() == ''
+            divStyle[0].value() == 'width:100%;height:1000px;'
+        }
+    }
+
+    def 'test iframe with all options'() {
+        when:
+        view.topPortlets {
+            iframe {
+                displayName('bar')
+                iframeSource('one')
+                effectiveUrl('three')
+                divStyle('four')
+            }
+        }
+
+        then:
+        with(view.node.topPortlets[0].children()[0]) {
+            name() == 'hudson.plugins.view.dashboard.core.IframePortlet'
+            children().size() == 5
+            id[0].value() ==~ /dashboard_portlet_\d+/
+            name[0].value() == 'bar'
+            iframeSource[0].value() == 'one'
+            effectiveUrl[0].value() == 'three'
+            divStyle[0].value() == 'four'
+        }
+    }
+
+    def 'test jenkins jobs list with no options'() {
+        when:
+        view.topPortlets {
+            jenkinsJobsList()
+        }
+
+        then:
+        with(view.node.topPortlets[0].children()[0]) {
+            name() == 'hudson.plugins.view.dashboard.core.HudsonStdJobsPortlet'
+            children().size() == 2
+            id[0].value() ==~ /dashboard_portlet_\d+/
+            name[0].value() == 'Jenkins jobs list'
+        }
+    }
+
+    def 'test jenkins jobs list with all options'() {
+        when:
+        view.topPortlets {
+            jenkinsJobsList {
+                displayName('bar')
+            }
+        }
+
+        then:
+        with(view.node.topPortlets[0].children()[0]) {
+            name() == 'hudson.plugins.view.dashboard.core.HudsonStdJobsPortlet'
+            children().size() == 2
+            id[0].value() ==~ /dashboard_portlet_\d+/
+            name[0].value() == 'bar'
+        }
     }
 
     def 'test statistics chart with no options'() {
@@ -94,6 +201,53 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
             skippedColor[0].value() == 'one'
             successColor[0].value() == 'two'
             failureColor[0].value() == 'three'
+        }
+    }
+
+    def 'test trend chart with no options'() {
+        when:
+        view.topPortlets {
+            testTrendChart()
+        }
+
+        then:
+        with(view.node.topPortlets[0].children()[0]) {
+            name() == 'hudson.plugins.view.dashboard.test.TestTrendChart'
+            children().size() == 7
+            id[0].value() ==~ /dashboard_portlet_\d+/
+            name[0].value() == 'Test Trend Chart'
+            graphWidth[0].value() == 300
+            graphHeight[0].value() == 220
+            dateRange[0].value() == 0
+            dateShift[0].value() == 0
+            displayStatus[0].value() == TestTrendChartContext.DisplayStatus.ALL
+        }
+    }
+
+    def 'test trend chart with all options'() {
+        when:
+        view.topPortlets {
+            testTrendChart {
+                displayName('bar')
+                graphWidth(100)
+                graphHeight(200)
+                dateRange(7)
+                dateShift(1)
+                displayStatus(TestTrendChartContext.DisplayStatus.SUCCESS)
+            }
+        }
+
+        then:
+        with(view.node.topPortlets[0].children()[0]) {
+            name() == 'hudson.plugins.view.dashboard.test.TestTrendChart'
+            children().size() == 7
+            id[0].value() ==~ /dashboard_portlet_\d+/
+            name[0].value() == 'bar'
+            graphWidth[0].value() == 100
+            graphHeight[0].value() == 200
+            dateRange[0].value() == 7
+            dateShift[0].value() == 1
+            displayStatus[0].value() == TestTrendChartContext.DisplayStatus.SUCCESS
         }
     }
 
