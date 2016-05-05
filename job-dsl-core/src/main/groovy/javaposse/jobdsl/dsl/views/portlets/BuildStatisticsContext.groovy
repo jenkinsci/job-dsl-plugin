@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.views.portlets
 import javaposse.jobdsl.dsl.Context
 
 class BuildStatisticsContext implements Context {
-
     String displayName = 'Build statistics'
 
     /**

@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.views.portlets.TestTrendChartContext
+
 class DashboardViewSpec extends ListViewSpec<DashboardView> {
     def setup() {
         view = new DashboardView(jobManagement)
@@ -63,11 +65,10 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
         then:
         with(view.node.topPortlets[0].children()[0]) {
             name() == 'hudson.plugins.view.dashboard.core.IframePortlet'
-            children().size() == 6
+            children().size() == 5
             id[0].value() ==~ /dashboard_portlet_\d+/
             name[0].value() == 'Iframe Portlet'
             iframeSource[0].value() == ''
-            effectiveSource[0].value() == ''
             effectiveUrl[0].value() == ''
             divStyle[0].value() == 'width:100%;height:1000px;'
         }
@@ -79,7 +80,6 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
             iframe {
                 displayName('bar')
                 iframeSource('one')
-                effectiveSource('two')
                 effectiveUrl('three')
                 divStyle('four')
             }
@@ -88,11 +88,10 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
         then:
         with(view.node.topPortlets[0].children()[0]) {
             name() == 'hudson.plugins.view.dashboard.core.IframePortlet'
-            children().size() == 6
+            children().size() == 5
             id[0].value() ==~ /dashboard_portlet_\d+/
             name[0].value() == 'bar'
             iframeSource[0].value() == 'one'
-            effectiveSource[0].value() == 'two'
             effectiveUrl[0].value() == 'three'
             divStyle[0].value() == 'four'
         }
@@ -109,7 +108,7 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
             name() == 'hudson.plugins.view.dashboard.core.HudsonStdJobsPortlet'
             children().size() == 2
             id[0].value() ==~ /dashboard_portlet_\d+/
-            name[0].value() == 'Jenkins Jobs List'
+            name[0].value() == 'Jenkins jobs list'
         }
     }
 
@@ -218,10 +217,10 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
             id[0].value() ==~ /dashboard_portlet_\d+/
             name[0].value() == 'Test Trend Chart'
             graphWidth[0].value() == 300
-            graphHeight[0].value() == 200
-            dateRange[0].value() == 30
+            graphHeight[0].value() == 220
+            dateRange[0].value() == 0
             dateShift[0].value() == 0
-            displayStatus[0].value() == DashboardView.DisplayStatus.ALL
+            displayStatus[0].value() == TestTrendChartContext.DisplayStatus.ALL
         }
     }
 
@@ -234,7 +233,7 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
                 graphHeight(200)
                 dateRange(7)
                 dateShift(1)
-                displayStatus(DashboardView.DisplayStatus.SUCCESS)
+                displayStatus(TestTrendChartContext.DisplayStatus.SUCCESS)
             }
         }
 
@@ -248,7 +247,7 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
             graphHeight[0].value() == 200
             dateRange[0].value() == 7
             dateShift[0].value() == 1
-            displayStatus[0].value() == DashboardView.DisplayStatus.SUCCESS
+            displayStatus[0].value() == TestTrendChartContext.DisplayStatus.SUCCESS
         }
     }
 

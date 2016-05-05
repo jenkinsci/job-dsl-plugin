@@ -49,8 +49,4 @@ class DashboardView extends ListView {
             }
         }
     }
-
-    static enum DisplayStatus {
-        ALL, SUCCESS, FAILED, SKIPPED
-    }
 }

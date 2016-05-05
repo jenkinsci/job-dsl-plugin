@@ -12,7 +12,7 @@ class DashboardPortletContext implements Context {
     protected final List<Node> portletNodes = []
 
     /**
-     * Add a build statistics.
+     * Adds a build statistics portlet.
      *
      * @since 1.46
      */
@@ -27,19 +27,18 @@ class DashboardPortletContext implements Context {
     }
 
     /**
-     * Add a iframe portlet.
+     * Adds an IFrame portlet.
      *
      * @since 1.46
      */
-    void iframe(@DslContext(IframeContext) Closure closure = null) {
-        IframeContext context = new IframeContext()
+    void iframe(@DslContext(IFrameContext) Closure closure = null) {
+        IFrameContext context = new IFrameContext()
         ContextHelper.executeInContext(closure, context)
 
         portletNodes << new NodeBuilder().'hudson.plugins.view.dashboard.core.IframePortlet' {
             id(generatePortletId())
             name(context.displayName ?: '')
             iframeSource(context.iframeSource ?: '')
-            effectiveSource(context.effectiveSource ?: '')
             effectiveUrl(context.effectiveUrl ?: '')
             divStyle(context.divStyle ?: '')
         }
@@ -91,7 +90,7 @@ class DashboardPortletContext implements Context {
     }
 
     /**
-     * Adds a trend chart.
+     * Adds a test trend chart.
      *
      * @since 1.46
      */
@@ -102,10 +101,10 @@ class DashboardPortletContext implements Context {
         portletNodes << new NodeBuilder().'hudson.plugins.view.dashboard.test.TestTrendChart' {
             id(generatePortletId())
             name(context.displayName ?: '')
-            graphWidth(context.graphWidth ?: 200)
-            graphHeight(context.graphHeight ?: 300)
-            dateRange(context.dateRange ?: 30)
-            dateShift(context.dateShift ?: 0)
+            graphWidth(context.graphWidth)
+            graphHeight(context.graphHeight)
+            dateRange(context.dateRange)
+            dateShift(context.dateShift)
             displayStatus(context.displayStatus)
         }
     }
