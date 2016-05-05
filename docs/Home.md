@@ -49,6 +49,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([JENKINS-33967](https://issues.jenkins-ci.org/browse/JENKINS-33967),
    [JENKINS-33968](https://issues.jenkins-ci.org/browse/JENKINS-33968))
+ * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
+   ([JENKINS-34360](https://issues.jenkins-ci.org/browse/JENKINS-34360))
  * Enhanced documentation for the [Gerrit Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger)
    ([JENKINS-30323](https://issues.jenkins-ci.org/browse/JENKINS-30323))
  * Removed anything that has been deprecated in 1.40, see [Migration](Migration#migrating-to-140)

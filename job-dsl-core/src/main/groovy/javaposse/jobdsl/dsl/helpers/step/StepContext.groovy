@@ -515,6 +515,9 @@ class StepContext extends AbstractExtensibleContext {
                 optional(true)
             }
             doNotFingerprintArtifacts(!copyArtifactContext.fingerprint)
+            if (copyArtifactContext.parameterFilters) {
+                parameters(copyArtifactContext.parameterFilters.join(', '))
+            }
         }
         copyArtifactNode.append(copyArtifactContext.selectorContext.selector)
         stepNodes << copyArtifactNode

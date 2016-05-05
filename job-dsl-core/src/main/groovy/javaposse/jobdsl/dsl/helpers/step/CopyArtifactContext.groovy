@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.JobManagement
 class CopyArtifactContext extends AbstractContext {
     final List<String> includePatterns = []
     final List<String> excludePatterns = []
+    final List<String> parameterFilters = []
     String targetDirectory
     boolean flatten
     boolean optional
@@ -59,6 +60,15 @@ class CopyArtifactContext extends AbstractContext {
      */
     void fingerprintArtifacts(boolean fingerprint = true) {
         this.fingerprint = fingerprint
+    }
+
+    /**
+     * Specify parameters to filter the job. Can be called multiple times to add more parameters.
+     *
+     * @since 1.46
+     */
+    void parameterFilters(String... parameterFilters) {
+        this.parameterFilters.addAll(parameterFilters)
     }
 
     /**
