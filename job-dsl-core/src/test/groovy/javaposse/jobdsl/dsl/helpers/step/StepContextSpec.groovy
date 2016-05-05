@@ -1016,6 +1016,8 @@ class StepContextSpec extends Specification {
             flatten()
             optional()
             fingerprintArtifacts(false)
+            parameterFilters('ONE=two', 'FOO=bar')
+            parameterFilters('LOREM=ipsum')
             buildSelector {
                 upstreamBuild(true)
             }
@@ -1025,7 +1027,7 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'
-            children().size() == 8
+            children().size() == 9
             project[0].value() == 'upstream'
             filter[0].value() == '*.xml, *.txt'
             excludes[0].value() == 'foo.xml, foo.txt'
@@ -1033,6 +1035,7 @@ class StepContextSpec extends Specification {
             optional[0].value() == true
             target[0].value() == 'target/'
             doNotFingerprintArtifacts[0].value() == true
+            parameters[0].value() == 'ONE=two, FOO=bar, LOREM=ipsum'
             with(selector[0]) {
                 children().size() == 1
                 attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
