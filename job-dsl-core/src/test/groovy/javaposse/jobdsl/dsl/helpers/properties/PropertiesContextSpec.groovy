@@ -246,4 +246,32 @@ class PropertiesContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('PrioritySorter', '3.4')
     }
+
+    def 'wallDisplay with no options'() {
+        when:
+        context.wallDisplay {
+        }
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'de.pellepelster.jenkins.walldisplay.WallDisplayJobProperty'
+            children().size() == 0
+        }
+    }
+
+    def 'wallDisplay with all options'() {
+        when:
+        context.wallDisplay {
+            name('example')
+            backgroundPicture('https://jenkins.io/images/226px-Jenkins_logo.svg.png')
+        }
+
+        then:
+        with(context.propertiesNodes[0]) {
+            name() == 'de.pellepelster.jenkins.walldisplay.WallDisplayJobProperty'
+            children().size() == 2
+            wallDisplayName[0].value() == 'example'
+            wallDisplayBgPicture[0].value() == 'https://jenkins.io/images/226px-Jenkins_logo.svg.png'
+        }
+    }
 }
