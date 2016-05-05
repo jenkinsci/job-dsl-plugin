@@ -984,11 +984,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'calling minimal html publisher closure'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.3') >> true
-        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.4') >> true
-        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.5') >> true
-
         when:
         context.publishHtml {
             report('build/*') {
@@ -1007,64 +1002,10 @@ class PublisherContextSpec extends Specification {
         target.keepAll[0].value() == false
         target.allowMissing[0].value() == false
         target.alwaysLinkToLastBuild[0].value() == false
-        1 * jobManagement.requirePlugin('htmlpublisher')
-        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
-    }
-
-    def 'calling minimal html publisher closure, plugin version older than 1.3'() {
-        when:
-        context.publishHtml {
-            report('build/*') {
-            }
-        }
-
-        then:
-        Node publisherHtmlNode = context.publisherNodes[0]
-        publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
-        !publisherHtmlNode.reportTargets.isEmpty()
-        def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
-        target.children().size() == 5
-        target.reportName[0].value() == ''
-        target.reportDir[0].value() == 'build/*'
-        target.reportFiles[0].value() == 'index.html'
-        target.keepAll[0].value() == false
-        target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
-        1 * jobManagement.requirePlugin('htmlpublisher')
-        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
-    }
-
-    def 'calling minimal html publisher closure, plugin version older than 1.4'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.3') >> true
-
-        when:
-        context.publishHtml {
-            report('build/*') {
-            }
-        }
-
-        then:
-        Node publisherHtmlNode = context.publisherNodes[0]
-        publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
-        !publisherHtmlNode.reportTargets.isEmpty()
-        def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
-        target.children().size() == 6
-        target.reportName[0].value() == ''
-        target.reportDir[0].value() == 'build/*'
-        target.reportFiles[0].value() == 'index.html'
-        target.keepAll[0].value() == false
-        target.allowMissing[0].value() == false
-        target.wrapperName[0].value() == 'htmlpublisher-wrapper.html'
-        1 * jobManagement.requirePlugin('htmlpublisher')
-        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
+        1 * jobManagement.requireMinimumPluginVersion('htmlpublisher', '1.5')
     }
 
     def 'calling html publisher closure with all options'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.3') >> true
-        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.4') >> true
-        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.5') >> true
-
         when:
         context.publishHtml {
             report('build/*') {
@@ -1077,7 +1018,6 @@ class PublisherContextSpec extends Specification {
         }
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('htmlpublisher', '1.3')
         Node publisherHtmlNode = context.publisherNodes[0]
         publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
         !publisherHtmlNode.reportTargets.isEmpty()
@@ -1089,8 +1029,7 @@ class PublisherContextSpec extends Specification {
         target.keepAll[0].value() == true
         target.allowMissing[0].value() == true
         target.alwaysLinkToLastBuild[0].value() == true
-        1 * jobManagement.requirePlugin('htmlpublisher')
-        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
+        1 * jobManagement.requireMinimumPluginVersion('htmlpublisher', '1.5')
     }
 
     def 'calling html publisher with multiple reports'() {
@@ -1116,8 +1055,7 @@ class PublisherContextSpec extends Specification {
         target2.reportName[0].value() == 'Test Report'
         target2.reportDir[0].value() == 'test/*'
 
-        1 * jobManagement.requirePlugin('htmlpublisher')
-        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.5')
+        1 * jobManagement.requireMinimumPluginVersion('htmlpublisher', '1.5')
     }
 
     def 'call Jabber publish with minimal args'() {

@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class GradleContext extends AbstractContext {
     final List<String> tasks = []
@@ -89,7 +88,6 @@ class GradleContext extends AbstractContext {
      *
      * @since 1.40
      */
-    @RequiresPlugin(id = 'gradle', minimumVersion = '1.23')
     void useWorkspaceAsHome(boolean useWorkspaceAsHome = true) {
         this.useWorkspaceAsHome  = useWorkspaceAsHome
     }

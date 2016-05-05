@@ -49,6 +49,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [JENKINS-33968](https://issues.jenkins-ci.org/browse/JENKINS-33968))
  * Enhanced documentation for the [Gerrit Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger)
    ([JENKINS-30323](https://issues.jenkins-ci.org/browse/JENKINS-30323))
+ * Removed anything that has been deprecated in 1.40, see [Migration](Migration#migrating-to-140)
 * 1.45 (April 05 2016)
  * Added support for the [CMake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CMake+Plugin)
    ([JENKINS-33829](https://issues.jenkins-ci.org/browse/JENKINS-33829))
