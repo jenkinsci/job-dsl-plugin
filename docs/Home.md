@@ -55,6 +55,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-34360](https://issues.jenkins-ci.org/browse/JENKINS-34360))
  * Enhanced documentation for the [Gerrit Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger)
    ([JENKINS-30323](https://issues.jenkins-ci.org/browse/JENKINS-30323))
+ * Enhanced support for the [JIRA Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JIRA+Plugin)
+   ([#834](https://github.com/jenkinsci/job-dsl-plugin/pull/834))
  * Removed anything that has been deprecated in 1.40, see [Migration](Migration#migrating-to-140)
 * 1.45 (April 05 2016)
  * Added support for the [CMake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CMake+Plugin)
