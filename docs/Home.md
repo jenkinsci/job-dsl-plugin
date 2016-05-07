@@ -30,6 +30,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#816](https://github.com/jenkinsci/job-dsl-plugin/pull/816))
  * Integrated the API Viewer into the plugin
    ([#822](https://github.com/jenkinsci/job-dsl-plugin/pull/822))
+ * Added a plugin dependency to the [Structs Plugin](https://github.com/jenkinsci/structs-plugin)
  * Added support for the [Maven Info Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Info+Plugin)
    ([JENKINS-32196](https://issues.jenkins-ci.org/browse/JENKINS-32196))
  * Added support for the [Log Parser Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Log+Parser+Plugin)

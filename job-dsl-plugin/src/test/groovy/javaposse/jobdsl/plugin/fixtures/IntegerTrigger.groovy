@@ -8,14 +8,14 @@ import hudson.triggers.TriggerDescriptor
 import org.jenkinsci.Symbol
 import org.kohsuke.stapler.DataBoundConstructor
 
-class FooTrigger extends Trigger<Job> {
+class IntegerTrigger extends Trigger<Job> {
     @SuppressWarnings('UnnecessaryConstructor')
     @DataBoundConstructor
-    FooTrigger() {
+    IntegerTrigger() {
     }
 
     @Extension
-    @Symbol(['foo', 'bar'])
+    @Symbol('int')
     static class DescriptorImpl extends TriggerDescriptor {
         final String displayName = null
 

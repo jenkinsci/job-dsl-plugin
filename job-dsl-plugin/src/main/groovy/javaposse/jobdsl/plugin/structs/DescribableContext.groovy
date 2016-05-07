@@ -20,11 +20,11 @@ import static org.apache.commons.lang.ClassUtils.isAssignable
  *
  * @since 1.46
  */
-class DescribableContext<T> implements Context {
-    private final DescribableModel<T> describableModel
+class DescribableContext implements Context {
+    private final DescribableModel describableModel
     private final Map<String, ?> values = [:]
 
-    DescribableContext(DescribableModel<T> describableModel) {
+    DescribableContext(DescribableModel describableModel) {
         this.describableModel = describableModel
     }
 
@@ -32,7 +32,7 @@ class DescribableContext<T> implements Context {
      * Returns an instance of this context's {@Describable}. The instance is populated with values that have been
      * collected by this context.
      */
-    T createInstance() {
+    Object createInstance() {
         describableModel.parameters.each { DescribableParameter parameter ->
             if (parameter.type instanceof ArrayType && !values.containsKey(parameter.name)) {
                 values[parameter.name] = []

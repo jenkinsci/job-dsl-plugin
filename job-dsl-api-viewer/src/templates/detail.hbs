@@ -19,7 +19,16 @@
                     <span class="label label-since">Since {{availableSince}}</span>
                 {{/if}}
                 {{#if deprecated}}
-                    <span class="label label-deprecated">Deprecated</span>
+                    <span class="label label-deprecated"><a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Deprecation-Policy" target="_blank">Deprecated</a></span>
+                {{/if}}
+                {{#if generated}}
+                    <span class="label label-generated"><a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL" target="_blank">Generated</a></span>
+                {{/if}}
+                {{#if extension}}
+                    <span class="label label-extension"><a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Extending-the-DSL" target="_blank">Extension</a></span>
+                {{/if}}
+                {{#if required}}
+                    <span class="label label-required">Required</span>
                 {{/if}}
                 <div class="signature">
                     {{name}}<span class="highlight groovy inline">{{text}}</span>
