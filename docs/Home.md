@@ -24,7 +24,7 @@ Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/j
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.46 (unreleased)
+* 1.46 (May 08 2016)
  * Increased the minimum supported Jenkins version to 1.625
  * Added support for [[Automatically Generated DSL]]
    ([#816](https://github.com/jenkinsci/job-dsl-plugin/pull/816))
