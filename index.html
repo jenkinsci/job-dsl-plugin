@@ -54,6 +54,7 @@
                 <button class="btn pull-right toggle-plugins"><span class="glyphicon glyphicon-filter"></span></button>
                 <select class="version-select form-control">
                     <!-- ADD VERSIONS HERE! -->
+                    <option value="build/data/dsl.json">v1.46</option>
                     <option value="build/data/dsl-1.45.json">v1.45</option>
                     <option value="build/data/dsl-1.44.json">v1.44</option>
                     <option value="build/data/dsl-1.43.json">v1.43</option>
@@ -76,7 +77,9 @@
         </div>
         <div class="tree-wrapper"></div>
     </div>
-    <div class="detail-wrapper"></div>
+    <div class="detail-wrapper">
+        <div class="loading-outer"><div class="loading-middle"><div class="loading-inner">Loading data...</div></div></div>
+    </div>
     <div class="plugins-wrapper">
         <div class="plugins-header"><label><span class="checkbox-wrapper"><input type="checkbox" /></span> Filter by Plugin</label></div>
         <div class="plugins-body"></div>

@@ -17,13 +17,17 @@
 .tree-body .jstree-wholerow-clicked~.jstree-anchor{color:#fff}
 .detail-wrapper{overflow:auto}
 .firstSentenceCommentText,ul.context-methods .method-name{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.detail-wrapper .loading-outer{display:table;position:absolute;height:100%;width:100%;opacity:0;transition:opacity 1s ease-in}
+.detail-wrapper .loading-middle{display:table-cell;vertical-align:middle}
+.detail-wrapper .loading-inner{margin-left:auto;margin-right:auto;text-align:center}
+.detail-wrapper .loading{opacity:1}
 .title .navbar{border:none}
 .title .navbar-header .navbar-brand{color:#ddd;font-size:17px;padding:15px 10px}
 .title .navbar-brand,.title .navbar-nav>li>a{text-shadow:none}
 .title .nav>li>a:focus,.title .nav>li>a:hover{color:#fff;background-color:#13262F}
 .title .navbar-nav a{color:#ddd}
 .title .navbar-nav li.active a{background-color:#000;color:#fff}
-.title .form-control.version-select{width:auto;float:right;margin-top:8px;margin-right:10px}
+.title .form-control.version-select{width:auto;float:right;margin-top:8px;margin-right:10px;display:none}
 .title .toggle-plugins{margin-top:8px;background-color:#fff}
 .title .toggle-plugins span{line-height:20px}
 .plugins{padding:10px;border-top:1px solid #ddd;border-bottom:1px solid #ddd}
@@ -43,6 +47,10 @@ body .breadcrumb>li+li:before{padding:0 5px;color:#ccc;content:"\2192\00a0"}
 .signatures .label.label-min-version{background-color:#27A668}
 .signatures .label.label-since{background-color:#FE9D0B}
 .signatures .label.label-deprecated{background-color:#E4344A}
+.signatures .label.label-generated{background-color:#BC0AFE}
+.signatures .label.label-required{background-color:#00BCBC}
+.signatures .label.label-extension{background-color:#FFFC19;color:#555}
+.signatures .label a{text-decoration:none;color:inherit}
 .signatures .signature{border-radius:3px;background-color:#fafafa;border:1px solid #d8d8d8;font-family:Menlo,Monaco,Consolas,"Courier New",monospace;font-size:13px;padding:5px;margin-bottom:10px;text-align:left;display:block}
 .signatures .enums{text-align:left;margin-left:5px;margin-bottom:10px}
 .signatures .enums ul{padding:0 0 0 20px;margin:0}
