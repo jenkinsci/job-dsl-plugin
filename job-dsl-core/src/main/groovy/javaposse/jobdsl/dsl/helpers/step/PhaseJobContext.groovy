@@ -32,9 +32,6 @@ class PhaseJobContext extends AbstractContext {
      */
     void currentJobParameters(boolean currentJobParameters = true) {
         this.currentJobParameters = currentJobParameters
-        if (currentJobParameters) {
-            paramTrigger.currentBuild()
-        }
     }
 
     /**

@@ -1,3 +1,40 @@
+## Migrating to 1.46
+
+### MultiJob
+
+The behavior of the `currentJobParameters` method in the `phaseJob` context has changed. Prior to 1.46, the method
+generated a `Current build parameters` job parameter. Since 1.46 the parameter is not generated when calling
+`currentJobParameters` and must be created explicitly.
+
+DSL prior to 1.46
+```groovy
+multiJob('example') {
+    steps {
+        phase('first') {
+            phaseJob('job-a') {
+                currentJobParameters()
+            }
+        }
+    }
+}
+```
+
+DSL since 1.46
+```groovy
+multiJob('example') {
+    steps {
+        phase('first') {
+            phaseJob('job-a') {
+                currentJobParameters()
+                parameters {
+                    currentBuild()
+                }
+            }
+        }
+    }
+}
+```
+
 ## Migrating to 1.45
 
 ### Docker Build and Publish
