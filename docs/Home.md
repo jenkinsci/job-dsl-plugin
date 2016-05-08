@@ -59,6 +59,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the [JIRA Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JIRA+Plugin)
    ([#834](https://github.com/jenkinsci/job-dsl-plugin/pull/834))
  * Removed anything that has been deprecated in 1.40, see [Migration](Migration#migrating-to-140)
+ * Changed the behavior of the `currentJobParameters` method in the `phaseJob` context, see
+   [Migration](Migration#migrating-to-146)
+   ([#836](https://github.com/jenkinsci/job-dsl-plugin/pull/836))
 * 1.45 (April 05 2016)
  * Added support for the [CMake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CMake+Plugin)
    ([JENKINS-33829](https://issues.jenkins-ci.org/browse/JENKINS-33829))
