@@ -35,7 +35,7 @@ task downloadUpdateCenter(type: Download) {
     onlyIfNewer true
 }
 
-(38..45).each { minorVersion ->
+(38..46).each { minorVersion ->
     def version = "1.${minorVersion}"
     task "downloadData-${version}"(type: Download) {
         src "http://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/job-dsl-core/${version}/job-dsl-core-${version}-apidoc.json"
