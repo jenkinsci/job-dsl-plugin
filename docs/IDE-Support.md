@@ -37,9 +37,9 @@ installation.
     }
 
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
-            url 'http://repo.jenkins-ci.org/releases/'
+            url 'https://repo.jenkins-ci.org/public/'
         }
     }
 

@@ -49,6 +49,15 @@ class DslScriptLoader {
         }
     }
 
+    /**
+     * Executes the script and returns the generated items.
+     *
+     * @since 1.47
+     */
+    GeneratedItems runScript(String script) throws IOException {
+        runScripts([new ScriptRequest(script)])
+    }
+
     private GeneratedItems runScriptsWithClassLoader(Collection<ScriptRequest> scriptRequests,
                                                      GroovyClassLoader groovyClassLoader,
                                                      CompilerConfiguration config) {
@@ -66,7 +75,7 @@ class DslScriptLoader {
                     engineCache[key] = engine
                 }
 
-                JobParent jobParent = runScript(scriptRequest, engine)
+                JobParent jobParent = runScriptEngine(scriptRequest, engine)
 
                 generatedItems.configFiles.addAll(
                         extractGeneratedConfigFiles(jobParent.referencedConfigFiles, scriptRequest.ignoreExisting)
@@ -94,7 +103,7 @@ class DslScriptLoader {
         generatedItems
     }
 
-    private JobParent runScript(ScriptRequest scriptRequest, GroovyScriptEngine engine) {
+    private JobParent runScriptEngine(ScriptRequest scriptRequest, GroovyScriptEngine engine) {
         LOGGER.log(Level.FINE, String.format("Request for ${scriptRequest.location}"))
 
         Binding binding = createBinding(scriptRequest)
@@ -169,8 +178,8 @@ class DslScriptLoader {
      */
     @Deprecated
     static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
-        ScriptRequest scriptRequest = new ScriptRequest(scriptBody)
-        runDslEngine(scriptRequest, jobManagement)
+        DslScriptLoader loader = new DslScriptLoader(jobManagement)
+        loader.runScript(scriptBody)
     }
 
     /**
