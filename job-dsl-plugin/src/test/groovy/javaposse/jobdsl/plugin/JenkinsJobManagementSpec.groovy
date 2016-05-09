@@ -317,6 +317,22 @@ class JenkinsJobManagementSpec extends Specification {
         jenkinsRule.jenkins.getItemByFullName('oldName') == null
     }
 
+    def 'rename job, dry run'() {
+        setup:
+        jobManagement.setDryRun(true)
+        jenkinsRule.createFreeStyleProject('oldName')
+
+        when:
+        jobManagement.renameJobMatching('oldName', 'newName')
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('oldName') != null
+        jenkinsRule.jenkins.getItemByFullName('newName') == null
+
+        cleanup:
+        jobManagement.setDryRun(false)
+    }
+
     def 'rename job relative to seed job'() {
         setup:
         Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
@@ -409,6 +425,23 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         jenkinsRule.jenkins.getItemByFullName('/project') != null
+    }
+
+    def 'createOrUpdateConfig with absolute path, dry run'() {
+        setup:
+        Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
+        AbstractBuild build = project.scheduleBuild2(0).get()
+        JenkinsJobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+        )
+        jobManagement.setDryRun(true)
+
+        when:
+        jobManagement.createOrUpdateConfig('/project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('/project') == null
     }
 
     def 'createOrUpdateView relative to folder'() {
@@ -616,6 +649,19 @@ class JenkinsJobManagementSpec extends Specification {
         view instanceof ListView
     }
 
+    def 'create view, dry run'() {
+        setup:
+        jobManagement.setDryRun(true)
+        when:
+        jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView/>', false)
+
+        then:
+        jenkinsRule.instance.getView('test-view') == null
+
+        cleanup:
+        jobManagement.setDryRun(false)
+    }
+
     def 'update view'() {
         setup:
         jenkinsRule.instance.addView(new ListView('test-view'))
@@ -631,6 +677,27 @@ class JenkinsJobManagementSpec extends Specification {
         View view = jenkinsRule.instance.getView('test-view')
         view instanceof ListView
         view.description == 'lorem ipsum'
+    }
+
+    def 'update view, dry run'() {
+        setup:
+        jobManagement.setDryRun(true)
+        jenkinsRule.instance.addView(new ListView('test-view'))
+
+        when:
+        jobManagement.createOrUpdateView(
+                'test-view',
+                '<hudson.model.ListView><description>lorem ipsum</description></hudson.model.ListView>',
+                false
+        )
+
+        then:
+        View view = jenkinsRule.instance.getView('test-view')
+        view instanceof ListView
+        view.description != 'lorem ipsum'
+
+        cleanup:
+        jobManagement.setDryRun(false)
     }
 
     def 'update view ignoring changes'() {
@@ -740,6 +807,23 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').exists()
         jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString() == 'foo'
+    }
+
+    def 'update user content, dry run'() {
+        setup:
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').write('lorem ipsum', 'UTF-8')
+        UserContent userContent = new UserContent('foo.txt', new ByteArrayInputStream('foo'.bytes))
+        jobManagement.setDryRun(true)
+
+        when:
+        jobManagement.createOrUpdateUserContent(userContent, false)
+
+        then:
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').exists()
+        jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString() == 'lorem ipsum'
+
+        cleanup:
+        jobManagement.setDryRun(false)
     }
 
     def 'do not update existing user content'() {

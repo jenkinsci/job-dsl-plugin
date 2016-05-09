@@ -81,6 +81,8 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments =
             new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
 
+    private boolean dryRun;
+
     public JenkinsJobManagement(PrintStream outputLogger, EnvVars envVars, AbstractBuild<?, ?> build,
                                 LookupStrategy lookupStrategy) {
         super(outputLogger);
@@ -141,6 +143,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         validateUpdateArgs(path, config);
         String viewBaseName = FilenameUtils.getName(path);
         Jenkins.checkGoodName(viewBaseName);
+        if (isDryRun()) {
+            getOutputStream().format("DRY RUN: Would create or update view '%s' on path '%s' with config:%n%s%n%n",
+                    viewBaseName, path, config);
+            return;
+        }
         try {
             InputStream inputStream = new ByteArrayInputStream(config.getBytes("UTF-8"));
 
@@ -211,6 +218,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         try {
             FilePath file = Jenkins.getInstance().getRootPath().child("userContent").child(userContent.getPath());
             if (!(file.exists() && ignoreExisting)) {
+                if (isDryRun()) {
+                    getOutputStream().format("DRY RUN: Would create or update user content on '%s' from '%s'%n", file,
+                            userContent.getPath());
+                    return;
+                }
                 file.getParent().mkdirs();
                 file.copyFrom(userContent.getContent());
             }
@@ -233,6 +245,11 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
 
         BuildableItem project = lookupStrategy.getItem(build.getParent(), path, BuildableItem.class);
 
+        if (isDryRun()) {
+            getOutputStream().format("DRY RUN: Would schedule build of %s from %s%n", path,
+                    build.getParent().getName());
+            return;
+        }
         LOGGER.log(Level.INFO, format("Scheduling build of %s from %s", path, build.getParent().getName()));
         project.scheduleBuild(new Cause.UpstreamCause((Run) build));
     }
@@ -459,7 +476,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             diff = XMLUnit.compareXML(oldJob, config);
             if (diff.identical()) {
                 LOGGER.log(Level.FINE, format("Item %s is identical", item.getName()));
-                notifyItemUpdated(item, dslItem);
+                if (!isDryRun()) {
+                    notifyItemUpdated(item, dslItem);
+                }
                 return false;
             }
         } catch (Exception e) {
@@ -472,8 +491,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.FINE, format("Updating item %s as %s", item.getName(), config));
         Source streamSource = new StreamSource(new StringReader(config));
         try {
-            item.updateByXml(streamSource);
-            notifyItemUpdated(item, dslItem);
+            if (!isDryRun()) {
+                item.updateByXml(streamSource);
+                notifyItemUpdated(item, dslItem);
+            } else {
+                getOutputStream().format("DRY RUN: Would update item '%s' as:%n%s%n%n", item.getName(), config);
+            }
             created = true;
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Error writing updated item to file.", e);
@@ -514,8 +537,12 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
             ItemGroup parent = lookupStrategy.getParent(build.getProject(), path);
             String itemName = FilenameUtils.getName(path);
             if (parent instanceof ModifiableTopLevelItemGroup) {
-                Item project = ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
-                notifyItemCreated(project, dslItem);
+                if (!isDryRun()) {
+                    Item project = ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
+                    notifyItemCreated(project, dslItem);
+                } else {
+                    getOutputStream().format("DRY RUN: Would create item as '%s' as:%n%s%n%n", itemName, config);
+                }
                 created = true;
             } else if (parent == null) {
                 throw new DslException(format(Messages.CreateItem_UnknownParent(), path));
@@ -564,8 +591,13 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
         if (fromParent != toParent) {
             LOGGER.info(format("Moving Job %s to folder %s", fromParent.getFullName(), toParent.getFullName()));
             if (toParent instanceof DirectlyModifiableTopLevelItemGroup) {
-                DirectlyModifiableTopLevelItemGroup itemGroup = (DirectlyModifiableTopLevelItemGroup) toParent;
-                move(from, itemGroup);
+                if (!isDryRun()) {
+                    DirectlyModifiableTopLevelItemGroup itemGroup = (DirectlyModifiableTopLevelItemGroup) toParent;
+                    move(from, itemGroup);
+                } else {
+                    getOutputStream().format("DRY RUN: Would move job '%s' to folder '%s'%n", fromParent.getFullName(),
+                            toParent.getFullName());
+                }
             } else {
                 throw new DslException(format(
                         Messages.RenameJobMatching_DestinationNotFolder(),
@@ -574,11 +606,23 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
                 ));
             }
         }
-        from.renameTo(FilenameUtils.getName(to));
+        if (!isDryRun()) {
+            from.renameTo(FilenameUtils.getName(to));
+        } else {
+            getOutputStream().format("DRY RUN: Would rename job '%s' to '%s'%n", from.getFullName(), to);
+        }
     }
 
     @SuppressWarnings("unchecked")
     private static <I extends AbstractItem & TopLevelItem> I move(Item item, DirectlyModifiableTopLevelItemGroup destination) throws IOException {
         return Items.move((I) item, destination);
+    }
+
+    boolean isDryRun() {
+        return dryRun;
+    }
+
+    void setDryRun(boolean dryRun) {
+        this.dryRun = dryRun;
     }
 }
