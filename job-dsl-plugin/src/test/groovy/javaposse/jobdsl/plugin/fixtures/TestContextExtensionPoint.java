@@ -75,11 +75,11 @@ public class TestContextExtensionPoint extends ContextExtensionPoint {
         updatedItems.add(item.getFullName());
     }
 
-    boolean isItemCreated(String name) {
+    public boolean isItemCreated(String name) {
         return createdItems.contains(name);
     }
 
-    boolean isItemUpdated(String name) {
+    public boolean isItemUpdated(String name) {
         return updatedItems.contains(name);
     }
 

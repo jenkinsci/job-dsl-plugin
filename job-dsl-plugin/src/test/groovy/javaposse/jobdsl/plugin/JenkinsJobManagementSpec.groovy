@@ -2,9 +2,9 @@ package javaposse.jobdsl.plugin
 
 import com.cloudbees.hudson.plugins.folder.Folder
 import com.google.common.io.Resources
-import hudson.EnvVars
 import hudson.LocalPluginManager
 import hudson.model.AbstractBuild
+import hudson.model.Cause
 import hudson.model.Failure
 import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
@@ -46,7 +46,8 @@ class JenkinsJobManagementSpec extends Specification {
 
     ByteArrayOutputStream buffer = new ByteArrayOutputStream()
     AbstractBuild build = Mock(AbstractBuild)
-    JenkinsJobManagement jobManagement = new JenkinsJobManagement(new PrintStream(buffer), new EnvVars(), build)
+    JenkinsJobManagement jobManagement = new JenkinsJobManagement(new PrintStream(buffer), [:], build)
+    JenkinsJobManagement testJobManagement = new JenkinsJobManagement(new PrintStream(buffer), [:], new File('.'))
 
     @WithoutJenkins
     def 'createOrUpdateView without name'() {
@@ -118,6 +119,15 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         1 * build.setResult(UNSTABLE)
         buffer.size() > 0
+    }
+
+    def 'requirePlugin not installed (without build)'() {
+        when:
+        testJobManagement.requirePlugin('foo')
+
+        then:
+        buffer.size() > 0
+        noExceptionThrown()
     }
 
     def 'fail requirePlugin not installed'() {
@@ -324,7 +334,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject seedJob = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = seedJob.scheduleBuild2(0).get()
         JobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -342,7 +352,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject seedJob = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = seedJob.scheduleBuild2(0).get()
         JobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -385,7 +395,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = project.scheduleBuild2(0).get()
         JenkinsJobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -395,13 +405,21 @@ class JenkinsJobManagementSpec extends Specification {
         jenkinsRule.jenkins.getItemByFullName('/folder/project') != null
     }
 
+    def 'createOrUpdateConfig without build'() {
+        when:
+        testJobManagement.createOrUpdateConfig(createItem('project', ('/minimal-job.xml')), true)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('/project') != null
+    }
+
     def 'createOrUpdateConfig with absolute path'() {
         setup:
         Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
         FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = project.scheduleBuild2(0).get()
         JenkinsJobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -417,7 +435,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = project.scheduleBuild2(0).get()
         JenkinsJobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -616,6 +634,15 @@ class JenkinsJobManagementSpec extends Specification {
         view instanceof ListView
     }
 
+    def 'create view without build'() {
+        when:
+        testJobManagement.createOrUpdateView('test-view', '<hudson.model.ListView/>', false)
+
+        then:
+        View view = jenkinsRule.instance.getView('test-view')
+        view instanceof ListView
+    }
+
     def 'update view'() {
         setup:
         jenkinsRule.instance.addView(new ListView('test-view'))
@@ -661,7 +688,7 @@ class JenkinsJobManagementSpec extends Specification {
     def 'readFileFromWorkspace with exception'() {
         setup:
         AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject())
-        jobManagement = new JenkinsJobManagement(System.out, new EnvVars(), build)
+        jobManagement = new JenkinsJobManagement(System.out, [:], build)
         String fileName = 'test.txt'
 
         when:
@@ -753,6 +780,46 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').exists()
         jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString() == 'lorem ipsum'
+    }
+
+    @SuppressWarnings('BusyWait')
+    def 'queue job'() {
+        setup:
+        FreeStyleProject project = jenkinsRule.createProject(FreeStyleProject, 'project')
+        FreeStyleProject seedJob = jenkinsRule.createProject(FreeStyleProject, 'seed')
+        AbstractBuild build = seedJob.scheduleBuild2(0).get()
+        JobManagement jobManagement = new JenkinsJobManagement(new PrintStream(buffer), [:], build)
+        jenkinsRule.instance.quietPeriod = 0
+
+        when:
+        jobManagement.queueJob(project.name)
+        while (project.builds.lastBuild == null) {
+            Thread.sleep(100)
+        }
+
+        then:
+        project.builds.lastBuild.causes.size() == 1
+        project.builds.lastBuild.causes[0] instanceof Cause.UpstreamCause
+        Cause.UpstreamCause upstreamCause = project.builds.lastBuild.causes[0] as Cause.UpstreamCause
+        upstreamCause.upstreamBuild == 1
+        upstreamCause.upstreamProject == 'seed'
+    }
+
+    @SuppressWarnings('BusyWait')
+    def 'queue job without build'() {
+        setup:
+        FreeStyleProject project = jenkinsRule.createProject(FreeStyleProject, 'project')
+        jenkinsRule.instance.quietPeriod = 0
+
+        when:
+        testJobManagement.queueJob(project.name)
+        while (project.builds.lastBuild == null) {
+            Thread.sleep(100)
+        }
+
+        then:
+        project.builds.lastBuild.causes.size() == 1
+        project.builds.lastBuild.causes[0].shortDescription == 'Started by a Job DSL script'
     }
 
     private static boolean isXmlIdentical(String expected, Node actual) throws Exception {

@@ -53,6 +53,16 @@ class DslScriptLoaderSpec extends Specification {
         jobs.iterator().next().jobName == 'test'
     }
 
+    def 'run engine for single script'() {
+        when:
+        def jobs = dslScriptLoader.runScript(new URL(resourcesDir, 'simple.dsl').text).jobs
+
+        then:
+        jobs != null
+        jobs.size() == 1
+        jobs.iterator().next().jobName == 'test'
+    }
+
     def 'run engine with multiple scripts'() {
         setup:
         ScriptRequest request1 = new ScriptRequest('simple.dsl', null, resourcesDir, false)
