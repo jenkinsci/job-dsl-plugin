@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.LogRotatorContext
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
@@ -170,6 +171,25 @@ class PropertiesContext extends AbstractExtensibleContext {
             }
             if (wallDisplayContext.backgroundPicture) {
                 wallDisplayBgPicture(wallDisplayContext.backgroundPicture)
+            }
+        }
+    }
+
+    /**
+     * Manages how long to keep records of the builds.
+     *
+     * @since 1.46
+     */
+    void discardOldBuilds(@DslContext(LogRotatorContext) Closure closure) {
+        LogRotatorContext logRotatorContext = new LogRotatorContext()
+        executeInContext(closure, logRotatorContext)
+
+        propertiesNodes << new NodeBuilder().'jenkins.model.BuildDiscarderProperty' {
+            strategy(class: 'hudson.tasks.LogRotator') {
+                daysToKeep(logRotatorContext.daysToKeep)
+                numToKeep(logRotatorContext.numToKeep)
+                artifactDaysToKeep(logRotatorContext.artifactDaysToKeep)
+                artifactNumToKeep(logRotatorContext.artifactNumToKeep)
             }
         }
     }
