@@ -25,6 +25,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.47 (unreleased)
+ * Enhanced support for the 
+   [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin)
+   ([JENKINS-31488](https://issues.jenkins-ci.org/browse/JENKINS-31488))
 * 1.46 (May 08 2016)
  * Increased the minimum supported Jenkins version to 1.625
  * Added support for [[Automatically Generated DSL]]
