@@ -545,6 +545,9 @@ public final class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     private DslEnvironment getSession(javaposse.jobdsl.dsl.Item item) {
+        if (item == null) {
+            return null;
+        }
         DslEnvironment session = environments.get(item);
         if (session == null) {
             session = new DslEnvironmentImpl(this, item);

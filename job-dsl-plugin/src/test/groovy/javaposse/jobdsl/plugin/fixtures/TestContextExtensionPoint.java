@@ -2,9 +2,11 @@ package javaposse.jobdsl.plugin.fixtures;
 
 import hudson.Extension;
 import hudson.model.Item;
+import hudson.views.ListViewColumn;
 import javaposse.jobdsl.dsl.Context;
 import javaposse.jobdsl.dsl.helpers.step.StepContext;
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext;
+import javaposse.jobdsl.dsl.views.ColumnsContext;
 import javaposse.jobdsl.plugin.ContextExtensionPoint;
 import javaposse.jobdsl.plugin.DslEnvironment;
 import javaposse.jobdsl.plugin.DslExtensionMethod;
@@ -65,6 +67,11 @@ public class TestContextExtensionPoint extends ContextExtensionPoint {
         return null;
     }
 
+    @DslExtensionMethod(context = ColumnsContext.class)
+    public Object myColumn() {
+        return new MyColumn();
+    }
+
     @Override
     public void notifyItemCreated(Item item, DslEnvironment dslEnvironment) {
         createdItems.add(item.getFullName());
@@ -111,5 +118,8 @@ public class TestContextExtensionPoint extends ContextExtensionPoint {
         public void value3(boolean value) {
             this.value3 = value;
         }
+    }
+
+    static class MyColumn extends ListViewColumn {
     }
 }

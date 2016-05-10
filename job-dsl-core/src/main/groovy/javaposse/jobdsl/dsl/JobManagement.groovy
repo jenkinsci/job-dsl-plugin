@@ -244,7 +244,7 @@ interface JobManagement {
      * appended to the given context.
      *
      * @param name name of the DSL extension method to be called
-     * @param item the {@link Item} which is being built
+     * @param item the {@link Item} which is being built or {@code null} when building something else
      * @param contextType type of the context which is extended by the method to be called
      * @param args arguments for the method to be called
      * @return a node to be appended to the given context, {@link #NO_VALUE} if the extension method does not produce a
