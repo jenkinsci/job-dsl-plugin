@@ -1,11 +1,23 @@
 package javaposse.jobdsl.dsl.helpers.workflow
 
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class BranchSourcesContextsSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    BranchSourcesContext context = new BranchSourcesContext(jobManagement)
+    BranchSourcesContext context = new BranchSourcesContext(jobManagement, Mock(Item))
+
+    def 'node from extension is added'() {
+        setup:
+        Node node = Mock(Node)
+
+        when:
+        context.addExtensionNode(node)
+
+        then:
+        context.branchSourceNodes[0] == node
+    }
 
     def 'git with minimal options'() {
         when:
