@@ -19,7 +19,6 @@ password=IHeartJenkins
 * Increment the version in gradle.properties and append "-SNAPSHOT": _echo "version=1.15-SNAPSHOT">gradle.properties_
 * Update the release notes, add the next version: `* 1.15 (unreleased)`
 * Add the new snapshot version to the API viewer in `job-dsl-api-viewer/index.html`
-* Update latest the version for downloading API JSON files in `job-dsl-api-viewer/build.gradle`
 * Commit the updated version number: _git commit -S -am "Bumping to next rev"_
 * Push the two new commit and the tag back to GitHub: _git push --tags && git push_
 * Close all resolved issues in [JIRA](https://issues.jenkins-ci.org/browse/JENKINS/component/16720)

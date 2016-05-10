@@ -35,7 +35,9 @@ task downloadUpdateCenter(type: Download) {
     onlyIfNewer true
 }
 
-(38..46).each { minorVersion ->
+def tokenizedVersion = version.split(/\.|-/) // version can be either x.y or x.y-SNAPSHOT
+int latestVersion = (tokenizedVersion[1] as int) - 1 // extract minor version and decrease by 1 to get the latest released version
+(38..latestVersion).each { minorVersion ->
     def version = "1.${minorVersion}"
     task "downloadData-${version}"(type: Download) {
         src "http://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/job-dsl-core/${version}/job-dsl-core-${version}-apidoc.json"
