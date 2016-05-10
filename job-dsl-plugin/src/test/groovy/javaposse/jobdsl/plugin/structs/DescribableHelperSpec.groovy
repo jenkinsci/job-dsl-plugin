@@ -1,5 +1,6 @@
 package javaposse.jobdsl.plugin.structs
 
+import com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger
 import hudson.model.Describable
 import hudson.triggers.SCMTrigger
 import hudson.triggers.TimerTrigger
@@ -196,7 +197,7 @@ class DescribableHelperSpec extends Specification {
         Map<String, DescribableModel> models = DescribableHelper.findDescribableModels(TriggerContext)
 
         then:
-        models.size() == 7
+        models.size() == 8
         models['dummy'].type == DummyTrigger
         models['foo'].type == FooTrigger
         models['bar'].type == FooTrigger
@@ -204,5 +205,6 @@ class DescribableHelperSpec extends Specification {
         models['scmTrigger'].type == SCMTrigger
         models['integerTrigger'].type == IntegerTrigger
         models['someTrigger'].type == SomeTrigger
+        models['periodicFolderTrigger'].type == PeriodicFolderTrigger
     }
 }

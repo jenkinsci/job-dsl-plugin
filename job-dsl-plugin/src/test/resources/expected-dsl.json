@@ -168,6 +168,24 @@
           ]
         },
         {
+          "name": "periodicFolderTrigger",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger",
+              "html": "<!--\n ~ The MIT License\n ~\n ~ Copyright (c) 2013, CloudBees, Inc.\n ~\n ~ Permission is hereby granted, free of charge, to any person obtaining a copy\n ~ of this software and associated documentation files (the \"Software\"), to deal\n ~ in the Software without restriction, including without limitation the rights\n ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n ~ copies of the Software, and to permit persons to whom the Software is\n ~ furnished to do so, subject to the following conditions:\n ~\n ~ The above copyright notice and this permission notice shall be included in\n ~ all copies or substantial portions of the Software.\n ~\n ~ THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n ~ THE SOFTWARE.\n -->\n<div>\n\n    <p>\n        Some kinds of folders are reindexed automatically and immediately upon receipt of an external event.\n        For example, a multi-branch project will recheck its SCM repository for new or removed or modified branches when it receives an SCM change notification.\n        (Push notification may be configured as per the SCM plugin used for each respective branch source.)\n        Such notifications can occasionally be unreliable, however, or Jenkins might not even be running to receive them.\n        In some cases no immediate notification is even possible, for example because Jenkins is behind a firewall and can only poll an external system.\n    <\/p>\n\n    <p>\n        This trigger allows for a periodic fallback, but when necessary.\n        If no indexing has been performed in the specified interval, then an indexing will be scheduled.\n        For example, in the case of a multi-branch project, if the source control system is not configured for push notification, set a short interval (most people will pick between 15 minutes and 1 hour).\n        If the source control system is configured for push notification, set an interval that corresponds to the maximum acceptable delay in the event of a lost push notification as the last commit of the day.\n        (Subsequent commits should trigger indexing anyway and result in the commit being picked up, so most people will pick between 4 hours and 1 day.)\n    <\/p>\n<\/div>",
+              "firstSentenceCommentText": "Some kinds of folders are reindexed automatically and immediately upon receipt of an external event."
+            }
+          ]
+        },
+        {
           "name": "scmTrigger",
           "signatures": [
             {
@@ -385,6 +403,28 @@
                 }
               ],
               "generated": true
+            }
+          ]
+        }
+      ]
+    },
+    "com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger": {
+      "type": "com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger",
+      "methods": [
+        {
+          "name": "interval",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "String"
+                }
+              ],
+              "generated": true,
+              "required": true,
+              "html": "<!--\n ~ The MIT License\n ~\n ~ Copyright (c) 2013, CloudBees, Inc.\n ~\n ~ Permission is hereby granted, free of charge, to any person obtaining a copy\n ~ of this software and associated documentation files (the \"Software\"), to deal\n ~ in the Software without restriction, including without limitation the rights\n ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n ~ copies of the Software, and to permit persons to whom the Software is\n ~ furnished to do so, subject to the following conditions:\n ~\n ~ The above copyright notice and this permission notice shall be included in\n ~ all copies or substantial portions of the Software.\n ~\n ~ THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n ~ THE SOFTWARE.\n -->\n<div>\n    The maximum amount of time since the last indexing that is allowed to elapse before an indexing is triggered.\n<\/div>",
+              "firstSentenceCommentText": "The maximum amount of time since the last indexing that is allowed to elapse before an indexing is triggered."
             }
           ]
         }

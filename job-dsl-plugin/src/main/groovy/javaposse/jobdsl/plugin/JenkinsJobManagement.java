@@ -1,6 +1,5 @@
 package javaposse.jobdsl.plugin;
 
-import com.cloudbees.hudson.plugins.folder.Folder;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
@@ -18,6 +17,7 @@ import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Items;
 import hudson.model.Job;
+import hudson.model.ModifiableViewGroup;
 import hudson.model.Run;
 import hudson.model.TopLevelItem;
 import hudson.model.View;
@@ -163,10 +163,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             if (parent instanceof ViewGroup) {
                 View view = ((ViewGroup) parent).getView(viewBaseName);
                 if (view == null) {
-                    if (parent instanceof Jenkins) {
-                        ((Jenkins) parent).addView(createViewFromXML(viewBaseName, inputStream));
-                    } else if (parent instanceof Folder) {
-                        ((Folder) parent).addView(createViewFromXML(viewBaseName, inputStream));
+                    if (parent instanceof ModifiableViewGroup) {
+                        ((ModifiableViewGroup) parent).addView(createViewFromXML(viewBaseName, inputStream));
                     } else {
                         LOGGER.log(Level.WARNING, format("Could not create view within %s", parent.getClass()));
                     }

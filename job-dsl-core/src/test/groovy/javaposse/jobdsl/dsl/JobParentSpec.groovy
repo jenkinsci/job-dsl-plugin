@@ -234,8 +234,7 @@ class JobParentSpec extends Specification {
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
         folder.node.displayName[0].text() == 'foo'
-        1 * jobManagement.requirePlugin('cloudbees-folder')
-        1 * jobManagement.logPluginDeprecationWarning('cloudbees-folder', '5.0')
+        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.0')
     }
 
     def 'folder without closure'() {
@@ -245,8 +244,7 @@ class JobParentSpec extends Specification {
         then:
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
-        1 * jobManagement.requirePlugin('cloudbees-folder')
-        1 * jobManagement.logPluginDeprecationWarning('cloudbees-folder', '5.0')
+        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.0')
     }
 
     def 'custom config file'() {

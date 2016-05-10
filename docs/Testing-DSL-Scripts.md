@@ -51,7 +51,6 @@ when running the DSL scripts, e.g. for testing [[extensions|Extending the DSL]] 
         testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}"
         testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}@jar"
         testCompile 'org.jenkins-ci.plugins:structs:1.1@jar'
-        testCompile 'org.jenkins-ci.plugins:cloudbees-folder:4.4@jar'
 
         // plugins to install in test instance
         testPlugins 'org.jenkins-ci.plugins:ghprb:1.31.4'
