@@ -24,6 +24,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import javaposse.jobdsl.dsl.UserContent
 import javaposse.jobdsl.dsl.helpers.step.StepContext
+import javaposse.jobdsl.dsl.views.ColumnsContext
 import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint
 import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint2
 import org.custommonkey.xmlunit.XMLUnit
@@ -279,6 +280,14 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         result == JobManagement.NO_VALUE
+    }
+
+    def 'callExtension for view'() {
+        when:
+        Node result = jobManagement.callExtension('myColumn', null, ColumnsContext)
+
+        then:
+        isXmlIdentical('view-extension.xml', result)
     }
 
     def 'extension is being notified'() {

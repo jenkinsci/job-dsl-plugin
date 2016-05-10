@@ -1,14 +1,21 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class ColumnsContext extends AbstractContext {
+@ContextType('hudson.views.ListViewColumn')
+class ColumnsContext extends AbstractExtensibleContext {
     List<Node> columnNodes = []
 
     ColumnsContext(JobManagement jobManagement) {
-        super(jobManagement)
+        super(jobManagement, null)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        columnNodes << node
     }
 
     /**
