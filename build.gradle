@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 buildscript {
     repositories {
         jcenter()
@@ -48,7 +50,7 @@ project(':job-dsl-core') {
     repositories {
         jcenter()
         maven {
-            url('http://repo.jenkins-ci.org/releases/')
+            url('https://repo.jenkins-ci.org/releases/')
         }
     }
 
@@ -156,9 +158,9 @@ project(':job-dsl-core') {
             maven {
                 name 'jenkins'
                 if (project.version.toString().endsWith('-SNAPSHOT')) {
-                    url 'http://maven.jenkins-ci.org:8081/content/repositories/snapshots'
+                    url 'https://repo.jenkins-ci.org/snapshots'
                 } else {
-                    url 'http://maven.jenkins-ci.org:8081/content/repositories/releases'
+                    url 'https://repo.jenkins-ci.org/releases'
                 }
             }
         }
@@ -202,6 +204,7 @@ githubPages {
     workingPath = "$buildDir/wiki"
     pages {
         from 'docs'
+        filter(ReplaceTokens, tokens: [version: version, jenkinsVersion: jenkinsVersion])
     }
 }
 

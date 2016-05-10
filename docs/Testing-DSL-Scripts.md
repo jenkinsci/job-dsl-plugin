@@ -16,8 +16,8 @@ when running the DSL scripts, e.g. for testing [[extensions|Extending the DSL]] 
     apply plugin: 'groovy'
 
     ext {
-        jobDslVersion = '1.47'
-        jenkinsVersion = '1.625'
+        jobDslVersion = '@version@'
+        jenkinsVersion = '@jenkinsVersion@'
     }
 
     sourceSets {
