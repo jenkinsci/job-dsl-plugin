@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 buildscript {
     repositories {
         jcenter()
@@ -202,6 +204,7 @@ githubPages {
     workingPath = "$buildDir/wiki"
     pages {
         from 'docs'
+        filter(ReplaceTokens, tokens: [version: version, jenkinsVersion: jenkinsVersion])
     }
 }
 

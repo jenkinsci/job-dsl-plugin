@@ -17,7 +17,7 @@ Maven:
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>job-dsl</artifactId>
-                <version>1.46</version>
+                <version>@version@</version>
                 <optional>true</optional>
             </dependency>
             ...
@@ -30,7 +30,7 @@ Gradle:
     ...
     dependencies {
         ...
-        optionalJenkinsPlugins 'org.jenkins-ci.plugins:job-dsl:1.46@jar'
+        optionalJenkinsPlugins 'org.jenkins-ci.plugins:job-dsl:@version@@jar'
         ...
     }
     ...
