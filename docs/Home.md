@@ -32,6 +32,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the 
    [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin)
    ([JENKINS-31488](https://issues.jenkins-ci.org/browse/JENKINS-31488))
+ * Enhanced support for the
+   [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
+  ([JENKINS-34552](https://issues.jenkins-ci.org/browse/JENKINS-34552))
  * Support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-147)
    ([JENKINS-34124](https://issues.jenkins-ci.org/browse/JENKINS-34124))

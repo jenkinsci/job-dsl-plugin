@@ -1,12 +1,25 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextType
+import javaposse.jobdsl.dsl.Item
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 
-class DownstreamTriggerParameterFactoryContext implements Context {
+@ContextType('hudson.plugins.parameterizedtrigger.AbstractBuildParameterFactory')
+class DownstreamTriggerParameterFactoryContext extends AbstractExtensibleContext {
     private static final Set<String> VALID_NO_FIILES_FOUND_ACTIONS = ['SKIP', 'NOPARMS', 'FAIL']
 
     List<Node> configFactories = []
+
+    DownstreamTriggerParameterFactoryContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        configFactories << node
+    }
 
     /**
      * Looks for files that match the specified pattern in the current build, then for each of them trigger a build of
