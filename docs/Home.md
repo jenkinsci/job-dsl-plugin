@@ -29,6 +29,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.47 (unreleased)
  * Improved support for [[Testing DSL Scripts]]
    ([JENKINS-29091](https://issues.jenkins-ci.org/browse/JENKINS-29091))
+ * Support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-147)
+   ([JENKINS-34124](https://issues.jenkins-ci.org/browse/JENKINS-34124))
 * 1.46 (May 08 2016)
  * Increased the minimum supported Jenkins version to 1.625
  * Added support for [[Automatically Generated DSL]]

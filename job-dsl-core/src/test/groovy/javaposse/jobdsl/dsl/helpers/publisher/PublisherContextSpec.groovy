@@ -5325,6 +5325,7 @@ class PublisherContextSpec extends Specification {
             customMessage.text() == ''
         }
         1 * jobManagement.requireMinimumPluginVersion('slack', '1.8')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'slackNotifications with all options'() {
@@ -5366,6 +5367,7 @@ class PublisherContextSpec extends Specification {
             customMessage.text() == 'testing customMessage'
         }
         1 * jobManagement.requireMinimumPluginVersion('slack', '1.8')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'debianPackage with no options'() {

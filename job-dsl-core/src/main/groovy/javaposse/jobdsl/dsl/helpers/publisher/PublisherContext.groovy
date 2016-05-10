@@ -1689,7 +1689,10 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.36
      */
     @RequiresPlugin(id = 'slack', minimumVersion = '1.8')
+    @Deprecated
     void slackNotifications(@DslContext(SlackNotificationsContext) Closure slackNotificationsClosure) {
+        jobManagement.logDeprecationWarning()
+
         SlackNotificationsContext context = new SlackNotificationsContext()
         ContextHelper.executeInContext(slackNotificationsClosure, context)
 

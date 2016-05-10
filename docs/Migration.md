@@ -1,3 +1,54 @@
+## Migrating to 1.47
+
+### Slack
+
+Support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin) is
+[[deprecated|Deprecation-Policy]] because it is incompatible with newer versions of that plugin. It has been replaced by
+the [[Automatically Generated DSL]].
+
+DSL prior to 1.47
+```groovy
+job('example') {
+    publishers {
+        slackNotifications {
+            projectChannel('Dev Team A')
+            notifyAborted()
+            notifyFailure()
+            notifyNotBuilt()
+            notifyUnstable()
+            notifyBackToNormal()
+        }
+    }
+}
+```
+
+DSL since 1.47
+```groovy
+job('example') {
+  publishers {
+    slackNotifier {
+      room('Dev Team A')
+      notifyAborted(true)
+      notifyFailure(true)
+      notifyNotBuilt(true)
+      notifyUnstable(true)
+      notifyBackToNormal(true)
+      notifySuccess(false)
+      notifyRepeatedFailure(false)
+      startNotification(false)
+      includeTestSummary(false)
+      includeCustomMessage(false)
+      customMessage(null)
+      buildServerUrl(null)
+      sendAs(null)
+      commitInfoChoice('NONE')
+      teamDomain(null)
+      authToken(null)
+    }
+  }
+}
+```
+
 ## Migrating to 1.46
 
 ### MultiJob
