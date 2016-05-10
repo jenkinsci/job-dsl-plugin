@@ -4877,6 +4877,7 @@ class PublisherContextSpec extends Specification {
             completeJobMessage[0].value() == ''
         }
         1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'hipChat notification with all options'() {
@@ -4912,6 +4913,7 @@ class PublisherContextSpec extends Specification {
             completeJobMessage[0].value() == 'JOB DONE! $URL'
         }
         1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'mattermost notification with no options'() {
