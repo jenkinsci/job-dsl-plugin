@@ -1,10 +1,25 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.Item
+import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class DownstreamTriggerParameterFactoryContextSpec extends Specification {
-    DownstreamTriggerParameterFactoryContext context = new DownstreamTriggerParameterFactoryContext()
+    JobManagement jobManagement = Mock(JobManagement)
+    Item item = Mock(Item)
+    DownstreamTriggerParameterFactoryContext context = new DownstreamTriggerParameterFactoryContext(jobManagement, item)
+
+    def 'node from extension is added'() {
+        setup:
+        Node node = Mock(Node)
+
+        when:
+        context.addExtensionNode(node)
+
+        then:
+        context.configFactories[0] == node
+    }
 
     def 'forMatchingFiles with minimum options'() {
         when:
