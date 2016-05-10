@@ -1534,7 +1534,10 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.33
      */
     @RequiresPlugin(id = 'hipchat', minimumVersion = '0.1.9')
+    @Deprecated
     void hipChat(@DslContext(HipChatPublisherContext) Closure hipChatClosure = null) {
+        jobManagement.logDeprecationWarning()
+
         HipChatPublisherContext hipChatContext = new HipChatPublisherContext()
         ContextHelper.executeInContext(hipChatClosure, hipChatContext)
 

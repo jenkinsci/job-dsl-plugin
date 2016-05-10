@@ -1,3 +1,79 @@
+## Migrating to 1.47
+
+### HipChat
+
+Support for the [HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin) is
+[[deprecated|Deprecation-Policy]] because it is incompatible with newer versions of that plugin. It has been replaced by
+the [[Automatically Generated DSL]].
+
+DSL prior to 1.47
+```groovy
+job('example') {
+    publishers {
+        hipChat {
+            rooms('Dev Team A', 'QA')
+            notifyAborted()
+            notifyNotBuilt()
+            notifyUnstable()
+            notifyFailure()
+            notifyBackToNormal()
+        }
+    }
+}
+```
+
+DSL since 1.47
+```groovy
+job('example') {
+  publishers {
+    hipChatNotifier {
+      room('Dev Team A, QA')
+      matrixTriggerMode('ONLY_PARENT')
+      startJobMessage(null)
+      completeJobMessage(null)
+      token(null)
+      notifications {
+        notificationConfig {
+          notifyEnabled(true)
+          textFormat(true)
+          notificationType('ABORTED')
+          color('GRAY')
+          messageTemplate(null)
+        }
+        notificationConfig {
+          notifyEnabled(true)
+          textFormat(true)
+          notificationType('NOT_BUILT')
+          color('GRAY')
+          messageTemplate(null)
+        }
+        notificationConfig {
+          notifyEnabled(true)
+          textFormat(true)
+          notificationType('UNSTABLE')
+          color('YELLOW')
+          messageTemplate(null)
+        }
+        notificationConfig {
+          notifyEnabled(true)
+          textFormat(true)
+          notificationType('FAILURE')
+          color('RED')
+          messageTemplate(null)
+        }
+        notificationConfig {
+          notifyEnabled(true)
+          textFormat(true)
+          notificationType('BACK_TO_NORMAL')
+          color('GREEN')
+          messageTemplate(null)
+        }
+      }
+    }
+  }
+}
+```
+
 ## Migrating to 1.46
 
 ### MultiJob

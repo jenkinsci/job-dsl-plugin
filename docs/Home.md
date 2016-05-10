@@ -25,6 +25,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.47 (unreleased)
+ * Support for [HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-147)
+   ([JENKINS-32502](https://issues.jenkins-ci.org/browse/JENKINS-32502))
 * 1.46 (May 08 2016)
  * Increased the minimum supported Jenkins version to 1.625
  * Added support for [[Automatically Generated DSL]]
