@@ -3557,11 +3557,9 @@ class StepContextSpec extends Specification {
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.jira.JiraIssueUpdateBuilder'
             children().size() == 3
-            with(entries[0]) {
-                jqlSearch[0].value().empty
-                workflowActionName[0].value().empty
-                comment[0].value().empty
-            }
+            jqlSearch[0].value().empty
+            workflowActionName[0].value().empty
+            comment[0].value().empty
         }
         1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
     }
@@ -3579,11 +3577,9 @@ class StepContextSpec extends Specification {
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.jira.JiraIssueUpdateBuilder'
             children().size() == 3
-            with(entries[0]) {
-                jqlSearch[0].value() == expectedJql
-                workflowActionName[0].value() == expectedWork
-                comment[0].value() == expectedCom
-            }
+            jqlSearch[0].value() == expectedJql
+            workflowActionName[0].value() == expectedWork
+            comment[0].value() == expectedCom
         }
         1 * jobManagement.requireMinimumPluginVersion('jira', '1.39')
 

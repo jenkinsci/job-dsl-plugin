@@ -1447,12 +1447,10 @@ class WrapperContextSpec extends Specification {
         with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.jira.JiraCreateReleaseNotes'
             children().size() == 4
-            with(entries[0]) {
-                jiraEnvironmentVariable[0].value().empty
-                jiraProjectKey[0].value().empty
-                jiraRelease[0].value().empty
-                jiraFilter[0].value().empty
-            }
+            jiraEnvironmentVariable[0].value().empty
+            jiraProjectKey[0].value().empty
+            jiraRelease[0].value().empty
+            jiraFilter[0].value().empty
         }
         1 * mockJobManagement.requireMinimumPluginVersion('jira', '1.39')
     }
@@ -1471,12 +1469,10 @@ class WrapperContextSpec extends Specification {
         with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.jira.JiraCreateReleaseNotes'
             children().size() == 4
-            with(entries[0]) {
-                jiraEnvironmentVariable[0].value() == expectedEnv
-                jiraProjectKey[0].value() == expectedKey
-                jiraRelease[0].value() == expectedRel
-                jiraFilter[0].value() == expectedFil
-            }
+            jiraEnvironmentVariable[0].value() == expectedEnv
+            jiraProjectKey[0].value() == expectedKey
+            jiraRelease[0].value() == expectedRel
+            jiraFilter[0].value() == expectedFil
         }
         1 * mockJobManagement.requireMinimumPluginVersion('jira', '1.39')
 
