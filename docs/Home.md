@@ -39,6 +39,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   ([JENKINS-34552](https://issues.jenkins-ci.org/browse/JENKINS-34552))
  * Enhanced support for the [Branch API Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Branch+API+Plugin)
    ([#846](https://github.com/jenkinsci/job-dsl-plugin/pull/846))
+ * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
+   ([JENKINS-34720](https://issues.jenkins-ci.org/browse/JENKINS-34720))
  * Support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-147)
    ([JENKINS-34124](https://issues.jenkins-ci.org/browse/JENKINS-34124))

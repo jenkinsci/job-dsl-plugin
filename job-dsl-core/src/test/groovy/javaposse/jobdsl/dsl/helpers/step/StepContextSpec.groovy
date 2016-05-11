@@ -942,6 +942,24 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.17')
     }
 
+    def 'copyArtifacts with selector extension'() {
+        jobManagement.callExtension('foo', item, CopyArtifactSelectorContext) >> new Node(null, 'foo.Bar')
+
+        when:
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                foo()
+            }
+        }
+
+        then:
+        with(context.stepNodes[0].selector[0]) {
+            attribute('class') == 'foo.Bar'
+            children().size() == 0
+        }
+        1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
+    }
+
     def 'call minimal copyArtifacts'() {
         when:
         context.copyArtifacts('upstream')
