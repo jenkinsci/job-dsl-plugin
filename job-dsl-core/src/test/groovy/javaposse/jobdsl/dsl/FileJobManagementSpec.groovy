@@ -1,12 +1,14 @@
 package javaposse.jobdsl.dsl
 
 import org.custommonkey.xmlunit.XMLUnit
-import org.junit.Rule
+import org.junit.ClassRule
 import org.junit.rules.TemporaryFolder
+import spock.lang.Shared
 import spock.lang.Specification
 
 class FileJobManagementSpec extends Specification {
-    @Rule
+    @Shared
+    @ClassRule
     TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private final File tempFolder = temporaryFolder.newFolder()
@@ -14,10 +16,6 @@ class FileJobManagementSpec extends Specification {
 
     def setup() {
         XMLUnit.ignoreWhitespace = true
-    }
-
-    def cleanup() {
-        new File('foo.xml').delete()
     }
 
     def 'getConfig returns dummy XML when job name is empty'() {
