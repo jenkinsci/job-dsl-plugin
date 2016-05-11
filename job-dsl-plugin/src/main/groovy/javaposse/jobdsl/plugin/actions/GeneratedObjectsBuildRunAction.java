@@ -6,10 +6,10 @@ import jenkins.model.RunAction2;
 
 import java.util.Collection;
 
-public abstract class GeneratedObjectsBuildRunAction<T> extends GeneratedObjectsBuildAction<T> implements RunAction2 {
-    protected transient AbstractBuild owner;
+abstract class GeneratedObjectsBuildRunAction<T> extends GeneratedObjectsBuildAction<T> implements RunAction2 {
+    transient AbstractBuild owner;
 
-    public GeneratedObjectsBuildRunAction(Collection<T> modifiedObjects) {
+    GeneratedObjectsBuildRunAction(Collection<T> modifiedObjects) {
         super(modifiedObjects);
     }
 

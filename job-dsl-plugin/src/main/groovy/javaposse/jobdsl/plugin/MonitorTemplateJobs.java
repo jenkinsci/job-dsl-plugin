@@ -65,7 +65,7 @@ public class MonitorTemplateJobs extends SaveableListener {
     }
 
     public static class TemplateTriggerCause extends Cause {
-        public TemplateTriggerCause() {
+        TemplateTriggerCause() {
         }
 
         @Override

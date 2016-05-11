@@ -22,7 +22,7 @@ public class GeneratedViewsBuildAction extends GeneratedObjectsBuildRunAction<Ge
         this.lookupStrategy = lookupStrategy;
     }
 
-    public LookupStrategy getLookupStrategy() {
+    private LookupStrategy getLookupStrategy() {
         return lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
     }
 

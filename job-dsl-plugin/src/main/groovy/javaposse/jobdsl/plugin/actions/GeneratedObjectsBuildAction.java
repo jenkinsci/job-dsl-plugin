@@ -9,7 +9,7 @@ import java.util.Set;
 public abstract class GeneratedObjectsBuildAction<T> implements Action {
     private final Set<T> modifiedObjects;
 
-    public GeneratedObjectsBuildAction(Collection<T> modifiedObjects) {
+    GeneratedObjectsBuildAction(Collection<T> modifiedObjects) {
         this.modifiedObjects = new LinkedHashSet<T>(modifiedObjects);
     }
 
