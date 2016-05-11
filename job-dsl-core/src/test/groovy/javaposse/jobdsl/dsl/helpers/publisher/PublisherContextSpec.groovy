@@ -3053,7 +3053,7 @@ class PublisherContextSpec extends Specification {
 
     def 'flowdock with no tokens'() {
         when:
-        context.flowdock(null)
+        context.flowdock((String[]) null)
 
         then:
         thrown(DslScriptException)
