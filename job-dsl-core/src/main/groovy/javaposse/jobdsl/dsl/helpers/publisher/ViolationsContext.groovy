@@ -167,8 +167,8 @@ class ViolationsContext implements Context {
     private static createEntry(Integer min = null, Integer max = null, Integer unstable = null, String pattern = null) {
         new ViolationsEntry(
                 min: min == null ? 10 : min,
-                max: max ?: 999,
-                unstable: unstable ?: 999,
+                max: max == null ? 999 : max,
+                unstable: unstable == null ? 999 : unstable,
                 pattern: pattern
         )
     }
