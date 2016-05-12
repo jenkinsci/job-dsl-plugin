@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 
 class CopyArtifactContext extends AbstractContext {
@@ -13,10 +14,11 @@ class CopyArtifactContext extends AbstractContext {
     boolean flatten
     boolean optional
     boolean fingerprint = true
-    final CopyArtifactSelectorContext selectorContext = new CopyArtifactSelectorContext(jobManagement)
+    final CopyArtifactSelectorContext selectorContext
 
-    CopyArtifactContext(JobManagement jobManagement) {
+    CopyArtifactContext(JobManagement jobManagement, Item item) {
         super(jobManagement)
+        selectorContext = new CopyArtifactSelectorContext(jobManagement, item)
     }
 
     /**

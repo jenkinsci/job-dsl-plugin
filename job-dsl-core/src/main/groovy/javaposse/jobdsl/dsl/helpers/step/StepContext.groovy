@@ -498,7 +498,7 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.31')
     void copyArtifacts(String jobName, @DslContext(CopyArtifactContext) Closure copyArtifactClosure = null) {
-        CopyArtifactContext copyArtifactContext = new CopyArtifactContext(jobManagement)
+        CopyArtifactContext copyArtifactContext = new CopyArtifactContext(jobManagement, item)
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
         Node copyArtifactNode = new NodeBuilder().'hudson.plugins.copyartifact.CopyArtifact' {
