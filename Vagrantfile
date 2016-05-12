@@ -7,11 +7,12 @@ sudo apt-get install -y openjdk-7-jdk git
 SCRIPT
 
 $script = <<SCRIPT
-VERSION=1.625
 sudo apt-get install -y daemon
 wget -N -P /var/cache/wget --progress=dot:giga http://pkg.jenkins-ci.org/debian/binary/jenkins_${VERSION}_all.deb
 sudo dpkg -i /var/cache/wget/jenkins_${VERSION}_all.deb
 SCRIPT
+
+jenkins_version = IO.read("gradle.properties")[/jenkinsVersion=(.*)/,1]
 
 Vagrant.configure(2) do |config|
     config.vm.box = "ubuntu/trusty64"
@@ -21,7 +22,7 @@ Vagrant.configure(2) do |config|
     config.vm.define "master", primary: true do |master|
         master.vm.network "forwarded_port", guest: 8080, host: 8081
         master.vm.provision "shell", inline: $base_script
-        master.vm.provision "shell", inline: $script
+        master.vm.provision "shell", inline: $script, env: { VERSION: jenkins_version }
     end
 
     config.vm.define "node", autostart: false do |node|
