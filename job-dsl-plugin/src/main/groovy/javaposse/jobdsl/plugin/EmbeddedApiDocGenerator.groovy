@@ -324,7 +324,8 @@ class EmbeddedApiDocGenerator {
 
     private static void generateHelp(JSONObject object, String text) {
         if (text) {
-            object.element('html', text).element('firstSentenceCommentText', firstSentence(text))
+            String normalizedText = text.replaceAll(/\r?\n/, '\n')
+            object.element('html', normalizedText).element('firstSentenceCommentText', firstSentence(normalizedText))
         }
     }
 

@@ -463,7 +463,7 @@ public class ExecuteDslScripts extends Builder {
     private static class SeedNamePredicate implements Predicate<SeedReference> {
         private final String seedJobName;
 
-        public SeedNamePredicate(String seedJobName) {
+        SeedNamePredicate(String seedJobName) {
             this.seedJobName = seedJobName;
         }
 

@@ -2,7 +2,6 @@ package javaposse.jobdsl.plugin;
 
 import javaposse.jobdsl.dsl.Context;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 /**

@@ -11,7 +11,7 @@ public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildA
     protected final AbstractProject<?, ?> project;
     private final Class<B> buildActionClass;
 
-    public GeneratedObjectsAction(AbstractProject<?, ?> project, Class<B> buildActionClass) {
+    GeneratedObjectsAction(AbstractProject<?, ?> project, Class<B> buildActionClass) {
         this.project = project;
         this.buildActionClass = buildActionClass;
     }

@@ -168,7 +168,8 @@ class ContextHelperSpec extends Specification {
         then:
         NodeList permissions = root.builders[0].'hudson.security.AuthorizationMatrixProperty'[0].permission
         permissions.size() == 2
-        permissions[0].text() == 'hudson.model.Item.Configure:jill'
+        permissions[0].children().size() == 2
+        permissions[0].children()[0] == 'hudson.model.Item.Configure:jill'
         permissions[0].header.size() == 1
         permissions[0].header[0].text() == 'My Perm'
         permissions[1].text() == 'hudson.model.Item.Configure:jack'
