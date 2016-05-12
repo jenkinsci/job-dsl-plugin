@@ -38,9 +38,6 @@ class BranchSourcesContext extends AbstractExtensibleContext {
                 excludes(context.excludes ?: '')
                 ignoreOnPushNotifications(context.ignoreOnPushNotifications)
             }
-            strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
-                properties(class: 'empty-list')
-            }
         }
     }
 
