@@ -191,10 +191,6 @@ private Map loadCredentialsForJenkinsCommunityRepository() {
     [userName: props.userName, password: props.password]
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.5'
-}
-
 apply plugin: 'org.ajoberstar.github-pages'
 
 githubPages {
