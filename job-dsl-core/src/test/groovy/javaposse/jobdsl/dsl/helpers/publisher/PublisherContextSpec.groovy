@@ -1604,7 +1604,7 @@ class PublisherContextSpec extends Specification {
             fauxProjectPath 'faux path'
             perFileDisplayLimit 51
             checkstyle(10, 11, 10, 'test-report/*.xml')
-            jshint(10, 11, 10, 'test-report/*.xml')
+            jshint(0, 0, 0, 'test-report/*.xml')
             findbugs(12, 13, 12)
         }
 
@@ -1629,9 +1629,9 @@ class PublisherContextSpec extends Specification {
         def jshintNode = typeConfigsNode.entry.find { it.string[0].value() == 'jshint' }
         jshintNode != null
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].type[0].value() == 'jshint'
-        jshintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '10'
-        jshintNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '11'
-        jshintNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '10'
+        jshintNode.'hudson.plugins.violations.TypeConfig'[0].min[0].value() == '0'
+        jshintNode.'hudson.plugins.violations.TypeConfig'[0].max[0].value() == '0'
+        jshintNode.'hudson.plugins.violations.TypeConfig'[0].unstable[0].value() == '0'
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].usePattern[0].value() == 'true'
         jshintNode.'hudson.plugins.violations.TypeConfig'[0].pattern[0].value() == 'test-report/*.xml'
         def findbugsNode = typeConfigsNode.entry.find { it.string[0].value() == 'findbugs' }
