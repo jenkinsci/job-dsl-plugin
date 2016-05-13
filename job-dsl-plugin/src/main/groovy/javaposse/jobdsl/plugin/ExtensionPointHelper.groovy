@@ -1,148 +1,116 @@
-package javaposse.jobdsl.plugin;
+package javaposse.jobdsl.plugin
 
-import groovy.lang.Closure;
-import javaposse.jobdsl.dsl.ContextHelper;
-import javaposse.jobdsl.dsl.ExtensibleContext;
-import javaposse.jobdsl.plugin.structs.DescribableContext;
-import org.apache.commons.lang.ClassUtils;
-import org.jenkinsci.plugins.structs.describable.DescribableModel;
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ExtensibleContext
+import javaposse.jobdsl.plugin.structs.DescribableContext
+import org.apache.commons.lang.ClassUtils
+import org.jenkinsci.plugins.structs.describable.DescribableModel
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Method
 
-import static javaposse.jobdsl.plugin.structs.DescribableHelper.findDescribableModels;
-import static javaposse.jobdsl.plugin.structs.DescribableHelper.isOptionalClosureArgument;
-import static org.apache.commons.lang.ClassUtils.convertClassesToClassNames;
-import static org.apache.commons.lang.StringUtils.join;
+import static javaposse.jobdsl.plugin.structs.DescribableHelper.findDescribableModels
+import static javaposse.jobdsl.plugin.structs.DescribableHelper.isOptionalClosureArgument
 
 class ExtensionPointHelper {
     static Set<DslExtension> findExtensionPoints(String name, Class<? extends ExtensibleContext> contextType,
                                                  Object... args) {
-        Class[] parameterTypes = ClassUtils.toClass(args);
-        Set<DslExtension> candidates = new HashSet<DslExtension>();
+        Class[] parameterTypes = ClassUtils.toClass(args)
+        Set<DslExtension> candidates
 
         // Find extensions that match any @DslExtensionMethod annotated method with the given name and parameters
-        for (ExtensionPointMethod candidate : findCandidateMethods(name, contextType)) {
-            if (ClassUtils.isAssignable(parameterTypes, filterParameterTypes(candidate.method), true)) {
-                candidates.add(candidate);
-            }
+        candidates = findCandidateMethods(name, contextType).findAll {
+            ClassUtils.isAssignable(parameterTypes, filterParameterTypes(it.method), true)
         }
 
-        if (candidates.isEmpty() && isOptionalClosureArgument(args)) {
-            for (DescribableModel candidate : findDescribableModels(contextType, name)) {
-                candidates.add(new DescribableExtension(candidate));
-            }
+        if (candidates.empty && isOptionalClosureArgument(args)) {
+            candidates = findDescribableModels(contextType, name).collect { new DescribableExtension(it) }
         }
 
-        return candidates;
+        candidates
     }
 
     static Map<Method, ContextExtensionPoint> findExtensionMethods(Class<? extends ExtensibleContext> contextType) {
-        Map<Method, ContextExtensionPoint> result = new HashMap<Method, ContextExtensionPoint>();
-        for (ContextExtensionPoint extensionPoint : ContextExtensionPoint.all()) {
-            for (Method method : extensionPoint.getClass().getMethods()) {
-                DslExtensionMethod annotation = method.getAnnotation(DslExtensionMethod.class);
+        Map<Method, ContextExtensionPoint> result = [:]
+        ContextExtensionPoint.all().each { ContextExtensionPoint extensionPoint ->
+            extensionPoint.class.methods.each { Method method ->
+                DslExtensionMethod annotation = method.getAnnotation(DslExtensionMethod)
                 if (annotation != null && annotation.context().isAssignableFrom(contextType)) {
-                    result.put(method, extensionPoint);
+                    result[method] = extensionPoint
                 }
             }
         }
-        return result;
+        result
     }
 
     static boolean hasIdenticalSignature(Method method1, Method method2) {
-        return method1.getName().equals(method2.getName()) &&
-                Arrays.equals(filterParameterTypes(method1), filterParameterTypes(method2));
+        method1.name == method2.name && Arrays.equals(filterParameterTypes(method1), filterParameterTypes(method2))
     }
 
     static Class<?>[] filterParameterTypes(Method method) {
-        List<Class<?>> result = new ArrayList<Class<?>>();
-        for (Class<?> parameterType : method.getParameterTypes()) {
-            if (isVisibleParameterType(parameterType)) {
-                result.add(parameterType);
-            }
-        }
-        return result.toArray(new Class<?>[result.size()]);
+        method.parameterTypes.findAll { isVisibleParameterType(it) }
     }
 
     static boolean isVisibleParameterType(Class parameterType) {
-        return !DslEnvironment.class.isAssignableFrom(parameterType);
+        !DslEnvironment.isAssignableFrom(parameterType)
     }
 
-    private static List<ExtensionPointMethod> findCandidateMethods(String name, Class<? extends ExtensibleContext> contextType) {
-        List<ExtensionPointMethod> result = new ArrayList<ExtensionPointMethod>();
-        for (Map.Entry<Method, ContextExtensionPoint> entry : findExtensionMethods(contextType).entrySet()) {
-            if (entry.getKey().getName().equals(name)) {
-                result.add(new ExtensionPointMethod(entry.getValue(), entry.getKey()));
-            }
+    private static List<ExtensionPointMethod> findCandidateMethods(String name,
+                                                                   Class<? extends ExtensibleContext> contextType) {
+        findExtensionMethods(contextType).findAll { it.key.name == name }.collect {
+            new ExtensionPointMethod(it.value, it.key)
         }
-        return result;
     }
 
     interface DslExtension {
-        Object call(DslEnvironment environment, Object[] args) throws InvocationTargetException, IllegalAccessException;
+        Object call(DslEnvironment environment, Object[] args) throws InvocationTargetException
     }
 
     static class ExtensionPointMethod implements DslExtension {
-        final ContextExtensionPoint extensionPoint;
-
-        final Method method;
+        final ContextExtensionPoint extensionPoint
+        final Method method
 
         ExtensionPointMethod(ContextExtensionPoint extensionPoint, Method method) {
-            this.extensionPoint = extensionPoint;
-            this.method = method;
+            this.extensionPoint = extensionPoint
+            this.method = method
         }
 
         @Override
-        public String toString() {
-            return extensionPoint.getClass() +
-                    "." +
-                    method.getName() +
-                    "(" +
-                    join(convertClassesToClassNames(Arrays.asList(method.getParameterTypes())), ", ") +
-                    ")";
+        String toString() {
+            "${extensionPoint.class}.${method.name}(${method.parameterTypes*.name.join(', ')}"
         }
 
         @Override
-        public Object call(DslEnvironment environment, Object[] args)
-                throws InvocationTargetException, IllegalAccessException {
-            Class<?>[] parameterTypes = method.getParameterTypes();
-            Object[] processedArgs = new Object[parameterTypes.length];
-            int j = 0;
+        Object call(DslEnvironment environment, Object[] args) {
+            Class<?>[] parameterTypes = method.parameterTypes
+            Object[] processedArgs = new Object[parameterTypes.length]
+            int j = 0
             for (int i = 0; i < parameterTypes.length; i++) {
-                processedArgs[i] = DslEnvironment.class.isAssignableFrom(parameterTypes[i]) ? environment : args[j++];
+                processedArgs[i] = DslEnvironment.isAssignableFrom(parameterTypes[i]) ? environment : args[j++]
             }
-            return method.invoke(extensionPoint, processedArgs);
+            method.invoke(extensionPoint, processedArgs)
         }
     }
 
     static class DescribableExtension implements DslExtension {
-        final DescribableModel describableModel;
+        final DescribableModel describableModel
 
         DescribableExtension(DescribableModel describableModel) {
-            this.describableModel = describableModel;
+            this.describableModel = describableModel
         }
 
         @Override
-        public Object call(DslEnvironment environment, Object[] args)
-                throws InvocationTargetException, IllegalAccessException {
-            DescribableContext delegate = new DescribableContext(describableModel);
+        Object call(DslEnvironment environment, Object[] args) {
+            DescribableContext delegate = new DescribableContext(describableModel)
             if (args.length == 1 && args[0] instanceof Closure) {
-                ContextHelper.executeInContext((Closure) args[0], delegate);
+                ContextHelper.executeInContext((Closure) args[0], delegate)
             }
-            return delegate.createInstance();
+            delegate.createInstance()
         }
 
         @Override
-        public String toString() {
-            return describableModel.getType().getName();
+        String toString() {
+            describableModel.type.name
         }
     }
 }
