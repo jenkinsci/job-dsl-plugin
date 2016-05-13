@@ -31,6 +31,14 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Send console log to Logstash
+     */
+    @RequiresPlugin(id = 'logstash')
+    void logstash() {
+        wrapperNodes << new NodeBuilder().'jenkins.plugins.logstash.LogstashBuildWrapper'()
+    }
+
+    /**
      * Build the job on the same node as another job and optionally use the same workspace as the other job.
      *
      * @param jobName name of the job

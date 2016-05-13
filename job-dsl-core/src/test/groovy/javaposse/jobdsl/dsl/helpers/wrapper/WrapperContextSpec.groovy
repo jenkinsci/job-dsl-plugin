@@ -22,6 +22,17 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('timestamper')
     }
 
+    def 'call logstash method'() {
+        when:
+        context.logstash()
+
+        then:
+        context.wrapperNodes?.size() == 1
+        def logstashWrapper = context.wrapperNodes[0]
+        logstashWrapper.name() == 'jenkins.plugins.logstash.LogstashBuildWrapper'
+        1 * mockJobManagement.requirePlugin('logstash')
+    }
+
     def 'run on same node'() {
         when:
         context.runOnSameNodeAs('testJob')
