@@ -55,7 +55,7 @@ jpi {
             include 'build/dist/**'
         }
     }
-    dependsOn tasks.getByPath(':job-dsl-api-viewer:gulp_build')
+    dependsOn tasks.getByPath(':job-dsl-api-viewer:build')
 }
 
 dependencies {
