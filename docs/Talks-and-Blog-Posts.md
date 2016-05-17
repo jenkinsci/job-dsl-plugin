@@ -1,8 +1,14 @@
 This is a collection of talks, presentations and blog posts about the Job DSL plugin.
 
 * April 2016
+    * Diabol: [The power of Jenkins Job DSL](http://blog.diabol.se/?p=906)
+      by [Tommy Tynjä](https://twitter.com/tommysdk)
     * Mesosphere Documentation:
       [Using the Jenkins Job DSL plugin](https://docs.mesosphere.com/usage/managing-services/velocity/jenkins-job-dsl-plugin/)
+* March 2016
+    * Slalom:
+      [Automatically generating Jenkins jobs](https://www.slalom.com/thinking/automatically-generating-jenkins-jobs)
+      by [Jim Graf](https://twitter.com/jamesggraf)
 * February 2016
     * DZone DevOps:
       [The Jenkins Job DSL Plugin in Practice](https://dzone.com/articles/the-jenkins-job-dsl-plugin-in-practice)
