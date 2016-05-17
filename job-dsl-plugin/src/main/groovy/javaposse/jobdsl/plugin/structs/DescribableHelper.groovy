@@ -154,7 +154,10 @@ class DescribableHelper {
         descriptors.each {
             try {
                 result << new DescribableModel(it.clazz)
-            } catch (NoStaplerConstructorException ignore) {
+            } catch (NoStaplerConstructorException e) {
+                LOGGER.fine("can not introspect ${it.clazz}: ${e.message}")
+            } catch (NoClassDefFoundError e) {
+                LOGGER.fine("can not introspect ${it.clazz}: ${e.message}")
             }
         }
         result
