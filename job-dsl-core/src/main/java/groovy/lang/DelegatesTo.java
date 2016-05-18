@@ -24,7 +24,6 @@ import java.lang.annotation.Target;
  * <p>This annotation can be used by API or DSL writers to document parameters which accept a closure.
  * In that case, using this annotation, you can specify what the delegate type of the closure will
  * be. This is important for IDE support.</p>
- * <p/>
  * <p>Example:</p>
  * <pre><code>
  *     // Document the fact that the delegate of the closure will be an ExecSpec

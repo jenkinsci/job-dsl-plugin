@@ -15,6 +15,9 @@ public interface DslEnvironment extends Map<String, Object> {
     /**
      * Creates an instance of the specified {@link Context} type.
      *
+     * @param contextClass the type of the context to create
+     * @param <T>          the type of the context to create
+     * @return an instance of the specified type
      * @since 1.44
      */
     <T extends Context> T createContext(Class<T> contextClass);

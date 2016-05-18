@@ -22,6 +22,7 @@ public abstract class ContextExtensionPoint implements ExtensionPoint {
      * The default implementation is empty.
      *
      * @param item the newly created item
+     * @param dslEnvironment the environment that has been available while creating the item
      */
     public void notifyItemCreated(Item item, DslEnvironment dslEnvironment) {
     }
@@ -31,6 +32,7 @@ public abstract class ContextExtensionPoint implements ExtensionPoint {
      * The default implementation is empty.
      *
      * @param item the updated item
+     * @param dslEnvironment the environment that has been available while updating the item
      */
     public void notifyItemUpdated(Item item, DslEnvironment dslEnvironment) {
     }

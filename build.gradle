@@ -38,12 +38,6 @@ configure(subprojects - project(':job-dsl-api-viewer')) {
     codenarcTest {
         configFile = file('../config/codenarc/rules-test.groovy')
     }
-
-    if (JavaVersion.current().isJava8Compatible()) {
-        tasks.withType(Javadoc) {
-            options.addStringOption('Xdoclint:none', '-quiet')
-        }
-    }
 }
 
 project(':job-dsl-core') {
