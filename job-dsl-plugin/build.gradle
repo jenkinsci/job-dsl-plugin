@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jenkins-ci.jpi' version '0.17.0'
+    id 'org.jenkins-ci.jpi' version '0.18.0'
 }
 
 description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
