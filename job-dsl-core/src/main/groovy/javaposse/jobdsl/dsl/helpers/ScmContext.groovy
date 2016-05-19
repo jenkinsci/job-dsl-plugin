@@ -34,7 +34,7 @@ class ScmContext extends AbstractExtensibleContext {
 
     @Override
     protected void addExtensionNode(Node node) {
-        scmNodes << toNamedNode('scm', node)
+        scmNodes << ContextHelper.toNamedNode('scm', node)
     }
 
     /**

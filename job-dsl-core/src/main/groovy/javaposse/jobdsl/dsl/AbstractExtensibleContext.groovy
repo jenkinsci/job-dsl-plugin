@@ -1,7 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder
-
 /**
  * Abstract base class for {@link javaposse.jobdsl.dsl.ExtensibleContext} implementations.
  */
@@ -28,9 +26,8 @@ abstract class AbstractExtensibleContext extends AbstractContext implements Exte
 
     protected abstract void addExtensionNode(Node node)
 
+    @Deprecated
     protected static Node toNamedNode(String name, Node node) {
-        Node namedNode = new Node(null, name, node.attributes(), node.children())
-        namedNode.attributes()['class'] = new XmlFriendlyNameCoder().decodeAttribute(node.name().toString())
-        namedNode
+        ContextHelper.toNamedNode(name, node)
     }
 }

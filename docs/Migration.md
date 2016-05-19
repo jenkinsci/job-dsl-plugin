@@ -123,6 +123,11 @@ job('example') {
 }
 ```
 
+### Run Condition
+
+The enum `javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir` is [[deprecated|Deprecation-Policy]]
+and will be removed. Use `javaposse.jobdsl.dsl.helpers.step.RunConditionContext.BaseDir` instead.
+
 ## Migrating to 1.46
 
 ### MultiJob

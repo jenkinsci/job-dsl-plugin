@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -257,8 +258,7 @@ folder('folder-b') {
         dslScriptLoader.runScripts([request])
 
         then:
-        jm.savedConfigs['example'] ==
-                getClass().getResource('/JENKINS_32941.xml').text.replace(System.getProperty('line.separator'), '\n')
+        XMLUnit.compareXML(getClass().getResource('/JENKINS_32941.xml').text, jm.savedConfigs['example']).similar()
     }
 
     def 'script name which is not a valid class name'() {

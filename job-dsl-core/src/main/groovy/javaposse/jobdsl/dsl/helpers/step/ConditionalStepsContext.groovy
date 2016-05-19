@@ -4,15 +4,13 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
-import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class ConditionalStepsContext extends AbstractContext {
     private static final Set<String> VALID_RUNNERS = ['Fail', 'Unstable', 'RunUnstable', 'Run', 'DontRun']
 
-    RunCondition runCondition
+    Node runCondition
     String runnerClass
     final StepContext stepContext
 
@@ -26,7 +24,9 @@ class ConditionalStepsContext extends AbstractContext {
      * Specifies the condition to evaluate before executing the build steps.
      */
     void condition(@DslContext(RunConditionContext) Closure conditionClosure) {
-        this.runCondition = RunConditionFactory.of(jobManagement, conditionClosure)
+        RunConditionContext context = new RunConditionContext(jobManagement, stepContext.item)
+        ContextHelper.executeInContext(conditionClosure, context)
+        this.runCondition = context.condition
     }
 
     /**

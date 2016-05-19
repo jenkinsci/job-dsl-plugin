@@ -2164,7 +2164,7 @@ class StepContextSpec extends Specification {
         matchCondition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
         matchCondition.arg1[0].value() == 'foo'
         matchCondition.arg2[0].value() == 'bar'
-        matchCondition.ignoreCase[0].value() == 'false'
+        matchCondition.ignoreCase[0].value() == false
         1 * jobManagement.requirePlugin('conditional-buildstep')
     }
 
@@ -2201,7 +2201,7 @@ class StepContextSpec extends Specification {
         condition.attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
         condition.arg1[0].value() == 'foo'
         condition.arg2[0].value() == 'bar'
-        condition.ignoreCase[0].value() == 'false'
+        condition.ignoreCase[0].value() == false
 
         step.runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
 
@@ -2376,10 +2376,10 @@ class StepContextSpec extends Specification {
         'neverRun'         | []                       | 'org.jenkins_ci.plugins.run_condition.core.NeverRun'                  | [:]
         'booleanCondition' | ['someToken']            | 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'          | [token: 'someToken']
         'cause'            | ['userCause', true]      | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause    : 'userCause',
-                                                                                                                                 exclusiveCause: 'true']
+                                                                                                                                 exclusiveCause: true]
         'stringsMatch'     | ['some1', 'some2', true] | 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'     | [arg1      : 'some1',
                                                                                                                                  arg2      : 'some2',
-                                                                                                                                 ignoreCase: 'true']
+                                                                                                                                 ignoreCase: true]
         'expression'       | ['exp', 'lab']           | 'org.jenkins_ci.plugins.run_condition.core.ExpressionCondition'       | [expression: 'exp',
                                                                                                                                  label     : 'lab']
         'time'             | [5, 30, 15, 25, true]    | 'org.jenkins_ci.plugins.run_condition.core.TimeCondition'             | [earliestHours  : 5,

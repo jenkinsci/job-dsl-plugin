@@ -19,7 +19,7 @@ class CopyArtifactSelectorContext extends AbstractExtensibleContext {
 
     @Override
     protected void addExtensionNode(Node node) {
-        selector = toNamedNode('selector', node)
+        selector = ContextHelper.toNamedNode('selector', node)
     }
 
     /**

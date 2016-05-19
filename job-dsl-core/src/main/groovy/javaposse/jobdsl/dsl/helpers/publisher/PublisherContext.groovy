@@ -1111,22 +1111,18 @@ class PublisherContext extends AbstractExtensibleContext {
         publisherNodes << new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
             delegate.publishers {
                 if (context.actions) {
-                    'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-                        condition(class: context.condition.conditionClass) {
-                            context.condition.addArgs(delegate)
-                        }
+                    Node publisher = 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
                         publisherList(context.actions)
                         runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
                     }
+                    publisher.append(ContextHelper.toNamedNode('condition', context.condition))
                 }
                 context.conditionalActions.each { ConditionalActionsContext conditionalActionsContext ->
-                    'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-                        condition(class: conditionalActionsContext.runCondition.conditionClass) {
-                            conditionalActionsContext.runCondition.addArgs(delegate)
-                        }
+                    Node publisher = 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
                         publisherList(conditionalActionsContext.actions)
                         runner(class: conditionalActionsContext.runnerClass)
                     }
+                    publisher.append(ContextHelper.toNamedNode('condition', conditionalActionsContext.runCondition))
                 }
             }
         }

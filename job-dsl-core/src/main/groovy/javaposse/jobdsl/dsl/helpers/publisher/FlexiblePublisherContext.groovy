@@ -8,19 +8,20 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.step.RunConditionContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
-import javaposse.jobdsl.dsl.helpers.step.condition.AlwaysRunCondition
-import javaposse.jobdsl.dsl.helpers.step.condition.RunCondition
-import javaposse.jobdsl.dsl.helpers.step.condition.RunConditionFactory
 
 class FlexiblePublisherContext extends AbstractContext {
     protected final Item item
-    RunCondition condition = new AlwaysRunCondition()
+    Node condition
     List<Node> actions = []
     List<ConditionalActionsContext> conditionalActions = []
 
     FlexiblePublisherContext(JobManagement jobManagement, Item item) {
         super(jobManagement)
         this.item = item
+
+        RunConditionContext context = new RunConditionContext(jobManagement, item)
+        context.alwaysRun()
+        condition = context.condition
     }
 
     /**
@@ -41,7 +42,9 @@ class FlexiblePublisherContext extends AbstractContext {
     void condition(@DslContext(RunConditionContext) Closure closure) {
         jobManagement.logDeprecationWarning()
 
-        condition = RunConditionFactory.of(jobManagement, closure)
+        RunConditionContext context = new RunConditionContext(jobManagement, item)
+        ContextHelper.executeInContext(closure, context)
+        condition = context.condition
     }
 
     /**
