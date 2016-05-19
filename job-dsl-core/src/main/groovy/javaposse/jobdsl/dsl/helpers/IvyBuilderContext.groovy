@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers
 
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -18,7 +19,7 @@ class IvyBuilderContext extends AbstractExtensibleContext {
 
     @Override
     protected void addExtensionNode(Node node) {
-        ivyBuilderNodes << toNamedNode('ivyBuilderType', node)
+        ivyBuilderNodes << ContextHelper.toNamedNode('ivyBuilderType', node)
     }
 
     /**

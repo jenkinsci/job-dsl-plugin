@@ -7,7 +7,6 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.step.ConditionalStepsContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
-import javaposse.jobdsl.dsl.helpers.step.condition.AlwaysRunCondition
 
 class ConditionalActionsContext extends ConditionalStepsContext {
     protected final Item item
@@ -17,7 +16,10 @@ class ConditionalActionsContext extends ConditionalStepsContext {
     ConditionalActionsContext(JobManagement jobManagement, Item item) {
         super(jobManagement, new StepContext(jobManagement, item))
         this.item = item
-        runCondition = new AlwaysRunCondition()
+
+        condition {
+            alwaysRun()
+        }
     }
 
     @RequiresPlugin(id = 'any-buildstep')

@@ -247,4 +247,22 @@ class ContextHelperSpec extends Specification {
         assert scmNode.browser[1].url.size() == 1
         assert scmNode.browser[1].url[0].value() == 'https://github.com/foo/baz'
     }
+
+    def 'conversion to named node'() {
+        Node node = new Node(null, 'org.example.CustomType', [foo: 'bar'])
+        node.appendNode('test', 'value')
+
+        when:
+        Node namedNode = ContextHelper.toNamedNode('example', node)
+
+        then:
+        with(namedNode) {
+            name() == 'example'
+            attributes().size() == 2
+            attribute('class') == 'org.example.CustomType'
+            attribute('foo') == 'bar'
+            children().size() == 1
+            test[0].text() == 'value'
+        }
+    }
 }

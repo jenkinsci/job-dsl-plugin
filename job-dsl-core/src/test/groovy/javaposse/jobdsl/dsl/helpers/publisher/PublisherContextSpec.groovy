@@ -3525,7 +3525,7 @@ class PublisherContextSpec extends Specification {
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
-                condition[0].ignoreCase[0].value() == 'false'
+                condition[0].ignoreCase[0].value() == false
                 runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
                 runner[0].value().empty
                 publisherList[0].children().size() == 1
@@ -3576,7 +3576,7 @@ class PublisherContextSpec extends Specification {
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
-                condition[0].ignoreCase[0].value() == 'false'
+                condition[0].ignoreCase[0].value() == false
                 runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
                 runner[0].value().empty
                 publisherList[0].children().size() == 1
@@ -3628,7 +3628,7 @@ class PublisherContextSpec extends Specification {
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
-                condition[0].ignoreCase[0].value() == 'false'
+                condition[0].ignoreCase[0].value() == false
                 runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
                 runner[0].value().empty
                 publisherList[0].children().size() == 2
@@ -3757,7 +3757,7 @@ class PublisherContextSpec extends Specification {
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
                 condition[0].arg1[0].value() == 'foo'
                 condition[0].arg2[0].value() == 'bar'
-                condition[0].ignoreCase[0].value() == 'false'
+                condition[0].ignoreCase[0].value() == false
                 runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun'
                 runner[0].value().empty
                 with(publisherList[0]) {
