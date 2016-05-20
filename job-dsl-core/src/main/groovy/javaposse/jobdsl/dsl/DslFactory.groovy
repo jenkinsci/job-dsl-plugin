@@ -144,7 +144,8 @@ interface DslFactory extends ViewFactory {
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure)
 
     /**
-     * Create or updates a pipeline job - alias for #workflowJob(java.lang.String).
+     * Create or updates a pipeline job.
+     * Alias for #workflowJob(java.lang.String).
      *
      * @since 1.47
      * @see #workflowJob(java.lang.String, groovy.lang.Closure)
@@ -153,7 +154,8 @@ interface DslFactory extends ViewFactory {
     WorkflowJob pipelineJob(String name)
 
     /**
-     * Create or updates a workflow job - alias for #workflowJob(java.lang.String, groovy.lang.Closure)
+     * Create or updates a workflow job.
+     * Alias for #workflowJob(java.lang.String, groovy.lang.Closure)
      *
      * @since 1.47
      */
@@ -178,7 +180,8 @@ interface DslFactory extends ViewFactory {
     MultibranchWorkflowJob multibranchWorkflowJob(String name, @DslContext(MultibranchWorkflowJob) Closure closure)
 
     /**
-     * Create or updates a multibranch pipeline job - alias for #multibranchWorkflowJob(java.lang.String).
+     * Create or updates a multibranch pipeline job.
+     * Alias for #multibranchWorkflowJob(java.lang.String).
      *
      * @since 1.47
      * @see #multibranchWorkflowJob(java.lang.String, groovy.lang.Closure)
@@ -187,7 +190,8 @@ interface DslFactory extends ViewFactory {
     MultibranchWorkflowJob multibranchPipelineJob(String name)
 
     /**
-     * Creates or updates a multibranch pipeline job - alias for #multibranchWorkflowJob(java.lang.String, groovy.lang.Closure).
+     * Creates or updates a multibranch pipeline job.
+     * Alias for #multibranchWorkflowJob(java.lang.String, groovy.lang.Closure).
      *
      * @since 1.47
      */
