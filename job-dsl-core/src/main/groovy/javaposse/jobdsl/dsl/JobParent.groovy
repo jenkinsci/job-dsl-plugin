@@ -95,10 +95,27 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     /**
+     * @since 1.47
+     */
+    @Override
+    WorkflowJob pipelineJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
+        processItem(name, WorkflowJob, closure)
+    }
+
+    /**
      * @since 1.42
      */
     @Override
     MultibranchWorkflowJob multibranchWorkflowJob(String name,
+                                                  @DslContext(MultibranchWorkflowJob) Closure closure = null) {
+        processItem(name, MultibranchWorkflowJob, closure)
+    }
+
+    /**
+     * @since 1.47
+     */
+    @Override
+    MultibranchWorkflowJob multibranchPipelineJob(String name,
                                                   @DslContext(MultibranchWorkflowJob) Closure closure = null) {
         processItem(name, MultibranchWorkflowJob, closure)
     }

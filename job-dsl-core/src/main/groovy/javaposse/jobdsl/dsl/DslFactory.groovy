@@ -144,6 +144,23 @@ interface DslFactory extends ViewFactory {
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure)
 
     /**
+     * Create or updates a pipeline job - alias for #workflowJob(java.lang.String).
+     *
+     * @since 1.47
+     * @see #workflowJob(java.lang.String, groovy.lang.Closure)
+     */
+    @RequiresPlugin(id = 'workflow-aggregator')
+    WorkflowJob pipelineJob(String name)
+
+    /**
+     * Create or updates a workflow job - alias for #workflowJob(java.lang.String, groovy.lang.Closure)
+     *
+     * @since 1.47
+     */
+    @RequiresPlugin(id = 'workflow-aggregator')
+    WorkflowJob pipelineJob(String name, @DslContext(WorkflowJob) Closure closure)
+
+    /**
      * Create or updates a multibranch workflow job.
      *
      * @since 1.42
@@ -159,6 +176,23 @@ interface DslFactory extends ViewFactory {
      */
     @RequiresPlugin(id = 'workflow-multibranch', minimumVersion = '1.12')
     MultibranchWorkflowJob multibranchWorkflowJob(String name, @DslContext(MultibranchWorkflowJob) Closure closure)
+
+    /**
+     * Create or updates a multibranch pipeline job - alias for #multibranchWorkflowJob(java.lang.String).
+     *
+     * @since 1.47
+     * @see #multibranchWorkflowJob(java.lang.String, groovy.lang.Closure)
+     */
+    @RequiresPlugin(id = 'workflow-multibranch', minimumVersion = '1.12')
+    MultibranchWorkflowJob multibranchPipelineJob(String name)
+
+    /**
+     * Creates or updates a multibranch pipeline job - alias for #multibranchWorkflowJob(java.lang.String, groovy.lang.Closure).
+     *
+     * @since 1.47
+     */
+    @RequiresPlugin(id = 'workflow-multibranch', minimumVersion = '1.12')
+    MultibranchWorkflowJob multibranchPipelineJob(String name, @DslContext(MultibranchWorkflowJob) Closure closure)
 
     /**
      * Creates or updates a folder.
