@@ -88,7 +88,9 @@ abstract class JobParent extends Script implements DslFactory {
 
     /**
      * @since 1.30
+     * @deprecated as of 1.47. Use #pipelineJob(java.lang.String, groovy.lang.Closure) instead.
      */
+    @Deprecated
     @Override
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
         processItem(name, WorkflowJob, closure)
@@ -104,6 +106,7 @@ abstract class JobParent extends Script implements DslFactory {
 
     /**
      * @since 1.42
+     * @deprecated as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.
      */
     @Override
     MultibranchWorkflowJob multibranchWorkflowJob(String name,
