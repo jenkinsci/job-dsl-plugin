@@ -93,7 +93,9 @@ abstract class JobParent extends Script implements DslFactory {
     @Deprecated
     @Override
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
-        processItem(name, WorkflowJob, closure)
+        jm.logDeprecationWarning()
+
+        pipelineJob(name, closure)
     }
 
     /**
@@ -108,10 +110,13 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.42
      * @deprecated as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.
      */
+    @Deprecated
     @Override
     MultibranchWorkflowJob multibranchWorkflowJob(String name,
                                                   @DslContext(MultibranchWorkflowJob) Closure closure = null) {
-        processItem(name, MultibranchWorkflowJob, closure)
+        jm.logDeprecationWarning()
+
+        multibranchPipelineJob(name, closure)
     }
 
     /**

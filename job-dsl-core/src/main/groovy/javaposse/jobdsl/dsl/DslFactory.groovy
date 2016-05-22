@@ -189,7 +189,6 @@ interface DslFactory extends ViewFactory {
 
     /**
      * Create or updates a multibranch pipeline job.
-     * Alias for #multibranchWorkflowJob(java.lang.String).
      *
      * @since 1.47
      * @see #multibranchWorkflowJob(java.lang.String, groovy.lang.Closure)
@@ -199,7 +198,6 @@ interface DslFactory extends ViewFactory {
 
     /**
      * Creates or updates a multibranch pipeline job.
-     * Alias for #multibranchWorkflowJob(java.lang.String, groovy.lang.Closure).
      *
      * @since 1.47
      */
