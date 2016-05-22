@@ -524,12 +524,36 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
+        (1.._) * jobManagement.requirePlugin('workflow-aggregator')
+        1 * jobManagement.logDeprecationWarning()
+    }
+
+    def 'pipeline'() {
+        when:
+        WorkflowJob job = parent.pipelineJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
         1 * jobManagement.requirePlugin('workflow-aggregator')
     }
 
     def 'multibranchWorkflowJob'() {
         when:
         MultibranchWorkflowJob job = parent.multibranchWorkflowJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        (1.._) * jobManagement.requireMinimumPluginVersion('workflow-multibranch', '1.12')
+        1 * jobManagement.logDeprecationWarning()
+    }
+
+    def 'multibranchPipelineJob'() {
+        when:
+        MultibranchWorkflowJob job = parent.multibranchPipelineJob('test') {
         }
 
         then:

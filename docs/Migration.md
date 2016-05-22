@@ -1,5 +1,65 @@
 ## Migrating to 1.47
 
+### Pipeline
+
+The Workflow Plugin has been renamed to [Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Pipeline+Plugin).
+New `pipelineJob` and `multibranchPipelineJob` methods have been added as replacements for `workflowJob` and
+`multibranchWorkflowJob` which are [[deprecated|Deprecation-Policy]] and will be removed.
+
+DSL prior to 1.47
+```groovy
+workflowJob('example-1') {
+    definition {
+        cps {
+            script(readFileFromWorkspace('project-a-workflow.groovy'))
+            sandbox()
+        }
+    }
+}
+
+multibranchWorkflowJob('example-2') {
+    branchSources {
+        git {
+            remote('https://github.com/jenkinsci/job-dsl-plugin.git')
+            credentialsId('github-ci')
+            includes('JENKINS-*')
+        }
+    }
+    orphanedItemStrategy {
+        discardOldItems {
+            numToKeep(20)
+        }
+    }
+}
+```
+
+DSL since 1.47
+```groovy
+pipelineJob('example-1') {
+    definition {
+        cps {
+            script(readFileFromWorkspace('project-a-workflow.groovy'))
+            sandbox()
+        }
+    }
+}
+
+multibranchPipelineJob('example-2') {
+    branchSources {
+        git {
+            remote('https://github.com/jenkinsci/job-dsl-plugin.git')
+            credentialsId('github-ci')
+            includes('JENKINS-*')
+        }
+    }
+    orphanedItemStrategy {
+        discardOldItems {
+            numToKeep(20)
+        }
+    }
+}
+```
+ 
 ### Slack
 
 Support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin) is
