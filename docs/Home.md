@@ -56,6 +56,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-33325](https://issues.jenkins-ci.org/browse/JENKINS-33325))
  * The enum `javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir` is deprecated, see
    [Migration](Migration#migrating-to-147)
+ * Enhanced support for the [Build Name Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin)
+   [(#858)](https://github.com/jenkinsci/job-dsl-plugin/pull/858)
 * 1.46 (May 08 2016)
  * Increased the minimum supported Jenkins version to 1.625
  * Added support for [[Automatically Generated DSL]]
