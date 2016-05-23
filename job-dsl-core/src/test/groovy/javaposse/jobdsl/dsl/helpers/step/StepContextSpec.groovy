@@ -3805,4 +3805,46 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('phing', '0.13.3')
     }
+
+    def 'call build name setter with all options'() {
+        when:
+        context.updateBuildName {
+            buildNameFilePath('foo.txt')
+            buildNameMacroTemplate('$VERSION')
+            readFromFile(true)
+            useMacro(true)
+            insertMacroFirst(true)
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.buildnameupdater.BuildNameUpdater'
+            children().size() == 5
+            buildName[0].value() == 'foo.txt'
+            macroTemplate[0].value() == '$VERSION'
+            fromFile[0].value() == true
+            fromMacro[0].value() == true
+            macroFirst[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('build-name-setter', '1.6.5')
+    }
+
+    def 'call build name setter with no options'() {
+        when:
+        context.updateBuildName {}
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'org.jenkinsci.plugins.buildnameupdater.BuildNameUpdater'
+            children().size() == 5
+            buildName[0].value() == 'version.txt'
+            macroTemplate[0].value() == '#${BUILD_NUMBER}'
+            fromFile[0].value() == false
+            fromMacro[0].value() == false
+            macroFirst[0].value() == false
+        }
+        1 * jobManagement.requireMinimumPluginVersion('build-name-setter', '1.6.5')
+    }
 }
