@@ -303,8 +303,6 @@ abstract class Job extends Item {
     @RequiresPlugin(id = 'PrioritySorter')
     @Deprecated
     void priority(int value) {
-        jobManagement.logDeprecationWarning()
-
         configure { Node project ->
             Node node = new Node(project / 'properties', 'hudson.queueSorter.PrioritySorterJobProperty')
             node.appendNode('priority', value)

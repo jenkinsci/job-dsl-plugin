@@ -271,8 +271,6 @@ class WrapperContext extends AbstractExtensibleContext {
     @Deprecated
     @RequiresPlugin(id = 'envinject')
     void injectPasswords() {
-        jobManagement.logDeprecationWarning()
-
         wrapperNodes << new NodeBuilder().'EnvInjectPasswordWrapper' {
             'injectGlobalPasswords'(true)
             'passwordEntries'()

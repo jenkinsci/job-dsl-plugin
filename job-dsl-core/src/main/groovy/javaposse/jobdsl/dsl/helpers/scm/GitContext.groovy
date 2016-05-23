@@ -67,7 +67,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void strategy(@DslContext(StrategyContext) Closure strategyClosure) {
-        jobManagement.logDeprecationWarning()
         executeInContext(strategyClosure, strategyContext)
     }
 
@@ -76,9 +75,11 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void mergeOptions(String remote = null, String branch) {
-        mergeOptions {
-            delegate.remote(remote)
-            delegate.branch(branch)
+        extensions {
+            delegate.mergeOptions {
+                delegate.remote(remote)
+                delegate.branch(branch)
+            }
         }
     }
 
@@ -90,7 +91,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void mergeOptions(@DslContext(GitMergeOptionsContext) Closure gitMergeOptionsClosure) {
-        jobManagement.logDeprecationWarning()
         extensions {
             delegate.mergeOptions(gitMergeOptionsClosure)
         }
@@ -116,7 +116,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void createTag(boolean createTag = true) {
-        jobManagement.logDeprecationWarning()
         this.createTag = createTag
     }
 
@@ -126,7 +125,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void clean(boolean clean = true) {
-        jobManagement.logDeprecationWarning()
         this.clean = clean
     }
 
@@ -136,7 +134,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void wipeOutWorkspace(boolean wipeOutWorkspace = true) {
-        jobManagement.logDeprecationWarning()
         this.wipeOutWorkspace = wipeOutWorkspace
     }
 
@@ -146,7 +143,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void remotePoll(boolean remotePoll = true) {
-        jobManagement.logDeprecationWarning()
         this.remotePoll = remotePoll
     }
 
@@ -155,7 +151,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void shallowClone(boolean shallowClone = true) {
-        jobManagement.logDeprecationWarning()
         this.shallowClone = shallowClone
     }
 
@@ -166,7 +161,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void recursiveSubmodules(boolean recursive = true) {
-        jobManagement.logDeprecationWarning()
         this.recursiveSubmodules = recursive
     }
 
@@ -177,7 +171,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void trackingSubmodules(boolean tracking = true) {
-        jobManagement.logDeprecationWarning()
         this.trackingSubmodules = tracking
     }
 
@@ -186,7 +179,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void pruneBranches(boolean pruneBranches = true) {
-        jobManagement.logDeprecationWarning()
         this.pruneBranches = pruneBranches
     }
 
@@ -196,7 +188,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void localBranch(String localBranch) {
-        jobManagement.logDeprecationWarning()
         this.localBranch = localBranch
     }
 
@@ -205,7 +196,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void relativeTargetDir(String relativeTargetDir) {
-        jobManagement.logDeprecationWarning()
         this.relativeTargetDir = relativeTargetDir
     }
 
@@ -214,7 +204,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void reference(String reference) {
-        jobManagement.logDeprecationWarning()
         this.reference = reference
     }
 
@@ -225,7 +214,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void cloneTimeout(int cloneTimeout) {
-        jobManagement.logDeprecationWarning()
         this.cloneTimeout = cloneTimeout
     }
 
@@ -245,7 +233,6 @@ class GitContext extends AbstractContext {
      */
     @Deprecated
     void ignoreNotifyCommit(boolean ignoreNotifyCommit = true) {
-        jobManagement.logDeprecationWarning()
         this.ignoreNotifyCommit = ignoreNotifyCommit
     }
 
