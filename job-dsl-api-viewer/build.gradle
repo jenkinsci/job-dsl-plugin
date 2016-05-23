@@ -22,15 +22,11 @@ plugins {
 apply plugin: 'org.ajoberstar.github-pages'
 apply plugin: 'com.bertramlabs.asset-pipeline'
 
-// workaround, asset-pipeline needs a processResources task :-(
-task processResources(type: ProcessResources) {
-    onlyIf { false }
-}
-
 assets {
     enableDigests = false
     enableGzip = false
     enableSourceMaps = false
+    verbose = false
     configOptions = [
             handlebars: [
                     templateRoot: 'templates'
