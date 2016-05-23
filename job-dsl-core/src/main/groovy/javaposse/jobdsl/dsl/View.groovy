@@ -74,7 +74,6 @@ abstract class View extends AbstractContext {
 
     @Deprecated
     protected void execute(Closure rootClosure) {
-        jobManagement.logDeprecationWarning()
         configure(rootClosure)
     }
 }

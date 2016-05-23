@@ -40,8 +40,6 @@ class FlexiblePublisherContext extends AbstractContext {
      */
     @Deprecated
     void condition(@DslContext(RunConditionContext) Closure closure) {
-        jobManagement.logDeprecationWarning()
-
         RunConditionContext context = new RunConditionContext(jobManagement, item)
         ContextHelper.executeInContext(closure, context)
         condition = context.condition
@@ -53,8 +51,6 @@ class FlexiblePublisherContext extends AbstractContext {
     @RequiresPlugin(id = 'any-buildstep')
     @Deprecated
     void step(@DslContext(StepContext) Closure closure) {
-        jobManagement.logDeprecationWarning()
-
         StepContext stepContext = new StepContext(jobManagement, item)
         ContextHelper.executeInContext(closure, stepContext)
         actions.addAll(stepContext.stepNodes)
@@ -65,8 +61,6 @@ class FlexiblePublisherContext extends AbstractContext {
      */
     @Deprecated
     void publisher(@DslContext(PublisherContext) Closure closure) {
-        jobManagement.logDeprecationWarning()
-
         PublisherContext publisherContext = new PublisherContext(jobManagement, item)
         ContextHelper.executeInContext(closure, publisherContext)
         actions.addAll(publisherContext.publisherNodes)

@@ -98,8 +98,6 @@ class PublisherContext extends AbstractExtensibleContext {
     @Deprecated
     void extendedEmail(String recipients, String subjectTemplate, String contentTemplate,
                        @DslContext(EmailContext) Closure emailClosure = null) {
-        jobManagement.logDeprecationWarning()
-
         EmailContext emailContext = new EmailContext()
         ContextHelper.executeInContext(emailClosure, emailContext)
 
@@ -1485,8 +1483,6 @@ class PublisherContext extends AbstractExtensibleContext {
     @Deprecated
     @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26')
     void mergePullRequest(@DslContext(PullRequestPublisherContext) Closure contextClosure = null) {
-        jobManagement.logDeprecationWarning()
-
         PullRequestPublisherContext pullRequestPublisherContext = new PullRequestPublisherContext(jobManagement)
         ContextHelper.executeInContext(contextClosure, pullRequestPublisherContext)
 
@@ -1532,8 +1528,6 @@ class PublisherContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'hipchat', minimumVersion = '0.1.9')
     @Deprecated
     void hipChat(@DslContext(HipChatPublisherContext) Closure hipChatClosure = null) {
-        jobManagement.logDeprecationWarning()
-
         HipChatPublisherContext hipChatContext = new HipChatPublisherContext()
         ContextHelper.executeInContext(hipChatClosure, hipChatContext)
 
@@ -1690,8 +1684,6 @@ class PublisherContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'slack', minimumVersion = '1.8')
     @Deprecated
     void slackNotifications(@DslContext(SlackNotificationsContext) Closure slackNotificationsClosure) {
-        jobManagement.logDeprecationWarning()
-
         SlackNotificationsContext context = new SlackNotificationsContext()
         ContextHelper.executeInContext(slackNotificationsClosure, context)
 

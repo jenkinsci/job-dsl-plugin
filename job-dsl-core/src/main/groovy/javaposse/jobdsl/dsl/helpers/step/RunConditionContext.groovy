@@ -189,8 +189,6 @@ class RunConditionContext extends AbstractExtensibleContext {
      */
     @Deprecated
     void fileExists(String file, FileExistsCondition.BaseDir baseDir) {
-        jobManagement.logDeprecationWarning()
-
         createFileExists(file, baseDir.baseDirClass)
     }
 
@@ -210,8 +208,6 @@ class RunConditionContext extends AbstractExtensibleContext {
      */
     @Deprecated
     void filesMatch(String includes, String excludes, FileExistsCondition.BaseDir baseDir) {
-        jobManagement.logDeprecationWarning()
-
         createFilesMatch(includes, excludes, baseDir.baseDirClass)
     }
 

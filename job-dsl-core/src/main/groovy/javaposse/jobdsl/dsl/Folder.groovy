@@ -78,7 +78,6 @@ class Folder extends Item {
 
     @Deprecated
     protected void execute(Closure rootClosure) {
-        jobManagement.logDeprecationWarning()
         configure(rootClosure)
     }
 }

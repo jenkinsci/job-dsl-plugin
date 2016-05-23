@@ -73,6 +73,7 @@ project(':job-dsl-core') {
             }
         }
         main.compileClasspath += sourceSets.ast.output
+        test.compileClasspath += sourceSets.ast.output
     }
 
     description = 'Generates Jenkins jobs via a DSL'

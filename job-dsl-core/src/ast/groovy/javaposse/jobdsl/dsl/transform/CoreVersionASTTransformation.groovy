@@ -31,24 +31,18 @@ class CoreVersionASTTransformation implements ASTTransformation {
     @Override
     void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
         sourceUnit.AST?.classes*.methods.flatten().each { MethodNode method ->
-            method.getAnnotations(REQUIRES_CORE_ANNOTATION).each { AnnotationNode requiresCoreAnnotation ->
-                if (!method.declaringClass.getField('jobManagement')) {
-                    sourceUnit.errorCollector.addError(
-                            "no jobManagement field in $method.declaringClass",
-                            Token.newString(
-                                    requiresCoreAnnotation.text,
-                                    requiresCoreAnnotation.lineNumber,
-                                    requiresCoreAnnotation.columnNumber
-                            ),
-                            sourceUnit
-                    )
-                }
+            method.getAnnotations(REQUIRES_CORE_ANNOTATION).each { AnnotationNode annotationNode ->
+                VariableExpression jobManagementVariable = ASTTransformationHelper.getJobManagementVariable(
+                        sourceUnit,
+                        method.declaringClass,
+                        Token.newString(annotationNode.text, annotationNode.lineNumber, annotationNode.columnNumber)
+                )
 
                 MethodCallExpression pluginCheckStatement = new MethodCallExpression(
-                        new VariableExpression('jobManagement'),
+                        jobManagementVariable,
                         new ConstantExpression('requireMinimumCoreVersion'),
                         new ArgumentListExpression(
-                                requiresCoreAnnotation.members.minimumVersion,
+                                annotationNode.members.minimumVersion,
                         )
                 )
 

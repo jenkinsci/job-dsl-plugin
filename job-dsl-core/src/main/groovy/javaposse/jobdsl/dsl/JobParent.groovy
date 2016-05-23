@@ -93,8 +93,6 @@ abstract class JobParent extends Script implements DslFactory {
     @Deprecated
     @Override
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
-        jm.logDeprecationWarning()
-
         pipelineJob(name, closure)
     }
 
@@ -114,8 +112,6 @@ abstract class JobParent extends Script implements DslFactory {
     @Override
     MultibranchWorkflowJob multibranchWorkflowJob(String name,
                                                   @DslContext(MultibranchWorkflowJob) Closure closure = null) {
-        jm.logDeprecationWarning()
-
         multibranchPipelineJob(name, closure)
     }
 
