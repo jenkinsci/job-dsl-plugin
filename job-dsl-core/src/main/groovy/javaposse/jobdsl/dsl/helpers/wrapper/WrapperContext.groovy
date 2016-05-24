@@ -190,6 +190,14 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Use sonar build wrapper
+     */
+    @RequiresPlugin(id = 'sonar', minimumVersion = '2.4')
+    void useSonarBuildWrapper() {
+        wrapperNodes << new NodeBuilder().'hudson.plugins.sonar.SonarBuildWrapper'()
+    }
+
+    /**
      * Run a Xvnc session during a build.
      *
      * @since 1.26
