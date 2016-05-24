@@ -1,15 +1,19 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
-class GitLabTriggerContext implements Context {
+class GitLabTriggerContext extends AbstractContext {
     private static final Set<String> VALID_EXECUTION_STATUSES = ['never', 'source', 'both']
 
-    String includeBranches = ''
-    String excludeBranches = ''
+    String includeBranches
+    String excludeBranches
+    String targetBranchRegex
     String rebuildOpenMergeRequest = 'never'
+    String branchFilterType = 'all'
     boolean buildOnMergeRequestEvents = true
     boolean buildOnPushEvents = true
     boolean enableCiSkip = true
@@ -20,11 +24,16 @@ class GitLabTriggerContext implements Context {
     boolean acceptMergeRequestOnSuccess = false
     boolean allowAllBranches = false
 
+    GitLabTriggerContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
+
     /**
      * Comma-separated list of source branches allowed to trigger a build from a push event.
      */
     void includeBranches(String includeBranches) {
         this.includeBranches = includeBranches
+        this.branchFilterType = 'nameBasedFilter'
     }
 
     /**
@@ -32,6 +41,20 @@ class GitLabTriggerContext implements Context {
      */
     void excludeBranches(String excludeBranches) {
         this.excludeBranches = excludeBranches
+        this.branchFilterType = 'nameBasedFilter'
+    }
+
+    /**
+     * The target branch regex allows to limit the execution of this job to
+     * certain branches. Any branch matching the specified pattern triggers the
+     * job.
+     *
+     * @since 1.47
+     */
+    @RequiresPlugin(id = 'gitlab-plugin', minimumVersion = '1.2.0')
+    void targetBranchRegex(String targetBranchRegex) {
+        this.targetBranchRegex = targetBranchRegex
+        this.branchFilterType = 'regexBasedFilter'
     }
 
     /**
@@ -93,6 +116,7 @@ class GitLabTriggerContext implements Context {
     /**
      * If set, ignores filtered branches. Defaults to {@code false}.
      */
+    @Deprecated
     void allowAllBranches(boolean allowAllBranches = true) {
         this.allowAllBranches = allowAllBranches
     }

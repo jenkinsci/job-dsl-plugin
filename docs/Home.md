@@ -43,6 +43,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-34720](https://issues.jenkins-ci.org/browse/JENKINS-34720))
  * Enhanced support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
    ([JENKINS-34941](https://issues.jenkins-ci.org/browse/JENKINS-34941))
+ * Enhanced support for the [Gitlab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin)
+   ([JENKINS-34534](https://issues.jenkins-ci.org/browse/JENKINS-34534))
  * Fixed support for the [Violations Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Violations)
    ([JENKINS-26086](https://issues.jenkins-ci.org/browse/JENKINS-26086))
  * Support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin) is deprecated, see
@@ -51,6 +53,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Support for [HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-147)
    ([JENKINS-32502](https://issues.jenkins-ci.org/browse/JENKINS-32502))
+ * Support for the older versions of the [Gitlab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-147)
  * Added `pipelineJob` and `multibranchPipelineJob` as replacements for `workflowJob` and `multibranchWorkflowJob`, see
    [Migration](Migration#migrating-to-147)
    ([JENKINS-33325](https://issues.jenkins-ci.org/browse/JENKINS-33325))

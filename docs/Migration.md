@@ -60,6 +60,11 @@ multibranchPipelineJob('example-2') {
 }
 ```
  
+### GitLab
+
+Support for versions older than 1.2 of the [Gitlab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ### Slack
 
 Support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin) is
