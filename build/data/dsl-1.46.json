@@ -1,5 +1,5 @@
 {
-    "version": "1.47",
+    "version": "1.46-SNAPSHOT",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -8530,26 +8530,6 @@
                                 },
                                 {
                                     "name": "baseDir",
-                                    "type": "javaposse.jobdsl.dsl.helpers.step.RunConditionContext.BaseDir",
-                                    "enumConstants": [
-                                        "JENKINS_HOME",
-                                        "ARTIFACTS_DIR",
-                                        "WORKSPACE"
-                                    ]
-                                }
-                            ],
-                            "availableSince": "1.47",
-                            "html": "Runs the build steps if the file exists.\r\n     ",
-                            "firstSentenceCommentText": "Runs the build steps if the file exists."
-                        },
-                        {
-                            "parameters": [
-                                {
-                                    "name": "file",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "baseDir",
                                     "type": "javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir",
                                     "enumConstants": [
                                         "JENKINS_HOME",
@@ -8558,7 +8538,6 @@
                                     ]
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.23",
                             "html": "Runs the build steps if the file exists.\r\n     ",
                             "firstSentenceCommentText": "Runs the build steps if the file exists."
@@ -8581,7 +8560,7 @@
                                 },
                                 {
                                     "name": "baseDir",
-                                    "type": "javaposse.jobdsl.dsl.helpers.step.RunConditionContext.BaseDir",
+                                    "type": "javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir",
                                     "enumConstants": [
                                         "JENKINS_HOME",
                                         "ARTIFACTS_DIR",
@@ -8590,31 +8569,6 @@
                                     "defaultValue": "BaseDir.WORKSPACE"
                                 }
                             ],
-                            "availableSince": "1.47",
-                            "html": "Runs the build steps if one or more files match the selectors.\r\n     ",
-                            "firstSentenceCommentText": "Runs the build steps if one or more files match the selectors."
-                        },
-                        {
-                            "parameters": [
-                                {
-                                    "name": "includes",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "excludes",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "baseDir",
-                                    "type": "javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir",
-                                    "enumConstants": [
-                                        "JENKINS_HOME",
-                                        "ARTIFACTS_DIR",
-                                        "WORKSPACE"
-                                    ]
-                                }
-                            ],
-                            "deprecated": true,
                             "availableSince": "1.36",
                             "html": "Runs the build steps if one or more files match the selectors.\r\n     ",
                             "firstSentenceCommentText": "Runs the build steps if one or more files match the selectors."
@@ -20075,7 +20029,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.33",
                             "plugin": {
                                 "id": "hipchat",
@@ -20908,7 +20861,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.36",
                             "plugin": {
                                 "id": "slack",
@@ -22497,7 +22449,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.33",
                             "plugin": {
                                 "id": "hipchat",
@@ -23330,7 +23281,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.36",
                             "plugin": {
                                 "id": "slack",
@@ -24053,7 +24003,6 @@
                                     "defaultValue": "true"
                                 }
                             ],
-                            "deprecated": true,
                             "html": "If set, ignores filtered branches. Defaults to <TT>false</TT>.",
                             "firstSentenceCommentText": "If set, ignores filtered branches. "
                         }
@@ -24149,26 +24098,6 @@
                             ],
                             "html": "Only rebuild open Merge Requests. Defaults to <TT>'never'</TT>.\r\n\r\n Possible values are <TT>'never'</TT>, <TT>'source'</TT> and <TT>'both'</TT>.",
                             "firstSentenceCommentText": "Only rebuild open Merge Requests. "
-                        }
-                    ]
-                },
-                {
-                    "name": "targetBranchRegex",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "targetBranchRegex",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.47",
-                            "plugin": {
-                                "id": "gitlab-plugin",
-                                "minimumVersion": "1.2.0"
-                            },
-                            "html": "The target branch regex allows to limit the execution of this job to\r\n certain branches. Any branch matching the specified pattern triggers the\r\n job.\r\n     ",
-                            "firstSentenceCommentText": "The target branch regex allows to limit the execution of this job to\r\n certain branches. "
                         }
                     ]
                 },
@@ -24921,7 +24850,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.GitLabTriggerContext"
                         }
                     ],
-                    "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            addNoteOnMergeRequest(false)\r\n            rebuildOpenMergeRequest('never')\r\n            addVoteOnMergeRequest(false)\r\n            useCiFeatures(false)\r\n            acceptMergeRequestOnSuccess()\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}\r\n"
+                    "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            addNoteOnMergeRequest(false)\r\n            rebuildOpenMergeRequest('never')\r\n            addVoteOnMergeRequest(false)\r\n            useCiFeatures(false)\r\n            acceptMergeRequestOnSuccess()\r\n            allowAllBranches(false)\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}\r\n"
                 },
                 {
                     "name": "pullRequest",
@@ -30898,12 +30827,6 @@
                 }
             ]
         },
-        "javaposse.jobdsl.dsl.helpers.properties.FolderPropertiesContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.properties.FolderPropertiesContext",
-            "methods": [
-                
-            ]
-        },
         "javaposse.jobdsl.dsl.Folder": {
             "type": "javaposse.jobdsl.dsl.Folder",
             "methods": [
@@ -30986,23 +30909,6 @@
                             "availableSince": "1.36",
                             "html": "Changes the initial view to show when the folder contains multiple views. Defaults to the <TT>'All'</TT> view.\r\n     ",
                             "firstSentenceCommentText": "Changes the initial view to show when the folder contains multiple views. "
-                        }
-                    ]
-                },
-                {
-                    "name": "properties",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.47",
-                            "html": "Adds custom properties to the folder.\r\n     ",
-                            "firstSentenceCommentText": "Adds custom properties to the folder.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.properties.FolderPropertiesContext"
                         }
                     ]
                 }
@@ -35456,7 +35362,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.33",
                             "plugin": {
                                 "id": "hipchat",
@@ -36289,7 +36194,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.36",
                             "plugin": {
                                 "id": "slack",
@@ -36724,7 +36628,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.GitLabTriggerContext"
                         }
                     ],
-                    "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            addNoteOnMergeRequest(false)\r\n            rebuildOpenMergeRequest('never')\r\n            addVoteOnMergeRequest(false)\r\n            useCiFeatures(false)\r\n            acceptMergeRequestOnSuccess()\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}\r\n"
+                    "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            addNoteOnMergeRequest(false)\r\n            rebuildOpenMergeRequest('never')\r\n            addVoteOnMergeRequest(false)\r\n            useCiFeatures(false)\r\n            acceptMergeRequestOnSuccess()\r\n            allowAllBranches(false)\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}\r\n"
                 },
                 {
                     "name": "pullRequest",
@@ -41811,23 +41715,6 @@
                     ]
                 },
                 {
-                    "name": "properties",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.47",
-                            "html": "Adds custom properties to the folder.\r\n     ",
-                            "firstSentenceCommentText": "Adds custom properties to the folder.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.properties.FolderPropertiesContext"
-                        }
-                    ]
-                },
-                {
                     "name": "triggers",
                     "signatures": [
                         {
@@ -43945,47 +43832,6 @@
                     "examples": "multiJob('example') {\r\n    steps {\r\n        phase('Second') {\r\n            phaseJob('JobZ') {\r\n                parameters {\r\n                    propertiesFile('my1.properties')\r\n                }\r\n            }\r\n        }\r\n        phase('Third') {\r\n            phaseJob('JobA')\r\n            phaseJob('JobB')\r\n            phaseJob('JobC')\r\n        }\r\n        phase('Fourth') {\r\n            phaseJob('JobD') {\r\n                currentJobParameters(false)\r\n                parameters {\r\n                    booleanParam('cParam', true)\r\n                    propertiesFile('my.properties')\r\n                    sameNode()\r\n                    matrixSubset('it.name==\"hello\"')\r\n                    subversionRevision()\r\n                    gitRevision()\r\n                    predefinedProp('prop1', 'value1')\r\n                    nodeLabel('lParam', 'my_nodes')\r\n                }\r\n                configure { phaseJobConfig ->\r\n                    phaseJobConfig / enableCondition << 'true'\r\n                    phaseJobConfig / condition << '${RUN_JOB} == \"true\"'\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n"
                 },
                 {
-                    "name": "multibranchPipelineJob",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.47\r\n",
-                            "plugin": {
-                                "id": "workflow-multibranch",
-                                "minimumVersion": "1.12"
-                            },
-                            "html": "Create or updates a multibranch pipeline job.\r\n     ",
-                            "firstSentenceCommentText": "Create or updates a multibranch pipeline job."
-                        },
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.47",
-                            "plugin": {
-                                "id": "workflow-multibranch",
-                                "minimumVersion": "1.12"
-                            },
-                            "html": "Creates or updates a multibranch pipeline job.\r\n     ",
-                            "firstSentenceCommentText": "Creates or updates a multibranch pipeline job.",
-                            "contextClass": "javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob"
-                        }
-                    ],
-                    "examples": "multibranchPipelineJob('example') {\r\n    branchSources {\r\n        git {\r\n            remote('https://github.com/jenkinsci/job-dsl-plugin.git')\r\n            credentialsId('github-ci')\r\n            includes('JENKINS-*')\r\n        }\r\n    }\r\n    orphanedItemStrategy {\r\n        discardOldItems {\r\n            numToKeep(20)\r\n        }\r\n    }\r\n}\r\n"
-                },
-                {
                     "name": "multibranchWorkflowJob",
                     "signatures": [
                         {
@@ -43995,13 +43841,12 @@
                                     "type": "String"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.42\r\n",
                             "plugin": {
                                 "id": "workflow-multibranch",
                                 "minimumVersion": "1.12"
                             },
-                            "html": "Create or updates a multibranch workflow job.",
+                            "html": "Create or updates a multibranch workflow job.\r\n     ",
                             "firstSentenceCommentText": "Create or updates a multibranch workflow job."
                         },
                         {
@@ -44015,13 +43860,12 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
-                            "availableSince": "1.42\r\n",
+                            "availableSince": "1.42",
                             "plugin": {
                                 "id": "workflow-multibranch",
                                 "minimumVersion": "1.12"
                             },
-                            "html": "Creates or updates a multibranch workflow job.",
+                            "html": "Creates or updates a multibranch workflow job.\r\n     ",
                             "firstSentenceCommentText": "Creates or updates a multibranch workflow job.",
                             "contextClass": "javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob"
                         }
@@ -44064,45 +43908,6 @@
                         }
                     ],
                     "examples": "nestedView('project-a') {\r\n    views {\r\n        listView('overview') {\r\n            jobs {\r\n                regex(/project-A-.*/)\r\n            }\r\n            columns {\r\n                status()\r\n                weather()\r\n                name()\r\n                lastSuccess()\r\n                lastFailure()\r\n            }\r\n        }\r\n        buildPipelineView('pipeline') {\r\n            selectedJob('project-a-compile')\r\n        }\r\n    }\r\n}\r\n"
-                },
-                {
-                    "name": "pipelineJob",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.47\r\n",
-                            "plugin": {
-                                "id": "workflow-aggregator"
-                            },
-                            "html": "Create or updates a pipeline job.\r\n Alias for #workflowJob(java.lang.String).\r\n     ",
-                            "firstSentenceCommentText": "Create or updates a pipeline job.\r\n "
-                        },
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.47",
-                            "plugin": {
-                                "id": "workflow-aggregator"
-                            },
-                            "html": "Create or updates a workflow job.\r\n Alias for #workflowJob(java.lang.String, groovy.lang.Closure)\r\n     ",
-                            "firstSentenceCommentText": "Create or updates a workflow job.\r\n ",
-                            "contextClass": "javaposse.jobdsl.dsl.jobs.WorkflowJob"
-                        }
-                    ],
-                    "examples": "pipelineJob('example') {\r\n    definition {\r\n        cps {\r\n            script(readFileFromWorkspace('project-a-workflow.groovy'))\r\n            sandbox()\r\n        }\r\n    }\r\n}\r\n"
                 },
                 {
                     "name": "queue",
@@ -44244,12 +44049,11 @@
                                     "type": "String"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.30\r\n",
                             "plugin": {
                                 "id": "workflow-aggregator"
                             },
-                            "html": "Create or updates a workflow job.",
+                            "html": "Create or updates a workflow job.\r\n     ",
                             "firstSentenceCommentText": "Create or updates a workflow job."
                         },
                         {
@@ -44263,12 +44067,11 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
-                            "availableSince": "1.31\r\n",
+                            "availableSince": "1.31",
                             "plugin": {
                                 "id": "workflow-aggregator"
                             },
-                            "html": "Create or updates a workflow job.",
+                            "html": "Create or updates a workflow job.\r\n     ",
                             "firstSentenceCommentText": "Create or updates a workflow job.",
                             "contextClass": "javaposse.jobdsl.dsl.jobs.WorkflowJob"
                         }
