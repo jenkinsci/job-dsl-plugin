@@ -72,7 +72,7 @@ import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvide
 /**
  * Manages Jenkins jobs, providing facilities to retrieve and create / update.
  */
-public final class JenkinsJobManagement extends AbstractJobManagement {
+public class JenkinsJobManagement extends AbstractJobManagement {
     private static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
 
     private final Map<String, String> envVars;
