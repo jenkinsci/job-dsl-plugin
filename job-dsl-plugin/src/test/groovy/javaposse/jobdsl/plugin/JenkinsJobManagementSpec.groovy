@@ -2,6 +2,7 @@ package javaposse.jobdsl.plugin
 
 import com.cloudbees.hudson.plugins.folder.Folder
 import com.google.common.io.Resources
+import hudson.FilePath
 import hudson.LocalPluginManager
 import hudson.model.AbstractBuild
 import hudson.model.Cause
@@ -9,6 +10,7 @@ import hudson.model.Failure
 import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
 import hudson.model.ListView
+import hudson.model.Run
 import hudson.model.View
 import hudson.model.listeners.SaveableListener
 import hudson.tasks.ArtifactArchiver
@@ -46,8 +48,10 @@ class JenkinsJobManagementSpec extends Specification {
     JenkinsRule jenkinsRule = new JenkinsRule()
 
     ByteArrayOutputStream buffer = new ByteArrayOutputStream()
-    AbstractBuild build = Mock(AbstractBuild)
-    JenkinsJobManagement jobManagement = new JenkinsJobManagement(new PrintStream(buffer), [:], build)
+    Run build = Mock(Run)
+    JenkinsJobManagement jobManagement = new JenkinsJobManagement(
+            new PrintStream(buffer), [:], build, new FilePath(new File('.')), LookupStrategy.JENKINS_ROOT
+    )
     JenkinsJobManagement testJobManagement = new JenkinsJobManagement(new PrintStream(buffer), [:], new File('.'))
 
     @WithoutJenkins
@@ -343,7 +347,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject seedJob = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = seedJob.scheduleBuild2(0).get()
         JobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), [:], build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -361,7 +365,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject seedJob = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = seedJob.scheduleBuild2(0).get()
         JobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), [:], build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -404,7 +408,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = project.scheduleBuild2(0).get()
         JenkinsJobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), [:], build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -428,7 +432,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = project.scheduleBuild2(0).get()
         JenkinsJobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), [:], build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -444,7 +448,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = project.scheduleBuild2(0).get()
         JenkinsJobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), [:], build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -697,7 +701,7 @@ class JenkinsJobManagementSpec extends Specification {
     def 'readFileFromWorkspace with exception'() {
         setup:
         AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject())
-        jobManagement = new JenkinsJobManagement(System.out, [:], build)
+        jobManagement = new JenkinsJobManagement(System.out, [:], build, build.workspace, LookupStrategy.JENKINS_ROOT)
         String fileName = 'test.txt'
 
         when:
@@ -797,7 +801,9 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject project = jenkinsRule.createProject(FreeStyleProject, 'project')
         FreeStyleProject seedJob = jenkinsRule.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = seedJob.scheduleBuild2(0).get()
-        JobManagement jobManagement = new JenkinsJobManagement(new PrintStream(buffer), [:], build)
+        JobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.JENKINS_ROOT
+        )
         jenkinsRule.instance.quietPeriod = 0
 
         when:

@@ -5,7 +5,9 @@ import com.google.common.base.Predicates;
 import hudson.Extension;
 import hudson.Util;
 import hudson.XmlFile;
+import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Cause;
 import hudson.model.Saveable;
 import hudson.model.listeners.SaveableListener;
@@ -35,7 +37,7 @@ public class MonitorTemplateJobs extends SaveableListener {
         }
 
         // Look for template jobs
-        AbstractProject project = (AbstractProject) saveable;
+        AbstractItem project = (AbstractItem) saveable;
         String possibleTemplateName = project.getName();
 
         DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
@@ -53,13 +55,13 @@ public class MonitorTemplateJobs extends SaveableListener {
             return;
         }
 
-        Collection<AbstractProject> changed = filter(
+        Collection<BuildableItem> changed = filter(
                 transform(
                         filter(seedJobReferences, new SeedReferenceDigestPredicate(digest)),
                         new LookupProjectFunction()),
                 Predicates.notNull());
 
-        for (AbstractProject seedProject : changed) {
+        for (BuildableItem seedProject : changed) {
             seedProject.scheduleBuild(30, new TemplateTriggerCause());
         }
     }
@@ -84,10 +86,10 @@ public class MonitorTemplateJobs extends SaveableListener {
         }
     }
 
-    private static class LookupProjectFunction implements Function<SeedReference, AbstractProject> {
+    private static class LookupProjectFunction implements Function<SeedReference, BuildableItem> {
         @Override
-        public AbstractProject apply(SeedReference input) {
-            return (AbstractProject) Jenkins.getInstance().getItem(input.getSeedJobName());
+        public BuildableItem apply(SeedReference input) {
+            return (BuildableItem) Jenkins.getInstance().getItem(input.getSeedJobName());
         }
     }
 }

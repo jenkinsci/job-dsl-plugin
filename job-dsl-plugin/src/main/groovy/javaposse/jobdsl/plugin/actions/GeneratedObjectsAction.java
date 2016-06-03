@@ -1,18 +1,18 @@
 package javaposse.jobdsl.plugin.actions;
 
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.Job;
+import hudson.model.Run;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildAction<T>> implements Action {
-    protected final AbstractProject<?, ?> project;
+public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildRunAction<T>> implements Action {
+    protected final Job<?, ?> job;
     private final Class<B> buildActionClass;
 
-    GeneratedObjectsAction(AbstractProject<?, ?> project, Class<B> buildActionClass) {
-        this.project = project;
+    GeneratedObjectsAction(Job<?, ?> job, Class<B> buildActionClass) {
+        this.job = job;
         this.buildActionClass = buildActionClass;
     }
 
@@ -32,8 +32,8 @@ public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildA
     }
 
     public Set<T> findLastGeneratedObjects() {
-        for (AbstractBuild<?, ?> b = project.getLastBuild(); b != null; b = b.getPreviousBuild()) {
-            B action = b.getAction(buildActionClass);
+        for (Run run = job.getLastBuild(); run != null; run = run.getPreviousBuild()) {
+            B action = run.getAction(buildActionClass);
             if (action != null && action.getModifiedObjects() != null) {
                 return new LinkedHashSet<T>(action.getModifiedObjects());
             }
@@ -44,8 +44,8 @@ public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildA
     @SuppressWarnings("unused") // used by some Jelly views
     public Set<T> findAllGeneratedObjects() {
         Set<T> result = new LinkedHashSet<T>();
-        for (AbstractBuild build : project.getBuilds()) {
-            B action = build.getAction(buildActionClass);
+        for (Run run : job.getBuilds()) {
+            B action = run.getAction(buildActionClass);
             if (action != null && action.getModifiedObjects() != null) {
                 result.addAll(action.getModifiedObjects());
             }
@@ -53,8 +53,8 @@ public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildA
         return result;
     }
 
-    public static <T, A extends GeneratedObjectsAction<T, ?>> Set<T> extractGeneratedObjects(AbstractProject<?, ?> project, Class<A> actionType) {
-        A action = project.getAction(actionType);
+    public static <T, A extends GeneratedObjectsAction<T, ?>> Set<T> extractGeneratedObjects(Job job, Class<A> actionType) {
+        A action = job.getAction(actionType);
         return action == null ? new LinkedHashSet<T>() : action.findLastGeneratedObjects();
     }
 }

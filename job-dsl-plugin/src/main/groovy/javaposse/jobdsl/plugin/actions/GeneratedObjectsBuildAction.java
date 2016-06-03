@@ -1,12 +1,12 @@
 package javaposse.jobdsl.plugin.actions;
 
-import hudson.model.Action;
+import jenkins.tasks.SimpleBuildStep;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public abstract class GeneratedObjectsBuildAction<T> implements Action {
+public abstract class GeneratedObjectsBuildAction<T> implements SimpleBuildStep.LastBuildAction {
     private final Set<T> modifiedObjects;
 
     GeneratedObjectsBuildAction(Collection<T> modifiedObjects) {

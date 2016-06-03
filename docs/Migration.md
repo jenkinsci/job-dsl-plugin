@@ -1,3 +1,13 @@
+## Migrating to 1.48
+
+### Pipeline Compatibility
+
+The classes `javaposse.jobdsl.plugin.WorkspaceProtocol`, `javaposse.jobdsl.plugin.WorkspaceUrlConnection` and
+`javaposse.jobdsl.plugin.WorkspaceUrlHandler` as well as some constructors in
+`javaposse.jobdsl.plugin.JenkinsJobManagement`, `javaposse.jobdsl.plugin.ExecuteDslScripts` and
+`javaposse.jobdsl.plugin.ScriptRequestGenerator` are [[deprecated|Deprecation-Policy]] and will be removed. These
+classes are part of the internal implementation and should not affect DSL scripts.
+
 ## Migrating to 1.47
 
 ### Pipeline

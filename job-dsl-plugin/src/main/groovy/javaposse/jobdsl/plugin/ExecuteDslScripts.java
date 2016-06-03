@@ -8,15 +8,18 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import hudson.AbortException;
 import hudson.EnvVars;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.BuildListener;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Items;
+import hudson.model.Job;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.tasks.Builder;
@@ -39,13 +42,16 @@ import javaposse.jobdsl.plugin.actions.GeneratedUserContentsBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
 import jenkins.model.Jenkins;
+import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.io.FilenameUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
+import javax.annotation.Nonnull;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -60,22 +66,44 @@ import static javaposse.jobdsl.plugin.actions.GeneratedObjectsAction.extractGene
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /
  * update Jenkins jobs.
  */
-public class ExecuteDslScripts extends Builder {
+public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     private static final Logger LOGGER = Logger.getLogger(ExecuteDslScripts.class.getName());
 
     // Artifact of how Jelly/Stapler puts conditional variables in blocks, which NEED to map to a sub-Object.
     // The alternative would have been to mess with DescriptorImpl.getInstance
     public static class ScriptLocation {
+        private Boolean usingScriptText;
+        private String targets;
+        private String scriptText;
+
         @DataBoundConstructor
-        public ScriptLocation(String value, String targets, String scriptText) {
-            this.usingScriptText = value == null || Boolean.parseBoolean(value);
-            this.targets = Util.fixEmptyAndTrim(targets);
-            this.scriptText = Util.fixEmptyAndTrim(scriptText);
+        public ScriptLocation() {
         }
 
-        private final boolean usingScriptText;
-        private final String targets;
-        private final String scriptText;
+        @Deprecated
+        public ScriptLocation(String value, String targets, String scriptText) {
+            setValue(value);
+            setTargets(targets);
+            setScriptText(scriptText);
+        }
+
+        @DataBoundSetter
+        public void setValue(String value) {
+            this.usingScriptText = value == null || Boolean.parseBoolean(value);
+        }
+
+        @DataBoundSetter
+        public void setTargets(String targets) {
+            this.targets = Util.fixEmptyAndTrim(targets);
+        }
+
+        @DataBoundSetter
+        public void setScriptText(String scriptText) {
+            this.scriptText = Util.fixEmptyAndTrim(scriptText);
+            if (this.scriptText != null && this.usingScriptText == null) {
+                usingScriptText = true;
+            }
+        }
     }
 
     /**
@@ -93,24 +121,28 @@ public class ExecuteDslScripts extends Builder {
      */
     private final boolean usingScriptText;
 
-    private final boolean ignoreExisting;
+    private boolean ignoreExisting;
 
-    private final RemovedJobAction removedJobAction;
+    private RemovedJobAction removedJobAction = RemovedJobAction.IGNORE;
 
-    private final RemovedViewAction removedViewAction;
+    private RemovedViewAction removedViewAction = RemovedViewAction.IGNORE;
 
-    private final LookupStrategy lookupStrategy;
+    private LookupStrategy lookupStrategy = LookupStrategy.JENKINS_ROOT;
 
-    private final String additionalClasspath;
+    private String additionalClasspath;
 
     @DataBoundConstructor
+    public ExecuteDslScripts(ScriptLocation scriptLocation) {
+        this.usingScriptText = scriptLocation == null || (scriptLocation.usingScriptText != null && scriptLocation.usingScriptText);
+        this.targets = scriptLocation == null ? null : scriptLocation.targets;
+        this.scriptText = scriptLocation == null ? null : scriptLocation.scriptText;
+    }
+
+    @Deprecated
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
                              RemovedViewAction removedViewAction, LookupStrategy lookupStrategy,
                              String additionalClasspath) {
-        // Copy over from embedded object
-        this.usingScriptText = scriptLocation == null || scriptLocation.usingScriptText;
-        this.targets = scriptLocation == null ? null : scriptLocation.targets;
-        this.scriptText = scriptLocation == null ? null : scriptLocation.scriptText;
+        this(scriptLocation);
         this.ignoreExisting = ignoreExisting;
         this.removedJobAction = removedJobAction;
         this.removedViewAction = removedViewAction;
@@ -118,15 +150,18 @@ public class ExecuteDslScripts extends Builder {
         this.additionalClasspath = additionalClasspath;
     }
 
+    @Deprecated
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
                              LookupStrategy lookupStrategy) {
         this(scriptLocation, ignoreExisting, removedJobAction, RemovedViewAction.IGNORE, lookupStrategy, null);
     }
 
+    @Deprecated
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
         this(scriptLocation, ignoreExisting, removedJobAction, LookupStrategy.JENKINS_ROOT);
     }
 
+    @Deprecated
     public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
                              RemovedViewAction removedViewAction, LookupStrategy lookupStrategy) {
         this(scriptLocation, ignoreExisting, removedJobAction, removedViewAction, lookupStrategy, null);
@@ -141,10 +176,6 @@ public class ExecuteDslScripts extends Builder {
         this.removedViewAction = RemovedViewAction.IGNORE;
         this.lookupStrategy = LookupStrategy.JENKINS_ROOT;
         this.additionalClasspath = null;
-    }
-
-    ExecuteDslScripts() {
-        this(null);
     }
 
     public String getTargets() {
@@ -163,31 +194,50 @@ public class ExecuteDslScripts extends Builder {
         return ignoreExisting;
     }
 
+    @DataBoundSetter
+    public void setIgnoreExisting(boolean ignoreExisting) {
+        this.ignoreExisting = ignoreExisting;
+    }
+
     public RemovedJobAction getRemovedJobAction() {
         return removedJobAction;
+    }
+
+    @DataBoundSetter
+    public void setRemovedJobAction(RemovedJobAction removedJobAction) {
+        this.removedJobAction = removedJobAction;
     }
 
     public RemovedViewAction getRemovedViewAction() {
         return removedViewAction;
     }
 
+    @DataBoundSetter
+    public void setRemovedViewAction(RemovedViewAction removedViewAction) {
+        this.removedViewAction = removedViewAction;
+    }
+
     public LookupStrategy getLookupStrategy() {
         return lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
+    }
+
+    @DataBoundSetter
+    public void setLookupStrategy(LookupStrategy lookupStrategy) {
+        this.lookupStrategy = lookupStrategy;
     }
 
     public String getAdditionalClasspath() {
         return additionalClasspath;
     }
 
+    @DataBoundSetter
+    public void setAdditionalClasspath(String additionalClasspath) {
+        this.additionalClasspath = additionalClasspath;
+    }
+
     @Override
     public Collection<? extends Action> getProjectActions(AbstractProject<?, ?> project) {
-        return Arrays.<Action>asList(
-                new GeneratedJobsAction(project),
-                new GeneratedViewsAction(project),
-                new GeneratedConfigFilesAction(project),
-                new GeneratedUserContentsAction(project),
-                new ApiViewerAction()
-        );
+        return Collections.singleton(new ApiViewerAction());
     }
 
     /**
@@ -195,17 +245,19 @@ public class ExecuteDslScripts extends Builder {
      * updated Jenkins jobs. The created / updated jobs are reported in the build result.
      */
     @Override
-    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher,
-                           final BuildListener listener) throws InterruptedException, IOException {
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher,
+                        @Nonnull TaskListener listener) throws InterruptedException, IOException {
         try {
-            EnvVars env = build.getEnvironment(listener);
-            env.putAll(build.getBuildVariables());
+            EnvVars env = run.getEnvironment(listener);
+            if (run instanceof AbstractBuild) {
+                env.putAll(((AbstractBuild<?, ?>) run).getBuildVariables());
+            }
 
             JobManagement jm = new InterruptibleJobManagement(
-                    new JenkinsJobManagement(listener.getLogger(), env, build, getLookupStrategy())
+                    new JenkinsJobManagement(listener.getLogger(), env, run, workspace, getLookupStrategy())
             );
 
-            ScriptRequestGenerator generator = new ScriptRequestGenerator(build, env);
+            ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env);
             try {
                 Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
                         targets, usingScriptText, scriptText, ignoreExisting, additionalClasspath
@@ -218,19 +270,17 @@ public class ExecuteDslScripts extends Builder {
                 Set<GeneratedConfigFile> freshConfigFiles = generatedItems.getConfigFiles();
                 Set<GeneratedUserContent> freshUserContents = generatedItems.getUserContents();
 
-                updateTemplates(build, listener, freshJobs);
-                updateGeneratedJobs(build, listener, freshJobs);
-                updateGeneratedViews(build, listener, freshViews);
-                updateGeneratedConfigFiles(build, listener, freshConfigFiles);
-                updateGeneratedUserContents(build, listener, freshUserContents);
+                updateTemplates(run.getParent(), listener, freshJobs);
+                updateGeneratedJobs(run.getParent(), listener, freshJobs);
+                updateGeneratedViews(run.getParent(), listener, freshViews);
+                updateGeneratedConfigFiles(run.getParent(), listener, freshConfigFiles);
+                updateGeneratedUserContents(run.getParent(), listener, freshUserContents);
 
                 // Save onto Builder, which belongs to a Project.
-                build.addAction(new GeneratedJobsBuildAction(freshJobs, getLookupStrategy()));
-                build.addAction(new GeneratedViewsBuildAction(freshViews, getLookupStrategy()));
-                build.addAction(new GeneratedConfigFilesBuildAction(freshConfigFiles));
-                build.addAction(new GeneratedUserContentsBuildAction(freshUserContents));
-
-                return true;
+                run.addAction(new GeneratedJobsBuildAction(freshJobs, getLookupStrategy()));
+                run.addAction(new GeneratedViewsBuildAction(freshViews, getLookupStrategy()));
+                run.addAction(new GeneratedConfigFilesBuildAction(freshConfigFiles));
+                run.addAction(new GeneratedUserContentsBuildAction(freshUserContents));
             } finally {
                 generator.close();
             }
@@ -247,10 +297,8 @@ public class ExecuteDslScripts extends Builder {
     /**
      * Uses generatedJobs as existing data, so call before updating generatedJobs.
      */
-    private Set<String> updateTemplates(AbstractBuild<?, ?> build, BuildListener listener,
+    private Set<String> updateTemplates(Job seedJob, TaskListener listener,
                                         Set<GeneratedJob> freshJobs) throws IOException {
-        AbstractProject<?, ?> seedJob = build.getProject();
-
         Set<String> freshTemplates = getTemplates(freshJobs);
         Set<String> existingTemplates = getTemplates(extractGeneratedObjects(seedJob, GeneratedJobsAction.class));
         Set<String> newTemplates = Sets.difference(freshTemplates, existingTemplates);
@@ -307,10 +355,10 @@ public class ExecuteDslScripts extends Builder {
     }
 
 
-    private void updateGeneratedJobs(final AbstractBuild<?, ?> build, BuildListener listener,
+    private void updateGeneratedJobs(final Job seedJob, TaskListener listener,
                                      Set<GeneratedJob> freshJobs) throws IOException, InterruptedException {
         // Update Project
-        Set<GeneratedJob> generatedJobs = extractGeneratedObjects(build.getProject(), GeneratedJobsAction.class);
+        Set<GeneratedJob> generatedJobs = extractGeneratedObjects(seedJob, GeneratedJobsAction.class);
         Set<GeneratedJob> added = Sets.difference(freshJobs, generatedJobs);
         Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
         Set<GeneratedJob> unreferenced = Sets.difference(generatedJobs, freshJobs);
@@ -323,7 +371,7 @@ public class ExecuteDslScripts extends Builder {
 
         // Update unreferenced jobs
         for (GeneratedJob unreferencedJob : unreferenced) {
-            Item removedItem = getLookupStrategy().getItem(build.getProject(), unreferencedJob.getJobName(), Item.class);
+            Item removedItem = getLookupStrategy().getItem(seedJob, unreferencedJob.getJobName(), Item.class);
             if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     removedItem.delete();
@@ -341,10 +389,10 @@ public class ExecuteDslScripts extends Builder {
         logItems(listener, "Disabled items", disabled);
         logItems(listener, "Removed items", removed);
 
-        updateGeneratedJobMap(build.getProject(), Sets.union(added, existing), unreferenced);
+        updateGeneratedJobMap(seedJob, Sets.union(added, existing), unreferenced);
     }
 
-    private void updateGeneratedJobMap(AbstractProject<?, ?> seedJob, Set<GeneratedJob> createdOrUpdatedJobs,
+    private void updateGeneratedJobMap(Job seedJob, Set<GeneratedJob> createdOrUpdatedJobs,
                                        Set<GeneratedJob> removedJobs) throws IOException {
         DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
         boolean descriptorMutated = false;
@@ -383,9 +431,9 @@ public class ExecuteDslScripts extends Builder {
         }
     }
 
-    private void updateGeneratedViews(AbstractBuild<?, ?> build, BuildListener listener,
+    private void updateGeneratedViews(Job seedJob, TaskListener listener,
                                       Set<GeneratedView> freshViews) throws IOException {
-        Set<GeneratedView> generatedViews = extractGeneratedObjects(build.getProject(), GeneratedViewsAction.class);
+        Set<GeneratedView> generatedViews = extractGeneratedObjects(seedJob, GeneratedViewsAction.class);
         Set<GeneratedView> added = Sets.difference(freshViews, generatedViews);
         Set<GeneratedView> existing = Sets.intersection(generatedViews, freshViews);
         Set<GeneratedView> unreferenced = Sets.difference(generatedViews, freshViews);
@@ -399,7 +447,7 @@ public class ExecuteDslScripts extends Builder {
         if (removedViewAction == RemovedViewAction.DELETE) {
             for (GeneratedView unreferencedView : unreferenced) {
                 String viewName = unreferencedView.getName();
-                ItemGroup parent = getLookupStrategy().getParent(build.getProject(), viewName);
+                ItemGroup parent = getLookupStrategy().getParent(seedJob, viewName);
                 if (parent instanceof ViewGroup) {
                     View view = ((ViewGroup) parent).getView(FilenameUtils.getName(viewName));
                     if (view != null) {
@@ -417,9 +465,9 @@ public class ExecuteDslScripts extends Builder {
         logItems(listener, "Removed views", removed);
     }
 
-    private void updateGeneratedConfigFiles(AbstractBuild<?, ?> build, BuildListener listener,
+    private void updateGeneratedConfigFiles(Job seedJob, TaskListener listener,
                                             Set<GeneratedConfigFile> freshConfigFiles) {
-        Set<GeneratedConfigFile> generatedConfigFiles = extractGeneratedObjects(build.getProject(), GeneratedConfigFilesAction.class);
+        Set<GeneratedConfigFile> generatedConfigFiles = extractGeneratedObjects(seedJob, GeneratedConfigFilesAction.class);
         Set<GeneratedConfigFile> added = Sets.difference(freshConfigFiles, generatedConfigFiles);
         Set<GeneratedConfigFile> existing = Sets.intersection(generatedConfigFiles, freshConfigFiles);
         Set<GeneratedConfigFile> unreferenced = Sets.difference(generatedConfigFiles, freshConfigFiles);
@@ -429,9 +477,9 @@ public class ExecuteDslScripts extends Builder {
         logItems(listener, "Unreferenced config files", unreferenced);
     }
 
-    private void updateGeneratedUserContents(AbstractBuild<?, ?> build, BuildListener listener,
+    private void updateGeneratedUserContents(Job seedJob, TaskListener listener,
                                              Set<GeneratedUserContent> freshUserContents) {
-        Set<GeneratedUserContent> generatedUserContents = extractGeneratedObjects(build.getProject(), GeneratedUserContentsAction.class);
+        Set<GeneratedUserContent> generatedUserContents = extractGeneratedObjects(seedJob, GeneratedUserContentsAction.class);
         Set<GeneratedUserContent> added = Sets.difference(freshUserContents, generatedUserContents);
         Set<GeneratedUserContent> existing = Sets.intersection(generatedUserContents, freshUserContents);
         Set<GeneratedUserContent> unreferenced = Sets.difference(generatedUserContents, freshUserContents);
@@ -441,7 +489,7 @@ public class ExecuteDslScripts extends Builder {
         logItems(listener, "Unreferenced user content", unreferenced);
     }
 
-    private static void logItems(BuildListener listener, String message, Collection<?> collection) {
+    private static void logItems(TaskListener listener, String message, Collection<?> collection) {
         if (!collection.isEmpty()) {
             listener.getLogger().println(message + ":");
             for (Object item : collection) {
