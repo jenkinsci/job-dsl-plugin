@@ -1,5 +1,9 @@
 This is a collection of talks, presentations and blog posts about the Job DSL plugin.
 
+* June 2016
+    * ePages devBlog:
+      [How to empower your Jenkins with Gradle](https://developer.epages.com/blog/2016/06/07/gradle-jenkins-plugin.html)
+      by Renato
 * April 2016
     * Diabol: [The power of Jenkins Job DSL](http://blog.diabol.se/?p=906)
       by [Tommy Tynjä](https://twitter.com/tommysdk)
