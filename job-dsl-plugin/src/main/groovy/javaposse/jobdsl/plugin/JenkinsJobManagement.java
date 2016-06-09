@@ -76,34 +76,36 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
 
     private final Map<String, String> envVars;
-    private final AbstractBuild<?, ?> build;
+    private final Run<?, ?> run;
     private final FilePath workspace;
     private final Item project;
     private final LookupStrategy lookupStrategy;
     private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments =
             new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
 
+    @Deprecated
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, String> envVars, AbstractBuild<?, ?> build,
                                 LookupStrategy lookupStrategy) {
+        this(outputLogger, envVars, build, build.getWorkspace(), lookupStrategy);
+    }
+
+    public JenkinsJobManagement(PrintStream outputLogger, Map<String, String> envVars, Run<?, ?> run,
+                                FilePath workspace, LookupStrategy lookupStrategy) {
         super(outputLogger);
         this.envVars = envVars;
-        this.build = build;
-        this.workspace = build.getWorkspace();
-        this.project = build.getProject();
+        this.run = run;
+        this.workspace = workspace;
+        this.project = run == null ? null : run.getParent();
         this.lookupStrategy = lookupStrategy;
     }
 
+    @Deprecated
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, String> envVars, AbstractBuild<?, ?> build) {
-        this(outputLogger, envVars, build, LookupStrategy.JENKINS_ROOT);
+        this(outputLogger, envVars, build, build.getWorkspace(), LookupStrategy.JENKINS_ROOT);
     }
 
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, String> envVars, File workspace) {
-        super(outputLogger);
-        this.envVars = envVars;
-        this.build = null;
-        this.workspace = new FilePath(workspace.getAbsoluteFile());
-        this.project = null;
-        this.lookupStrategy = LookupStrategy.JENKINS_ROOT;
+        this(outputLogger, envVars, null, new FilePath(workspace.getAbsoluteFile()), LookupStrategy.JENKINS_ROOT);
     }
 
     @Override
@@ -247,7 +249,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         BuildableItem project = lookupStrategy.getItem(this.project, path, BuildableItem.class);
 
         LOGGER.log(Level.INFO, format("Scheduling build of %s from %s", path, project.getName()));
-        project.scheduleBuild(build == null ? new JobDslCause() : new Cause.UpstreamCause((Run) build));
+        project.scheduleBuild(run == null ? new JobDslCause() : new Cause.UpstreamCause(run));
     }
 
 
@@ -434,8 +436,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             throw new DslScriptException(message);
         } else {
             logWarning(message);
-            if (build != null) {
-                build.setResult(UNSTABLE);
+            if (run != null) {
+                run.setResult(UNSTABLE);
             }
         }
     }

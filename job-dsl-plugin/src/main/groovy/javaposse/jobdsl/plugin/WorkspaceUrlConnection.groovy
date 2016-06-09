@@ -2,6 +2,7 @@ package javaposse.jobdsl.plugin
 
 import hudson.FilePath
 
+@Deprecated
 class WorkspaceUrlConnection extends URLConnection {
     InputStream is
 

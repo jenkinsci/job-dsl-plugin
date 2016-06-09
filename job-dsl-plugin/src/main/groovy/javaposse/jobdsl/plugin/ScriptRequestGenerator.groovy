@@ -1,21 +1,25 @@
 package javaposse.jobdsl.plugin
 
+import groovy.transform.PackageScope
 import hudson.EnvVars
 import hudson.FilePath
 import hudson.model.AbstractBuild
 import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.ScriptRequest
 
-import static javaposse.jobdsl.plugin.WorkspaceProtocol.createWorkspaceUrl
-import static javaposse.jobdsl.plugin.WorkspaceProtocol.getAbsolutePath
-
 class ScriptRequestGenerator implements Closeable {
-    final AbstractBuild build
-    EnvVars env
+    final FilePath workspace
+    final EnvVars env
     final Map<FilePath, File> cachedFiles = [:]
 
+    @Deprecated
+    @SuppressWarnings('GroovyUnusedDeclaration')
     ScriptRequestGenerator(AbstractBuild build, EnvVars env) {
-        this.build = build
+        this(build.workspace, env)
+    }
+
+    ScriptRequestGenerator(FilePath workspace, EnvVars env) {
+        this.workspace = workspace
         this.env = env
     }
 
@@ -29,24 +33,24 @@ class ScriptRequestGenerator implements Closeable {
             String expandedClasspath = env.expand(additionalClasspath)
             expandedClasspath.split('\n').each {
                 if (it.contains('*') || it.contains('?')) {
-                    classpath.addAll(build.workspace.list(it).collect { createClasspathURL(it) })
+                    classpath.addAll(workspace.list(it).collect { createClasspathURL(it) })
                 } else {
-                    classpath << createClasspathURL(build.workspace.child(it))
+                    classpath << createClasspathURL(workspace.child(it))
                 }
             }
         }
         if (usingScriptText) {
-            URL[] urlRoots = ([createWorkspaceUrl(build.project)] + classpath) as URL[]
+            URL[] urlRoots = ([createWorkspaceUrl()] + classpath) as URL[]
             ScriptRequest request = new ScriptRequest(null, scriptText, urlRoots, ignoreExisting)
             scriptRequests.add(request)
         } else {
             targets.split('\n').each { String target ->
-                FilePath[] filePaths = build.workspace.list(env.expand(target))
+                FilePath[] filePaths = workspace.list(env.expand(target))
                 if (filePaths.length == 0) {
                     throw new DslException("no Job DSL script(s) found at ${target}")
                 }
                 for (FilePath filePath : filePaths) {
-                    URL[] urlRoots = ([createWorkspaceUrl(build, filePath.parent)] + classpath) as URL[]
+                    URL[] urlRoots = ([createWorkspaceUrl(filePath.parent)] + classpath) as URL[]
                     ScriptRequest request = new ScriptRequest(
                             filePath.name, null, urlRoots, ignoreExisting, getAbsolutePath(filePath)
                     )
@@ -67,7 +71,7 @@ class ScriptRequestGenerator implements Closeable {
     private URL createClasspathURL(FilePath filePath) {
         if (filePath.isRemote()) {
             if (filePath.directory) {
-                createWorkspaceUrl(build, filePath)
+                createWorkspaceUrl(filePath)
             } else {
                 File file = cachedFiles[filePath]
                 if (!file) {
@@ -81,9 +85,79 @@ class ScriptRequestGenerator implements Closeable {
         }
     }
 
+    private URL createWorkspaceUrl() {
+        new URL(null, 'workspace:/', new WorkspaceUrlHandler(workspace))
+    }
+
+    private URL createWorkspaceUrl(FilePath filePath) {
+        String relativePath = getAbsolutePath(filePath) - getAbsolutePath(workspace)
+        relativePath = relativePath.replaceAll('\\\\', '/') // normalize for Windows
+        String slash = filePath.directory ? '/' : ''
+        new URL(createWorkspaceUrl(), "$relativePath$slash")
+    }
+
     private static File copyToLocal(FilePath filePath) {
         File file = File.createTempFile('jobdsl', '.jar')
         filePath.copyTo(new FilePath(file))
         file
+    }
+
+    @SuppressWarnings('UnnecessaryGetter')
+    @PackageScope
+    static String getAbsolutePath(FilePath filePath) {
+        // see JENKINS-33723
+        filePath.getRemote()
+    }
+
+    private static class WorkspaceUrlHandler extends URLStreamHandler {
+        private final FilePath workspace
+
+        WorkspaceUrlHandler(FilePath workspace) {
+            this.workspace = workspace
+        }
+
+        protected URLConnection openConnection(URL url) throws IOException {
+            new WorkspaceUrlConnection(url, workspace)
+        }
+    }
+
+    private static class WorkspaceUrlConnection extends URLConnection {
+        private final FilePath workspace
+        private InputStream is
+
+        WorkspaceUrlConnection(URL url, FilePath workspace) {
+            super(url)
+            this.workspace = workspace
+        }
+
+        @Override
+        void connect() throws IOException {
+            String relativePath = url.file[1..-1] // remove leading slash
+            FilePath targetPath = workspace.child(relativePath)
+
+            try {
+                if (!targetPath.exists()) {
+                    throw new FileNotFoundException("Unable to find file at ${targetPath}")
+                }
+
+                is = targetPath.read()
+                connected = true
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt()
+                throw new IOException(e)
+            }
+        }
+
+        @Override
+        InputStream getInputStream() throws IOException {
+            if (!connected) {
+                connect()
+            }
+            is
+        }
+
+        String getContentType() {
+            guessContentTypeFromName(url.file)
+        }
     }
 }

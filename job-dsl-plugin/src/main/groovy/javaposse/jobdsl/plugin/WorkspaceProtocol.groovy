@@ -5,6 +5,7 @@ import hudson.model.AbstractBuild
 import hudson.model.AbstractProject
 import jenkins.model.Jenkins
 
+@Deprecated
 class WorkspaceProtocol {
     /**
      * Create a workspace URL that represents the base dir of the given AbstractProject.

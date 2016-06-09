@@ -168,3 +168,42 @@ But note, this will only work if the BuildFlow project type uses the same sub-el
 # Use DSL scripts in a Gradle project
 
 Gradle provides a way to build and test your scripts and supporting classes. See [job-dsl-gradle-example](https://github.com/sheehan/job-dsl-gradle-example) for an example.
+
+# Use Job DSL in Pipeline scripts
+
+Starting with version 1.48, the Job DSL build step can be used in
+[Pipeline](https://github.com/jenkinsci/pipeline-plugin) scripts (e.g. in `Jenkinsfile`).
+
+Example:
+
+```groovy
+node {
+    step([
+        $class: 'ExecuteDslScripts',
+        scriptLocation: [scriptText: 'job("example-2")'],
+    ])
+    step([
+        $class: 'ExecuteDslScripts',
+        scriptLocation: [targets: ['jobs/projectA/*.groovy', 'jobs/common.groovy'].join('\n')],
+        removedJobAction: 'DELETE',
+        removedViewAction: 'DELETE',
+        lookupStrategy: 'SEED_JOB',
+        additionalClasspath: ['libA.jar', 'libB.jar'].join('\n')
+    ])
+}
+```
+
+Options:
+* `scriptLocation`: mandatory, specifies the Job DSL scripts to execute and consists of two sub-options:
+     * `targets`: optional, specifies Job DSL script files to execute, newline separated list of file names relative
+                  to the workspace
+     * `scriptText`: optional, specifies an inline Job DSL script
+* `ignoreExisting`: optional, defaults to `false`, set to `true` to not update existing jobs and views
+* `removedJobAction`: optional, set to `'DELETE'` or `'DISABLE'` to delete or disable jobs that have been removed from
+                      DSL scripts, defaults to `'IGNORE'`
+* `removedViewAction`: optional, set to `'DELETE'` to delete views that have been removed from Job DSL scripts, defaults
+                       to `'IGNORE'`
+* `lookupStrategy`: optional, when set to `'SEED_JOB'` job names will be interpreted as relative to the pipeline job,
+                    defaults to `'JENKINS_ROOT` which will treat all job names as absolute
+* `additionalClasspath`: optional, newline separated list of additional classpath entries for Job DSL scripts, file
+                         names relative must be relative to the workspace
