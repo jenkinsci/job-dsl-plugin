@@ -1,11 +1,8 @@
-package javaposse.jobdsl.plugin.actions;
+package javaposse.jobdsl.plugin.actions
 
-import hudson.model.Action;
-import hudson.model.Job;
-import hudson.model.Run;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
+import hudson.model.Action
+import hudson.model.Job
+import hudson.model.Run
 
 public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsBuildRunAction<T>> implements Action {
     protected final Job<?, ?> job;
