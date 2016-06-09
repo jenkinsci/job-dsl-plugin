@@ -1,6 +1,5 @@
 package javaposse.jobdsl.plugin;
 
-import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import jenkins.model.Jenkins;
@@ -80,7 +79,8 @@ public enum LookupStrategy {
             case 0:
                 return jenkins;
             default:
-                return jenkins.getItem(path.substring(0, i), getContext(seedJob), Folder.class);
+                Item item = jenkins.getItem(path.substring(0, i), getContext(seedJob));
+                return item instanceof ItemGroup ? (ItemGroup) item : null;
         }
     }
 

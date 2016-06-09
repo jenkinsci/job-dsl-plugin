@@ -30,6 +30,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Made `ExecuteDslScripts` build step compatible with [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
    ([JENKINS-35282](https://issues.jenkins-ci.org/browse/JENKINS-35282))
  * Several classes and some constructors have been deprecated, see [Migration](Migration#migrating-to-148)
+ * Removed optional dependency to
+   [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin)
+ * Removed anything that has been deprecated in 1.41, see [Migration](Migration#migrating-to-141)
 * 1.47 (May 24 2016)
  * Improved support for [[Testing DSL Scripts]]
    ([JENKINS-29091](https://issues.jenkins-ci.org/browse/JENKINS-29091))

@@ -1084,8 +1084,7 @@ class PublisherContextSpec extends Specification {
             buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
             matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
         }
-        1 * jobManagement.requirePlugin('jabber')
-        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+        1 * jobManagement.requireMinimumPluginVersion('jabber', '1.35')
     }
 
     def 'call Jabber publish with group chat'() {
@@ -1115,8 +1114,7 @@ class PublisherContextSpec extends Specification {
             buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
             matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
         }
-        1 * jobManagement.requirePlugin('jabber')
-        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+        1 * jobManagement.requireMinimumPluginVersion('jabber', '1.35')
     }
 
     def 'call Jabber publish with conference room'() {
@@ -1146,8 +1144,7 @@ class PublisherContextSpec extends Specification {
             buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
             matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
         }
-        1 * jobManagement.requirePlugin('jabber')
-        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+        1 * jobManagement.requireMinimumPluginVersion('jabber', '1.35')
     }
 
     def 'call Jabber publish with closure args'() {
@@ -1185,8 +1182,7 @@ class PublisherContextSpec extends Specification {
                     'hudson.plugins.im.build_notify.PrintFailingTestsBuildToChatNotifier'
             matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
         }
-        1 * jobManagement.requirePlugin('jabber')
-        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+        1 * jobManagement.requireMinimumPluginVersion('jabber', '1.35')
     }
 
     def 'call Jabber publish with NEW_FAILURE_AND_FIXED strategy'() {
@@ -1217,8 +1213,7 @@ class PublisherContextSpec extends Specification {
             buildToChatNotifier[0].attribute('class') == 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
             matrixMultiplier[0].value() == 'ONLY_CONFIGURATIONS'
         }
-        1 * jobManagement.requirePlugin('jabber')
-        1 * jobManagement.logPluginDeprecationWarning('jabber', '1.35')
+        1 * jobManagement.requireMinimumPluginVersion('jabber', '1.35')
         1 * jobManagement.requireMinimumPluginVersion('instant-messaging', '1.26')
     }
 

@@ -210,7 +210,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.30
      * @see #folder(java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'cloudbees-folder')
+    @RequiresPlugin(id = 'cloudbees-folder', minimumVersion = '5.0')
     Folder folder(String name)
 
     /**
@@ -218,7 +218,7 @@ interface DslFactory extends ViewFactory {
      *
      * @since 1.31
      */
-    @RequiresPlugin(id = 'cloudbees-folder')
+    @RequiresPlugin(id = 'cloudbees-folder', minimumVersion = '5.0')
     Folder folder(String name, @DslContext(Folder) Closure closure)
 
     /**
