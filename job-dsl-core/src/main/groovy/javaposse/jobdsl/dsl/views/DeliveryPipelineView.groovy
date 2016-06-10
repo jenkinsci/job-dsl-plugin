@@ -166,6 +166,13 @@ class DeliveryPipelineView extends View {
         }
     }
 
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.10')
+    void pagingEnabled(boolean value = true) {
+        configure {
+            it / methodMissing('pagingEnabled', value)
+        }
+    }
+
     /**
      * Defines pipelines by either specifying names and start jobs or by regular expressions. Both variants can be
      * called multiple times to add different pipelines to the view.
