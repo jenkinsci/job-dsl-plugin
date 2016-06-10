@@ -5,6 +5,11 @@ import jenkins.model.RunAction2;
 
 import java.util.Collection;
 
+/**
+ * @deprecated use {@code javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction} instead
+ */
+@Deprecated
+@SuppressWarnings("Deprecation")
 abstract class GeneratedObjectsBuildRunAction<T> extends GeneratedObjectsBuildAction<T> implements RunAction2 {
     transient Run owner;
 

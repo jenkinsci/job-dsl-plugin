@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.GeneratedUserContent;
 import java.util.Collection;
 import java.util.Collections;
 
-public class GeneratedUserContentsBuildAction extends GeneratedObjectsBuildRunAction<GeneratedUserContent> {
+public class GeneratedUserContentsBuildAction extends GeneratedObjectsRunAction<GeneratedUserContent> {
     public GeneratedUserContentsBuildAction(Collection<GeneratedUserContent> modifiedUserContents) {
         super(modifiedUserContents);
     }

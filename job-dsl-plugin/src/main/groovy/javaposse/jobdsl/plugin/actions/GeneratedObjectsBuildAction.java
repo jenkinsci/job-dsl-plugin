@@ -6,6 +6,10 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * @deprecated use {@code javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction} instead
+ */
+@Deprecated
 public abstract class GeneratedObjectsBuildAction<T> implements SimpleBuildStep.LastBuildAction {
     private final Set<T> modifiedObjects;
 

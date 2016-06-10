@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class GeneratedJobsBuildAction extends GeneratedObjectsBuildRunAction<GeneratedJob> {
+public class GeneratedJobsBuildAction extends GeneratedObjectsRunAction<GeneratedJob> {
     @SuppressWarnings("unused")
     private transient Set<GeneratedJob> modifiedJobs;
 

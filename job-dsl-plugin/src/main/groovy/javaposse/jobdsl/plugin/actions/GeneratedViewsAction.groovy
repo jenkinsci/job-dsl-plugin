@@ -1,26 +1,23 @@
-package javaposse.jobdsl.plugin.actions;
+package javaposse.jobdsl.plugin.actions
 
-import hudson.model.Job;
-import hudson.model.Run;
-import hudson.model.View;
-import javaposse.jobdsl.dsl.GeneratedView;
+import hudson.model.Job
+import hudson.model.Run
+import hudson.model.View
+import javaposse.jobdsl.dsl.GeneratedView
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-public class GeneratedViewsAction extends GeneratedObjectsAction<GeneratedView, GeneratedViewsBuildAction> {
-    public GeneratedViewsAction(Job<?, ?> job) {
-        super(job, GeneratedViewsBuildAction.class);
+class GeneratedViewsAction extends GeneratedObjectsAction<GeneratedView, GeneratedViewsBuildAction> {
+    GeneratedViewsAction(Job job) {
+        super(job, GeneratedViewsBuildAction)
     }
 
-    public Set<View> getViews() {
-        Set<View> result = new LinkedHashSet<View>();
-        for (Run run : job.getBuilds()) {
-            GeneratedViewsBuildAction action = run.getAction(GeneratedViewsBuildAction.class);
+    Set<View> getViews() {
+        Set<View> result = []
+        for (Run run : job.builds) {
+            GeneratedViewsBuildAction action = run.getAction(GeneratedViewsBuildAction)
             if (action != null) {
-                result.addAll(action.getViews());
+                result.addAll(action.views)
             }
         }
-        return result;
+        result
     }
 }

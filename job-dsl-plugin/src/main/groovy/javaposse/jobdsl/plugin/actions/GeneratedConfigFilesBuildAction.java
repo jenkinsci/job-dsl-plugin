@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-public class GeneratedConfigFilesBuildAction extends GeneratedObjectsBuildRunAction<GeneratedConfigFile> {
+public class GeneratedConfigFilesBuildAction extends GeneratedObjectsRunAction<GeneratedConfigFile> {
     @SuppressWarnings("unused")
     private transient Set<GeneratedConfigFile> modifiedConfigFiles;
 
