@@ -54,6 +54,17 @@ class TimeoutContext extends AbstractContext {
             timeoutMinutes(minutes)
         }
     }
+    
+    /**
+     * Aborts the build based on a fixed time-out. (may be a digital string or a Macro Token)
+     *
+     * @since 1.48
+     */
+    void absolute(String minutes) {
+      setStrategy('Absolute') {
+            timeoutMinutes(minutes)
+      }
+    }
 
     /**
      * Uses a heuristics based approach to detect builds that are suspiciously running for a long time.
