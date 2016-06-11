@@ -54,7 +54,7 @@ class TimeoutContext extends AbstractContext {
             timeoutMinutes(minutes)
         }
     }
-    
+
     /**
      * Aborts the build based on a fixed time-out. (may be a digital string or a Macro Token)
      *
