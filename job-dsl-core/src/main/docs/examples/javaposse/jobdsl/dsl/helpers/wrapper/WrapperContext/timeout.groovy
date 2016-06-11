@@ -44,3 +44,35 @@ job('example-5') {
         }
     }
 }
+
+// defines an absolute timeout with a maximum build time of 5 minutes via String type
+job('example-6') {
+    wrappers {
+        timeout {
+            absolute('5')
+        }
+    }
+}
+
+// defines an absolute timeout using a prepare environment variable 
+job('example-7') {
+    wrappers {
+        timeout {
+          absolute('${JOB_TIMEOUT}')
+        }
+    }
+}
+
+// defines an absolute timeout using the string parameter
+// then you can use the parameterized build to set the absolute timeout 
+job('example-8') {
+    parameters {
+        stringParam('MY_JOB_TIMEOUT', '5', 'my description')
+    }
+  
+    wrappers {
+        timeout {
+          absolute('${MY_JOB_TIMEOUT}')
+        }
+    }
+}
