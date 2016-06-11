@@ -54,7 +54,7 @@ job('example-6') {
     }
 }
 
-// defines an absolute timeout using a prepare environment variable 
+// defines an absolute timeout using a prepare environment variable
 job('example-7') {
     wrappers {
         timeout {
@@ -64,12 +64,12 @@ job('example-7') {
 }
 
 // defines an absolute timeout using the string parameter
-// then you can use the parameterized build to set the absolute timeout 
+// then you can use the parameterized build to set the absolute timeout
 job('example-8') {
     parameters {
         stringParam('MY_JOB_TIMEOUT', '5', 'my description')
     }
-  
+
     wrappers {
         timeout {
           absolute('${MY_JOB_TIMEOUT}')
