@@ -158,6 +158,23 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
     }
 
+    def 'absolute timeout configuration working using string type'() {
+        when:
+        context.timeout {
+            absolute('${TEST_JOB_TIMEOUT}')
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            children().size() == 2
+            strategy[0].children().size() == 1
+            strategy[0].@class == 'hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy'
+            strategy[0].timeoutMinutes[0].value() == '${TEST_JOB_TIMEOUT}'
+            operationList[0].children().size() == 0
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
+    }
+
     def 'elastic timeout configuration working'() {
         when:
         context.timeout {
