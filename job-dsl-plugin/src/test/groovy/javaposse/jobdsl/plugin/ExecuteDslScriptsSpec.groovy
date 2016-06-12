@@ -996,6 +996,36 @@ class ExecuteDslScriptsSpec extends Specification {
         freeStyleBuild.getLog(25).join('\n') =~ /jenkins.dsl/
     }
 
+    def 'ignore missing file'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation(targets: 'jenkins.dsl', ignoreMissingFiles: true)
+        ))
+        job.onCreatedFromScratch()
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+    }
+
+    def 'ignore empty wildcard'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(
+                new ExecuteDslScripts.ScriptLocation(targets: '*.dsl', ignoreMissingFiles: true)
+        ))
+        job.onCreatedFromScratch()
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+    }
+
     def 'classpath per script'() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')

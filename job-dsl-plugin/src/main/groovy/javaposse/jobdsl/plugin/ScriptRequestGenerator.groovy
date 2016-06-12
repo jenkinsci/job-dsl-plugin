@@ -24,7 +24,7 @@ class ScriptRequestGenerator implements Closeable {
     }
 
     Set<ScriptRequest> getScriptRequests(String targets, boolean usingScriptText, String scriptText,
-                                         boolean ignoreExisting,
+                                         boolean ignoreExisting, boolean ignoreMissingFiles = false,
                                          String additionalClasspath) throws IOException, InterruptedException {
         Set<ScriptRequest> scriptRequests = new LinkedHashSet<ScriptRequest>()
 
@@ -46,7 +46,7 @@ class ScriptRequestGenerator implements Closeable {
         } else {
             targets.split('\n').each { String target ->
                 FilePath[] filePaths = workspace.list(env.expand(target))
-                if (filePaths.length == 0) {
+                if (filePaths.length == 0 && !ignoreMissingFiles) {
                     throw new DslException("no Job DSL script(s) found at ${target}")
                 }
                 for (FilePath filePath : filePaths) {

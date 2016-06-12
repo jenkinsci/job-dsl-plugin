@@ -342,6 +342,18 @@ class ScriptRequestGeneratorSpec extends Specification {
         e.message == 'no Job DSL script(s) found at x.groovy'
     }
 
+    def 'ignore file not found'() {
+        setup:
+        EnvVars env = new EnvVars()
+        ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
+
+        when:
+        List<ScriptRequest> requests = generator.getScriptRequests('x.groovy', false, null, false, true, null).toList()
+
+        then:
+        requests.empty
+    }
+
     def 'pattern does not match anything'() {
         setup:
         EnvVars env = new EnvVars()
@@ -353,5 +365,17 @@ class ScriptRequestGeneratorSpec extends Specification {
         then:
         Exception e = thrown(DslException)
         e.message == 'no Job DSL script(s) found at *.foo'
+    }
+
+    def 'ignore empty wildcared'() {
+        setup:
+        EnvVars env = new EnvVars()
+        ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
+
+        when:
+        List<ScriptRequest> requests = generator.getScriptRequests('*.foo', false, null, false, true, null).toList()
+
+        then:
+        requests.empty
     }
 }

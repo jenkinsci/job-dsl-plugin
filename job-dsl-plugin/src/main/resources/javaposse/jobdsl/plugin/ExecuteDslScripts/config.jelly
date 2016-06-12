@@ -14,6 +14,9 @@
         <f:entry title="DSL Scripts" field="targets">
             <f:expandableTextbox/>
         </f:entry>
+        <f:entry title="Ignore missing files:" field="ignoreMissingFiles">
+            <f:checkbox name="ignoreMissingFiles" checked="${instance.ignoreMissingFiles}"/>
+        </f:entry>
     </f:radioBlock>
     <f:entry title="Action for existing jobs and views:" field="ignoreExisting">
         <f:checkbox name="ignoreExisting" title="Ignore changes" checked="${instance.ignoreExisting}"

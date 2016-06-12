@@ -75,6 +75,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         private Boolean usingScriptText;
         private String targets;
         private String scriptText;
+        private boolean ignoreMissingFiles;
 
         @DataBoundConstructor
         public ScriptLocation() {
@@ -104,6 +105,11 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 usingScriptText = true;
             }
         }
+
+        @DataBoundSetter
+        public void setIgnoreMissingFiles(boolean ignoreMissingFiles) {
+            this.ignoreMissingFiles = ignoreMissingFiles;
+        }
     }
 
     /**
@@ -123,6 +129,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private boolean ignoreExisting;
 
+    private boolean ignoreMissingFiles;
+
     private RemovedJobAction removedJobAction = RemovedJobAction.IGNORE;
 
     private RemovedViewAction removedViewAction = RemovedViewAction.IGNORE;
@@ -136,6 +144,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.usingScriptText = scriptLocation == null || (scriptLocation.usingScriptText != null && scriptLocation.usingScriptText);
         this.targets = scriptLocation == null ? null : scriptLocation.targets;
         this.scriptText = scriptLocation == null ? null : scriptLocation.scriptText;
+        this.ignoreMissingFiles = scriptLocation != null && scriptLocation.ignoreMissingFiles;
     }
 
     @Deprecated
@@ -188,6 +197,10 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     public boolean isUsingScriptText() {
         return usingScriptText;
+    }
+
+    public boolean isIgnoreMissingFiles() {
+        return ignoreMissingFiles;
     }
 
     public boolean isIgnoreExisting() {
@@ -260,7 +273,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env);
             try {
                 Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
-                        targets, usingScriptText, scriptText, ignoreExisting, additionalClasspath
+                        targets, usingScriptText, scriptText, ignoreExisting, ignoreMissingFiles, additionalClasspath
                 );
 
                 DslScriptLoader dslScriptLoader = new DslScriptLoader(jm);
