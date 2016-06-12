@@ -8,6 +8,10 @@ The classes `javaposse.jobdsl.plugin.WorkspaceProtocol`, `javaposse.jobdsl.plugi
 `javaposse.jobdsl.plugin.ScriptRequestGenerator` are [[deprecated|Deprecation-Policy]] and will be removed. These
 classes are part of the internal implementation and should not affect DSL scripts.
 
+The classes `javaposse.jobdsl.plugin.actions.GeneratedObjectsBuildAction` and
+`javaposse.jobdsl.plugin.actions.GeneratedObjectsBuildRunAction` are also deprecated and will be removed. Use
+`javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction` instead.
+
 ## Migrating to 1.47
 
 ### Pipeline

@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class GeneratedViewsBuildAction extends GeneratedObjectsBuildRunAction<GeneratedView> {
+public class GeneratedViewsBuildAction extends GeneratedObjectsRunAction<GeneratedView> {
     @SuppressWarnings("unused")
     private transient Set<GeneratedView> modifiedViews;
 
