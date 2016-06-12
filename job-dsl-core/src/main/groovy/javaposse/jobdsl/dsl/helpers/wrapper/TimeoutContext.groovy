@@ -56,7 +56,7 @@ class TimeoutContext extends AbstractContext {
     }
 
     /**
-     * Aborts the build based on a fixed time-out. (may be a digital string or a Macro Token)
+     * Aborts the build based on a fixed time-out.
      *
      * @since 1.48
      */
