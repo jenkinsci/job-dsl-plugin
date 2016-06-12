@@ -167,6 +167,18 @@ class DeliveryPipelineView extends View {
     }
 
     /**
+     * Enable pagination to allow navigation to older pipeline runs which are not displayed on the first page.
+     *
+     * @since 1.48
+     */
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.10')
+    void enablePaging(boolean value = true) {
+        configure {
+            it / methodMissing('pagingEnabled', value)
+        }
+    }
+
+    /**
      * Defines pipelines by either specifying names and start jobs or by regular expressions. Both variants can be
      * called multiple times to add different pipelines to the view.
      */

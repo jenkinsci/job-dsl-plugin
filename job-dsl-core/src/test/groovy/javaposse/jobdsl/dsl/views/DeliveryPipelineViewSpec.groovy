@@ -56,6 +56,7 @@ class DeliveryPipelineViewSpec extends Specification {
             allowPipelineStart()
             showDescription()
             showPromotions()
+            enablePaging()
 
             pipelines {
                 component('test', 'compile-a')
@@ -67,6 +68,7 @@ class DeliveryPipelineViewSpec extends Specification {
         compareXML(allOptionsXml, view.xml).similar()
         3 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.9.5')
         2 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.9.0')
+        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.9.10')
     }
 
     def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
@@ -117,6 +119,7 @@ class DeliveryPipelineViewSpec extends Specification {
     <allowPipelineStart>true</allowPipelineStart>
     <showDescription>true</showDescription>
     <showPromotions>true</showPromotions>
+    <pagingEnabled>true</pagingEnabled>
     <componentSpecs>
         <se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>
             <name>test</name>

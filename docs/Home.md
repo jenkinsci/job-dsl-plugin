@@ -29,6 +29,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.48 (unreleased)
  * Improved support for the [Build-timeout Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin)
    ([JENKINS-35228](https://issues.jenkins-ci.org/browse/JENKINS-35228))
+ * Enhanced support for the
+   [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
+   ([#863](https://github.com/jenkinsci/job-dsl-plugin/pull/863))
  * Made `ExecuteDslScripts` build step compatible with [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
    ([JENKINS-35282](https://issues.jenkins-ci.org/browse/JENKINS-35282))
  * Several classes and some constructors have been deprecated, see [Migration](Migration#migrating-to-148)
