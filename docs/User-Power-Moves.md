@@ -194,10 +194,12 @@ node {
 ```
 
 Options:
-* `scriptLocation`: mandatory, specifies the Job DSL scripts to execute and consists of two sub-options:
+* `scriptLocation`: mandatory, specifies the Job DSL scripts to execute and consists of three sub-options:
      * `targets`: optional, specifies Job DSL script files to execute, newline separated list of file names relative
                   to the workspace
      * `scriptText`: optional, specifies an inline Job DSL script
+     * `ignoreMissingFiles`: optional, defaults to `false`, set to `true` to ignore missing files or empty wildcards in
+                            `targets`
 * `ignoreExisting`: optional, defaults to `false`, set to `true` to not update existing jobs and views
 * `removedJobAction`: optional, set to `'DELETE'` or `'DISABLE'` to delete or disable jobs that have been removed from
                       DSL scripts, defaults to `'IGNORE'`
