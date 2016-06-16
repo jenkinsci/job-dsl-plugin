@@ -1934,6 +1934,7 @@ class ScmContextSpec extends Specification {
         context.svn {
             location('url') {
                 directory('dir')
+                ignoreExternals()
             }
         }
 
@@ -1941,10 +1942,11 @@ class ScmContextSpec extends Specification {
         isValidSvnScmNode(context.scmNodes[0])
         with(context.scmNodes[0]) {
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
-            locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].children().size() == 3
+            locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].children().size() == 4
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == 'dir'
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].depthOption[0].value() == 'infinity'
+            locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].ignoreExternalsOption[0].value() == true
         }
         (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
@@ -1961,9 +1963,12 @@ class ScmContextSpec extends Specification {
         isValidSvnScmNode(context.scmNodes[0])
         with(context.scmNodes[0]) {
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() == 1
+            locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].children().size() == 5
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].remote[0].value() == 'url'
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].local[0].value() == '.'
+            locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].depthOption[0].value() == 'infinity'
             locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].credentialsId[0].value() == 'foo'
+            locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'[0].ignoreExternalsOption[0].value() == false
         }
         (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }

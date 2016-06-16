@@ -34,6 +34,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the
    [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)
    ([JENKINS-34282](https://issues.jenkins-ci.org/browse/JENKINS-34282))
+ * Enhanced support for the [Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin)
+   ([JENKINS-34091](https://issues.jenkins-ci.org/browse/JENKINS-34091))
  * Enhanced support for the
    [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
    ([#863](https://github.com/jenkinsci/job-dsl-plugin/pull/863))

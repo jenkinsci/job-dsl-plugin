@@ -37,6 +37,7 @@ class SvnContext extends AbstractContext {
             }
             local(svnLocationContext.directory)
             depthOption(svnLocationContext.depth.xmlValue)
+            ignoreExternalsOption(svnLocationContext.ignoreExternals)
         }
     }
 
