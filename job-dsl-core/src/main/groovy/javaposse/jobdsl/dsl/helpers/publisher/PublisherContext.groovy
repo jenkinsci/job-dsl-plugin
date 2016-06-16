@@ -11,6 +11,7 @@ import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
+import static javaposse.jobdsl.dsl.ContextHelper.toNamedNode
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COLOR_MAP
@@ -1111,14 +1112,22 @@ class PublisherContext extends AbstractExtensibleContext {
                         publisherList(context.actions)
                         runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
                     }
-                    publisher.append(ContextHelper.toNamedNode('condition', context.condition))
+                    publisher.append(toNamedNode('condition', context.condition))
                 }
                 context.conditionalActions.each { ConditionalActionsContext conditionalActionsContext ->
                     Node publisher = 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
                         publisherList(conditionalActionsContext.actions)
                         runner(class: conditionalActionsContext.runnerClass)
+                        if (conditionalActionsContext.aggregationRunner) {
+                            aggregationRunner(class: conditionalActionsContext.aggregationRunner)
+                        }
                     }
-                    publisher.append(ContextHelper.toNamedNode('condition', conditionalActionsContext.runCondition))
+                    publisher.append(toNamedNode('condition', conditionalActionsContext.runCondition))
+                    if (conditionalActionsContext.aggregationCondition) {
+                        publisher.append(
+                                toNamedNode('aggregationCondition', conditionalActionsContext.aggregationCondition)
+                        )
+                    }
                 }
             }
         }
