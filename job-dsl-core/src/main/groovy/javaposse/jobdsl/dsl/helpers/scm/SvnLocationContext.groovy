@@ -7,6 +7,7 @@ class SvnLocationContext extends AbstractContext {
     String directory = '.'
     String credentials
     SvnDepth depth = SvnDepth.INFINITY
+    boolean ignoreExternals
 
     SvnLocationContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -31,5 +32,14 @@ class SvnLocationContext extends AbstractContext {
      */
     void depth(SvnDepth depth) {
         this.depth = depth
+    }
+
+    /**
+     * If set, disables externals definition processing.
+     *
+     * @since 1.48
+     */
+    void ignoreExternals(boolean ignoreExternals = true) {
+        this.ignoreExternals = ignoreExternals
     }
 }
