@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import javaposse.jobdsl.dsl.jobs.MatrixJob
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitContext.ThresholdMode
@@ -3777,6 +3778,84 @@ class PublisherContextSpec extends Specification {
             publishers[0].value().empty
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
+    }
+
+    def 'call flexible publish with matrix options'() {
+        given:
+        context = new PublisherContext(jobManagement, Mock(MatrixJob))
+
+        when:
+        context.flexiblePublish {
+            conditionalAction {
+                aggregationCondition {
+                    stringsMatch('foo', 'bar', false)
+                }
+                aggregationRunner('DontRun')
+                steps {
+                    shell('echo hello')
+                }
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
+            children().size() == 1
+            publishers[0].children().size == 1
+            with(publishers[0].children()[0]) {
+                name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
+                children().size() == 5
+                condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
+                condition[0].children().size() == 0
+                runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
+                runner[0].value().empty
+                with(aggregationCondition[0]) {
+                    attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
+                    arg1[0].value() == 'foo'
+                    arg2[0].value() == 'bar'
+                    ignoreCase[0].value() == false
+                }
+                with(aggregationRunner[0]) {
+                    attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun'
+                    value().empty
+                }
+                with(publisherList[0]) {
+                    children().size() == 1
+                    children()[0].name() == 'hudson.tasks.Shell'
+                    children()[0].command[0].value() == 'echo hello'
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
+    }
+
+    def 'call flexible publish aggregationRunner not in matrix job'() {
+        when:
+        context.flexiblePublish {
+            conditionalAction {
+                aggregationRunner('Fail')
+            }
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'can only be using in matrix jobs'
+    }
+
+    def 'call flexible publish aggregationCondition not in matrix job'() {
+        when:
+        context.flexiblePublish {
+            conditionalAction {
+                aggregationCondition {
+                    always()
+                }
+            }
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'can only be using in matrix jobs'
     }
 
     def 'call post build scripts with minimal options with plugin version 0.14'() {

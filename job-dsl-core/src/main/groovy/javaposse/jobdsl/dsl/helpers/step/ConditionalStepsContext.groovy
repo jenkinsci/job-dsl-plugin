@@ -8,7 +8,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class ConditionalStepsContext extends AbstractContext {
-    private static final Set<String> VALID_RUNNERS = ['Fail', 'Unstable', 'RunUnstable', 'Run', 'DontRun']
+    protected static final Set<String> VALID_RUNNERS = ['Fail', 'Unstable', 'RunUnstable', 'Run', 'DontRun']
 
     Node runCondition
     String runnerClass
