@@ -490,97 +490,136 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('envinject')
     }
 
-    def 'release plugin simple'() {
+    def 'release plugin without options'() {
         when:
         context.release {
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'hudson.plugins.release.ReleaseWrapper'
+            children().size() == 8
+            releaseVersionTemplate[0].value() == ''
+            doNotKeepLog[0].value() == false
+            overrideBuildParameters[0].value() == false
+            parameterDefinitions[0].children().size() == 0
+            preBuildSteps[0].children().size() == 0
+            postBuildSteps[0].children().size() == 0
+            postSuccessfulBuildSteps[0].children().size() == 0
+            postFailedBuildSteps[0].children().size() == 0
+        }
+        1 * mockJobManagement.requirePlugin('release')
+    }
+
+    def 'release plugin with all options'() {
+        when:
+        context.release {
+            releaseVersionTemplate('templatename')
+            doNotKeepLog()
+            overrideBuildParameters()
             parameters {
-                textParam('p1', 'p1', 'd1')
+                booleanParam('myBooleanParam', true)
+                booleanParam('my2ndBooleanParam', true)
             }
             preBuildSteps {
                 shell('echo hello;')
             }
-        }
-
-        then:
-        context.wrapperNodes[0].name() == 'hudson.plugins.release.ReleaseWrapper'
-        def wrapper = context.wrapperNodes[0]
-        wrapper.'parameterDefinitions'.'hudson.model.TextParameterDefinition'[0].value()[0].value() == 'p1'
-        wrapper.'preBuildSteps'[0].value()[0].name() == 'hudson.tasks.Shell'
-        wrapper.'preBuildSteps'[0].value()[0].value()[0].name() == 'command'
-        wrapper.'preBuildSteps'[0].value()[0].value()[0].value() == 'echo hello;'
-        1 * mockJobManagement.requirePlugin('release')
-    }
-
-    def 'release plugin extended'() {
-        when:
-        context.release {
-            releaseVersionTemplate('templatename')
-            doNotKeepLog(true)
-            overrideBuildParameters(false)
-            parameters {
-                booleanParam('myBooleanParam', true)
-                booleanParam('my2ndBooleanParam', true)
+            preBuildPublishers {
+                archiveArtifacts('*.xml')
             }
             postSuccessfulBuildSteps {
                 shell('echo postsuccess;')
                 shell('echo hello world;')
             }
+            postSuccessfulBuildPublishers {
+                archiveArtifacts('*.xml')
+            }
             postBuildSteps {
                 shell('echo post;')
+            }
+            postBuildPublishers {
+                archiveArtifacts('*.xml')
             }
             postFailedBuildSteps {
                 shell('echo postfailed;')
             }
-        }
-
-        then:
-        context.wrapperNodes[0].name() == 'hudson.plugins.release.ReleaseWrapper'
-        def params = context.wrapperNodes[0]
-        params.value()[0].name() == 'releaseVersionTemplate'
-        params.value()[0].value() == 'templatename'
-        params.value()[1].name() == 'doNotKeepLog'
-        params.value()[1].value() == true
-        params.value()[2].name() == 'overrideBuildParameters'
-        params.value()[2].value() == false
-
-        def stepsPostSuccess = context.wrapperNodes[0].'postSuccessfulBuildSteps'
-        stepsPostSuccess[0].value()[0].name() == 'hudson.tasks.Shell'
-        stepsPostSuccess[0].value()[0].value()[0].name() == 'command'
-        stepsPostSuccess[0].value()[0].value()[0].value() == 'echo postsuccess;'
-        stepsPostSuccess[0].value()[1].name() == 'hudson.tasks.Shell'
-        stepsPostSuccess[0].value()[1].value()[0].name() == 'command'
-        stepsPostSuccess[0].value()[1].value()[0].value() == 'echo hello world;'
-
-        def stepsPost = context.wrapperNodes[0].'postBuildSteps'
-        stepsPost[0].value()[0].name() == 'hudson.tasks.Shell'
-        stepsPost[0].value()[0].value()[0].name() == 'command'
-        stepsPost[0].value()[0].value()[0].value() == 'echo post;'
-
-        def stepsPostFailed = context.wrapperNodes[0].'postFailedBuildSteps'
-        stepsPostFailed[0].value()[0].name() == 'hudson.tasks.Shell'
-        stepsPostFailed[0].value()[0].value()[0].name() == 'command'
-        stepsPostFailed[0].value()[0].value()[0].value() == 'echo postfailed;'
-
-        1 * mockJobManagement.requirePlugin('release')
-    }
-
-    def 'release plugin configure'() {
-        when:
-        context.release {
-            configure { project ->
-                def node = project / 'testCommand'
-                node << {
-                    custom('value')
-                }
+            postFailedBuildPublishers {
+                archiveArtifacts('*.xml')
+            }
+            configure {
+                it / custom('value')
             }
         }
 
         then:
-        context.wrapperNodes[0].name() == 'hudson.plugins.release.ReleaseWrapper'
-        def params = context.wrapperNodes[0].'testCommand'
-        params[0].value()[0].name() == 'custom'
-        params[0].value()[0].value() == 'value'
+        with(context.wrapperNodes[0]) {
+            name() == 'hudson.plugins.release.ReleaseWrapper'
+            children().size() == 9
+            releaseVersionTemplate[0].value() == 'templatename'
+            doNotKeepLog[0].value() == true
+            overrideBuildParameters[0].value() == true
+            parameterDefinitions[0].children().size() == 2
+            with(parameterDefinitions[0].children()[0]) {
+                name() == 'hudson.model.BooleanParameterDefinition'
+                children().size() == 2
+                name[0].value() == 'myBooleanParam'
+                defaultValue[0].value() == true
+            }
+            with(parameterDefinitions[0].children()[1]) {
+                name() == 'hudson.model.BooleanParameterDefinition'
+                children().size() == 2
+                name[0].value() == 'my2ndBooleanParam'
+                defaultValue[0].value() == true
+            }
+            preBuildSteps[0].children().size() == 2
+            with(preBuildSteps[0].children()[0]) {
+                name() == 'hudson.tasks.Shell'
+                children().size() == 1
+                command[0].value() == 'echo hello;'
+            }
+            with(preBuildSteps[0].children()[1]) {
+                name() == 'hudson.tasks.ArtifactArchiver'
+                children().size() == 5
+            }
+            postSuccessfulBuildSteps[0].children().size() == 3
+            with(postSuccessfulBuildSteps[0].children()[0]) {
+                name() == 'hudson.tasks.Shell'
+                children().size() == 1
+                command[0].value() == 'echo postsuccess;'
+            }
+            with(postSuccessfulBuildSteps[0].children()[1]) {
+                name() == 'hudson.tasks.Shell'
+                children().size() == 1
+                command[0].value() == 'echo hello world;'
+            }
+            with(postSuccessfulBuildSteps[0].children()[2]) {
+                name() == 'hudson.tasks.ArtifactArchiver'
+                children().size() == 5
+            }
+            postBuildSteps[0].children().size() == 2
+            with(postBuildSteps[0].children()[0]) {
+                name() == 'hudson.tasks.Shell'
+                children().size() == 1
+                command[0].value() == 'echo post;'
+            }
+            with(postBuildSteps[0].children()[1]) {
+                name() == 'hudson.tasks.ArtifactArchiver'
+                children().size() == 5
+            }
+            postFailedBuildSteps[0].children().size() == 2
+            with(postFailedBuildSteps[0].children()[0]) {
+                name() == 'hudson.tasks.Shell'
+                children().size() == 1
+                command[0].value() == 'echo postfailed;'
+            }
+            with(postFailedBuildSteps[0].children()[1]) {
+                name() == 'hudson.tasks.ArtifactArchiver'
+                children().size() == 5
+            }
+            custom[0].value() == 'value'
+        }
         1 * mockJobManagement.requirePlugin('release')
+        4 * mockJobManagement.requireMinimumPluginVersion('release', '2.5.3')
     }
 
     def 'phabricator with minimal options'() {
