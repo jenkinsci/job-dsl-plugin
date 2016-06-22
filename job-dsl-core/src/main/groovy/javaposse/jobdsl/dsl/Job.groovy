@@ -12,6 +12,7 @@ import javaposse.jobdsl.dsl.helpers.toplevel.NotificationContext
 import javaposse.jobdsl.dsl.helpers.toplevel.ThrottleConcurrentBuildsContext
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
+import javaposse.jobdsl.dsl.coercion.Template
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
@@ -663,7 +664,11 @@ abstract class Job extends Item {
         Node emptyTemplateNode = super.nodeTemplate
 
         if (emptyTemplateNode.name() != templateNode.name()) {
-            throw new JobTypeMismatchException(name, templateName)
+            //maybe we can coerce the template into our required type
+            templateNode = new Template().coerce(templateNode, emptyTemplateNode.name())
+            if (emptyTemplateNode.name() != templateNode.name()) {
+                throw new JobTypeMismatchException(name, templateName)
+            }
         }
 
         templateNode
