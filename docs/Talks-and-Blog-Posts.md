@@ -1,6 +1,14 @@
 This is a collection of talks, presentations and blog posts about the Job DSL plugin.
 
 * June 2016
+    * [Jenkins-as-code: registering jobs for automatic seed job creation](http://marcesher.com/2016/06/21/jenkins-as-code-registering-jobs-for-automatic-seed-job-creation/)
+      by [Marc Esher](http://marcesher.com)
+    * [Jenkins-as-code: creating reusable builders](http://marcesher.com/2016/06/13/jenkins-as-code-creating-reusable-builders/)
+      by [Marc Esher](http://marcesher.com)
+    * [Jenkins-as-code: job-dsl-plugin](http://marcesher.com/2016/06/09/jenkins-as-code-job-dsl/)
+      by [Marc Esher](http://marcesher.com)
+    * [Jenkins-as-code: Creating Jenkins jobs with text, not clicks](http://marcesher.com/2016/06/08/jenkins-as-code-creating-jenkins-jobs-with-text-not-clicks/)
+      by [Marc Esher](http://marcesher.com)
     * ePages devBlog:
       [How to empower your Jenkins with Gradle](https://developer.epages.com/blog/2016/06/07/gradle-jenkins-plugin.html)
       by Renato
