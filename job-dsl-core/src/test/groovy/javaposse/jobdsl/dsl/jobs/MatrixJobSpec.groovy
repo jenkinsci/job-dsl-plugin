@@ -98,4 +98,73 @@ class MatrixJobSpec extends Specification {
         job.node.childCustomWorkspace.size() == 1
         job.node.childCustomWorkspace[0].value() == 'test'
     }
+
+    def 'throttle concurrents with old plugin version'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('throttle-concurrents', '1.8.3') >> false
+
+        when:
+        job.throttleConcurrentBuilds {
+        }
+
+        then:
+        with(job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]) {
+            children().size() == 5
+            maxConcurrentPerNode[0].value() == 0
+            maxConcurrentTotal[0].value() == 0
+            throttleEnabled[0].value() == true
+            throttleOption[0].value() == 'project'
+            categories[0].children().size() == 0
+        }
+        1 * jobManagement.requirePlugin('throttle-concurrents')
+    }
+
+    def 'throttle concurrents with no matrix options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('throttle-concurrents', '1.8.3') >> true
+
+        when:
+        job.throttleConcurrentBuilds {
+        }
+
+        then:
+        with(job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]) {
+            children().size() == 6
+            maxConcurrentPerNode[0].value() == 0
+            maxConcurrentTotal[0].value() == 0
+            throttleEnabled[0].value() == true
+            throttleOption[0].value() == 'project'
+            categories[0].children().size() == 0
+            matrixOptions[0].children().size() == 2
+            matrixOptions[0].throttleMatrixBuilds[0].value() == true
+            matrixOptions[0].throttleMatrixConfigurations[0].value() == true
+        }
+        1 * jobManagement.requirePlugin('throttle-concurrents')
+    }
+
+    def 'throttle concurrents with all matrix options'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('throttle-concurrents', '1.8.3') >> true
+
+        when:
+        job.throttleConcurrentBuilds {
+            throttleMatrixBuilds(false)
+            throttleMatrixConfigurations(false)
+        }
+
+        then:
+        with(job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]) {
+            children().size() == 6
+            maxConcurrentPerNode[0].value() == 0
+            maxConcurrentTotal[0].value() == 0
+            throttleEnabled[0].value() == true
+            throttleOption[0].value() == 'project'
+            categories[0].children().size() == 0
+            matrixOptions[0].children().size() == 2
+            matrixOptions[0].throttleMatrixBuilds[0].value() == false
+            matrixOptions[0].throttleMatrixConfigurations[0].value() == false
+        }
+        1 * jobManagement.requirePlugin('throttle-concurrents')
+        2 * jobManagement.requireMinimumPluginVersion('throttle-concurrents', '1.8.3')
+    }
 }

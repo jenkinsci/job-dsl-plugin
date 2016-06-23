@@ -34,6 +34,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the
    [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)
    ([JENKINS-34282](https://issues.jenkins-ci.org/browse/JENKINS-34282))
+ * Enhanced support for the
+   [Throttle Concurrent Builds Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Throttle+Concurrent+Builds+Plugin)
+   ([JENKINS-32631](https://issues.jenkins-ci.org/browse/JENKINS-32631))
  * Enhanced support for the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin)
    ([JENKINS-33341](https://issues.jenkins-ci.org/browse/JENKINS-33341))
  * Enhanced support for the [Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin)
