@@ -27,6 +27,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.48 (unreleased)
+ * Improved support for the [Email-ext plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin)
+   ([JENKINS-34367](https://issues.jenkins-ci.org/browse/JENKINS-34367))
  * Added option to ignore missing DSL script files or empty wildcards
    ([JENKINS-34060](https://issues.jenkins-ci.org/browse/JENKINS-34060))
  * Improved support for the [Build-timeout Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin)
