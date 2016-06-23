@@ -5,7 +5,9 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
+import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 
 class ReleaseContext extends AbstractContext {
@@ -35,12 +37,36 @@ class ReleaseContext extends AbstractContext {
     }
 
     /**
+     * Adds publishers to run before the release.
+     *
+     * @since 1.48
+     */
+    @RequiresPlugin(id = 'release', minimumVersion = '2.5.3')
+    void preBuildPublishers(@DslContext(PublisherContext) Closure closure) {
+        PublisherContext publisherContext = new PublisherContext(jobManagement, item)
+        ContextHelper.executeInContext(closure, publisherContext)
+        preBuildSteps.addAll(publisherContext.publisherNodes)
+    }
+
+    /**
      * Adds build steps to run after a successful release.
      */
     void postSuccessfulBuildSteps(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement, item)
         ContextHelper.executeInContext(closure, stepContext)
         postSuccessfulBuildSteps.addAll(stepContext.stepNodes)
+    }
+
+    /**
+     * Adds publishers to run after a successful release.
+     *
+     * @since 1.48
+     */
+    @RequiresPlugin(id = 'release', minimumVersion = '2.5.3')
+    void postSuccessfulBuildPublishers(@DslContext(PublisherContext) Closure closure) {
+        PublisherContext publisherContext = new PublisherContext(jobManagement, item)
+        ContextHelper.executeInContext(closure, publisherContext)
+        postSuccessfulBuildSteps.addAll(publisherContext.publisherNodes)
     }
 
     /**
@@ -53,12 +79,36 @@ class ReleaseContext extends AbstractContext {
     }
 
     /**
+     * Adds publishers to run after a successful or failed release.
+     *
+     * @since 1.48
+     */
+    @RequiresPlugin(id = 'release', minimumVersion = '2.5.3')
+    void postBuildPublishers(@DslContext(PublisherContext) Closure closure) {
+        PublisherContext publisherContext = new PublisherContext(jobManagement, item)
+        ContextHelper.executeInContext(closure, publisherContext)
+        postBuildSteps.addAll(publisherContext.publisherNodes)
+    }
+
+    /**
      * Adds build steps to run after a failed release.
      */
     void postFailedBuildSteps(@DslContext(StepContext) Closure closure) {
         StepContext stepContext = new StepContext(jobManagement, item)
         ContextHelper.executeInContext(closure, stepContext)
         postFailedBuildSteps.addAll(stepContext.stepNodes)
+    }
+
+    /**
+     * Adds publishers to run after a failed release.
+     *
+     * @since 1.48
+     */
+    @RequiresPlugin(id = 'release', minimumVersion = '2.5.3')
+    void postFailedBuildPublishers(@DslContext(PublisherContext) Closure closure) {
+        PublisherContext publisherContext = new PublisherContext(jobManagement, item)
+        ContextHelper.executeInContext(closure, publisherContext)
+        postFailedBuildSteps.addAll(publisherContext.publisherNodes)
     }
 
     /**
