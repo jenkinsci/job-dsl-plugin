@@ -419,18 +419,19 @@ class JobSpec extends Specification {
     def 'throttle concurrents enabled as project alone'() {
         when:
         job.throttleConcurrentBuilds {
-            maxPerNode 1
-            maxTotal 2
+            maxPerNode(1)
+            maxTotal(2)
         }
 
         then:
-        def throttleNode = job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
-
-        throttleNode.maxConcurrentPerNode[0].value() == 1
-        throttleNode.maxConcurrentTotal[0].value() == 2
-        throttleNode.throttleEnabled[0].value() == 'true'
-        throttleNode.throttleOption[0].value() == 'project'
-        throttleNode.categories[0].children().size() == 0
+        with(job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]) {
+            children().size() == 5
+            maxConcurrentPerNode[0].value() == 1
+            maxConcurrentTotal[0].value() == 2
+            throttleEnabled[0].value() == true
+            throttleOption[0].value() == 'project'
+            categories[0].children().size() == 0
+        }
         1 * jobManagement.requirePlugin('throttle-concurrents')
     }
 
@@ -441,29 +442,57 @@ class JobSpec extends Specification {
         }
 
         then:
-        def throttleNode = job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
-        throttleNode.throttleEnabled[0].value() == 'false'
+        with(job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]) {
+            children().size() == 5
+            maxConcurrentPerNode[0].value() == 0
+            maxConcurrentTotal[0].value() == 0
+            throttleEnabled[0].value() == false
+            throttleOption[0].value() == 'project'
+            categories[0].children().size() == 0
+        }
         1 * jobManagement.requirePlugin('throttle-concurrents')
     }
 
     def 'throttle concurrents enabled as part of categories'() {
         when:
         job.throttleConcurrentBuilds {
-            maxPerNode 1
-            maxTotal 2
+            maxPerNode(1)
+            maxTotal(2)
             categories(['cat-1', 'cat-2'])
         }
 
         then:
-        def throttleNode = job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]
-        throttleNode.maxConcurrentPerNode[0].value() == 1
-        throttleNode.maxConcurrentTotal[0].value() == 2
-        throttleNode.throttleEnabled[0].value() == 'true'
-        throttleNode.throttleOption[0].value() == 'category'
-        throttleNode.categories[0].children().size() == 2
-        throttleNode.categories[0].string[0].value() == 'cat-1'
-        throttleNode.categories[0].string[1].value() == 'cat-2'
+        with(job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]) {
+            children().size() == 5
+            maxConcurrentPerNode[0].value() == 1
+            maxConcurrentTotal[0].value() == 2
+            throttleEnabled[0].value() == true
+            throttleOption[0].value() == 'category'
+            categories[0].children().size() == 2
+            categories[0].string[0].value() == 'cat-1'
+            categories[0].string[1].value() == 'cat-2'
+        }
         1 * jobManagement.requirePlugin('throttle-concurrents')
+    }
+
+    def 'throttle concurrents matrix options not allowed for non-matrix jobs'() {
+        when:
+        job.throttleConcurrentBuilds {
+            throttleMatrixBuilds()
+        }
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message =~ 'throttleMatrixBuilds can only be used in matrix jobs'
+
+        when:
+        job.throttleConcurrentBuilds {
+            throttleMatrixConfigurations()
+        }
+
+        then:
+        e = thrown(DslScriptException)
+        e.message =~ 'throttleMatrixConfigurations can only be used in matrix jobs'
     }
 
     def 'disable defaults to true'() {

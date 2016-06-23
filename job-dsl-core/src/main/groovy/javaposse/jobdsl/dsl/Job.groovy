@@ -12,6 +12,7 @@ import javaposse.jobdsl.dsl.helpers.toplevel.NotificationContext
 import javaposse.jobdsl.dsl.helpers.toplevel.ThrottleConcurrentBuildsContext
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
+import javaposse.jobdsl.dsl.jobs.MatrixJob
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
@@ -114,22 +115,25 @@ abstract class Job extends Item {
      */
     @RequiresPlugin(id = 'throttle-concurrents')
     void throttleConcurrentBuilds(@DslContext(ThrottleConcurrentBuildsContext) Closure throttleClosure) {
-        ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext()
+        ThrottleConcurrentBuildsContext throttleContext = new ThrottleConcurrentBuildsContext(jobManagement, this)
         ContextHelper.executeInContext(throttleClosure, throttleContext)
 
         configure { Node project ->
             project / 'properties' / 'hudson.plugins.throttleconcurrents.ThrottleJobProperty' {
-                maxConcurrentPerNode throttleContext.maxConcurrentPerNode
-                maxConcurrentTotal throttleContext.maxConcurrentTotal
-                throttleEnabled throttleContext.throttleDisabled ? 'false' : 'true'
-                if (throttleContext.categories.isEmpty()) {
-                    throttleOption 'project'
-                } else {
-                    throttleOption 'category'
-                }
+                maxConcurrentPerNode(throttleContext.maxConcurrentPerNode)
+                maxConcurrentTotal(throttleContext.maxConcurrentTotal)
+                throttleEnabled(!throttleContext.throttleDisabled)
+                throttleOption(throttleContext.categories.empty ? 'project' : 'category')
                 categories {
                     throttleContext.categories.each { c ->
-                        string c
+                        string(c)
+                    }
+                }
+                if (jobManagement.isMinimumPluginVersionInstalled('throttle-concurrents', '1.8.3')
+                        && this instanceof MatrixJob) {
+                    matrixOptions {
+                        throttleMatrixBuilds(throttleContext.throttleMatrixBuilds)
+                        throttleMatrixConfigurations(throttleContext.throttleMatrixConfigurations)
                     }
                 }
             }
