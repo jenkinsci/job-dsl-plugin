@@ -40,7 +40,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-34091](https://issues.jenkins-ci.org/browse/JENKINS-34091))
  * Enhanced support for the
    [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
-   ([#863](https://github.com/jenkinsci/job-dsl-plugin/pull/863))
+   ([#863](https://github.com/jenkinsci/job-dsl-plugin/pull/863),
+   [#872](https://github.com/jenkinsci/job-dsl-plugin/pull/872))
  * Made `ExecuteDslScripts` build step compatible with [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
    ([JENKINS-35282](https://issues.jenkins-ci.org/browse/JENKINS-35282))
  * Several classes and some constructors have been deprecated, see [Migration](Migration#migrating-to-148)
