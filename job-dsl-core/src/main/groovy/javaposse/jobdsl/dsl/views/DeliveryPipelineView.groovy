@@ -106,6 +106,8 @@ class DeliveryPipelineView extends View {
 
     /**
      * Show test results in view. Defaults to {@code false}.
+     *
+     * @since 1.48
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.6')
     void showTestResults(boolean value = true) {
@@ -116,6 +118,8 @@ class DeliveryPipelineView extends View {
 
     /**
      * Use defined theme for pipeline. Defaults to {@code 'default'}.
+     *
+     * @since 1.48
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.10')
     void useTheme(String value) {
