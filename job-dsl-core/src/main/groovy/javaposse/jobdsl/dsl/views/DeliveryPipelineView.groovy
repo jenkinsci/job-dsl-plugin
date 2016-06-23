@@ -105,6 +105,24 @@ class DeliveryPipelineView extends View {
     }
 
     /**
+     * Show Test Results in View. Defaults to {@code false}.
+     */
+    void showTestResults(boolean value = true) {
+        configure {
+            it / methodMissing('showTestResults', value)
+        }
+    }
+
+    /**
+     * Use defined Theme for Pipeline. Defaults to 'Default'.
+     */
+    void useTheme(String value = 'Default') {
+        configure {
+            it / methodMissing('theme', value)
+        }
+    }
+
+    /**
      * Shows the total build time of a pipeline. Defaults to {@code false}.
      *
      * @since 1.38
