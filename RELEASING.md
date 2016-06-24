@@ -21,7 +21,7 @@ password=IHeartJenkins
 * Add the new snapshot version to the API viewer in `job-dsl-api-viewer/index.html`
 * Commit the updated version number: _git commit -S -am "Bumping to next rev"_
 * Push the two new commit and the tag back to GitHub: _git push --tags && git push_
-* Close all resolved issues in [JIRA](https://issues.jenkins-ci.org/browse/JENKINS/component/16720)
+* Close all resolved issues in [JIRA](https://issues.jenkins-ci.org/secure/Dashboard.jspa?selectPageId=15341)
 * Open a pull request to update the [Job DSL Playground](https://github.com/sheehan/job-dsl-playground) 
 * Open a pull request to update the [Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example)
 * Wait up to twelve hours for it show up in the Update Center
