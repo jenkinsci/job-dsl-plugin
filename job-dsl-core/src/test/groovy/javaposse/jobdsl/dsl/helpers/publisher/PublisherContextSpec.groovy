@@ -3507,7 +3507,16 @@ class PublisherContextSpec extends Specification {
 
     def 'call flexible publish'() {
         when:
-        context.flexiblePublish(closure)
+        context.flexiblePublish {
+            conditionalAction {
+                condition {
+                    stringsMatch('foo', 'bar', false)
+                }
+                publishers {
+                    mailer('test@test.com')
+                }
+            }
+        }
 
         then:
         context.publisherNodes.size() == 1
@@ -3532,33 +3541,20 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
-
-        where:
-        closure << [
-                {
-                    condition {
-                        stringsMatch('foo', 'bar', false)
-                    }
-                    publisher {
-                        mailer('test@test.com')
-                    }
-                },
-                {
-                    conditionalAction {
-                        condition {
-                            stringsMatch('foo', 'bar', false)
-                        }
-                        publishers {
-                            mailer('test@test.com')
-                        }
-                    }
-                }
-        ]
     }
 
     def 'call flexible publish with build step'() {
         when:
-        context.flexiblePublish(closure)
+        context.flexiblePublish {
+            conditionalAction {
+                condition {
+                    stringsMatch('foo', 'bar', false)
+                }
+                steps {
+                    shell('echo hello')
+                }
+            }
+        }
 
         then:
         context.publisherNodes.size() == 1
@@ -3584,33 +3580,23 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
         1 * jobManagement.requirePlugin('any-buildstep')
-
-        where:
-        closure << [
-                {
-                    condition {
-                        stringsMatch('foo', 'bar', false)
-                    }
-                    step {
-                        shell('echo hello')
-                    }
-                },
-                {
-                    conditionalAction {
-                        condition {
-                            stringsMatch('foo', 'bar', false)
-                        }
-                        steps {
-                            shell('echo hello')
-                        }
-                    }
-                }
-        ]
     }
 
     def 'call flexible publish with multiple actions'() {
         when:
-        context.flexiblePublish(closure)
+        context.flexiblePublish {
+            conditionalAction {
+                condition {
+                    stringsMatch('foo', 'bar', false)
+                }
+                steps {
+                    shell('echo hello')
+                }
+                publishers {
+                    wsCleanup()
+                }
+            }
+        }
 
         then:
         context.publisherNodes.size() == 1
@@ -3636,39 +3622,17 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
         1 * jobManagement.requirePlugin('any-buildstep')
-
-        where:
-        closure << [
-                {
-                    condition {
-                        stringsMatch('foo', 'bar', false)
-                    }
-                    step {
-                        shell('echo hello')
-                    }
-                    publisher {
-                        wsCleanup()
-                    }
-                },
-                {
-                    conditionalAction {
-                        condition {
-                            stringsMatch('foo', 'bar', false)
-                        }
-                        steps {
-                            shell('echo hello')
-                        }
-                        publishers {
-                            wsCleanup()
-                        }
-                    }
-                }
-        ]
     }
 
     def 'call flexible publish without condition'() {
         when:
-        context.flexiblePublish(closure)
+        context.flexiblePublish {
+            conditionalAction {
+                steps {
+                    shell('echo hello')
+                }
+            }
+        }
 
         then:
         context.publisherNodes.size() == 1
@@ -3691,22 +3655,6 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
-
-        where:
-        closure << [
-                {
-                    step {
-                        shell('echo hello')
-                    }
-                },
-                {
-                    conditionalAction {
-                        steps {
-                            shell('echo hello')
-                        }
-                    }
-                }
-        ]
     }
 
     def 'call flexible publish with multiple conditional actions'() {
@@ -3858,50 +3806,7 @@ class PublisherContextSpec extends Specification {
         e.message =~ 'can only be using in matrix jobs'
     }
 
-    def 'call post build scripts with minimal options with plugin version 0.14'() {
-        when:
-        context.postBuildScripts {
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
-            children().size() == 2
-            buildSteps[0].children().size == 0
-            scriptOnlyIfSuccess[0].value() == true
-        }
-        1 * jobManagement.requirePlugin('postbuildscript')
-        1 * jobManagement.logPluginDeprecationWarning('postbuildscript', '0.17')
-    }
-
-    def 'call post build scripts with all options with plugin version 0.14'() {
-        when:
-        context.postBuildScripts {
-            steps {
-                shell('echo TEST')
-            }
-            onlyIfBuildSucceeds(value)
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
-            children().size() == 2
-            buildSteps[0].children().size == 1
-            buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
-            scriptOnlyIfSuccess[0].value() == value
-        }
-        1 * jobManagement.requirePlugin('postbuildscript')
-        1 * jobManagement.logPluginDeprecationWarning('postbuildscript', '0.17')
-
-        where:
-        value << [true, false]
-    }
-
     def 'call post build scripts with minimal options'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('postbuildscript', '0.17') >> true
-
         when:
         context.postBuildScripts {
         }
@@ -3915,13 +3820,10 @@ class PublisherContextSpec extends Specification {
             scriptOnlyIfFailure[0].value() == false
             markBuildUnstable[0].value() == false
         }
-        1 * jobManagement.requirePlugin('postbuildscript')
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
     }
 
     def 'call post build scripts with all options'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('postbuildscript', '0.17') >> true
-
         when:
         context.postBuildScripts {
             steps {
@@ -3942,7 +3844,7 @@ class PublisherContextSpec extends Specification {
             scriptOnlyIfFailure[0].value() == value
             markBuildUnstable[0].value() == value
         }
-        1 * jobManagement.requirePlugin('postbuildscript')
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
 
         where:
         value << [true, false]

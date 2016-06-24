@@ -1107,13 +1107,6 @@ class PublisherContext extends AbstractExtensibleContext {
 
         publisherNodes << new NodeBuilder().'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher' {
             delegate.publishers {
-                if (context.actions) {
-                    Node publisher = 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
-                        publisherList(context.actions)
-                        runner(class: 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail')
-                    }
-                    publisher.append(toNamedNode('condition', context.condition))
-                }
                 context.conditionalActions.each { ConditionalActionsContext conditionalActionsContext ->
                     Node publisher = 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher' {
                         publisherList(conditionalActionsContext.actions)
@@ -1282,11 +1275,9 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.17
      */
-    @RequiresPlugin(id = 'tasks')
+    @RequiresPlugin(id = 'tasks', minimumVersion = '4.41')
     void tasks(String pattern, excludePattern = '', high = '', normal = '', low = '', ignoreCase = false,
                @DslContext(TaskScannerContext) Closure closure = null) {
-        jobManagement.logPluginDeprecationWarning('tasks', '4.41')
-
         TaskScannerContext context = new TaskScannerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
@@ -1297,9 +1288,7 @@ class PublisherContext extends AbstractExtensibleContext {
             delegate.low(low)
             delegate.ignoreCase(ignoreCase)
             delegate.excludePattern(excludePattern)
-            if (jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41')) {
-                asRegexp(context.regularExpression)
-            }
+            asRegexp(context.regularExpression)
         }
     }
 
@@ -1409,20 +1398,16 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.31
      */
-    @RequiresPlugin(id = 'postbuildscript')
+    @RequiresPlugin(id = 'postbuildscript', minimumVersion = '0.17')
     void postBuildScripts(@DslContext(PostBuildScriptsContext) Closure closure) {
-        jobManagement.logPluginDeprecationWarning('postbuildscript', '0.17')
-
         PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement, item)
         ContextHelper.executeInContext(closure, context)
 
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.postbuildscript.PostBuildScript' {
             buildSteps(context.stepContext.stepNodes)
             scriptOnlyIfSuccess(context.onlyIfBuildSucceeds)
-            if (jobManagement.isMinimumPluginVersionInstalled('postbuildscript', '0.17')) {
-                scriptOnlyIfFailure(context.onlyIfBuildFails)
-                markBuildUnstable(context.markBuildUnstable)
-            }
+            scriptOnlyIfFailure(context.onlyIfBuildFails)
+            markBuildUnstable(context.markBuildUnstable)
         }
     }
 
