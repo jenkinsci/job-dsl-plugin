@@ -26,6 +26,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
+* 1.49 (unreleased)
 * 1.48 (June 24 2016)
  * Added option to ignore missing DSL script files or empty wildcards
    ([JENKINS-34060](https://issues.jenkins-ci.org/browse/JENKINS-34060))
