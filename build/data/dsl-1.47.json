@@ -1,5 +1,5 @@
 {
-    "version": "1.48",
+    "version": "1.47",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -1874,23 +1874,6 @@
                             ],
                             "html": "The directoy to checkout to. By default, files are checked out into the workspace directory.",
                             "firstSentenceCommentText": "The directoy to checkout to. "
-                        }
-                    ]
-                },
-                {
-                    "name": "ignoreExternals",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "ignoreExternals",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "html": "If set, disables externals definition processing.\r\n     ",
-                            "firstSentenceCommentText": "If set, disables externals definition processing."
                         }
                     ]
                 }
@@ -15876,7 +15859,7 @@
                             "firstSentenceCommentText": "Runs a shell script."
                         }
                     ],
-                    "examples": "// execute echo command\r\njob('example-1') {\r\n    steps {\r\n        shell('echo Hello World!')\r\n    }\r\n}\r\n\r\n// read file from workspace\r\njob('example-2') {\r\n    steps {\r\n        shell(readFileFromWorkspace('build.sh'))\r\n    }\r\n}\r\n"
+                    "examples": "job('example') {\r\n    steps {\r\n        shell('echo Hello World!')\r\n        shell(readFileFromWorkspace('build.sh'))\r\n    }\r\n}\r\n"
                 },
                 {
                     "name": "systemGroovyCommand",
@@ -20617,8 +20600,7 @@
                                 }
                             ],
                             "plugin": {
-                                "id": "jabber",
-                                "minimumVersion": "1.35"
+                                "id": "jabber"
                             },
                             "html": "Sends notifications to Jabber.",
                             "firstSentenceCommentText": "Sends notifications to Jabber.",
@@ -21217,39 +21199,6 @@
         "javaposse.jobdsl.dsl.helpers.publisher.ConditionalActionsContext": {
             "type": "javaposse.jobdsl.dsl.helpers.publisher.ConditionalActionsContext",
             "methods": [
-                {
-                    "name": "aggregationCondition",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "conditionClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "html": "Specifies the condition for matrix aggregation.\r\n     ",
-                            "firstSentenceCommentText": "Specifies the condition for matrix aggregation.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.step.RunConditionContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "aggregationRunner",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "runnerName",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "html": "Specifies the action to take if the evaluation of the aggregation condition fails. Must be one of <TT>'Fail'</TT>,\r\n <TT>'Unstable'</TT>, <TT>'RunUnstable'</TT>, <TT>'Run'</TT> or <TT>'DontRun'</TT>. Defaults to <TT>'Fail'</TT>.\r\n     ",
-                            "firstSentenceCommentText": "Specifies the action to take if the evaluation of the aggregation condition fails. "
-                        }
-                    ]
-                },
                 {
                     "name": "condition",
                     "signatures": [
@@ -23073,8 +23022,7 @@
                                 }
                             ],
                             "plugin": {
-                                "id": "jabber",
-                                "minimumVersion": "1.35"
+                                "id": "jabber"
                             },
                             "html": "Sends notifications to Jabber.",
                             "firstSentenceCommentText": "Sends notifications to Jabber.",
@@ -23731,48 +23679,6 @@
                             ],
                             "html": "Disables the throttle. Defaults to <TT>false</TT>.",
                             "firstSentenceCommentText": "Disables the throttle. "
-                        }
-                    ]
-                },
-                {
-                    "name": "throttleMatrixBuilds",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "throttleMatrixBuilds",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "plugin": {
-                                "id": "throttle-concurrents",
-                                "minimumVersion": "1.8.3"
-                            },
-                            "html": "If set, throttles Matrix master builds. Defaults to <TT>true</TT>.\r\n     ",
-                            "firstSentenceCommentText": "If set, throttles Matrix master builds. "
-                        }
-                    ]
-                },
-                {
-                    "name": "throttleMatrixConfigurations",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "throttleMatrixConfigurations",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "plugin": {
-                                "id": "throttle-concurrents",
-                                "minimumVersion": "1.8.3"
-                            },
-                            "html": "If set, throttles Matrix configuration builds. Defaults to <TT>true</TT>.\r\n     ",
-                            "firstSentenceCommentText": "If set, throttles Matrix configuration builds. "
                         }
                     ]
                 }
@@ -26285,27 +26191,6 @@
                     ]
                 },
                 {
-                    "name": "postBuildPublishers",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "plugin": {
-                                "id": "release",
-                                "minimumVersion": "2.5.3"
-                            },
-                            "html": "Adds publishers to run after a successful or failed release.\r\n     ",
-                            "firstSentenceCommentText": "Adds publishers to run after a successful or failed release.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext"
-                        }
-                    ]
-                },
-                {
                     "name": "postBuildSteps",
                     "signatures": [
                         {
@@ -26318,27 +26203,6 @@
                             "html": "Adds build steps to run after a successful or failed release.",
                             "firstSentenceCommentText": "Adds build steps to run after a successful or failed release.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.step.StepContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "postFailedBuildPublishers",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "plugin": {
-                                "id": "release",
-                                "minimumVersion": "2.5.3"
-                            },
-                            "html": "Adds publishers to run after a failed release.\r\n     ",
-                            "firstSentenceCommentText": "Adds publishers to run after a failed release.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext"
                         }
                     ]
                 },
@@ -26359,27 +26223,6 @@
                     ]
                 },
                 {
-                    "name": "postSuccessfulBuildPublishers",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "plugin": {
-                                "id": "release",
-                                "minimumVersion": "2.5.3"
-                            },
-                            "html": "Adds publishers to run after a successful release.\r\n     ",
-                            "firstSentenceCommentText": "Adds publishers to run after a successful release.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext"
-                        }
-                    ]
-                },
-                {
                     "name": "postSuccessfulBuildSteps",
                     "signatures": [
                         {
@@ -26392,27 +26235,6 @@
                             "html": "Adds build steps to run after a successful release.",
                             "firstSentenceCommentText": "Adds build steps to run after a successful release.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.step.StepContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "preBuildPublishers",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "plugin": {
-                                "id": "release",
-                                "minimumVersion": "2.5.3"
-                            },
-                            "html": "Adds publishers to run before the release.\r\n     ",
-                            "firstSentenceCommentText": "Adds publishers to run before the release.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext"
                         }
                     ]
                 },
@@ -26687,17 +26509,6 @@
                                 }
                             ],
                             "availableSince": "1.24",
-                            "html": "Aborts the build based on a fixed time-out.\r\n     ",
-                            "firstSentenceCommentText": "Aborts the build based on a fixed time-out."
-                        },
-                        {
-                            "parameters": [
-                                {
-                                    "name": "minutes",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.48",
                             "html": "Aborts the build based on a fixed time-out.\r\n     ",
                             "firstSentenceCommentText": "Aborts the build based on a fixed time-out."
                         }
@@ -27609,7 +27420,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.wrapper.TimeoutContext"
                         }
                     ],
-                    "examples": "// defines an absolute timeout with a maximum build time of 3 minutes\r\njob('example-1') {\r\n    wrappers {\r\n        timeout()\r\n    }\r\n}\r\n\r\n// defines an absolute timeout with a maximum build time of one hour\r\njob('example-2') {\r\n    wrappers {\r\n        timeout {\r\n            absolute(60)\r\n        }\r\n    }\r\n}\r\n\r\n// the build will timeout when it take 3 times longer than the reference build duration of the last 3 builds\r\n// use a 30 minutes timeout when no successful builds available as reference\r\njob('example-3') {\r\n    wrappers {\r\n        timeout {\r\n            elastic(300, 3, 30)\r\n        }\r\n    }\r\n}\r\n\r\n// abort when the build is likely to be stuck\r\njob('example-4') {\r\n    wrappers {\r\n        timeout {\r\n            likelyStuck()\r\n        }\r\n    }\r\n}\r\n\r\n// timeout if there has been no activity for 180 seconds\r\n// then fail the build and set a build description\r\njob('example-5') {\r\n    wrappers {\r\n        timeout {\r\n            noActivity(180)\r\n            failBuild()\r\n            writeDescription('Build failed due to timeout after {0} minutes')\r\n        }\r\n    }\r\n}\r\n\r\n// defines an absolute timeout using an environment variable\r\njob('example-6') {\r\n    wrappers {\r\n        timeout {\r\n          absolute('${JOB_TIMEOUT}')\r\n        }\r\n    }\r\n}\r\n"
+                    "examples": "// defines an absolute timeout with a maximum build time of 3 minutes\r\njob('example-1') {\r\n    wrappers {\r\n        timeout()\r\n    }\r\n}\r\n\r\n// defines an absolute timeout with a maximum build time of one hour\r\njob('example-2') {\r\n    wrappers {\r\n        timeout {\r\n            absolute(60)\r\n        }\r\n    }\r\n}\r\n\r\n// the build will timeout when it take 3 times longer than the reference build duration of the last 3 builds\r\n// use a 30 minutes timeout when no successful builds available as reference\r\njob('example-3') {\r\n    wrappers {\r\n        timeout {\r\n            elastic(300, 3, 30)\r\n        }\r\n    }\r\n}\r\n\r\n// abort when the build is likely to be stuck\r\njob('example-4') {\r\n    wrappers {\r\n        timeout {\r\n            likelyStuck()\r\n        }\r\n    }\r\n}\r\n\r\n// timeout if there has been no activity for 180 seconds\r\n// then fail the build and set a build description\r\njob('example-5') {\r\n    wrappers {\r\n        timeout {\r\n            noActivity(180)\r\n            failBuild()\r\n            writeDescription('Build failed due to timeout after {0} minutes')\r\n        }\r\n    }\r\n}\r\n"
                 },
                 {
                     "name": "timestamps",
@@ -30850,27 +30661,6 @@
                     "examples": "deliveryPipelineView('example') {\r\n    enableManualTriggers()\r\n}\r\n"
                 },
                 {
-                    "name": "enablePaging",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "value",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "plugin": {
-                                "id": "delivery-pipeline-plugin",
-                                "minimumVersion": "0.9.10"
-                            },
-                            "html": "Enable pagination to allow navigation to older pipeline runs which are not displayed on the first page.\r\n     ",
-                            "firstSentenceCommentText": "Enable pagination to allow navigation to older pipeline runs which are not displayed on the first page."
-                        }
-                    ]
-                },
-                {
                     "name": "pipelineInstances",
                     "signatures": [
                         {
@@ -30999,27 +30789,6 @@
                     "examples": "deliveryPipelineView('example') {\r\n    showPromotions()\r\n}\r\n"
                 },
                 {
-                    "name": "showTestResults",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "value",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "plugin": {
-                                "id": "delivery-pipeline-plugin",
-                                "minimumVersion": "0.9.6"
-                            },
-                            "html": "Show test results in view. Defaults to <TT>false</TT>.\r\n     ",
-                            "firstSentenceCommentText": "Show test results in view. "
-                        }
-                    ]
-                },
-                {
                     "name": "showTotalBuildTime",
                     "signatures": [
                         {
@@ -31077,26 +30846,6 @@
                         }
                     ],
                     "examples": "deliveryPipelineView('example') {\r\n    updateInterval(60)\r\n}\r\n"
-                },
-                {
-                    "name": "useTheme",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "value",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.48",
-                            "plugin": {
-                                "id": "delivery-pipeline-plugin",
-                                "minimumVersion": "0.9.10"
-                            },
-                            "html": "Use defined theme for pipeline. Defaults to <TT>'default'</TT>.\r\n     ",
-                            "firstSentenceCommentText": "Use defined theme for pipeline. "
-                        }
-                    ]
                 }
             ]
         },
@@ -36232,8 +35981,7 @@
                                 }
                             ],
                             "plugin": {
-                                "id": "jabber",
-                                "minimumVersion": "1.35"
+                                "id": "jabber"
                             },
                             "html": "Sends notifications to Jabber.",
                             "firstSentenceCommentText": "Sends notifications to Jabber.",
@@ -37921,7 +37669,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.wrapper.TimeoutContext"
                         }
                     ],
-                    "examples": "// defines an absolute timeout with a maximum build time of 3 minutes\r\njob('example-1') {\r\n    wrappers {\r\n        timeout()\r\n    }\r\n}\r\n\r\n// defines an absolute timeout with a maximum build time of one hour\r\njob('example-2') {\r\n    wrappers {\r\n        timeout {\r\n            absolute(60)\r\n        }\r\n    }\r\n}\r\n\r\n// the build will timeout when it take 3 times longer than the reference build duration of the last 3 builds\r\n// use a 30 minutes timeout when no successful builds available as reference\r\njob('example-3') {\r\n    wrappers {\r\n        timeout {\r\n            elastic(300, 3, 30)\r\n        }\r\n    }\r\n}\r\n\r\n// abort when the build is likely to be stuck\r\njob('example-4') {\r\n    wrappers {\r\n        timeout {\r\n            likelyStuck()\r\n        }\r\n    }\r\n}\r\n\r\n// timeout if there has been no activity for 180 seconds\r\n// then fail the build and set a build description\r\njob('example-5') {\r\n    wrappers {\r\n        timeout {\r\n            noActivity(180)\r\n            failBuild()\r\n            writeDescription('Build failed due to timeout after {0} minutes')\r\n        }\r\n    }\r\n}\r\n\r\n// defines an absolute timeout using an environment variable\r\njob('example-6') {\r\n    wrappers {\r\n        timeout {\r\n          absolute('${JOB_TIMEOUT}')\r\n        }\r\n    }\r\n}\r\n"
+                    "examples": "// defines an absolute timeout with a maximum build time of 3 minutes\r\njob('example-1') {\r\n    wrappers {\r\n        timeout()\r\n    }\r\n}\r\n\r\n// defines an absolute timeout with a maximum build time of one hour\r\njob('example-2') {\r\n    wrappers {\r\n        timeout {\r\n            absolute(60)\r\n        }\r\n    }\r\n}\r\n\r\n// the build will timeout when it take 3 times longer than the reference build duration of the last 3 builds\r\n// use a 30 minutes timeout when no successful builds available as reference\r\njob('example-3') {\r\n    wrappers {\r\n        timeout {\r\n            elastic(300, 3, 30)\r\n        }\r\n    }\r\n}\r\n\r\n// abort when the build is likely to be stuck\r\njob('example-4') {\r\n    wrappers {\r\n        timeout {\r\n            likelyStuck()\r\n        }\r\n    }\r\n}\r\n\r\n// timeout if there has been no activity for 180 seconds\r\n// then fail the build and set a build description\r\njob('example-5') {\r\n    wrappers {\r\n        timeout {\r\n            noActivity(180)\r\n            failBuild()\r\n            writeDescription('Build failed due to timeout after {0} minutes')\r\n        }\r\n    }\r\n}\r\n"
                 },
                 {
                     "name": "timestamps",
@@ -40530,7 +40278,7 @@
                             "firstSentenceCommentText": "Runs a shell script."
                         }
                     ],
-                    "examples": "// execute echo command\r\njob('example-1') {\r\n    steps {\r\n        shell('echo Hello World!')\r\n    }\r\n}\r\n\r\n// read file from workspace\r\njob('example-2') {\r\n    steps {\r\n        shell(readFileFromWorkspace('build.sh'))\r\n    }\r\n}\r\n"
+                    "examples": "job('example') {\r\n    steps {\r\n        shell('echo Hello World!')\r\n        shell(readFileFromWorkspace('build.sh'))\r\n    }\r\n}\r\n"
                 },
                 {
                     "name": "systemGroovyCommand",
@@ -43792,8 +43540,7 @@
                             ],
                             "availableSince": "1.30\r\n",
                             "plugin": {
-                                "id": "cloudbees-folder",
-                                "minimumVersion": "5.0"
+                                "id": "cloudbees-folder"
                             },
                             "html": "Creates or updates a folder.\r\n     ",
                             "firstSentenceCommentText": "Creates or updates a folder."
@@ -43811,8 +43558,7 @@
                             ],
                             "availableSince": "1.31",
                             "plugin": {
-                                "id": "cloudbees-folder",
-                                "minimumVersion": "5.0"
+                                "id": "cloudbees-folder"
                             },
                             "html": "Creates or updates a folder.\r\n     ",
                             "firstSentenceCommentText": "Creates or updates a folder.",
