@@ -493,34 +493,6 @@ Built-in support for the
 [[deprecated|Deprecation-Policy]] and will be removed. The GitHub Pull Request Builder Plugin implements the Job DSL
 extension point and provides it's own Job DSL syntax since version 1.29.7.
 
-DSL prior to 1.43
-```groovy
-job('example') {
-    triggers {
-        pullRequest {
-        }
-    }
-    publishers {
-        mergePullRequest {
-        }
-    }
-}
-```
-
-DSL since 1.43
-```groovy
-job('example') {
-    triggers {
-        githubPullRequest {
-        }
-    }
-    publishers {
-        mergeGithubPullRequest {
-        }
-    }
-}
-```
-
 ### Docker Custom Build Environment
 
 Support for versions older than 1.6.2 of the [CloudBees Docker Custom Build Environment
