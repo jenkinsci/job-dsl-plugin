@@ -639,6 +639,7 @@ class WrapperContext extends AbstractExtensibleContext {
             useLatestVersion(context.useLatestVersion)
             launchSauceConnectOnSlave(context.launchSauceConnectOnSlave)
             options(context.options ?: '')
+            credentialId(context.credentialId ?: '')
             verboseLogging(context.verboseLogging)
             condition(class: 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun')
         }

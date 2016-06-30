@@ -14,6 +14,7 @@ class SauceOnDemandContext implements Context {
     String seleniumHost
     String seleniumPort
     String options
+    String credentialId
     List<String> webDriverBrowsers = []
     List<String> appiumBrowsers = []
 
@@ -29,6 +30,13 @@ class SauceOnDemandContext implements Context {
      */
     void webDriverBrowsers(String... webDriverBrowsers) {
         this.webDriverBrowsers.addAll(webDriverBrowsers)
+    }
+
+    /**
+     * Sets the credential a build should use.
+     */
+    void credentialId(String credentialId) {
+        this.credentialId = credentialId
     }
 
     /**
