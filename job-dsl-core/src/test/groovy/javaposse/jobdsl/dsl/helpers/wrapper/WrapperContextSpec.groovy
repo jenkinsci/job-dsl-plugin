@@ -1112,7 +1112,7 @@ class WrapperContextSpec extends Specification {
         then:
         with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'
-            children().size() == 15
+            children().size() == 16
             useGeneratedTunnelIdentifier[0].value() == false
             sendUsageData[0].value() == false
             nativeAppPackage[0].value() == ''
@@ -1126,6 +1126,7 @@ class WrapperContextSpec extends Specification {
             useLatestVersion[0].value() == false
             launchSauceConnectOnSlave[0].value() == false
             options[0].value() == ''
+            credentialId[0].value() == ''
             verboseLogging[0].value() == false
             condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
         }
@@ -1148,13 +1149,14 @@ class WrapperContextSpec extends Specification {
             useLatestVersion()
             launchSauceConnectOnSlave()
             options('options')
+            credentialId('credentialId')
             verboseLogging()
         }
 
         then:
         with(context.wrapperNodes[0]) {
             name() == 'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'
-            children().size() == 15
+            children().size() == 16
             useGeneratedTunnelIdentifier[0].value() == true
             sendUsageData[0].value() == true
             nativeAppPackage[0].value() == 'nativeAppPackage'
@@ -1174,6 +1176,7 @@ class WrapperContextSpec extends Specification {
             useLatestVersion[0].value() == true
             launchSauceConnectOnSlave[0].value() == true
             options[0].value() == 'options'
+            credentialId[0].value() == 'credentialId'
             verboseLogging[0].value() == true
             condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
         }
