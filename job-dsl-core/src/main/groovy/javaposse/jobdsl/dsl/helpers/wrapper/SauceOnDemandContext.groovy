@@ -1,8 +1,10 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
-class SauceOnDemandContext implements Context {
+class SauceOnDemandContext extends AbstractContext {
     boolean useGeneratedTunnelIdentifier
     boolean sendUsageData
     boolean enableSauceConnect
@@ -14,8 +16,13 @@ class SauceOnDemandContext implements Context {
     String seleniumHost
     String seleniumPort
     String options
+    String credentialsId
     List<String> webDriverBrowsers = []
     List<String> appiumBrowsers = []
+
+    SauceOnDemandContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Specifies the browsers to test with Appium. Can be called multiple times to add more browsers.
@@ -29,6 +36,16 @@ class SauceOnDemandContext implements Context {
      */
     void webDriverBrowsers(String... webDriverBrowsers) {
         this.webDriverBrowsers.addAll(webDriverBrowsers)
+    }
+
+    /**
+     * Sets the credentials a build should use.
+     *
+     * @since 1.49
+     */
+    @RequiresPlugin(id = 'sauce-ondemand', minimumVersion = '1.148')
+    void credentials(String credentialsId) {
+        this.credentialsId = credentialsId
     }
 
     /**

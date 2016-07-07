@@ -27,6 +27,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.49 (unreleased)
+ * Enhanced support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)
+   ([JENKINS-36370](https://issues.jenkins-ci.org/browse/JENKINS-36370))
 * 1.48 (June 24 2016)
  * Added option to ignore missing DSL script files or empty wildcards
    ([JENKINS-34060](https://issues.jenkins-ci.org/browse/JENKINS-34060))
