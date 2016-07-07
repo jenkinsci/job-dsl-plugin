@@ -1104,7 +1104,37 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('nodejs')
     }
 
+    def 'call sauce on demand with defaults for older plugin version'() {
+        when:
+        context.sauceOnDemand {
+        }
+
+        then:
+        with(context.wrapperNodes[0]) {
+            name() == 'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper'
+            children().size() == 15
+            useGeneratedTunnelIdentifier[0].value() == false
+            sendUsageData[0].value() == false
+            nativeAppPackage[0].value() == ''
+            useChromeForAndroid[0].value() == false
+            sauceConnectPath[0].value() == ''
+            enableSauceConnect[0].value() == false
+            seleniumHost[0].value() == ''
+            seleniumPort[0].value() == ''
+            webDriverBrowsers[0].value().empty
+            appiumBrowsers[0].value().empty
+            useLatestVersion[0].value() == false
+            launchSauceConnectOnSlave[0].value() == false
+            options[0].value() == ''
+            verboseLogging[0].value() == false
+            condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
+        }
+    }
+
     def 'call sauce on demand with defaults'() {
+        given:
+        mockJobManagement.isMinimumPluginVersionInstalled('sauce-ondemand', '1.148') >> true
+
         when:
         context.sauceOnDemand {
         }
@@ -1133,6 +1163,9 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'call sauce on demand with all options'() {
+        given:
+        mockJobManagement.isMinimumPluginVersionInstalled('sauce-ondemand', '1.148') >> true
+
         when:
         context.sauceOnDemand {
             useGeneratedTunnelIdentifier()
@@ -1149,7 +1182,7 @@ class WrapperContextSpec extends Specification {
             useLatestVersion()
             launchSauceConnectOnSlave()
             options('options')
-            credentialId('credentialId')
+            credentials('credentialId')
             verboseLogging()
         }
 

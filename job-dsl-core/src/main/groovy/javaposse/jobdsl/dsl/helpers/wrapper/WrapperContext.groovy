@@ -614,7 +614,7 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'sauce-ondemand', minimumVersion = '1.142')
     void sauceOnDemand(@DslContext(SauceOnDemandContext) Closure closure) {
-        SauceOnDemandContext context = new SauceOnDemandContext()
+        SauceOnDemandContext context = new SauceOnDemandContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper' {
@@ -639,7 +639,9 @@ class WrapperContext extends AbstractExtensibleContext {
             useLatestVersion(context.useLatestVersion)
             launchSauceConnectOnSlave(context.launchSauceConnectOnSlave)
             options(context.options ?: '')
-            credentialId(context.credentialId ?: '')
+            if (jobManagement.isMinimumPluginVersionInstalled('sauce-ondemand', '1.148')) {
+                credentialId(context.credentialsId ?: '')
+            }
             verboseLogging(context.verboseLogging)
             condition(class: 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun')
         }
