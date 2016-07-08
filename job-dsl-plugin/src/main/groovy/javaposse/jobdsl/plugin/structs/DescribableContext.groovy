@@ -3,6 +3,7 @@ package javaposse.jobdsl.plugin.structs
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.JobManagement
 import org.jenkinsci.plugins.structs.describable.ArrayType
 import org.jenkinsci.plugins.structs.describable.AtomicType
 import org.jenkinsci.plugins.structs.describable.DescribableModel
@@ -22,10 +23,12 @@ import static org.apache.commons.lang.ClassUtils.isAssignable
  */
 class DescribableContext implements Context {
     private final DescribableModel describableModel
+    private final JobManagement jobManagement
     private final Map<String, ?> values = [:]
 
-    DescribableContext(DescribableModel describableModel) {
+    DescribableContext(DescribableModel describableModel, JobManagement jobManagement) {
         this.describableModel = describableModel
+        this.jobManagement = jobManagement
     }
 
     /**
@@ -56,6 +59,9 @@ class DescribableContext implements Context {
                 throw new ParameterMissingException(name, DescribableContext, argsArray, describableModel)
             }
             if (isValidValue(parameter.type, value)) {
+                if (parameter.deprecated) {
+                    jobManagement.logDeprecationWarning()
+                }
                 values[name] = getValue(parameter.type, value)
                 return null
             }
@@ -91,20 +97,27 @@ class DescribableContext implements Context {
         false
     }
 
-    private static Object getValue(ParameterType parameterType, Object value) {
+    private Object getValue(ParameterType parameterType, Object value) {
         if (value instanceof Closure) {
             if (parameterType instanceof ArrayType) {
-                ArrayType arrayType = (ArrayType) parameterType
-                DescribableListContext delegate = new DescribableListContext(getArrayElementTypes(arrayType))
+                DescribableListContext delegate = new DescribableListContext(
+                        getArrayElementTypes((ArrayType) parameterType),
+                        jobManagement
+                )
                 executeInContext(value, delegate)
                 return delegate.values
             } else if (parameterType instanceof HomogeneousObjectType) {
-                DescribableContext delegate = new DescribableContext(((HomogeneousObjectType) parameterType).schemaType)
+                DescribableContext delegate = new DescribableContext(
+                        ((HomogeneousObjectType) parameterType).schemaType,
+                        jobManagement
+                )
                 executeInContext((Closure) value, delegate)
                 return delegate.createInstance()
             } else if (parameterType instanceof HeterogeneousObjectType) {
-                HeterogeneousObjectType heterogeneousObjectType = (HeterogeneousObjectType) parameterType
-                DescribableListContext delegate = new DescribableListContext(heterogeneousObjectType.types.values())
+                DescribableListContext delegate = new DescribableListContext(
+                        ((HeterogeneousObjectType) parameterType).types.values(),
+                        jobManagement
+                )
                 executeInContext(value, delegate)
                 return delegate.values ? delegate.values[-1] : null
             }

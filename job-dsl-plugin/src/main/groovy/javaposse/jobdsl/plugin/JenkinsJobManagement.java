@@ -422,7 +422,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
 
         try {
-            Object result = Iterables.getOnlyElement(candidates).call(getSession(item), args);
+            Object result = Iterables.getOnlyElement(candidates).call(getSession(item), this, args);
             return result == null ? NO_VALUE : new XmlParser().parseText(Items.XSTREAM2.toXML(result));
         } catch (InvocationTargetException e) {
             throw e.getCause();

@@ -1,9 +1,11 @@
 package javaposse.jobdsl.plugin.structs
 
 import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.plugin.fixtures.ABean
 import javaposse.jobdsl.plugin.fixtures.ADescribable
 import javaposse.jobdsl.plugin.fixtures.ADuplicateBuilder
+import javaposse.jobdsl.plugin.fixtures.DeprecatedTrigger
 import javaposse.jobdsl.plugin.fixtures.DummyTrigger
 import jenkins.mvn.DefaultSettingsProvider
 import jenkins.mvn.FilePathSettingsProvider
@@ -18,9 +20,11 @@ class DescribableContextSpec extends Specification {
     @ClassRule
     JenkinsRule jenkinsRule = new JenkinsRule()
 
+    JobManagement jobManagement = Mock(JobManagement)
+
     def 'no argument'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aString()
@@ -35,7 +39,7 @@ class DescribableContextSpec extends Specification {
 
     def 'more than one argument'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aString('foo', 'bar')
@@ -50,7 +54,7 @@ class DescribableContextSpec extends Specification {
 
     def 'unknown method'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.foo('foo')
@@ -65,7 +69,7 @@ class DescribableContextSpec extends Specification {
 
     def 'string property with invalid type'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aString(1)
@@ -80,7 +84,7 @@ class DescribableContextSpec extends Specification {
 
     def 'string property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aString('foo')
@@ -94,7 +98,7 @@ class DescribableContextSpec extends Specification {
 
     def 'string property with null value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aString(null)
@@ -108,7 +112,7 @@ class DescribableContextSpec extends Specification {
 
     def 'boolean property with invalid type'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aBoolean('true')
@@ -123,7 +127,7 @@ class DescribableContextSpec extends Specification {
 
     def 'boolean property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aBoolean(true)
@@ -137,7 +141,7 @@ class DescribableContextSpec extends Specification {
 
     def 'boolean property with null value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aBoolean(null)
@@ -152,7 +156,7 @@ class DescribableContextSpec extends Specification {
 
     def 'integer property with invalid type'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.anInt('true')
@@ -167,7 +171,7 @@ class DescribableContextSpec extends Specification {
 
     def 'integer property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.anInteger(4711)
@@ -181,7 +185,7 @@ class DescribableContextSpec extends Specification {
 
     def 'integer property with null value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.anInteger(null)
@@ -195,7 +199,7 @@ class DescribableContextSpec extends Specification {
 
     def 'enum property with invalid value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.anEnum('true')
@@ -210,7 +214,7 @@ class DescribableContextSpec extends Specification {
 
     def 'enum property with string value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.anEnum('NEW')
@@ -224,7 +228,7 @@ class DescribableContextSpec extends Specification {
 
     def 'enum property with enum value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.anEnum(Thread.State.NEW)
@@ -238,7 +242,7 @@ class DescribableContextSpec extends Specification {
 
     def 'enum property with null value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.anEnum(null)
@@ -253,7 +257,7 @@ class DescribableContextSpec extends Specification {
 
     def 'heterogeneous property with invalid type'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHeterogeneous('true')
@@ -268,7 +272,7 @@ class DescribableContextSpec extends Specification {
 
     def 'heterogeneous property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHeterogeneous {
@@ -284,7 +288,7 @@ class DescribableContextSpec extends Specification {
 
     def 'heterogeneous property with null value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHeterogeneous(null)
@@ -298,7 +302,7 @@ class DescribableContextSpec extends Specification {
 
     def 'empty heterogeneous property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHeterogeneous {}
@@ -312,7 +316,7 @@ class DescribableContextSpec extends Specification {
 
     def 'last heterogeneous wins'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHeterogeneous {
@@ -331,7 +335,7 @@ class DescribableContextSpec extends Specification {
 
     def 'heterogeneous list property with invalid type'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHeterogeneousList('true')
@@ -346,7 +350,7 @@ class DescribableContextSpec extends Specification {
 
     def 'heterogeneous list property with inull value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHeterogeneousList(null)
@@ -361,7 +365,7 @@ class DescribableContextSpec extends Specification {
 
     def 'heterogeneous list property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHeterogeneousList {
@@ -382,7 +386,7 @@ class DescribableContextSpec extends Specification {
 
     def 'empty heterogeneous list property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHeterogeneousList {}
@@ -396,7 +400,7 @@ class DescribableContextSpec extends Specification {
 
     def 'unset heterogeneous list property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         def instance = context.createInstance()
@@ -409,7 +413,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous property with invalid type'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneous('true')
@@ -424,7 +428,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneous {
@@ -441,7 +445,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous property with null value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneous(null)
@@ -455,7 +459,7 @@ class DescribableContextSpec extends Specification {
 
     def 'empty homogeneous property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneous {}
@@ -469,7 +473,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous list property with invalid type'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousList('true')
@@ -484,7 +488,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous list property with null value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousList(null)
@@ -499,7 +503,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous list property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousList {
@@ -526,7 +530,7 @@ class DescribableContextSpec extends Specification {
 
     def 'empty homogeneous property list'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousList {}
@@ -540,7 +544,7 @@ class DescribableContextSpec extends Specification {
 
     def 'unset homogeneous property list'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         def instance = context.createInstance()
@@ -553,7 +557,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous bean property with invalid type'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousBean('true')
@@ -568,7 +572,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous bean property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousBean {
@@ -585,7 +589,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous bean property with null value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousBean(null)
@@ -599,7 +603,7 @@ class DescribableContextSpec extends Specification {
 
     def 'empty homogeneous bean property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousBean {}
@@ -613,7 +617,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous bean list property with invalid type'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousBeanList('true')
@@ -628,7 +632,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous bean list property with null value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousBeanList(null)
@@ -643,7 +647,7 @@ class DescribableContextSpec extends Specification {
 
     def 'homogeneous bean list property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousBeanList {
@@ -668,7 +672,7 @@ class DescribableContextSpec extends Specification {
 
     def 'empty homogeneous bean property list'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.aHomogeneousBeanList {}
@@ -682,7 +686,7 @@ class DescribableContextSpec extends Specification {
 
     def 'unset homogeneous bean list property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         def instance = context.createInstance()
@@ -695,7 +699,7 @@ class DescribableContextSpec extends Specification {
 
     def 'string list property with invalid type'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.stringList(this)
@@ -710,7 +714,7 @@ class DescribableContextSpec extends Specification {
 
     def 'string list property with null value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.stringList(null)
@@ -725,7 +729,7 @@ class DescribableContextSpec extends Specification {
 
     def 'string list property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.stringList(['foo', 'bar'])
@@ -741,7 +745,7 @@ class DescribableContextSpec extends Specification {
 
     def 'empty string property list'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.stringList([])
@@ -755,7 +759,7 @@ class DescribableContextSpec extends Specification {
 
     def 'unset string property list'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         def instance = context.createInstance()
@@ -768,7 +772,7 @@ class DescribableContextSpec extends Specification {
 
     def 'enum list property with invalid type'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.enumList(this)
@@ -783,7 +787,7 @@ class DescribableContextSpec extends Specification {
 
     def 'enum list property with null value'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.enumList(null)
@@ -798,7 +802,7 @@ class DescribableContextSpec extends Specification {
 
     def 'enum list property'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.enumList(['NEW', 'BLOCKED'])
@@ -814,7 +818,7 @@ class DescribableContextSpec extends Specification {
 
     def 'empty enum property list'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         context.enumList([])
@@ -828,7 +832,7 @@ class DescribableContextSpec extends Specification {
 
     def 'unset enum property list'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger))
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
         when:
         def instance = context.createInstance()
@@ -841,7 +845,7 @@ class DescribableContextSpec extends Specification {
 
     def 'required parameter missing'() {
         setup:
-        DescribableContext context = new DescribableContext(new DescribableModel(ADuplicateBuilder))
+        DescribableContext context = new DescribableContext(new DescribableModel(ADuplicateBuilder), jobManagement)
 
         when:
         context.createInstance()
@@ -849,5 +853,16 @@ class DescribableContextSpec extends Specification {
         then:
         Exception e = thrown(DslScriptException)
         e.message =~ 'the following options are required and must be specified: foo'
+    }
+
+    def 'log deprecation warning'() {
+        setup:
+        DescribableContext context = new DescribableContext(new DescribableModel(DeprecatedTrigger), jobManagement)
+
+        when:
+        context.deprecatedOption('foo')
+
+        then:
+        1 * jobManagement.logDeprecationWarning()
     }
 }

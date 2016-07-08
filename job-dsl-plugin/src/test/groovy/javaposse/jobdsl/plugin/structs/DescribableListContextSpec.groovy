@@ -3,6 +3,7 @@ package javaposse.jobdsl.plugin.structs
 import hudson.triggers.SCMTrigger
 import hudson.triggers.TimerTrigger
 import javaposse.jobdsl.dsl.DslException
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.plugin.fixtures.ADescribable
 import javaposse.jobdsl.plugin.fixtures.ADuplicateBuilder
 import javaposse.jobdsl.plugin.fixtures.BDuplicateBuilder
@@ -18,9 +19,14 @@ class DescribableListContextSpec extends Specification {
     @ClassRule
     JenkinsRule jenkinsRule = new JenkinsRule()
 
+    JobManagement jobManagement = Mock(JobManagement)
+
     def 'invalid args'() {
         setup:
-        DescribableListContext context = new DescribableListContext([new DescribableModel(ReverseBuildTrigger)])
+        DescribableListContext context = new DescribableListContext(
+                [new DescribableModel(ReverseBuildTrigger)],
+                jobManagement
+        )
 
         when:
         context.reverseBuildTrigger('foo')
@@ -35,7 +41,10 @@ class DescribableListContextSpec extends Specification {
 
     def 'unknown name'() {
         setup:
-        DescribableListContext context = new DescribableListContext([new DescribableModel(ReverseBuildTrigger)])
+        DescribableListContext context = new DescribableListContext(
+                [new DescribableModel(ReverseBuildTrigger)],
+                jobManagement
+        )
 
         when:
         context.myTrigger()
@@ -50,10 +59,10 @@ class DescribableListContextSpec extends Specification {
 
     def 'duplicate name'() {
         setup:
-        DescribableListContext context = new DescribableListContext([
-                new DescribableModel(ADuplicateBuilder),
-                new DescribableModel(BDuplicateBuilder),
-        ])
+        DescribableListContext context = new DescribableListContext(
+                [new DescribableModel(ADuplicateBuilder), new DescribableModel(BDuplicateBuilder)],
+                jobManagement
+        )
 
         when:
         context.duplicate()
@@ -66,7 +75,7 @@ class DescribableListContextSpec extends Specification {
 
     def 'create instance'() {
         setup:
-        DescribableListContext context = new DescribableListContext([new DescribableModel(TimerTrigger)])
+        DescribableListContext context = new DescribableListContext([new DescribableModel(TimerTrigger)], jobManagement)
 
         when:
         context.timerTrigger {
@@ -82,7 +91,7 @@ class DescribableListContextSpec extends Specification {
 
     def 'create instance without closure'() {
         setup:
-        DescribableListContext context = new DescribableListContext([new DescribableModel(ADescribable)])
+        DescribableListContext context = new DescribableListContext([new DescribableModel(ADescribable)], jobManagement)
 
         when:
         context.aDescribable()
@@ -95,10 +104,10 @@ class DescribableListContextSpec extends Specification {
 
     def 'create multiple instance'() {
         setup:
-        DescribableListContext context = new DescribableListContext([
-                new DescribableModel(SCMTrigger),
-                new DescribableModel(TimerTrigger),
-        ])
+        DescribableListContext context = new DescribableListContext(
+                [new DescribableModel(SCMTrigger), new DescribableModel(TimerTrigger)],
+                jobManagement
+        )
 
         when:
         context.scmTrigger {
