@@ -168,6 +168,22 @@
           ]
         },
         {
+          "name": "old",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "closure",
+                  "type": "Closure",
+                  "defaultValue": null
+                }
+              ],
+              "generated": true,
+              "contextClass": "javaposse.jobdsl.plugin.fixtures.DeprecatedTrigger"
+            }
+          ]
+        },
+        {
           "name": "periodicFolderTrigger",
           "signatures": [
             {
@@ -236,6 +252,7 @@
                   "type": "boolean"
                 }
               ],
+              "deprecated": false,
               "generated": true
             }
           ]
@@ -251,6 +268,7 @@
                   "defaultValue": null
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "contextClass": "jenkins.mvn.SettingsProvider$$List"
             }
@@ -267,6 +285,7 @@
                   "defaultValue": null
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "contextClass": "jenkins.mvn.SettingsProvider$$List"
             }
@@ -283,6 +302,7 @@
                   "defaultValue": null
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "contextClass": "javaposse.jobdsl.plugin.fixtures.ADescribable"
             }
@@ -299,6 +319,7 @@
                   "defaultValue": null
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "contextClass": "javaposse.jobdsl.plugin.fixtures.ABean"
             }
@@ -315,6 +336,7 @@
                   "defaultValue": null
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "contextClass": "javaposse.jobdsl.plugin.fixtures.ABean$$List"
             }
@@ -331,6 +353,7 @@
                   "defaultValue": null
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "contextClass": "javaposse.jobdsl.plugin.fixtures.ADescribable$$List"
             }
@@ -346,6 +369,7 @@
                   "type": "String"
                 }
               ],
+              "deprecated": false,
               "generated": true
             }
           ]
@@ -360,6 +384,7 @@
                   "type": "String"
                 }
               ],
+              "deprecated": false,
               "generated": true
             }
           ]
@@ -374,6 +399,7 @@
                   "type": "Integer"
                 }
               ],
+              "deprecated": false,
               "generated": true
             }
           ]
@@ -388,6 +414,7 @@
                   "type": "Iterable<String>"
                 }
               ],
+              "deprecated": false,
               "generated": true
             }
           ]
@@ -402,6 +429,27 @@
                   "type": "Iterable<String>"
                 }
               ],
+              "deprecated": false,
+              "generated": true
+            }
+          ]
+        }
+      ]
+    },
+    "javaposse.jobdsl.plugin.fixtures.DeprecatedTrigger": {
+      "type": "javaposse.jobdsl.plugin.fixtures.DeprecatedTrigger",
+      "methods": [
+        {
+          "name": "deprecatedOption",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "String"
+                }
+              ],
+              "deprecated": true,
               "generated": true
             }
           ]
@@ -421,6 +469,7 @@
                   "type": "String"
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "required": true,
               "html": "<!--\n ~ The MIT License\n ~\n ~ Copyright (c) 2013, CloudBees, Inc.\n ~\n ~ Permission is hereby granted, free of charge, to any person obtaining a copy\n ~ of this software and associated documentation files (the \"Software\"), to deal\n ~ in the Software without restriction, including without limitation the rights\n ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n ~ copies of the Software, and to permit persons to whom the Software is\n ~ furnished to do so, subject to the following conditions:\n ~\n ~ The above copyright notice and this permission notice shall be included in\n ~ all copies or substantial portions of the Software.\n ~\n ~ THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n ~ THE SOFTWARE.\n -->\n<div>\n    The maximum amount of time since the last indexing that is allowed to elapse before an indexing is triggered.\n<\/div>",
@@ -443,6 +492,7 @@
                   "type": "String"
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "required": true
             }
@@ -458,6 +508,7 @@
                   "type": "boolean"
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "required": true,
               "html": "<div>\n  Ignore changes notified by SCM post-commit hooks.\n<p>\n  This can be useful if you want to prevent some long-running jobs (e.g. reports) starting because of every commit, but still want to\n  run them periodic if SCM changes have occurred.\n<p>\n  Note that this option needs to be supported by the SCM plugin, too! The subversion-plugin supports this since version 1.44. \n<\/div>",
@@ -480,6 +531,7 @@
                   "type": "String"
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "required": true,
               "html": "<div>\n  This field follows the syntax of cron (with minor differences).\n  Specifically, each line consists of 5 fields separated by TAB or whitespace:\n  <pre>MINUTE HOUR DOM MONTH DOW<\/pre>\n  <table>\n    <tr>\n      <td>MINUTE<\/td>\n      <td>Minutes within the hour (0–59)<\/td>\n    <\/tr>\n    <tr>\n      <td>HOUR<\/td>\n      <td>The hour of the day (0–23)<\/td>\n    <\/tr>\n    <tr>\n      <td>DOM<\/td>\n      <td>The day of the month (1–31)<\/td>\n    <\/tr>\n    <tr>\n      <td>MONTH<\/td>\n      <td>The month (1–12)<\/td>\n    <\/tr>\n    <tr>\n      <td>DOW<\/td>\n      <td>The day of the week (0–7) where 0 and 7 are Sunday.<\/td>\n    <\/tr>\n  <\/table>\n  <p>\n    To specify multiple values for one field, the following operators are\n    available. In the order of precedence,\n  <\/p>\n  <ul>\n    <li><code>*<\/code> specifies all valid values<\/li>\n    <li><code>M-N<\/code> specifies a range of values<\/li>\n    <li><code>M-N/X<\/code> or <code>*/X<\/code> steps by intervals of X through the specified range or whole valid range<\/li>\n    <li><code>A,B,...,Z<\/code> enumerates multiple values<\/li>\n  <\/ul>\n  <p>\n    To allow periodically scheduled tasks to produce even load on the system,\n    the symbol <code>H<\/code> (for “hash”) should be used wherever possible.\n    For example, using <code>0 0 * * *<\/code> for a dozen daily jobs\n    will cause a large spike at midnight.\n    In contrast, using <code>H H * * *<\/code> would still execute each job once a day,\n    but not all at the same time, better using limited resources.\n  <\/p><p>\n    The <code>H<\/code> symbol can be used with a range. For example, <code>H H(0-7) * * *<\/code>\n    means some time between 12:00 AM (midnight) to 7:59 AM.\n    You can also use step intervals with <code>H<\/code>, with or without ranges.\n  <\/p><p>\n    The <code>H<\/code> symbol can be thought of as a random value over a range,\n    but it actually is a hash of the job name, not a random function, so that\n    the value remains stable for any given project.\n  <\/p>\n  <p>\n      Beware that for the day of month field, short cycles such as <code>*/3<\/code> or <code>H/3<\/code> will not work consistently near the end of most months, due to variable month lengths.\n      For example, <code>*/3<\/code> will run on the 1st, 4th, …31st days of a long month, then again the next day of the next month.\n      Hashes are always chosen in the 1-28 range, so <code>H/3<\/code> will produce a gap between runs of between 3 and 6 days at the end of a month.\n      (Longer cycles will also have inconsistent lengths but the effect may be relatively less noticeable.)\n  <\/p>\n  <p>\n    Empty lines and lines that start with <code>#<\/code> will be ignored as comments.\n  <\/p><p>\n    In addition, <code>@yearly<\/code>, <code>@annually<\/code>, <code>@monthly<\/code>,\n    <code>@weekly<\/code>, <code>@daily<\/code>, <code>@midnight<\/code>,\n    and <code>@hourly<\/code> are supported as convenient aliases.\n    These use the hash system for automatic balancing.\n    For example, <code>@hourly<\/code> is the same as <code>H * * * *<\/code> and could mean at any time during the hour.\n    <code>@midnight<\/code> actually means some time between 12:00 AM and 2:59 AM.\n  <\/p><p>\n    Examples:\n  <\/p>\n<pre>\n# every fifteen minutes (perhaps at :07, :22, :37, :52)\nH/15 * * * *\n# every ten minutes in the first half of every hour (three times, perhaps at :04, :14, :24)\nH(0-29)/10 * * * *\n# once every two hours every weekday (perhaps at 10:38 AM, 12:38 PM, 2:38 PM, 4:38 PM)\nH 9-16/2 * * 1-5\n# once a day on the 1st and 15th of every month except December\nH H 1,15 1-11 *\n<\/pre>\n<\/div>\n",
@@ -502,6 +554,7 @@
                   "type": "int"
                 }
               ],
+              "deprecated": false,
               "generated": true
             }
           ]
@@ -516,6 +569,7 @@
                   "type": "String"
                 }
               ],
+              "deprecated": false,
               "generated": true
             }
           ]
@@ -535,6 +589,7 @@
                   "type": "String"
                 }
               ],
+              "deprecated": false,
               "generated": true
             }
           ]
@@ -648,6 +703,7 @@
                   "type": "String"
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "required": true,
               "html": "<div>\n    Path to settings.xml file, relative to project workspace or absolute (variables are supported).\n<\/div>",
@@ -670,6 +726,7 @@
                   "type": "String"
                 }
               ],
+              "deprecated": false,
               "generated": true,
               "required": true
             }

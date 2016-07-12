@@ -214,6 +214,7 @@ class EmbeddedApiDocGenerator {
     private JSONObject generateSignature(DescribableParameter parameter) {
         JSONObject signature = new JSONObject()
                 .element('parameters', [generateParameter(parameter.type)])
+                .element('deprecated', parameter.deprecated)
                 .element('generated', true)
 
         if (isContextParameter(parameter.type)) {

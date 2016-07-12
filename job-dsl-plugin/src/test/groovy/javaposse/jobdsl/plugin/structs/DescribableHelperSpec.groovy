@@ -14,6 +14,7 @@ import javaposse.jobdsl.plugin.fixtures.ADuplicateBuilder
 import javaposse.jobdsl.plugin.fixtures.BDuplicateBuilder
 import javaposse.jobdsl.plugin.fixtures.Boolean
 import javaposse.jobdsl.plugin.fixtures.BrokenContext
+import javaposse.jobdsl.plugin.fixtures.DeprecatedTrigger
 import javaposse.jobdsl.plugin.fixtures.DummyTrigger
 import javaposse.jobdsl.plugin.fixtures.Foo
 import javaposse.jobdsl.plugin.fixtures.FooTrigger
@@ -197,7 +198,7 @@ class DescribableHelperSpec extends Specification {
         Map<String, DescribableModel> models = DescribableHelper.findDescribableModels(TriggerContext)
 
         then:
-        models.size() == 8
+        models.size() == 9
         models['dummy'].type == DummyTrigger
         models['foo'].type == FooTrigger
         models['bar'].type == FooTrigger
@@ -206,5 +207,6 @@ class DescribableHelperSpec extends Specification {
         models['integerTrigger'].type == IntegerTrigger
         models['someTrigger'].type == SomeTrigger
         models['periodicFolderTrigger'].type == PeriodicFolderTrigger
+        models['old'].type == DeprecatedTrigger
     }
 }
