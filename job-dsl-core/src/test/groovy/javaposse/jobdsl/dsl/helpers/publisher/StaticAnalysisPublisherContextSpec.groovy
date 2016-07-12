@@ -12,9 +12,6 @@ class StaticAnalysisPublisherContextSpec extends Specification {
 
     @Unroll
     def 'add #analysisTool with default values'(String analysisTool, Map extraNodes, String pluginId) {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
-
         when:
         context."${analysisTool}"('somewhere')
 
@@ -46,8 +43,6 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         'androidLint'     | [:]                                                                    | 'android-lint'
         'checkstyle'      | [:]                                                                    | 'checkstyle'
         'dry'             | [highThreshold: 50, normalThreshold: 25]                               | 'dry'
-        'tasks'           | [excludePattern: '', high: '', normal: '', low: '', ignoreCase: false,
-                             asRegexp: false]                                                      | 'tasks'
     }
 
     def 'add warnings with default values'() {
@@ -82,9 +77,6 @@ class StaticAnalysisPublisherContextSpec extends Specification {
 
     @Unroll
     def 'add #analysisTool with all values'(String analysisTool, String nodeName, List extraArgs, Map extraValues) {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
-
         when:
         context."${analysisTool}"('somewhere', *extraArgs) {
             healthLimits 3, 20
@@ -291,38 +283,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         1 * jobManagement.requirePlugin('analysis-collector')
     }
 
-    def 'task scanner with minimal options and older plugin version'() {
-        when:
-        context.tasks('foo')
-
-        then:
-        context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            children().size() == 17
-            pattern[0].value() == 'foo'
-            high[0].value().empty
-            normal[0].value().empty
-            low[0].value().empty
-            ignoreCase[0].value() == false
-            excludePattern[0].value().empty
-            healthy[0].value() == ''
-            unHealthy[0].value() == ''
-            thresholdLimit[0].value() == 'low'
-            defaultEncoding[0].value().empty
-            thresholds[0].value().empty
-            canRunOnFailed[0].value() == false
-            useStableBuildAsReference[0].value() == false
-            useDeltaValues[0].value() == false
-            shouldDetectModules[0].value() == false
-            dontComputeNew[0].value() == true
-            doNotResolveRelativePaths[0].value() == true
-        }
-    }
-
     def 'task scanner with minimal options'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
-
         when:
         context.tasks('foo')
 
@@ -349,12 +310,10 @@ class StaticAnalysisPublisherContextSpec extends Specification {
             doNotResolveRelativePaths[0].value() == true
             asRegexp[0].value() == false
         }
+        1 * jobManagement.requireMinimumPluginVersion('tasks', '4.41')
     }
 
     def 'task scanner with extra options'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('tasks', '4.41') >> true
-
         when:
         context.tasks('foo', 'bar', 'one', 'two', 'three', true) {
             regularExpression()
@@ -383,6 +342,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
             doNotResolveRelativePaths[0].value() == true
             asRegexp[0].value() == true
         }
+        1 * jobManagement.requireMinimumPluginVersion('tasks', '4.41')
     }
 
     private static void assertValues(Map map, baseNode, List notCheckedNodes = [], Map extraNodes = [:]) {

@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class TaskScannerContext extends StaticAnalysisContext {
     protected final JobManagement jobManagement
@@ -17,7 +16,6 @@ class TaskScannerContext extends StaticAnalysisContext {
      *
      * @since 1.42
      */
-    @RequiresPlugin(id = 'tasks', minimumVersion = '4.41')
     void regularExpression(boolean regularExpression = true) {
         this.regularExpression = regularExpression
     }

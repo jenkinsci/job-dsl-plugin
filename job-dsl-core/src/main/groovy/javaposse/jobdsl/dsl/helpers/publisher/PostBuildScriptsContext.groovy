@@ -6,7 +6,6 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.step.StepContext
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class PostBuildScriptsContext extends AbstractContext {
     final StepContext stepContext
@@ -38,7 +37,6 @@ class PostBuildScriptsContext extends AbstractContext {
      *
      * @since 1.42
      */
-    @RequiresPlugin(id = 'postbuildscript', minimumVersion = '0.17')
     void onlyIfBuildFails(boolean onlyIfBuildFails = true) {
         this.onlyIfBuildFails = onlyIfBuildFails
     }
@@ -48,7 +46,6 @@ class PostBuildScriptsContext extends AbstractContext {
      *
      * @since 1.42
      */
-    @RequiresPlugin(id = 'postbuildscript', minimumVersion = '0.17')
     void markBuildUnstable(boolean markBuildUnstable = true) {
         this.markBuildUnstable = markBuildUnstable
     }
