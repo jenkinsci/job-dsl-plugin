@@ -293,3 +293,21 @@ The `__FILE__` variable is available in scripts only, not in any classes used by
 Job DSL scripts are executed on the Jenkins master node, but the seed job's workspace which contains the script files
 may reside on a build node. This mean that direct access to the file specified by `__FILE__` may not be possible from a
 DSL script. See [Distributed builds](https://wiki.jenkins-ci.org/display/JENKINS/Distributed+builds) for details.
+
+# Seed Job
+
+Access to the seed job is available through the `SEED_JOB` variable. The variable contains a reference to the internal
+Jenkins object that represents the seed job. The actual type of the object depends on the type of job that runs the DSL.
+For a freestyle project, the object is an instance of `hudson.model.FreeStyleProject`. See the
+[Jenkins API Documentation](http://javadoc.jenkins-ci.org/) for details.
+
+The `SEED_JOB` variable is only available in scripts, not in any classes used by a script. And it is only available
+when running in Jenkins, e.g. in the "Process Job DSLs" build step.
+
+The following example show how to apply the same quiet period for a generated job as for the seed job.
+
+```groovy
+job('example') {
+    quietPeriod(SEED_JOB.quietPeriod)
+}
+```

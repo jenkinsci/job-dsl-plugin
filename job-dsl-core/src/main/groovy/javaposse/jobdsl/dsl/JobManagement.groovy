@@ -126,7 +126,7 @@ interface JobManagement {
     /**
      * Map of variables that should be available to the script.
      */
-    Map<String, String> getParameters()
+    Map<String, Object> getParameters()
 
     /**
      * Logs a deprecation warning for the calling method.

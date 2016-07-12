@@ -6,7 +6,7 @@ import hudson.util.VersionNumber
  * Abstract base class for all non-Jenkins implementations of {@link JobManagement}.
  */
 abstract class MockJobManagement extends AbstractJobManagement {
-    final Map<String, String> parameters = [:]
+    final Map<String, Object> parameters = [:]
     final Map<String, List<String>> permissions = [
             'hudson.security.AuthorizationMatrixProperty': [
                     'hudson.model.Item.Delete',

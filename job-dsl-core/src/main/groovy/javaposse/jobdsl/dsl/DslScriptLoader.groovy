@@ -274,7 +274,7 @@ class DslScriptLoader {
             binding.setVariable('__FILE__', scriptRequest.scriptPath)
         }
 
-        jobManagement.parameters.each { String key, String value ->
+        jobManagement.parameters.each { String key, Object value ->
             LOGGER.fine("Binding ${key} to ${value}")
             binding.setVariable(key, value)
         }

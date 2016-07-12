@@ -85,7 +85,7 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
-    Map<String, String> getParameters() {
+    Map<String, Object> getParameters() {
         delegate.parameters
     }
 

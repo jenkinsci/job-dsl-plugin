@@ -236,8 +236,12 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public Map<String, String> getParameters() {
-        return envVars;
+    public Map<String, Object> getParameters() {
+        Map<String, Object> result = new HashMap<String, Object>(envVars);
+        if (project != null && !result.containsKey("SEED_JOB")) {
+            result.put("SEED_JOB", project);
+        }
+        return result;
     }
 
     @Override
