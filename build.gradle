@@ -201,7 +201,9 @@ githubPages {
     workingPath = "$buildDir/wiki"
     pages {
         from 'docs'
-        filter(ReplaceTokens, tokens: [version: version, jenkinsVersion: jenkinsVersion])
+        filesMatching('*.md') {
+            filter(ReplaceTokens, tokens: [version: version, jenkinsVersion: jenkinsVersion])
+        }
     }
 }
 
