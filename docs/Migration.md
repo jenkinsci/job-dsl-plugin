@@ -1,3 +1,10 @@
+## Migrating to 1.49
+
+### JobManagement
+
+The return type of the `getParameters()` method in `javaposse.jobdsl.dsl.JobManagement` changed from
+`Map<String, String>` to `Map<String, Object>`.
+
 ## Migrating to 1.48
 
 ### Pipeline Compatibility

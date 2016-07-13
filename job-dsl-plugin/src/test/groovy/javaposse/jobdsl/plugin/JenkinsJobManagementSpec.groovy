@@ -9,6 +9,7 @@ import hudson.model.Cause
 import hudson.model.Failure
 import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
+import hudson.model.Job
 import hudson.model.ListView
 import hudson.model.Run
 import hudson.model.View
@@ -47,12 +48,24 @@ class JenkinsJobManagementSpec extends Specification {
     @Rule
     JenkinsRule jenkinsRule = new JenkinsRule()
 
-    ByteArrayOutputStream buffer = new ByteArrayOutputStream()
-    Run build = Mock(Run)
-    JenkinsJobManagement jobManagement = new JenkinsJobManagement(
-            new PrintStream(buffer), [:], build, new FilePath(new File('.')), LookupStrategy.JENKINS_ROOT
-    )
-    JenkinsJobManagement testJobManagement = new JenkinsJobManagement(new PrintStream(buffer), [:], new File('.'))
+    ByteArrayOutputStream buffer
+    Job seedJob
+    Run build
+    JenkinsJobManagement jobManagement
+    JenkinsJobManagement testJobManagement
+
+    def setup() {
+        seedJob = Mock(Job)
+        build = Mock(Run)
+
+        build.parent >> seedJob
+
+        buffer = new ByteArrayOutputStream()
+        jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), [:], build, new FilePath(new File('.')), LookupStrategy.JENKINS_ROOT
+        )
+        testJobManagement = new JenkinsJobManagement(new PrintStream(buffer), [:], new File('.'))
+    }
 
     @WithoutJenkins
     def 'createOrUpdateView without name'() {
@@ -835,6 +848,23 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         project.builds.lastBuild.causes.size() == 1
         project.builds.lastBuild.causes[0].shortDescription == 'Started by a Job DSL script'
+    }
+
+    def 'parameters include SEED_JOB'() {
+        when:
+        Map<String, Object> parameters = jobManagement.parameters
+
+        then:
+        parameters.containsKey('SEED_JOB')
+        parameters.SEED_JOB == seedJob
+    }
+
+    def 'parameters do not include SEED_JOB for testing'() {
+        when:
+        Map<String, Object> parameters = testJobManagement.parameters
+
+        then:
+        !parameters.containsKey('SEED_JOB')
     }
 
     private static boolean isXmlIdentical(String expected, Node actual) throws Exception {
