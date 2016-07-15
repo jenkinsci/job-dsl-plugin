@@ -11,6 +11,7 @@ class HttpRequestContext implements Context {
     String authentication
     Boolean returnCodeBuildRelevant
     Boolean logResponseBody
+    Boolean passBuildParameters
 
     /**
      * Sets the HTTP method to use. Must be one of {@code 'GET'}, {@code 'POST'}, {@code 'PUT'} or {@code 'DELETE'}.
@@ -39,5 +40,14 @@ class HttpRequestContext implements Context {
      */
     void logResponseBody(boolean logResponseBody = true) {
         this.logResponseBody = logResponseBody
+    }
+
+    /**
+     * Allows to pass build parameters to the request URL. Defaults to {@code false}.
+     *
+     * @since 1.49
+     */
+    void passBuildParameters(boolean passBuildParameters = true) {
+        this.passBuildParameters = passBuildParameters
     }
 }
