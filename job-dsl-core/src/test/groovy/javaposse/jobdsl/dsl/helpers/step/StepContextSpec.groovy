@@ -2935,20 +2935,23 @@ class StepContextSpec extends Specification {
             authentication('bob')
             returnCodeBuildRelevant()
             logResponseBody()
+            passBuildParameters()
         }
 
         then:
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'jenkins.plugins.http__request.HttpRequest'
-            children().size() == 5
+            children().size() == 6
             url[0].value() == 'http://www.example.com'
             httpMode[0].value() == 'GET'
             authentication[0].value() == 'bob'
             returnCodeBuildRelevant[0].value() == true
             logResponseBody[0].value() == true
+            passBuildParameters[0].value() == true
         }
         1 * jobManagement.requirePlugin('http_request')
+        1 * jobManagement.requireMinimumPluginVersion('http_request', '1.8.7')
     }
 
     def 'call http request with invalid HTTP mode'() {

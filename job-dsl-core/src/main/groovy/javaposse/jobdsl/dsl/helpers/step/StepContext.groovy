@@ -841,11 +841,14 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'http_request')
     void httpRequest(String requestUrl, @DslContext(HttpRequestContext) Closure closure = null) {
-        HttpRequestContext context = new HttpRequestContext()
+        HttpRequestContext context = new HttpRequestContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         stepNodes << new NodeBuilder().'jenkins.plugins.http__request.HttpRequest' {
             url(requestUrl)
+            if (context.passBuildParameters != null) {
+                passBuildParameters(context.passBuildParameters)
+            }
             if (context.httpMode != null) {
                 httpMode(context.httpMode)
             }
