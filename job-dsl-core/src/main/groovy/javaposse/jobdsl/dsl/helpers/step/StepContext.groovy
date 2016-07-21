@@ -138,6 +138,9 @@ class StepContext extends AbstractExtensibleContext {
             makeExecutable gradleContext.makeExecutable
             fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir
             useWorkspaceAsHome gradleContext.useWorkspaceAsHome
+            if (jobManagement.isMinimumPluginVersionInstalled('gradle', '1.25')) {
+                passAsProperties gradleContext.passAsProperties
+            }
         }
 
         ContextHelper.executeConfigureBlock(gradleNode, gradleContext.configureBlock)
