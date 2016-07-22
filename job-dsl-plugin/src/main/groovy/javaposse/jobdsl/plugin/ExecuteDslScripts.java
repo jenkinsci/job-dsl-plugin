@@ -77,6 +77,12 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         private String scriptText;
         private boolean ignoreMissingFiles;
 
+        // Snippet generation requires a @DataBoundConstructor.
+        // A DataBoundConstructor can take parameters whose names match
+        // databound properties.  Databound properties can be
+        // "public final" fields or "get/set" pairs. You cannot omit the getters.
+        // You cannot take constructor paramters whose names do not meet the criteria
+        // of databound properties.
         @DataBoundConstructor
         public ScriptLocation() {
         }
@@ -88,14 +94,45 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             setScriptText(scriptText);
         }
 
+        // We want to be able to set this, but we never want it to return a value.
+        // This will prevent the snippet generator generating output for this field,
+        // while also not throwing an exception due to missing getter.
+        public String getValue() {
+            return null;
+        }
+
+        // This property is optional and one-directional (set only).
+        // It is set only from the UI and will force usingScriptText to true or
+        // false, based on the UI databound value.
         @DataBoundSetter
         public void setValue(String value) {
-            this.usingScriptText = value == null || Boolean.parseBoolean(value);
+            value = Util.fixEmptyAndTrim(value);
+            if (value != null) {
+                this.usingScriptText = Boolean.parseBoolean(value);
+            }
+        }
+
+        // If not forced, isUsingScriptText() will be calculated based on
+        // the presence of non-null scriptText.
+        public boolean isUsingScriptText() {
+            if (usingScriptText == null) {
+                return scriptText != null;
+            } else {
+                return usingScriptText;
+            }
+        }
+
+        public String getTargets() {
+            return !this.isUsingScriptText() ? this.targets : null;
         }
 
         @DataBoundSetter
         public void setTargets(String targets) {
             this.targets = Util.fixEmptyAndTrim(targets);
+        }
+
+        public String getScriptText() {
+            return this.isUsingScriptText() ? this.scriptText : null;
         }
 
         @DataBoundSetter
@@ -106,30 +143,20 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             }
         }
 
+        // getter can be "isFieldName" for booleans
+        public boolean isIgnoreMissingFiles() {
+            return  this.ignoreMissingFiles && !this.isUsingScriptText();
+        }
+
         @DataBoundSetter
         public void setIgnoreMissingFiles(boolean ignoreMissingFiles) {
             this.ignoreMissingFiles = ignoreMissingFiles;
         }
     }
 
-    /**
-     * Newline-separated list of locations to load as dsl scripts.
-     */
-    private final String targets;
-
-    /**
-     * Text of a dsl script.
-     */
-    private final String scriptText;
-
-    /**
-     * Whether we're using some text for the script directly
-     */
-    private final boolean usingScriptText;
+    public final ScriptLocation scriptLocation;
 
     private boolean ignoreExisting;
-
-    private boolean ignoreMissingFiles;
 
     private RemovedJobAction removedJobAction = RemovedJobAction.IGNORE;
 
@@ -139,12 +166,17 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private String additionalClasspath;
 
+
+    // A DataBoundConstructor can take parameters whose names match
+    // databound properties.  Databound properties can be
+    // "public final" fields or "get/set" pairs. You cannot omit the getters.
+    // You cannot take constructor paramters whose names do not meet the criteria
+    // of databound properties.
+    // If a databound class has properties that are also classes or complex types,
+    // those types must also meet databound criteria.
     @DataBoundConstructor
     public ExecuteDslScripts(ScriptLocation scriptLocation) {
-        this.usingScriptText = scriptLocation == null || (scriptLocation.usingScriptText != null && scriptLocation.usingScriptText);
-        this.targets = scriptLocation == null ? null : scriptLocation.targets;
-        this.scriptText = scriptLocation == null ? null : scriptLocation.scriptText;
-        this.ignoreMissingFiles = scriptLocation != null && scriptLocation.ignoreMissingFiles;
+        this.scriptLocation = scriptLocation == null ? new ScriptLocation() : scriptLocation;
     }
 
     @Deprecated
@@ -177,9 +209,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     }
 
     ExecuteDslScripts(String scriptText) {
-        this.usingScriptText = true;
-        this.scriptText = scriptText;
-        this.targets = null;
+        this(new ScriptLocation());
+        this.scriptLocation.setScriptText(scriptText);
         this.ignoreExisting = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
         this.removedViewAction = RemovedViewAction.IGNORE;
@@ -188,21 +219,22 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     }
 
     public String getTargets() {
-        return targets;
+        return scriptLocation.getTargets();
     }
 
     public String getScriptText() {
-        return scriptText;
+      return scriptLocation.getScriptText();
     }
 
     public boolean isUsingScriptText() {
-        return usingScriptText;
+        return scriptLocation.isUsingScriptText();
     }
 
     public boolean isIgnoreMissingFiles() {
-        return ignoreMissingFiles;
+        return scriptLocation.isIgnoreMissingFiles();
     }
 
+    // For booleans, getter for databound setter can be "isFieldName".
     public boolean isIgnoreExisting() {
         return ignoreExisting;
     }
@@ -245,7 +277,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     @DataBoundSetter
     public void setAdditionalClasspath(String additionalClasspath) {
-        this.additionalClasspath = additionalClasspath;
+        this.additionalClasspath = Util.fixEmptyAndTrim(additionalClasspath);
     }
 
     @Override
@@ -273,7 +305,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env);
             try {
                 Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
-                        targets, usingScriptText, scriptText, ignoreExisting, ignoreMissingFiles, additionalClasspath
+                    getTargets(), isUsingScriptText(), getScriptText(), isIgnoreExisting(), isIgnoreMissingFiles(), additionalClasspath
                 );
 
                 DslScriptLoader dslScriptLoader = new DslScriptLoader(jm);

@@ -62,6 +62,7 @@ dependencies {
     compile project(':job-dsl-core')
     compile 'org.jenkins-ci:symbol-annotation:1.1'
     jenkinsPlugins 'org.jenkins-ci.plugins:structs:1.2@jar'
+    jenkinsPlugins 'org.jenkins-ci.plugins.workflow:workflow-step-api:1.15@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:vsphere-cloud:1.1.11@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:config-file-provider:2.8.1@jar'
     optionalJenkinsPlugins 'org.jenkinsci.plugins:managed-scripts:1.2.1@jar'
