@@ -400,7 +400,7 @@ class WrapperContextSpec extends Specification {
 
         then:
         with(context.wrapperNodes[0]) {
-            name() == 'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper'
+            name() == 'org.jenkinsci.plugins.xvfb.Xvfb'
             children().size() == 8
             installationName[0].value() == 'default'
             screen[0].value() == '1024x768x24'
