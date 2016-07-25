@@ -219,7 +219,7 @@ class WrapperContext extends AbstractExtensibleContext {
         XvfbContext context = new XvfbContext()
         ContextHelper.executeInContext(closure, context)
 
-        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.xvfb.XvfbBuildWrapper' {
+        wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.xvfb.Xvfb' {
             installationName(installation)
             screen(context.screen)
             debug(context.debug)
