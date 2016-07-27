@@ -88,6 +88,17 @@ class ColumnsContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Adds a column showing test results, format defined by parmater. Defauls to 1.
+     *
+     */
+    @RequiresPlugin(id = 'extra-columns')
+    void testResult(int number = 1) {
+        columnNodes << new NodeBuilder().'jenkins.plugins.extracolumns.TestResultColumn' {
+            testResultFormat(number)
+        }
+    }
+
+    /**
      * Adds a column for showing that a build has been claimed.
      *
      * @since 1.29
