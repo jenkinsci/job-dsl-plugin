@@ -863,10 +863,27 @@ class PublisherContext extends AbstractExtensibleContext {
         GroovyPostbuildContext groovyPostbuildContext = new GroovyPostbuildContext(jobManagement)
         ContextHelper.executeInContext(groovyPostbuildClosure, groovyPostbuildContext)
 
+        Closure pathToURL = { path ->
+            try {
+                return new URL(path)
+            } catch (MalformedURLException e) {
+                return new File(path).toURI().toURL()
+            }
+        }
+
         publisherNodes << new NodeBuilder().'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder' {
             script {
                 script(groovyPostbuildContext.script ?: '')
                 sandbox(groovyPostbuildContext.sandbox)
+                if (groovyPostbuildContext.classpath != null && !groovyPostbuildContext.classpath.isEmpty()) {
+                    classpath {
+                        groovyPostbuildContext.classpath.each { value ->
+                            entry {
+                                url(pathToURL(value))
+                            }
+                        }
+                    }
+                }
             }
             behavior(groovyPostbuildContext.behavior.value)
         }

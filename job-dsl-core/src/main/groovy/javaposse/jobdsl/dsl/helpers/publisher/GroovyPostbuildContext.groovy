@@ -7,6 +7,7 @@ class GroovyPostbuildContext extends AbstractContext {
     String script
     PublisherContext.Behavior behavior = PublisherContext.Behavior.DoNothing
     boolean sandbox
+    List<String> classpath
 
     GroovyPostbuildContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -32,5 +33,12 @@ class GroovyPostbuildContext extends AbstractContext {
      */
     void sandbox(boolean sandbox = true) {
         this.sandbox = sandbox
+    }
+
+    /**
+     * Specify the additional classpath for post build script
+     */
+    void classpath(List<String> classpath) {
+        this.classpath = classpath
     }
 }

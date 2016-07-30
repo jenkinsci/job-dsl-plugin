@@ -2272,6 +2272,7 @@ class PublisherContextSpec extends Specification {
             script('foo')
             behavior(PublisherContext.Behavior.MarkFailed)
             sandbox()
+            classpath(['foo', 'bar'])
         }
 
         then:
@@ -2279,9 +2280,20 @@ class PublisherContextSpec extends Specification {
             name() == 'org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder'
             children().size() == 2
             with(script[0]) {
-                children().size() == 2
+                children().size() == 3
                 script[0].value() == 'foo'
                 sandbox[0].value() == true
+                with(classpath[0]) {
+                    children().size() == 2
+                    with(entry[0]) {
+                        children().size() == 1
+                        url[0].value().toString().contains('foo')
+                    }
+                    with(entry[1]) {
+                        children().size() == 1
+                        url[0].value().toString().contains('bar')
+                    }
+                }
             }
             behavior[0].value() == 2
         }
