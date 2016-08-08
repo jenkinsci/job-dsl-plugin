@@ -3211,6 +3211,33 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
     }
 
+    def 'call rundeck with rundeckInstance selected (version 3.5.4)'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.5.4') >> true
+
+        when:
+        context.rundeck('jobId') {
+            rundeckInstance('myRundeckInstance')
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
+            children().size() == 8
+            jobId[0].value() == 'jobId'
+            options[0].value().isEmpty()
+            nodeFilters[0].value().isEmpty()
+            tag[0].value() == ''
+            shouldWaitForRundeckJob[0].value() == false
+            shouldFailTheBuild[0].value() == false
+            includeRundeckLogs[0].value() == false
+            rundeckInstance[0].value() == 'myRundeckInstance'
+        }
+
+        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.5.4')
+        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.5.4')
+    }
+
     def 'call s3 without profile'(String profile) {
         when:
         context.s3(profile) {
