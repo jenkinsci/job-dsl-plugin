@@ -325,8 +325,14 @@ class EmbeddedApiDocGenerator {
 
     private static void generateHelp(JSONObject object, String text) {
         if (text) {
-            String normalizedText = text.replaceAll(/\r?\n/, '\n')
-            object.element('html', normalizedText).element('firstSentenceCommentText', firstSentence(normalizedText))
+            String normalizedText = text.replaceAll(/\r?\n/, '\n').trim()
+            if (normalizedText) {
+                object.element('html', normalizedText)
+                String firstSentence = firstSentence(normalizedText)
+                if (firstSentence) {
+                    object.element('firstSentenceCommentText', firstSentence)
+                }
+            }
         }
     }
 
@@ -338,6 +344,10 @@ class EmbeddedApiDocGenerator {
         cleanText = cleanText.replaceAll(/<.*?>/, '')
         // unescape HTML and remove leading/trailing spaces
         cleanText = unescapeHtml(cleanText).trim()
+
+        if (cleanText.empty) {
+            return ''
+        }
 
         BreakIterator iterator = BreakIterator.sentenceInstance
         iterator.text = new StringCharacterIterator(cleanText)

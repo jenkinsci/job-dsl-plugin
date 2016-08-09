@@ -38,6 +38,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    viewer
  * Added a `SEED_JOB` script variable which provides access to the seed job,
    see [Job DSL Commands](Job-DSL-Commands#seed-job)
+ * Fixed issues with embedded API Viewer
+   ([#886](https://github.com/jenkinsci/job-dsl-plugin/pull/886))
  * Removed anything that has been deprecated in 1.42, see [Migration](Migration#migrating-to-142)
 * 1.48 (June 24 2016)
  * Added option to ignore missing DSL script files or empty wildcards

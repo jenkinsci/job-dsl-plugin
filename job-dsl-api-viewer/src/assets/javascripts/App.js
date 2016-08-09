@@ -71,7 +71,7 @@ Marionette.Renderer.render = function(template, data) {
 
         loadSelectedDsl: function() {
             var url = $('.version-select').val();
-            return this.dslLoader.fetch(url).then(this.onDslFetchComplete.bind(this));
+            return this.dslLoader.fetch(url).then(this.onDslFetchComplete.bind(this), this.onDslFetchFailure.bind(this));
         },
 
         onDslFetchComplete: function(dsl) {
@@ -94,6 +94,10 @@ Marionette.Renderer.render = function(template, data) {
             });
             allItems = _.sortBy(allItems, function(item) { return item.name.toLowerCase(); });
             this.allItems = allItems;
+        },
+
+        onDslFetchFailure: function(dsl) {
+            $('.loading-inner').html('Error while loading data, see Jenkins logs for details.');
         },
 
         initPluginList: function() {
