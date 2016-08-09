@@ -1,7 +1,6 @@
 package javaposse.jobdsl.plugin
 
 import groovy.transform.ThreadInterrupt
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
@@ -137,18 +136,6 @@ class InterruptibleJobManagement implements JobManagement {
     @Override
     boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
         delegate.isMinimumPluginVersionInstalled(pluginShortName, version)
-    }
-
-    @Override
-    @Deprecated
-    VersionNumber getPluginVersion(String pluginShortName) {
-        delegate.getPluginVersion(pluginShortName)
-    }
-
-    @Override
-    @Deprecated
-    VersionNumber getJenkinsVersion() {
-        delegate.jenkinsVersion
     }
 
     @Override

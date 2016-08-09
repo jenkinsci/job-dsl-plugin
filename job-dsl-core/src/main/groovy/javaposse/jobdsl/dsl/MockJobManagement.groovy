@@ -1,7 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import hudson.util.VersionNumber
-
 /**
  * Abstract base class for all non-Jenkins implementations of {@link JobManagement}.
  */
@@ -70,18 +68,6 @@ abstract class MockJobManagement extends AbstractJobManagement {
     @Override
     boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
         false
-    }
-
-    @Override
-    @Deprecated
-    VersionNumber getPluginVersion(String pluginShortName) {
-        null
-    }
-
-    @Override
-    @Deprecated
-    VersionNumber getJenkinsVersion() {
-        new VersionNumber('1.565')
     }
 
     @Override

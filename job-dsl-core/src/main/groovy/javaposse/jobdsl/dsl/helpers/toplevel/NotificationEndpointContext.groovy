@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.toplevel
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
@@ -22,7 +21,6 @@ class NotificationEndpointContext extends AbstractContext {
      *
      * Possible values are {@code 'all'}, {@code 'started'}, {@code 'completed'} and {@code 'finalized'}.
      */
-    @RequiresPlugin(id = 'notification', minimumVersion = '1.6')
     void event(String event) {
         checkArgument(EVENTS.contains(event), "event must be one of ${EVENTS.join(', ')}")
 
@@ -32,7 +30,6 @@ class NotificationEndpointContext extends AbstractContext {
     /**
      * Sets a timeout in milliseconds. Defaults to {@code 30000}.
      */
-    @RequiresPlugin(id = 'notification', minimumVersion = '1.6')
     void timeout(int timeout) {
         this.timeout = timeout
     }
@@ -42,7 +39,6 @@ class NotificationEndpointContext extends AbstractContext {
      *
      * @since 1.43
      */
-    @RequiresPlugin(id = 'notification', minimumVersion = '1.8')
     void logLines(int lines) {
         this.logLines = lines
     }

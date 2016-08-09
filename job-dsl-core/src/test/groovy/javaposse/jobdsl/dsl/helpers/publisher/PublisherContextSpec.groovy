@@ -16,86 +16,6 @@ class PublisherContextSpec extends Specification {
     Item item = new FreeStyleJob(jobManagement)
     PublisherContext context = new PublisherContext(jobManagement, item)
 
-    def 'empty call deprecated extended email method'() {
-        when:
-        context.extendedEmail()
-
-        then:
-        context.publisherNodes != null
-        context.publisherNodes.size() == 1
-        Node emailPublisher = context.publisherNodes[0]
-        emailPublisher.name() == 'hudson.plugins.emailext.ExtendedEmailPublisher'
-        emailPublisher.recipientList[0].value() == '$DEFAULT_RECIPIENTS'
-        emailPublisher.defaultSubject[0].value() == '$DEFAULT_SUBJECT'
-        emailPublisher.contentType[0].value() == 'default'
-        Node triggers = emailPublisher.configuredTriggers[0]
-        triggers.children().size() == 2
-        Node email = triggers.children()[0].email[0]
-        email.recipientList[0].value() == ''
-        email.subject[0].value() == '$PROJECT_DEFAULT_SUBJECT'
-        email.body[0].value() == '$PROJECT_DEFAULT_CONTENT'
-    }
-
-    def 'call deprecated extended email with args'() {
-        when:
-        context.extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
-            trigger('PreBuild')
-            trigger(triggerName: 'StillUnstable', subject: 'Subject', body: 'Body', recipientList: 'RecipientList',
-                    sendToDevelopers: true, sendToRequester: true, includeCulprits: true, sendToRecipientList: false)
-            configure { node ->
-                node / contentType << 'html'
-            }
-        }
-
-        then:
-        Node emailPublisher = context.publisherNodes[0]
-        emailPublisher.recipientList[0].value() == 'me@halfempty.org'
-        emailPublisher.defaultSubject[0].value() == 'Oops'
-        emailPublisher.defaultContent[0].value() == 'Something broken'
-        emailPublisher.contentType.size() == 1
-        emailPublisher.contentType[0].value() == 'html'
-        Node triggers = emailPublisher.configuredTriggers[0]
-        triggers.children().size() == 2
-        Node emailDefault = triggers.children()[0].email[0]
-        emailDefault.recipientList[0].value() == ''
-        emailDefault.subject[0].value() == '$PROJECT_DEFAULT_SUBJECT'
-        emailDefault.body[0].value() == '$PROJECT_DEFAULT_CONTENT'
-        emailDefault.sendToDevelopers[0].value() as String == 'false'
-        emailDefault.sendToRequester[0].value() as String == 'false'
-        emailDefault.includeCulprits[0].value() as String == 'false'
-        emailDefault.sendToRecipientList[0].value() as String == 'true'
-
-        triggers.children()[1].name() == 'hudson.plugins.emailext.plugins.trigger.StillUnstableTrigger'
-        Node email = triggers.children()[1].email[0]
-        email.recipientList[0].value() == 'RecipientList'
-        email.subject[0].value() == 'Subject'
-        email.body[0].value() == 'Body'
-        email.sendToDevelopers[0].value() as String == 'true'
-        email.sendToRequester[0].value() as String == 'true'
-        email.includeCulprits[0].value() as String == 'true'
-        email.sendToRecipientList[0].value() as String == 'false'
-    }
-
-    def 'call deprecated extendedEmail with triggers to set send to requester'() {
-        when:
-        // Given by Thaddeus Diamond <thaddeus@hadapt.com> in mailing list
-        def triggerNames = ['Unstable', 'Aborted', 'Success', 'Failure']
-        context.extendedEmail('', '$DEFAULT_SUBJECT', '$DEFAULT_CONTENT') {
-            triggerNames.each { result -> trigger triggerName: result, sendToRequester: true }
-        }
-
-        then:
-        Node emailPublisher = context.publisherNodes[0]
-
-        emailPublisher.recipientList[0].value() == '' // Not $DEFAULT_RECIPIENTS, not sure if this is valid
-
-        Node triggers = emailPublisher.configuredTriggers[0]
-        triggers.children().size() == triggerNames.size()
-        Node emailDefault = triggers.children()[0].email[0]
-        emailDefault.sendToDevelopers[0].value() == 'false'
-        emailDefault.sendToRequester[0].value() == 'true'
-    }
-
     def 'call extendedEmail with no options'() {
         when:
         context.extendedEmail {
@@ -421,9 +341,6 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call junit archive with all args'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('junit', '1.10') >> true
-
         when:
         context.archiveJunit('include/*') {
             allowEmptyResults()
@@ -450,19 +367,14 @@ class PublisherContextSpec extends Specification {
             testDataPublishers[0].'com.google.jenkins.flakyTestHandler.plugin.JUnitFlakyTestDataPublisher'[0] != null
         }
 
-        1 * jobManagement.requirePlugin('junit')
         1 * jobManagement.requireMinimumPluginVersion('claim', '2.0')
         1 * jobManagement.requireMinimumPluginVersion('junit-attachments', '1.0')
         1 * jobManagement.requireMinimumPluginVersion('test-stability', '1.0')
         1 * jobManagement.requireMinimumPluginVersion('flaky-test-handler', '1.0.0')
         1 * jobManagement.requireMinimumPluginVersion('junit', '1.10')
-        1 * jobManagement.logPluginDeprecationWarning('junit', '1.10')
     }
 
     def 'call junit archive with minimal args'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('junit', '1.10') >> true
-
         when:
         context.archiveJunit('include/*')
 
@@ -475,24 +387,7 @@ class PublisherContextSpec extends Specification {
             allowEmptyResults[0].value() == false
             testDataPublishers[0].children().size() == 0
         }
-        1 * jobManagement.requirePlugin('junit')
-        1 * jobManagement.logPluginDeprecationWarning('junit', '1.10')
-    }
-
-    def 'call junit archive with minimal args, plugin version older than 1.10'() {
-        when:
-        context.archiveJunit('include/*')
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'hudson.tasks.junit.JUnitResultArchiver'
-            children().size() == 3
-            testResults[0].value() == 'include/*'
-            keepLongStdio[0].value() == false
-            testDataPublishers[0].children().size() == 0
-        }
-        1 * jobManagement.requirePlugin('junit')
-        1 * jobManagement.logPluginDeprecationWarning('junit', '1.10')
+        1 * jobManagement.requireMinimumPluginVersion('junit', '1.10')
     }
 
     def 'call archiveXUnit with no args'() {
@@ -3243,35 +3138,6 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requirePlugin('ws-cleanup')
     }
 
-    def 'call rundeck with all args should create valid rundeck node'() {
-        when:
-        context.rundeck('jobId') {
-            options(key1: 'value1', key2: 'value2')
-            options(key4: 'value4')
-            option('key3', 'value3')
-            nodeFilters(key1: 'value1', key2: 'value2')
-            nodeFilters(key4: 'value4')
-            nodeFilter('key3', 'value3')
-            tag('tag')
-            shouldWaitForRundeckJob()
-            shouldFailTheBuild()
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
-            children().size() == 6
-            jobId[0].value() == 'jobId'
-            options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-            nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-            tag[0].value() == 'tag'
-            shouldWaitForRundeckJob[0].value() == true
-            shouldFailTheBuild[0].value() == true
-        }
-        1 * jobManagement.requirePlugin('rundeck')
-        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
-    }
-
     def 'call rundeck with invalid jobId should fail'() {
         when:
         context.rundeck(id)
@@ -3284,29 +3150,7 @@ class PublisherContextSpec extends Specification {
         id << [null, '']
     }
 
-    def 'call rundeck with default values'() {
-        when:
-        context.rundeck('jobId')
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
-            children().size() == 6
-            jobId[0].value() == 'jobId'
-            options[0].value().isEmpty()
-            nodeFilters[0].value().isEmpty()
-            tag[0].value() == ''
-            shouldWaitForRundeckJob[0].value() == false
-            shouldFailTheBuild[0].value() == false
-        }
-        1 * jobManagement.requirePlugin('rundeck')
-        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
-    }
-
-    def 'call rundeck with all args should create valid rundeck node (version 3.4)'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.4') >> true
-
+    def 'call rundeck with all args should create valid rundeck node'() {
         when:
         context.rundeck('jobId') {
             options(key1: 'value1', key2: 'value2')
@@ -3333,15 +3177,10 @@ class PublisherContextSpec extends Specification {
             shouldFailTheBuild[0].value() == true
             includeRundeckLogs[0].value() == true
         }
-        1 * jobManagement.requirePlugin('rundeck')
         1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
-        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
     }
 
-    def 'call rundeck with default values (version 3.4)'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.4') >> true
-
+    def 'call rundeck with default values'() {
         when:
         context.rundeck('jobId')
 
@@ -3357,8 +3196,7 @@ class PublisherContextSpec extends Specification {
             shouldFailTheBuild[0].value() == false
             includeRundeckLogs[0].value() == false
         }
-        1 * jobManagement.requirePlugin('rundeck')
-        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
+        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
     }
 
     def 'call s3 without profile'(String profile) {

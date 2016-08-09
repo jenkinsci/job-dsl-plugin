@@ -345,19 +345,6 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    @Deprecated
-    public VersionNumber getPluginVersion(String pluginShortName) {
-        Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
-        return plugin == null ? null : plugin.getWrapper().getVersionNumber();
-    }
-
-    @Override
-    @Deprecated
-    public VersionNumber getJenkinsVersion() {
-        return Jenkins.getVersion();
-    }
-
-    @Override
     public Integer getVSphereCloudHash(String name) {
         Jenkins jenkins = Jenkins.getInstance();
         if (jenkins.getPlugin("vsphere-cloud") != null) {

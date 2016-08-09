@@ -101,37 +101,6 @@ class ItemTriggerContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Builds pull requests from GitHub and will report the results back to the pull request.
-     *
-     * The pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for
-     * details.
-     *
-     * @since 1.22
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26')
-    void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
-        PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
-        ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
-
-        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
-            adminlist pullRequestBuilderContext.admins.join('\n')
-            whitelist pullRequestBuilderContext.userWhitelist.join('\n')
-            orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
-            delegate.cron(pullRequestBuilderContext.cron)
-            spec pullRequestBuilderContext.cron
-            triggerPhrase pullRequestBuilderContext.triggerPhrase ?: ''
-            onlyTriggerPhrase pullRequestBuilderContext.onlyTriggerPhrase
-            useGitHubHooks pullRequestBuilderContext.useGitHubHooks
-            permitAll pullRequestBuilderContext.permitAll
-            autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
-            commentFilePath pullRequestBuilderContext.commentFilePath ?: ''
-            allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
-            extensions(pullRequestBuilderContext.extensionContext.extensionNodes)
-        }
-    }
-
-    /**
      * Trigger a build with a DOS script.
      *
      * @since 1.42

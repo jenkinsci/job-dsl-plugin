@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class RundeckContext extends AbstractContext {
     Map<String, String> options = [:]
@@ -75,7 +74,6 @@ class RundeckContext extends AbstractContext {
      *
      * @since 1.43
      */
-    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.4')
     void includeRundeckLogs(boolean includeRundeckLogs = true) {
         this.includeRundeckLogs = includeRundeckLogs
         if (includeRundeckLogs) {

@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class BuildInDockerContext extends AbstractContext {
     Node selector
@@ -68,7 +67,6 @@ class BuildInDockerContext extends AbstractContext {
      *
      * @since 1.43
      */
-    @RequiresPlugin(id = 'docker-custom-build-environment', minimumVersion = '1.6.2')
     void forcePull(boolean forcePull = true) {
         this.forcePull = forcePull
     }

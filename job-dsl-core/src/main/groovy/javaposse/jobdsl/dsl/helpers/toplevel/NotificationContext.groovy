@@ -46,13 +46,9 @@ class NotificationContext extends AbstractContext {
             delegate.url(url)
             delegate.protocol(protocol)
             delegate.format(format)
-            if (jobManagement.isMinimumPluginVersionInstalled('notification', '1.6')) {
-                event(notificationEndpointContext.event)
-                timeout(notificationEndpointContext.timeout)
-            }
-            if (jobManagement.isMinimumPluginVersionInstalled('notification', '1.8')) {
-                loglines(notificationEndpointContext.logLines)
-            }
+            event(notificationEndpointContext.event)
+            timeout(notificationEndpointContext.timeout)
+            loglines(notificationEndpointContext.logLines)
         }
     }
 }
