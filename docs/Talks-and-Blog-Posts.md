@@ -1,5 +1,11 @@
 This is a collection of talks, presentations and blog posts about the Job DSL plugin.
 
+* August 2016
+    * [Jenkins-as-code: comparing job-dsl and Pipelines](http://marcesher.com/2016/08/04/jenkins-as-code-comparing-job-dsl-and-pipelines/)
+      by [Marc Esher](http://marcesher.com)
+* July 2016
+    * [Jenkins-as-code: creating jobs from the command line during development](http://marcesher.com/2016/07/01/jenkins-as-code-creating-jobs-from-the-command-line-during-development/)
+      by [Marc Esher](http://marcesher.com)
 * June 2016
     * [Jenkins-as-code: registering jobs for automatic seed job creation](http://marcesher.com/2016/06/21/jenkins-as-code-registering-jobs-for-automatic-seed-job-creation/)
       by [Marc Esher](http://marcesher.com)
