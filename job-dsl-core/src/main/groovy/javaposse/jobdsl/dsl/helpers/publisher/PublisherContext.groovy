@@ -74,71 +74,6 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Sends customizable email notifications.
-     */
-    @RequiresPlugin(id = 'email-ext')
-    @Deprecated
-    void extendedEmail(String recipients = null, @DslContext(EmailContext) Closure emailClosure = null) {
-        extendedEmail(recipients, null, emailClosure)
-    }
-
-    /**
-     * Sends customizable email notifications.
-     */
-    @RequiresPlugin(id = 'email-ext')
-    @Deprecated
-    void extendedEmail(String recipients, String subjectTemplate,
-                       @DslContext(EmailContext) Closure emailClosure = null) {
-        extendedEmail(recipients, subjectTemplate, null, emailClosure)
-    }
-
-    /**
-     * Sends customizable email notifications.
-     */
-    @RequiresPlugin(id = 'email-ext')
-    @Deprecated
-    void extendedEmail(String recipients, String subjectTemplate, String contentTemplate,
-                       @DslContext(EmailContext) Closure emailClosure = null) {
-        EmailContext emailContext = new EmailContext()
-        ContextHelper.executeInContext(emailClosure, emailContext)
-
-        // Validate that we have the typical triggers, if nothing is provided
-        if (emailContext.emailTriggers.isEmpty()) {
-            emailContext.emailTriggers << new EmailContext.EmailTrigger('Failure')
-            emailContext.emailTriggers << new EmailContext.EmailTrigger('Success')
-        }
-
-        // Now that the context has what we need
-        Node emailNode = new NodeBuilder().'hudson.plugins.emailext.ExtendedEmailPublisher' {
-            recipientList recipients != null ? recipients : '$DEFAULT_RECIPIENTS'
-            contentType 'default'
-            defaultSubject subjectTemplate ?: '$DEFAULT_SUBJECT'
-            defaultContent contentTemplate ?: '$DEFAULT_CONTENT'
-            attachmentsPattern ''
-
-            configuredTriggers {
-                emailContext.emailTriggers.each { EmailContext.EmailTrigger trigger ->
-                    "hudson.plugins.emailext.plugins.trigger.${trigger.triggerShortName}Trigger" {
-                        email {
-                            recipientList trigger.recipientList
-                            subject trigger.subject
-                            body trigger.body
-                            sendToDevelopers trigger.sendToDevelopers as String
-                            sendToRequester trigger.sendToRequester as String
-                            includeCulprits trigger.includeCulprits as String
-                            sendToRecipientList trigger.sendToRecipientList as String
-                        }
-                    }
-                }
-            }
-        }
-
-        ContextHelper.executeConfigureBlock(emailNode, emailContext.configureBlock)
-
-        publisherNodes << emailNode
-    }
-
-    /**
      * Sends email notifications.
      *
      * @since 1.17
@@ -188,9 +123,8 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.26
      */
-    @RequiresPlugin(id = 'junit')
+    @RequiresPlugin(id = 'junit', minimumVersion = '1.10')
     void archiveJunit(String glob, @DslContext(ArchiveJUnitContext) Closure junitClosure = null) {
-        jobManagement.logPluginDeprecationWarning('junit', '1.10')
 
         ArchiveJUnitContext junitContext = new ArchiveJUnitContext(jobManagement)
         ContextHelper.executeInContext(junitClosure, junitContext)
@@ -199,9 +133,7 @@ class PublisherContext extends AbstractExtensibleContext {
             testResults(glob)
             keepLongStdio(junitContext.retainLongStdout)
             testDataPublishers(junitContext.testDataPublishersContext.testDataPublishers)
-            if (jobManagement.isMinimumPluginVersionInstalled('junit', '1.10')) {
-                allowEmptyResults(junitContext.allowEmptyResults)
-            }
+            allowEmptyResults(junitContext.allowEmptyResults)
         }
     }
 
@@ -1166,10 +1098,8 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.24
      */
-    @RequiresPlugin(id = 'rundeck')
+    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.4')
     void rundeck(String jobIdentifier, @DslContext(RundeckContext) Closure rundeckClosure = null) {
-        jobManagement.logPluginDeprecationWarning('rundeck', '3.4')
-
         checkNotNullOrEmpty(jobIdentifier, 'jobIdentifier cannot be null or empty')
 
         RundeckContext rundeckContext = new RundeckContext(jobManagement)
@@ -1182,9 +1112,7 @@ class PublisherContext extends AbstractExtensibleContext {
             tag(rundeckContext.tag ?: '')
             shouldWaitForRundeckJob(rundeckContext.shouldWaitForRundeckJob)
             shouldFailTheBuild(rundeckContext.shouldFailTheBuild)
-            if (jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.4')) {
-                includeRundeckLogs(rundeckContext.includeRundeckLogs)
-            }
+            includeRundeckLogs(rundeckContext.includeRundeckLogs)
         }
     }
 

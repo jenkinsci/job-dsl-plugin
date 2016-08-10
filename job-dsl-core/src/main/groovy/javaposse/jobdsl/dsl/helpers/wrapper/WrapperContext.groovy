@@ -577,10 +577,8 @@ class WrapperContext extends AbstractExtensibleContext {
      *
      * @since 1.39
      */
-    @RequiresPlugin(id = 'docker-custom-build-environment', minimumVersion = '1.5.1')
+    @RequiresPlugin(id = 'docker-custom-build-environment', minimumVersion = '1.6.2')
     void buildInDocker(@DslContext(BuildInDockerContext) Closure closure) {
-        jobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
-
         BuildInDockerContext context = new BuildInDockerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
@@ -597,9 +595,7 @@ class WrapperContext extends AbstractExtensibleContext {
             verbose(context.verbose)
             volumes(context.volumes)
             privileged(context.privilegedMode)
-            if (jobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2')) {
-                forcePull(context.forcePull)
-            }
+            forcePull(context.forcePull)
             group(context.userGroup ?: '')
             command(context.startCommand ?: '')
         }

@@ -17,7 +17,6 @@ import hudson.model.View
 import hudson.model.listeners.SaveableListener
 import hudson.tasks.ArtifactArchiver
 import hudson.tasks.Fingerprinter
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
@@ -553,30 +552,6 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         !result
-    }
-
-    def 'get plugin version'() {
-        when:
-        VersionNumber version = jobManagement.getPluginVersion('cvs')
-
-        then:
-        version != null
-    }
-
-    def 'get plugin version of unknown plugin'() {
-        when:
-        VersionNumber version = jobManagement.getPluginVersion('foo')
-
-        then:
-        version == null
-    }
-
-    def 'getJenkinsVersion returns a version'() {
-        when:
-        VersionNumber versionNumber = jobManagement.jenkinsVersion
-
-        then:
-        versionNumber != null
     }
 
     def 'get vSphere cloud hash without vSphere cloud plugin'() {

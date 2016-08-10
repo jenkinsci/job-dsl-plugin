@@ -1379,9 +1379,6 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'buildInDocker with no options'() {
-        setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2') >> true
-
         when:
         context.buildInDocker {
         }
@@ -1403,14 +1400,10 @@ class WrapperContextSpec extends Specification {
             group[0].value().empty
             command[0].value() == '/bin/cat'
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.5.1')
-        1 * mockJobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
+        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.6.2')
     }
 
     def 'buildInDocker with dockerfile selector and all options'() {
-        setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2') >> true
-
         when:
         context.buildInDocker {
             dockerfile('test1', 'test2')
@@ -1451,15 +1444,10 @@ class WrapperContextSpec extends Specification {
             group[0].value() == 'test10'
             command[0].value() == 'test11'
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.5.1')
         1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.6.2')
-        1 * mockJobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
     }
 
     def 'buildInDocker with image selector and all options'() {
-        setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('docker-custom-build-environment', '1.6.2') >> true
-
         when:
         context.buildInDocker {
             image('test1')
@@ -1499,34 +1487,7 @@ class WrapperContextSpec extends Specification {
             group[0].value() == 'test10'
             command[0].value() == 'test11'
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.5.1')
         1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.6.2')
-        1 * mockJobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
-    }
-
-    def 'buildInDocker with no options with 1.6.1'() {
-        when:
-        context.buildInDocker {
-        }
-
-        then:
-        with(context.wrapperNodes[0]) {
-            name() == 'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper'
-            children().size() == 8
-            selector[0].children().size() == 2
-            selector[0].attribute('class') == 'com.cloudbees.jenkins.plugins.okidocki.DockerfileImageSelector'
-            selector[0].contextPath[0].value() == '.'
-            selector[0].dockerfile[0].value() == 'Dockerfile'
-            dockerHost[0].value().empty
-            dockerRegistryCredentials[0].value().empty
-            verbose[0].value() == false
-            volumes[0].value().empty
-            privileged[0].value() == false
-            group[0].value().empty
-            command[0].value() == '/bin/cat'
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.5.1')
-        1 * mockJobManagement.logPluginDeprecationWarning('docker-custom-build-environment', '1.6.2')
     }
 
     def 'call generateJiraReleaseNotes with no options'() {

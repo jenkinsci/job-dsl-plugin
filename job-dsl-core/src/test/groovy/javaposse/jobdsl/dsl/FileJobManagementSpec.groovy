@@ -202,14 +202,6 @@ class FileJobManagementSpec extends Specification {
         !result
     }
 
-    def 'getPluginVersion returns null'() {
-        when:
-        String id = jobManagement.getPluginVersion('foo')
-
-        then:
-        id == null
-    }
-
     def 'getVSphereCloudHash returns null'() {
         when:
         String id = jobManagement.getVSphereCloudHash('foo')

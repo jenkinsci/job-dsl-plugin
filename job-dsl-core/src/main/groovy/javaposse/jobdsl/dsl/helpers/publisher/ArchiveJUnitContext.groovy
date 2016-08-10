@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class ArchiveJUnitContext extends AbstractContext {
     final TestDataPublishersContext testDataPublishersContext
@@ -21,7 +20,6 @@ class ArchiveJUnitContext extends AbstractContext {
      *
      * @since 1.43
      */
-    @RequiresPlugin(id = 'junit', minimumVersion = '1.10')
     void allowEmptyResults(boolean allow = true) {
         allowEmptyResults = allow
     }

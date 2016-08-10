@@ -1,7 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import hudson.util.VersionNumber
-
 /**
  * Interface to manage jobs, which the DSL needs to do.
  */
@@ -198,18 +196,10 @@ interface JobManagement {
     boolean isMinimumPluginVersionInstalled(String pluginShortName, String version)
 
     /**
-     * Returns the currently installed version of the given plugin or <code>null<code> if the plugin is not installed.
-     */
-    @Deprecated
-    VersionNumber getPluginVersion(String pluginShortName)
-
-    /**
      * Returns the version of Jenkins.
      *
      * @since 1.33
      */
-    @Deprecated
-    VersionNumber getJenkinsVersion()
 
     /**
      * Return the hash of the vSphere cloud with the given name.
