@@ -169,6 +169,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
                         LOGGER.log(Level.WARNING, format("Could not create view within %s", parent.getClass()));
                     }
                 } else if (!ignoreExisting) {
+                    checkItemType(view, inputStream);
+                    inputStream.reset();
                     view.updateByXml(new StreamSource(inputStream));
                 }
             } else if (parent == null) {
@@ -518,6 +520,27 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             throw new DslException(format(
                     Messages.UpdateExistingItem_ItemTypeDoesNotMatch(),
                     item.getFullName()
+            ));
+        }
+    }
+
+    private void checkItemType(View view, InputStream config) {
+        Node newConfig;
+
+        try {
+            newConfig = new XmlParser().parse(config);
+        } catch (Exception e) {
+            throw new DslException(format(
+                    Messages.UpdateExistingView_CouldNotParseConfig(),
+                    view.getViewName()
+            ), e);
+        }
+
+        Class viewType = Jenkins.XSTREAM2.getMapper().realClass(newConfig.name().toString());
+        if (!viewType.equals(view.getClass())) {
+            throw new DslException(format(
+                    Messages.UpdateExistingView_ViewTypeDoesNotMatch(),
+                    view.getViewName()
             ));
         }
     }

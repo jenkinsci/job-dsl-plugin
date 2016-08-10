@@ -40,6 +40,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    see [Job DSL Commands](Job-DSL-Commands#seed-job)
  * Fixed issues with embedded API Viewer
    ([#886](https://github.com/jenkinsci/job-dsl-plugin/pull/886))
+ * Improved error message when trying to change the type of a view
+   ([#888](https://github.com/jenkinsci/job-dsl-plugin/pull/888))
  * Removed anything that has been deprecated in 1.42, see [Migration](Migration#migrating-to-142)
 * 1.48 (June 24 2016)
  * Added option to ignore missing DSL script files or empty wildcards

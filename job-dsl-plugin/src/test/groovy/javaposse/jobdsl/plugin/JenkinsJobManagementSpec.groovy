@@ -5,6 +5,7 @@ import com.google.common.io.Resources
 import hudson.FilePath
 import hudson.LocalPluginManager
 import hudson.model.AbstractBuild
+import hudson.model.AllView
 import hudson.model.Cause
 import hudson.model.Failure
 import hudson.model.FreeStyleBuild
@@ -516,6 +517,22 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         Exception e = thrown(DslException)
         e.message == 'Type of item "my-job" does not match existing type, item type can not be changed'
+    }
+
+    def 'createOrUpdateView should fail if view type does not match'() {
+        setup:
+        jenkinsRule.jenkins.addView(new AllView('foo'))
+
+        when:
+        jobManagement.createOrUpdateView(
+                'foo',
+                JenkinsJobManagementSpec.getResourceAsStream('/javaposse/jobdsl/dsl/views/ListView-template.xml').text,
+                false
+        )
+
+        then:
+        Exception e = thrown(DslException)
+        e.message == 'Type of view "foo" does not match existing type, view type can not be changed'
     }
 
     def isMinimumPluginVersionInstalled() {
