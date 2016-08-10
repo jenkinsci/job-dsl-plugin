@@ -36,6 +36,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Updated [Structs Plugin](https://github.com/jenkinsci/structs-plugin) dependency to version 1.2
  * Improved support for [[Automatically Generated DSL]]: print deprecation warnings and show deprecated methods in API
    viewer
+ * Added symbol to allow nicer pipeline syntax, see
+   [Use Job DSL in Pipeline scripts](User-Power-Moves#use-job-dsl-in-pipeline-scripts)
+   ([JENKINS-36768](https://issues.jenkins-ci.org/browse/JENKINS-36768))
  * Added a `SEED_JOB` script variable which provides access to the seed job,
    see [Job DSL Commands](Job-DSL-Commands#seed-job)
  * Fixed issues with embedded API Viewer

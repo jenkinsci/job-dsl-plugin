@@ -209,3 +209,17 @@ Options:
                     defaults to `'JENKINS_ROOT` which will treat all job names as absolute
 * `additionalClasspath`: optional, newline separated list of additional classpath entries for Job DSL scripts, file
                          names relative must be relative to the workspace
+
+With version 1.49 and _Pipeline: Groovy_ 2.10 or later it is possible to use a more concise syntax:
+
+```groovy
+node {
+    jobDsl scriptLocation: [scriptText: 'job("example-2")']
+ 
+    jobDsl scriptLocation: [targets: ['jobs/projectA/*.groovy', 'jobs/common.groovy'].join('\n')],
+           removedJobAction: 'DELETE',
+           removedViewAction: 'DELETE',
+           lookupStrategy: 'SEED_JOB',
+           additionalClasspath: ['libA.jar', 'libB.jar'].join('\n')
+}
+```

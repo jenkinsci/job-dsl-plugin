@@ -18,10 +18,12 @@ import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
 import jenkins.YesNoMaybe;
 import jenkins.model.Jenkins;
+import org.jenkinsci.Symbol;
 
 import java.util.Map;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
+@Symbol("jobDsl")
 public class DescriptorImpl extends BuildStepDescriptor<Builder> {
     private Multimap<String, SeedReference> templateJobMap; // K=templateName, V=Seed
     private Map<String, SeedReference> generatedJobMap;
