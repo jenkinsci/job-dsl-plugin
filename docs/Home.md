@@ -41,6 +41,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Added symbol to allow nicer pipeline syntax, see
    [Use Job DSL in Pipeline scripts](User-Power-Moves#use-job-dsl-in-pipeline-scripts)
    ([JENKINS-36768](https://issues.jenkins-ci.org/browse/JENKINS-36768))
+ * Improved script processing performance
+   ([JENKINS-37138](https://issues.jenkins-ci.org/browse/JENKINS-37138))
  * Added a `SEED_JOB` script variable which provides access to the seed job,
    see [Job DSL Commands](Job-DSL-Commands#seed-job)
  * Fixed issues with embedded API Viewer
