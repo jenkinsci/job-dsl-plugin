@@ -799,6 +799,15 @@ class PublisherContext extends AbstractExtensibleContext {
             script {
                 script(groovyPostbuildContext.script ?: '')
                 sandbox(groovyPostbuildContext.sandbox)
+                if (groovyPostbuildContext.classpath) {
+                    classpath {
+                        groovyPostbuildContext.classpath.each { value ->
+                            entry {
+                                url(value)
+                            }
+                        }
+                    }
+                }
             }
             behavior(groovyPostbuildContext.behavior.value)
         }
