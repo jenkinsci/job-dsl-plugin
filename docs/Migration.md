@@ -1,5 +1,43 @@
 ## Migrating to 1.49
 
+### ScriptLocation
+
+The `scriptLocation` property of `javaposse.jobdsl.plugin.ExecuteDslScripts` and the
+`javaposse.jobdsl.plugin.ExecuteDslScripts.ScriptLocation` class have been [[deprecated|Deprecation-Policy]] and will be
+removed. The properties of `scriptLocation` can now be set directly on `ExecuteDslScripts`.
+
+Pipeline syntax prior to 1.49
+```groovy
+node {
+    step([
+        $class: 'ExecuteDslScripts',
+        scriptLocation: [scriptText: 'job("example-2")'],
+    ])
+    step([
+        $class: 'ExecuteDslScripts',
+        scriptLocation: [
+            targets: ['jobs/projectA/*.groovy', 'jobs/common.groovy'].join('\n'),
+            ignoreMissingFiles: true
+        ]
+    ])
+}
+```
+
+Pipeline syntax since to 1.49
+```groovy
+node {
+    step([
+        $class: 'ExecuteDslScripts',
+        scriptText: 'job("example-2")'
+    ])
+    step([
+        $class: 'ExecuteDslScripts',
+        targets: ['jobs/projectA/*.groovy', 'jobs/common.groovy'].join('\n'),
+        ignoreMissingFiles: true
+    ])
+}
+```
+
 ### JobManagement
 
 The return type of the `getParameters()` method in `javaposse.jobdsl.dsl.JobManagement` changed from

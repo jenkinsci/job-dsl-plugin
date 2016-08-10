@@ -3,14 +3,14 @@
     <f:block>
         <p>See <a href="${rootURL}/plugin/job-dsl/api-viewer" target="_blank">Job DSL API</a> for syntax reference.</p>
     </f:block>
-    <f:radioBlock name="scriptLocation" value="true" title="Use the provided DSL script" checked="${instance.isUsingScriptText()}">
+    <f:radioBlock name="usingScriptText" value="true" title="Use the provided DSL script" checked="${instance.isUsingScriptText()}" inline="true">
         <f:entry title='DSL Script' field='scriptText'>
             <f:textarea codemirror-mode="groovy"
                         codemirror-config="mode: 'text/x-groovy', lineNumbers: true, matchBrackets: true, onBlur: function(editor){editor.save()}"/>
         </f:entry>
     </f:radioBlock>
 
-    <f:radioBlock name="scriptLocation" value="false" title="Look on Filesystem" checked="${!instance.isUsingScriptText()}">
+    <f:radioBlock name="usingScriptText" value="false" title="Look on Filesystem" checked="${!instance.isUsingScriptText()}" inline="true">
         <f:entry title="DSL Scripts" field="targets">
             <f:expandableTextbox/>
         </f:entry>

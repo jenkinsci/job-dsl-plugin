@@ -172,19 +172,34 @@ Gradle provides a way to build and test your scripts and supporting classes. See
 # Use Job DSL in Pipeline scripts
 
 Starting with version 1.48, the Job DSL build step can be used in
-[Pipeline](https://github.com/jenkinsci/pipeline-plugin) scripts (e.g. in `Jenkinsfile`).
+[Pipeline](https://github.com/jenkinsci/pipeline-plugin) scripts (e.g. in `Jenkinsfile`). In version 1.49 Pipeline
+support has been improved by enabling a more concise syntax when using _Pipeline: Groovy_ 2.10 or later.
 
-Example:
+Pipeline syntax with version 1.49 and _Pipeline: Groovy_ 2.10 or later:
+
+```groovy
+node {
+    jobDsl scriptText: 'job("example-2")'
+
+    jobDsl targets: ['jobs/projectA/*.groovy', 'jobs/common.groovy'].join('\n'),
+           removedJobAction: 'DELETE',
+           removedViewAction: 'DELETE',
+           lookupStrategy: 'SEED_JOB',
+           additionalClasspath: ['libA.jar', 'libB.jar'].join('\n')
+}
+```
+
+Pipeline syntax with version 1.48 or _Pipeline: Groovy_ 2.9 and older:
 
 ```groovy
 node {
     step([
         $class: 'ExecuteDslScripts',
-        scriptLocation: [scriptText: 'job("example-2")'],
+        scriptText: 'job("example-2")'
     ])
     step([
         $class: 'ExecuteDslScripts',
-        scriptLocation: [targets: ['jobs/projectA/*.groovy', 'jobs/common.groovy'].join('\n')],
+        targets: ['jobs/projectA/*.groovy', 'jobs/common.groovy'].join('\n'),
         removedJobAction: 'DELETE',
         removedViewAction: 'DELETE',
         lookupStrategy: 'SEED_JOB',
@@ -194,12 +209,12 @@ node {
 ```
 
 Options:
-* `scriptLocation`: mandatory, specifies the Job DSL scripts to execute and consists of three sub-options:
-     * `targets`: optional, specifies Job DSL script files to execute, newline separated list of file names relative
-                  to the workspace
-     * `scriptText`: optional, specifies an inline Job DSL script
-     * `ignoreMissingFiles`: optional, defaults to `false`, set to `true` to ignore missing files or empty wildcards in
-                            `targets`
+* `targets`: optional, specifies Job DSL script files to execute, newline separated list of file names relative
+             to the workspace
+* `scriptText`: optional, specifies an inline Job DSL script
+* `usingScriptText`: optional, `scriptText` will be used if set to `true`, `targets` will be used if set to `false`
+* `ignoreMissingFiles`: optional, defaults to `false`, set to `true` to ignore missing files or empty wildcards in
+                        `targets`
 * `ignoreExisting`: optional, defaults to `false`, set to `true` to not update existing jobs and views
 * `removedJobAction`: optional, set to `'DELETE'` or `'DISABLE'` to delete or disable jobs that have been removed from
                       DSL scripts, defaults to `'IGNORE'`
@@ -208,18 +223,4 @@ Options:
 * `lookupStrategy`: optional, when set to `'SEED_JOB'` job names will be interpreted as relative to the pipeline job,
                     defaults to `'JENKINS_ROOT` which will treat all job names as absolute
 * `additionalClasspath`: optional, newline separated list of additional classpath entries for Job DSL scripts, file
-                         names relative must be relative to the workspace
-
-With version 1.49 and _Pipeline: Groovy_ 2.10 or later it is possible to use a more concise syntax:
-
-```groovy
-node {
-    jobDsl scriptLocation: [scriptText: 'job("example-2")']
- 
-    jobDsl scriptLocation: [targets: ['jobs/projectA/*.groovy', 'jobs/common.groovy'].join('\n')],
-           removedJobAction: 'DELETE',
-           removedViewAction: 'DELETE',
-           lookupStrategy: 'SEED_JOB',
-           additionalClasspath: ['libA.jar', 'libB.jar'].join('\n')
-}
-```
+                         names must be relative to the workspace

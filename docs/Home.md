@@ -47,6 +47,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    see [Job DSL Commands](Job-DSL-Commands#seed-job)
  * Fixed issues with embedded API Viewer
    ([#886](https://github.com/jenkinsci/job-dsl-plugin/pull/886))
+ * Fixed compatibility with Pipeline Snippet Generator
+   ([JENKINS-36502](https://issues.jenkins-ci.org/browse/JENKINS-36502))
+ * Deprecated the `scriptLocation` property of the `ExecuteDslScripts` build step, see
+   [Migration](Migration#migrating-to-149)
  * Improved error message when trying to change the type of a view
    ([#888](https://github.com/jenkinsci/job-dsl-plugin/pull/888))
  * Removed anything that has been deprecated in 1.42, see [Migration](Migration#migrating-to-142)
