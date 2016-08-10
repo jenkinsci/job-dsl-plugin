@@ -33,6 +33,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#879](https://github.com/jenkinsci/job-dsl-plugin/pull/879))
  * Enhanced support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)
    ([JENKINS-33093](https://issues.jenkins-ci.org/browse/JENKINS-33093))
+ * Enhanced support for the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin)
+   ([#882](https://github.com/jenkinsci/job-dsl-plugin/pull/882))
  * Updated [Structs Plugin](https://github.com/jenkinsci/structs-plugin) dependency to version 1.2
  * Improved support for [[Automatically Generated DSL]]: print deprecation warnings and show deprecated methods in API
    viewer

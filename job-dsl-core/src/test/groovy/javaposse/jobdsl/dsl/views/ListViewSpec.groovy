@@ -763,6 +763,25 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.7')
     }
 
+    def 'test result column'() {
+        when:
+        view.columns {
+            testResult(2)
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        def columns = root.columns[0].value()
+        columns.size() == 1
+
+        Node column = columns[0]
+        column.name() == 'jenkins.plugins.extracolumns.TestResultColumn'
+        column.children().size() == 1
+        column.testResultFormat[0].value() == 2
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.6')
+    }
+
     protected String getDefaultXml() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
