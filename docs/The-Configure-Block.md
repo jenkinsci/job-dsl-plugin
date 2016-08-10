@@ -62,6 +62,7 @@ The `configure` method can be stated multiple times and configure blocks are run
 
 See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) for details about the configure blocks supported by
 DSL methods.
+<br>[This article](http://www.devexp.eu/2014/10/26/use-unsupported-jenkins-plugins-with-jenkins-dsl/) will provide you with a step-by-step tutorial with example on how to create a custom xml for unsupported plugin using configure block. 
 
 # Transforming XML
 
