@@ -71,7 +71,7 @@ step-by-step tutorial on how to create a configure block.
 All standard documentation for Node applies here, but transforming XML via Node is no fun, and quite ugly. The general
 groovy use-cases are to consume this structure or build it up via NodeBuilder. Use the samples below to help navigate
 the Jenkins XML, but keep in mind that the actual syntax is Groovy syntax:
-http://groovy.codehaus.org/Updating+XML+with+XmlParser.
+[http://groovy-lang.org/processing-xml.html](http://groovy-lang.org/processing-xml.html).
 
 Things to keep in mind:
 
