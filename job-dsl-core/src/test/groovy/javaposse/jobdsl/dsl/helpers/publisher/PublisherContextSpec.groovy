@@ -6312,4 +6312,17 @@ class PublisherContextSpec extends Specification {
 
         1 * jobManagement.requireMinimumPluginVersion('log-parser', '2.0')
     }
+
+    def 'ci-game is activated'() {
+        when:
+        context.ciGame()
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.cigame.GamePublisher'
+        }
+        1 * jobManagement.requirePlugin('ci-game')
+    }
 }

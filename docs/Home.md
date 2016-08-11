@@ -51,6 +51,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#888](https://github.com/jenkinsci/job-dsl-plugin/pull/888))
  * Removed anything that has been deprecated in 1.42, see [Migration](Migration#migrating-to-142)
  * Removed anything that has been deprecated in 1.43, see [Migration](Migration#migrating-to-143)
+ * Added [ci-game](https://wiki.jenkins-ci.org/display/JENKINS/The+Continuous+Integration+Game+plugin) to publishers [JENKINS-37343](https://issues.jenkins-ci.org/browse/JENKINS-37343)
 * 1.48 (June 24 2016)
  * Added option to ignore missing DSL script files or empty wildcards
    ([JENKINS-34060](https://issues.jenkins-ci.org/browse/JENKINS-34060))
