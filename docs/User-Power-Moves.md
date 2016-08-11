@@ -212,7 +212,6 @@ Options:
 * `targets`: optional, specifies Job DSL script files to execute, newline separated list of file names relative
              to the workspace
 * `scriptText`: optional, specifies an inline Job DSL script
-* `usingScriptText`: optional, `scriptText` will be used if set to `true`, `targets` will be used if set to `false`
 * `ignoreMissingFiles`: optional, defaults to `false`, set to `true` to ignore missing files or empty wildcards in
                         `targets`
 * `ignoreExisting`: optional, defaults to `false`, set to `true` to not update existing jobs and views

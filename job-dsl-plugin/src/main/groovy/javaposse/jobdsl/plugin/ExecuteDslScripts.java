@@ -190,8 +190,9 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.additionalClasspath = null;
     }
 
+    // Return null targets if isUsingScriptText
     public String getTargets() {
-        return targets;
+        return !this.isUsingScriptText() ? this.targets : null;
     }
 
     @DataBoundSetter
@@ -199,8 +200,9 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.targets = fixEmptyAndTrim(targets);
     }
 
+    // Return null scriptText if not isUsingScriptText
     public String getScriptText() {
-        return scriptText;
+        return this.isUsingScriptText() ? this.scriptText : null;
     }
 
     @DataBoundSetter
@@ -208,18 +210,33 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.scriptText = fixEmptyAndTrim(scriptText);
     }
 
+    // If not set explicitly, isUsingScriptText() will be calculated based on
+    // the absence of non-null targets field.
     @SuppressWarnings("WeakerAccess")  // used in config.jelly
     public boolean isUsingScriptText() {
         return usingScriptText == null ? (targets == null) : usingScriptText;
     }
 
+    // We want to be able to set this, but we never want it to return a value.
+    // This will prevent the snippet generator generating output for this field,
+    // while also not throwing an exception due to missing getter.
+    public String getUseScriptText() {
+        return null;
+    }
+
+    // This property is optional and one-directional (set only).
+    // It is set only from the UI and will force usingScriptText to true or
+    // false, based on the UI databound value.
     @DataBoundSetter
-    public void setUsingScriptText(boolean usingScriptText) {
-        this.usingScriptText = usingScriptText;
+    public void setUseScriptText(String value) {
+        value = Util.fixEmptyAndTrim(value);
+        if (value != null) {
+            this.usingScriptText = Boolean.parseBoolean(value);
+        }
     }
 
     public boolean isIgnoreMissingFiles() {
-        return ignoreMissingFiles;
+        return !this.isUsingScriptText() ? this.ignoreMissingFiles : false;
     }
 
     @DataBoundSetter
@@ -311,7 +328,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env);
             try {
                 Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
-                        targets, isUsingScriptText(), scriptText, ignoreExisting, ignoreMissingFiles, additionalClasspath
+                        getTargets(), isUsingScriptText(), getScriptText(), ignoreExisting, isIgnoreMissingFiles(), additionalClasspath
                 );
 
                 DslScriptLoader dslScriptLoader = new DslScriptLoader(jm);
