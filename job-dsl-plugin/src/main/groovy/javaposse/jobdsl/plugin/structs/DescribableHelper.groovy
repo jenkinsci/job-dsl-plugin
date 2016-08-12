@@ -1,5 +1,8 @@
 package javaposse.jobdsl.plugin.structs
 
+import groovy.transform.EqualsAndHashCode
+import hudson.ExtensionList
+import hudson.ExtensionListListener
 import hudson.model.Describable
 import hudson.model.Descriptor
 import javaposse.jobdsl.dsl.Context
@@ -14,8 +17,11 @@ import org.jenkinsci.plugins.structs.describable.DescribableModel
 import org.jenkinsci.plugins.structs.describable.ErrorType
 import org.kohsuke.stapler.NoStaplerConstructorException
 
+import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Level
 import java.util.logging.Logger
+
+import static java.util.Collections.unmodifiableCollection
 
 /**
  * Provides utility methods for extending the DSL with any {@link Describable}.
@@ -25,6 +31,17 @@ import java.util.logging.Logger
 class DescribableHelper {
     private static final Logger LOGGER = Logger.getLogger(DescribableHelper.name)
     private static final Collection<String> KEYWORDS = Types.keywords
+
+    private static final Map<CacheKey, Collection<DescribableModel>> CACHE = new ConcurrentHashMap<>()
+
+    static {
+        ExtensionList.lookup(Descriptor).addListener(new ExtensionListListener() {
+            @Override
+            void onChange() {
+                CACHE.clear()
+            }
+        })
+    }
 
     /**
      * Finds {@link DescribableModel}s with the given name within the set of given models.
@@ -48,9 +65,16 @@ class DescribableHelper {
      * @see #uncapitalize(java.lang.Class)
      */
     static Collection<DescribableModel> findDescribableModels(Class<? extends Context> contextClass, String name) {
-        Collection<Descriptor> descriptors = getDescriptors(contextClass)
-        Collection<Descriptor> result = descriptors.findAll { SymbolLookup.get().find(it.class, name) }
-        getDescribableModels(result ?: descriptors.findAll { uncapitalize(it.clazz) == name })
+        CacheKey cacheKey = new CacheKey(contextClass, name)
+        Collection<DescribableModel> result = CACHE.get(cacheKey)
+        if (result == null) {
+            Collection<Descriptor> descriptors = getDescriptors(contextClass)
+            Collection<Descriptor> symbols = descriptors.findAll { SymbolLookup.get().find(it.class, name) }
+            result = getDescribableModels(symbols ?: descriptors.findAll { uncapitalize(it.clazz) == name })
+            result = unmodifiableCollection(result)
+            CACHE.put(cacheKey, result)
+        }
+        result
     }
 
     /**
@@ -209,5 +233,16 @@ class DescribableHelper {
     private static Map<String, DescribableModel> filterIllegalSymbols(Map<String, DescribableModel> symbols,
                                                                       Collection<String> illegalSymbols) {
         symbols.findAll { !illegalSymbols.contains(it.key) }
+    }
+
+    @EqualsAndHashCode
+    private static class CacheKey {
+        final Class<? extends Context> contextClass
+        final String name
+
+        CacheKey(Class<? extends Context> contextClass, String name) {
+            this.contextClass = contextClass
+            this.name = name
+        }
     }
 }
