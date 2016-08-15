@@ -577,6 +577,24 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('release', '2.5.3')
     }
 
+    def 'job filter extension'() {
+        setup:
+        jobManagement.callExtension('extension', null, JobFiltersContext) >> new Node(null, 'foo')
+
+        when:
+        view.jobFilters {
+            extension()
+        }
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+        with(filters[0]) {
+            name() == 'foo'
+            children().size() == 0
+        }
+    }
+
     def 'recurse folders'() {
         when:
         view.recurse()
