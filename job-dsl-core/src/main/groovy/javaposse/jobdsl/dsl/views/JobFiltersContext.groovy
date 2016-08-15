@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
@@ -13,11 +14,17 @@ import javaposse.jobdsl.dsl.views.jobfilter.UnclassifiedJobsFilter
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
-class JobFiltersContext extends AbstractContext {
+@ContextType('hudson.views.ViewJobFilter')
+class JobFiltersContext extends AbstractExtensibleContext {
     List<Node> filterNodes = []
 
     protected JobFiltersContext(JobManagement jobManagement) {
-        super(jobManagement)
+        super(jobManagement, null)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        filterNodes << node
     }
 
     /**
