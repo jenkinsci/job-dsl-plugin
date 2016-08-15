@@ -117,13 +117,34 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'add rvm-controlled ruby version'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('rvm', '0.6') >> true
+
         when:
         context.rvm('ruby-1.9.3')
 
         then:
         context.wrapperNodes[0].name() == 'ruby-proxy-object'
-        context.wrapperNodes[0].'ruby-object'[0].object[0].impl[0].value() == 'ruby-1.9.3'
-        1 * mockJobManagement.requirePlugin('rvm')
+        def rootObject = context.wrapperNodes[0].'ruby-object'[0]
+
+        rootObject.'@pluginid' == 'rvm'
+        rootObject.'@ruby-class' == 'Jenkins::Tasks::BuildWrapperProxy'
+
+        def pluginid = rootObject.pluginid[0]
+        pluginid.'@ruby-class' == 'String'
+        pluginid.'@pluginid' == 'rvm'
+        pluginid.value() == 'rvm'
+
+        def innerObject = rootObject.object[0]
+        innerObject.'@ruby-class' == 'RvmWrapper'
+        innerObject.'@pluginid' == 'rvm'
+
+        def impl = innerObject.impl[0]
+        impl.'@ruby-class' == 'String'
+        impl.'@pluginid' == 'rvm'
+        impl.value() == 'ruby-1.9.3'
+
+        1 * mockJobManagement.requireMinimumPluginVersion('rvm', '0.6')
     }
 
     def 'default timeout works'() {
