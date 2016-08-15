@@ -59,6 +59,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static hudson.Util.fixEmptyAndTrim;
 import static java.lang.String.format;
 import static javaposse.jobdsl.plugin.actions.GeneratedObjectsAction.extractGeneratedObjects;
 
@@ -71,6 +72,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     // Artifact of how Jelly/Stapler puts conditional variables in blocks, which NEED to map to a sub-Object.
     // The alternative would have been to mess with DescriptorImpl.getInstance
+    @Deprecated
     public static class ScriptLocation {
         private Boolean usingScriptText;
         private String targets;
@@ -95,12 +97,12 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
         @DataBoundSetter
         public void setTargets(String targets) {
-            this.targets = Util.fixEmptyAndTrim(targets);
+            this.targets = fixEmptyAndTrim(targets);
         }
 
         @DataBoundSetter
         public void setScriptText(String scriptText) {
-            this.scriptText = Util.fixEmptyAndTrim(scriptText);
+            this.scriptText = fixEmptyAndTrim(scriptText);
             if (this.scriptText != null && this.usingScriptText == null) {
                 usingScriptText = true;
             }
@@ -115,17 +117,17 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     /**
      * Newline-separated list of locations to load as dsl scripts.
      */
-    private final String targets;
+    private String targets;
 
     /**
      * Text of a dsl script.
      */
-    private final String scriptText;
+    private String scriptText;
 
     /**
      * Whether we're using some text for the script directly
      */
-    private final boolean usingScriptText;
+    private Boolean usingScriptText;
 
     private boolean ignoreExisting;
 
@@ -140,11 +142,12 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     private String additionalClasspath;
 
     @DataBoundConstructor
+    public ExecuteDslScripts() {
+    }
+
+    @Deprecated
     public ExecuteDslScripts(ScriptLocation scriptLocation) {
-        this.usingScriptText = scriptLocation == null || (scriptLocation.usingScriptText != null && scriptLocation.usingScriptText);
-        this.targets = scriptLocation == null ? null : scriptLocation.targets;
-        this.scriptText = scriptLocation == null ? null : scriptLocation.scriptText;
-        this.ignoreMissingFiles = scriptLocation != null && scriptLocation.ignoreMissingFiles;
+        setScriptLocation(scriptLocation);
     }
 
     @Deprecated
@@ -188,19 +191,49 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     }
 
     public String getTargets() {
-        return targets;
+        return !this.isUsingScriptText() ? this.targets : null;
+    }
+
+    @DataBoundSetter
+    public void setTargets(String targets) {
+        this.targets = fixEmptyAndTrim(targets);
     }
 
     public String getScriptText() {
-        return scriptText;
+        return this.isUsingScriptText() ? this.scriptText : null;
+    }
+
+    @DataBoundSetter
+    public void setScriptText(String scriptText) {
+        this.scriptText = fixEmptyAndTrim(scriptText);
     }
 
     public boolean isUsingScriptText() {
-        return usingScriptText;
+        return usingScriptText == null ? (targets == null) : usingScriptText;
+    }
+
+    // We want to be able to set this, but we never want it to return a value.
+    // This will prevent the snippet generator generating output for this field,
+    // while also not throwing an exception due to missing getter.
+    public Boolean getUseScriptText() {
+        return null;
+    }
+
+    // This property is optional and one-directional (set only).
+    // It is set only from the UI and will force usingScriptText to true or
+    // false, based on the UI databound value.
+    @DataBoundSetter
+    public void setUseScriptText(Boolean value) {
+        this.usingScriptText = value;
     }
 
     public boolean isIgnoreMissingFiles() {
-        return ignoreMissingFiles;
+        return !this.isUsingScriptText() && this.ignoreMissingFiles;
+    }
+
+    @DataBoundSetter
+    public void setIgnoreMissingFiles(boolean ignoreMissingFiles) {
+        this.ignoreMissingFiles = ignoreMissingFiles;
     }
 
     public boolean isIgnoreExisting() {
@@ -245,12 +278,26 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     @DataBoundSetter
     public void setAdditionalClasspath(String additionalClasspath) {
-        this.additionalClasspath = additionalClasspath;
+        this.additionalClasspath = fixEmptyAndTrim(additionalClasspath);
     }
 
     @Override
     public Collection<? extends Action> getProjectActions(AbstractProject<?, ?> project) {
         return Collections.singleton(new ApiViewerAction());
+    }
+
+    @Deprecated
+    public ScriptLocation getScriptLocation() {
+        return null;
+    }
+
+    @DataBoundSetter
+    @Deprecated
+    public void setScriptLocation(ScriptLocation scriptLocation) {
+        this.usingScriptText = scriptLocation == null || (scriptLocation.usingScriptText != null && scriptLocation.usingScriptText);
+        this.targets = scriptLocation == null ? null : scriptLocation.targets;
+        this.scriptText = scriptLocation == null ? null : scriptLocation.scriptText;
+        this.ignoreMissingFiles = scriptLocation != null && scriptLocation.ignoreMissingFiles;
     }
 
     /**
@@ -273,7 +320,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env);
             try {
                 Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
-                        targets, usingScriptText, scriptText, ignoreExisting, ignoreMissingFiles, additionalClasspath
+                        getTargets(), isUsingScriptText(), getScriptText(), ignoreExisting, isIgnoreMissingFiles(), additionalClasspath
                 );
 
                 DslScriptLoader dslScriptLoader = new DslScriptLoader(jm);
