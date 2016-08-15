@@ -36,6 +36,259 @@ class ExecuteDslScriptsSpec extends Specification {
     public JenkinsRule jenkinsRule = new JenkinsRule()
 
     @WithoutJenkins
+    def 'targets'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.targets == null
+        executeDslScripts.usingScriptText
+
+        when:
+        executeDslScripts.targets = 'foo'
+
+        then:
+        executeDslScripts.targets == 'foo'
+        !executeDslScripts.usingScriptText
+
+        when:
+        executeDslScripts.useScriptText = true
+
+        then:
+        executeDslScripts.targets == null
+        executeDslScripts.usingScriptText
+
+        when:
+        executeDslScripts.useScriptText = false
+
+        then:
+        executeDslScripts.targets == 'foo'
+        !executeDslScripts.usingScriptText
+
+        when:
+        executeDslScripts.targets = '  '
+
+        then:
+        executeDslScripts.targets == null
+        !executeDslScripts.usingScriptText
+    }
+
+    @WithoutJenkins
+    def 'script text'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.scriptText == null
+        executeDslScripts.usingScriptText
+
+        when:
+        executeDslScripts.scriptText = 'foo'
+        executeDslScripts.usingScriptText
+
+        then:
+        executeDslScripts.scriptText == 'foo'
+        executeDslScripts.usingScriptText
+
+        when:
+        executeDslScripts.useScriptText = true
+
+        then:
+        executeDslScripts.scriptText == 'foo'
+        executeDslScripts.usingScriptText
+
+        when:
+        executeDslScripts.useScriptText = false
+
+        then:
+        executeDslScripts.scriptText == null
+        !executeDslScripts.usingScriptText
+
+        when:
+        executeDslScripts.scriptText = '  '
+        executeDslScripts.useScriptText = true
+
+        then:
+        executeDslScripts.scriptText == null
+        executeDslScripts.usingScriptText
+    }
+
+    @WithoutJenkins
+    def 'ignore missing files'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        !executeDslScripts.ignoreMissingFiles
+
+        when:
+        executeDslScripts.ignoreMissingFiles = true
+
+        then:
+        !executeDslScripts.ignoreMissingFiles
+
+        when:
+        executeDslScripts.targets = 'foo'
+
+        then:
+        executeDslScripts.ignoreMissingFiles
+
+        when:
+        executeDslScripts.useScriptText = true
+
+        then:
+        !executeDslScripts.ignoreMissingFiles
+
+        when:
+        executeDslScripts.useScriptText = false
+
+        then:
+        executeDslScripts.ignoreMissingFiles
+    }
+
+    @WithoutJenkins
+    def 'ignore existing'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        !executeDslScripts.ignoreExisting
+
+        when:
+        executeDslScripts.ignoreExisting = true
+
+        then:
+        executeDslScripts.ignoreExisting
+
+        when:
+        executeDslScripts.ignoreExisting = false
+
+        then:
+        !executeDslScripts.ignoreExisting
+    }
+
+    @WithoutJenkins
+    def 'removed job action'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.removedJobAction == RemovedJobAction.IGNORE
+
+        when:
+        executeDslScripts.removedJobAction = RemovedJobAction.DELETE
+
+        then:
+        executeDslScripts.removedJobAction == RemovedJobAction.DELETE
+    }
+
+    @WithoutJenkins
+    def 'removed view action'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.removedViewAction == RemovedViewAction.IGNORE
+
+        when:
+        executeDslScripts.removedViewAction = RemovedViewAction.DELETE
+
+        then:
+        executeDslScripts.removedViewAction == RemovedViewAction.DELETE
+    }
+
+    @WithoutJenkins
+    def 'lookup strategy'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.lookupStrategy == LookupStrategy.JENKINS_ROOT
+
+        when:
+        executeDslScripts.lookupStrategy = LookupStrategy.SEED_JOB
+
+        then:
+        executeDslScripts.lookupStrategy == LookupStrategy.SEED_JOB
+
+        when:
+        executeDslScripts.lookupStrategy = null
+
+        then:
+        executeDslScripts.lookupStrategy == LookupStrategy.JENKINS_ROOT
+    }
+
+    @WithoutJenkins
+    def 'additional classpath'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.additionalClasspath == null
+
+        when:
+        executeDslScripts.additionalClasspath = 'foo'
+
+        then:
+        executeDslScripts.additionalClasspath == 'foo'
+
+        when:
+        executeDslScripts.additionalClasspath = '   '
+
+        then:
+        executeDslScripts.additionalClasspath == null
+    }
+
+    @WithoutJenkins
+    def 'script location'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.scriptLocation == null
+
+        when:
+        executeDslScripts.scriptLocation = new ExecuteDslScripts.ScriptLocation('foo', 'bar', 'baz')
+
+        then:
+        executeDslScripts.scriptLocation == null
+        executeDslScripts.scriptText == null
+        executeDslScripts.targets == 'bar'
+        !executeDslScripts.usingScriptText
+        executeDslScripts.useScriptText == null
+
+        when:
+        executeDslScripts.scriptLocation = new ExecuteDslScripts.ScriptLocation('true', '', 'foo')
+
+        then:
+        executeDslScripts.scriptLocation == null
+        executeDslScripts.scriptText == 'foo'
+        executeDslScripts.targets == null
+        executeDslScripts.usingScriptText
+        executeDslScripts.useScriptText == null
+
+        when:
+        executeDslScripts.scriptLocation = new ExecuteDslScripts.ScriptLocation()
+
+        then:
+        executeDslScripts.scriptLocation == null
+        executeDslScripts.scriptText == null
+        executeDslScripts.targets == null
+        !executeDslScripts.usingScriptText
+        executeDslScripts.useScriptText == null
+
+        when:
+        executeDslScripts.scriptLocation = null
+
+        then:
+        executeDslScripts.scriptLocation == null
+        executeDslScripts.scriptText == null
+        executeDslScripts.targets == null
+        executeDslScripts.usingScriptText
+        executeDslScripts.useScriptText == null
+    }
+
+    @WithoutJenkins
     def 'getProjectActions'() {
         setup:
         ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
