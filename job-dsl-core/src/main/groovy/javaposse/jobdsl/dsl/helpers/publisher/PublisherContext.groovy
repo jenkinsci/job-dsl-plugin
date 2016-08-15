@@ -2074,7 +2074,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Activatea the ci-game for this job
+     * Activates the ci-game for this job
      *
      * @since 1.49
      */
