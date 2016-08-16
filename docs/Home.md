@@ -26,7 +26,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.49 (unreleased)
+* 1.49 (August 16 2016)
  * Enhanced support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)
    ([JENKINS-36370](https://issues.jenkins-ci.org/browse/JENKINS-36370))
  * Enhanced support for the [HTTP Request Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin)
