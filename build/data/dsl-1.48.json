@@ -1,5 +1,5 @@
 {
-    "version": "1.49",
+    "version": "1.48",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -2505,6 +2505,10 @@
                                     "type": "String"
                                 }
                             ],
+                            "plugin": {
+                                "id": "notification",
+                                "minimumVersion": "1.6"
+                            },
                             "html": "Sets the job lifecycle event triggering notification. Defaults to <TT>'all'</TT>.\r\n\r\n Possible values are <TT>'all'</TT>, <TT>'started'</TT>, <TT>'completed'</TT> and <TT>'finalized'</TT>.",
                             "firstSentenceCommentText": "Sets the job lifecycle event triggering notification. "
                         }
@@ -2521,6 +2525,10 @@
                                 }
                             ],
                             "availableSince": "1.43",
+                            "plugin": {
+                                "id": "notification",
+                                "minimumVersion": "1.8"
+                            },
                             "html": "Sets the number lines of log messages to send. Defaults to <TT>0</TT>.\r\n     ",
                             "firstSentenceCommentText": "Sets the number lines of log messages to send. "
                         }
@@ -2536,6 +2544,10 @@
                                     "type": "int"
                                 }
                             ],
+                            "plugin": {
+                                "id": "notification",
+                                "minimumVersion": "1.6"
+                            },
                             "html": "Sets a timeout in milliseconds. Defaults to <TT>30000</TT>.",
                             "firstSentenceCommentText": "Sets a timeout in milliseconds. "
                         }
@@ -4859,6 +4871,10 @@
                                 }
                             ],
                             "availableSince": "1.43",
+                            "plugin": {
+                                "id": "junit",
+                                "minimumVersion": "1.10"
+                            },
                             "html": "If set, does not fail the build on empty test results. Defaults to <TT>false</TT>.\r\n     ",
                             "firstSentenceCommentText": "If set, does not fail the build on empty test results. "
                         }
@@ -8339,6 +8355,86 @@
                 }
             ]
         },
+        "javaposse.jobdsl.dsl.helpers.publisher.EmailContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.publisher.EmailContext",
+            "methods": [
+                {
+                    "name": "configure",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "configureBlock",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Allows direct manipulation of the generated XML. The <TT>hudson.plugins.emailext.ExtendedEmailPublisher</TT> node\r\n is passed into the configure block.\r\n     ",
+                            "firstSentenceCommentText": "Allows direct manipulation of the generated XML. "
+                        }
+                    ]
+                },
+                {
+                    "name": "trigger",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "args",
+                                    "type": "Map"
+                                }
+                            ],
+                            "html": "Specifies the condition that should cause an email notification to be sent. Can be called multiple times to add\r\n more triggers.\r\n\r\n The map can contain one or more of the following keys: <TT>triggerName</TT>, <TT>subject</TT>, <TT>body</TT>,\r\n <TT>recipientList</TT>, <TT>sendToDevelopers</TT>, <TT>sendToRequester</TT>, <TT>includeCulprits</TT> and\r\n <TT>sendToRecipientList</TT>.\r\n\r\n The <TT>triggerName</TT> must be one of <TT>`PreBuild`</TT>, <TT>`StillUnstable`</TT>, <TT>`Fixed`</TT>,\r\n <TT>`Success`</TT>, <TT>`StillFailing`</TT>, <TT>`Improvement`</TT>, <TT>`Failure`</TT>, <TT>`Regression`</TT>,\r\n <TT>`Aborted`</TT>, <TT>`NotBuilt`</TT>, <TT>`FirstFailure`</TT>, <TT>`Unstable`</TT>, <TT>`Always`</TT>,\r\n <TT>`SecondFailure`</TT>, <TT>`FirstUnstable`</TT>, <TT>`FixedUnhealthy`</TT> or <TT>`StatusChanged`</TT>.\r\n Older versions of the Email-ext plugin do not support all triggers.",
+                            "firstSentenceCommentText": "Specifies the condition that should cause an email notification to be sent. "
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "triggerName",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "subject",
+                                    "type": "String",
+                                    "defaultValue": "null"
+                                },
+                                {
+                                    "name": "body",
+                                    "type": "String",
+                                    "defaultValue": "null"
+                                },
+                                {
+                                    "name": "recipientList",
+                                    "type": "String",
+                                    "defaultValue": "null"
+                                },
+                                {
+                                    "name": "sendToDevelopers",
+                                    "type": "Boolean",
+                                    "defaultValue": "null"
+                                },
+                                {
+                                    "name": "sendToRequester",
+                                    "type": "Boolean",
+                                    "defaultValue": "null"
+                                },
+                                {
+                                    "name": "includeCulprits",
+                                    "type": "Boolean",
+                                    "defaultValue": "null"
+                                },
+                                {
+                                    "name": "sendToRecipientList",
+                                    "type": "Boolean",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "html": "Specifies the condition that should cause an email notification to be sent. Can be called multiple times to add\r\n more triggers.\r\n\r\n The <TT>triggerName</TT> must be one of <TT>`PreBuild`</TT>, <TT>`StillUnstable`</TT>, <TT>`Fixed`</TT>,\r\n <TT>`Success`</TT>, <TT>`StillFailing`</TT>, <TT>`Improvement`</TT>, <TT>`Failure`</TT>, <TT>`Regression`</TT>,\r\n <TT>`Aborted`</TT>, <TT>`NotBuilt`</TT>, <TT>`FirstFailure`</TT>, <TT>`Unstable`</TT>, <TT>`Always`</TT>,\r\n <TT>`SecondFailure`</TT>, <TT>`FirstUnstable`</TT>, <TT>`FixedUnhealthy`</TT> or <TT>`StatusChanged`</TT>.\r\n Older versions of the Email-ext plugin do not support all triggers.",
+                            "firstSentenceCommentText": "Specifies the condition that should cause an email notification to be sent. "
+                        }
+                    ]
+                }
+            ]
+        },
         "javaposse.jobdsl.dsl.helpers.step.RunConditionContext": {
             "type": "javaposse.jobdsl.dsl.helpers.step.RunConditionContext",
             "methods": [
@@ -9036,22 +9132,6 @@
                             ],
                             "html": "Specifies the behavior when the script fails. Defaults to <TT>Behavior.DoNothing</TT>.",
                             "firstSentenceCommentText": "Specifies the behavior when the script fails. "
-                        }
-                    ]
-                },
-                {
-                    "name": "classpath",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "entries",
-                                    "type": "String..."
-                                }
-                            ],
-                            "availableSince": "1.49",
-                            "html": "Specifies an additional classpath entry. Can be called multiple times to add more entries.\r\n     ",
-                            "firstSentenceCommentText": "Specifies an additional classpath entry. "
                         }
                     ]
                 },
@@ -12219,27 +12299,6 @@
                     ]
                 },
                 {
-                    "name": "passAsProperties",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "passAsProperties",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.49",
-                            "plugin": {
-                                "id": "gradle",
-                                "minimumVersion": "1.25"
-                            },
-                            "html": "Passes job parameters as Gradle properties. Defaults to <TT>false</TT>.\r\n     ",
-                            "firstSentenceCommentText": "Passes job parameters as Gradle properties. "
-                        }
-                    ]
-                },
-                {
                     "name": "rootBuildScriptDir",
                     "signatures": [
                         {
@@ -12713,27 +12772,6 @@
                             ],
                             "html": "Allows to write the response body to the log. Defaults to <TT>false</TT>.",
                             "firstSentenceCommentText": "Allows to write the response body to the log. "
-                        }
-                    ]
-                },
-                {
-                    "name": "passBuildParameters",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "passBuildParameters",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.49",
-                            "plugin": {
-                                "id": "http_request",
-                                "minimumVersion": "1.8.7"
-                            },
-                            "html": "Allows to pass build parameters to the request URL. Defaults to <TT>false</TT>.\r\n     ",
-                            "firstSentenceCommentText": "Allows to pass build parameters to the request URL. "
                         }
                     ]
                 },
@@ -16070,6 +16108,10 @@
                                 }
                             ],
                             "availableSince": "1.42",
+                            "plugin": {
+                                "id": "postbuildscript",
+                                "minimumVersion": "0.17"
+                            },
                             "html": "If set, marks build as unstable instead of failed on script error. Defaults to <TT>false</TT>.\r\n     ",
                             "firstSentenceCommentText": "If set, marks build as unstable instead of failed on script error. "
                         }
@@ -16087,6 +16129,10 @@
                                 }
                             ],
                             "availableSince": "1.42",
+                            "plugin": {
+                                "id": "postbuildscript",
+                                "minimumVersion": "0.17"
+                            },
                             "html": "If set, runs the build steps only if the build failed. Defaults to <TT>false</TT>.\r\n     ",
                             "firstSentenceCommentText": "If set, runs the build steps only if the build failed. "
                         }
@@ -16937,6 +16983,10 @@
                                 }
                             ],
                             "availableSince": "1.43",
+                            "plugin": {
+                                "id": "rundeck",
+                                "minimumVersion": "3.4"
+                            },
                             "html": "If set, job execution logs from Rundeck are included in the console output. Defaults to <TT>false</TT>.\r\n\r\n This also enables waiting for Rundeck job executions to finish.\r\n     ",
                             "firstSentenceCommentText": "If set, job execution logs from Rundeck are included in the console output. "
                         }
@@ -17849,6 +17899,10 @@
                                 }
                             ],
                             "availableSince": "1.42",
+                            "plugin": {
+                                "id": "tasks",
+                                "minimumVersion": "4.41"
+                            },
                             "html": "If set, treats the tag identifiers as regular expression.\r\n     ",
                             "firstSentenceCommentText": "If set, treats the tag identifiers as regular expression."
                         }
@@ -19068,8 +19122,7 @@
                             ],
                             "availableSince": "1.26",
                             "plugin": {
-                                "id": "junit",
-                                "minimumVersion": "1.10"
+                                "id": "junit"
                             },
                             "html": "Publishes JUnit test result reports.\r\n     ",
                             "firstSentenceCommentText": "Publishes JUnit test result reports.",
@@ -19721,6 +19774,79 @@
                             "html": "Sends customizable email notifications.\r\n     ",
                             "firstSentenceCommentText": "Sends customizable email notifications.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.ExtendedEmailContext"
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "recipients",
+                                    "type": "String",
+                                    "defaultValue": "null"
+                                },
+                                {
+                                    "name": "emailClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugin": {
+                                "id": "email-ext"
+                            },
+                            "html": "Sends customizable email notifications.",
+                            "firstSentenceCommentText": "Sends customizable email notifications.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.EmailContext"
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "recipients",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "subjectTemplate",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "emailClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugin": {
+                                "id": "email-ext"
+                            },
+                            "html": "Sends customizable email notifications.",
+                            "firstSentenceCommentText": "Sends customizable email notifications.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.EmailContext"
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "recipients",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "subjectTemplate",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "contentTemplate",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "emailClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugin": {
+                                "id": "email-ext"
+                            },
+                            "html": "Sends customizable email notifications.",
+                            "firstSentenceCommentText": "Sends customizable email notifications.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.EmailContext"
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        extendedEmail {\r\n            recipientList('me@halfempty.org')\r\n            defaultSubject('Oops')\r\n            defaultContent('Something broken')\r\n            contentType('text/html')\r\n            triggers {\r\n                beforeBuild()\r\n                stillUnstable {\r\n                    subject('Subject')\r\n                    content('Body')\r\n                    sendTo {\r\n                        developers()\r\n                        requester()\r\n                        culprits()\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n"
@@ -20286,8 +20412,7 @@
                             ],
                             "availableSince": "1.31",
                             "plugin": {
-                                "id": "postbuildscript",
-                                "minimumVersion": "0.17"
+                                "id": "postbuildscript"
                             },
                             "html": "Execute a set of scripts at the end of the build.\r\n     ",
                             "firstSentenceCommentText": "Execute a set of scripts at the end of the build.",
@@ -20700,8 +20825,7 @@
                             ],
                             "availableSince": "1.24",
                             "plugin": {
-                                "id": "rundeck",
-                                "minimumVersion": "3.4"
+                                "id": "rundeck"
                             },
                             "html": "Triggers a Rundeck job.\r\n     ",
                             "firstSentenceCommentText": "Triggers a Rundeck job.",
@@ -20945,8 +21069,7 @@
                             ],
                             "availableSince": "1.17",
                             "plugin": {
-                                "id": "tasks",
-                                "minimumVersion": "4.41"
+                                "id": "tasks"
                             },
                             "html": "Scans the workspace for open tasks.\r\n     ",
                             "firstSentenceCommentText": "Scans the workspace for open tasks.",
@@ -21199,6 +21322,23 @@
             "type": "javaposse.jobdsl.dsl.helpers.publisher.FlexiblePublisherContext",
             "methods": [
                 {
+                    "name": "condition",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "html": "Specifies the condition to evaluate before executing publishers or build steps.",
+                            "firstSentenceCommentText": "Specifies the condition to evaluate before executing publishers or build steps.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.step.RunConditionContext"
+                        }
+                    ]
+                },
+                {
                     "name": "conditionalAction",
                     "signatures": [
                         {
@@ -21212,6 +21352,43 @@
                             "html": "Adds a conditional action. Can be called multiple times to add more actions.\r\n     ",
                             "firstSentenceCommentText": "Adds a conditional action. ",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.ConditionalActionsContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "publisher",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "html": "Adds one or more post-build actions which will be executed conditionally.",
+                            "firstSentenceCommentText": "Adds one or more post-build actions which will be executed conditionally.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "step",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugin": {
+                                "id": "any-buildstep"
+                            },
+                            "html": "Adds one or more build steps which will be executed conditionally.",
+                            "firstSentenceCommentText": "Adds one or more build steps which will be executed conditionally.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.step.StepContext"
                         }
                     ]
                 }
@@ -21421,8 +21598,7 @@
                             ],
                             "availableSince": "1.26",
                             "plugin": {
-                                "id": "junit",
-                                "minimumVersion": "1.10"
+                                "id": "junit"
                             },
                             "html": "Publishes JUnit test result reports.\r\n     ",
                             "firstSentenceCommentText": "Publishes JUnit test result reports.",
@@ -22074,6 +22250,79 @@
                             "html": "Sends customizable email notifications.\r\n     ",
                             "firstSentenceCommentText": "Sends customizable email notifications.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.ExtendedEmailContext"
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "recipients",
+                                    "type": "String",
+                                    "defaultValue": "null"
+                                },
+                                {
+                                    "name": "emailClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugin": {
+                                "id": "email-ext"
+                            },
+                            "html": "Sends customizable email notifications.",
+                            "firstSentenceCommentText": "Sends customizable email notifications.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.EmailContext"
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "recipients",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "subjectTemplate",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "emailClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugin": {
+                                "id": "email-ext"
+                            },
+                            "html": "Sends customizable email notifications.",
+                            "firstSentenceCommentText": "Sends customizable email notifications.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.EmailContext"
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "recipients",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "subjectTemplate",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "contentTemplate",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "emailClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugin": {
+                                "id": "email-ext"
+                            },
+                            "html": "Sends customizable email notifications.",
+                            "firstSentenceCommentText": "Sends customizable email notifications.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.EmailContext"
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        extendedEmail {\r\n            recipientList('me@halfempty.org')\r\n            defaultSubject('Oops')\r\n            defaultContent('Something broken')\r\n            contentType('text/html')\r\n            triggers {\r\n                beforeBuild()\r\n                stillUnstable {\r\n                    subject('Subject')\r\n                    content('Body')\r\n                    sendTo {\r\n                        developers()\r\n                        requester()\r\n                        culprits()\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n"
@@ -22619,8 +22868,7 @@
                             ],
                             "availableSince": "1.31",
                             "plugin": {
-                                "id": "postbuildscript",
-                                "minimumVersion": "0.17"
+                                "id": "postbuildscript"
                             },
                             "html": "Execute a set of scripts at the end of the build.\r\n     ",
                             "firstSentenceCommentText": "Execute a set of scripts at the end of the build.",
@@ -23033,8 +23281,7 @@
                             ],
                             "availableSince": "1.24",
                             "plugin": {
-                                "id": "rundeck",
-                                "minimumVersion": "3.4"
+                                "id": "rundeck"
                             },
                             "html": "Triggers a Rundeck job.\r\n     ",
                             "firstSentenceCommentText": "Triggers a Rundeck job.",
@@ -23278,8 +23525,7 @@
                             ],
                             "availableSince": "1.17",
                             "plugin": {
-                                "id": "tasks",
-                                "minimumVersion": "4.41"
+                                "id": "tasks"
                             },
                             "html": "Scans the workspace for open tasks.\r\n     ",
                             "firstSentenceCommentText": "Scans the workspace for open tasks.",
@@ -24038,6 +24284,341 @@
                 }
             ]
         },
+        "javaposse.jobdsl.dsl.helpers.triggers.GitHubPullRequestBuilderCommitStatusContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.triggers.GitHubPullRequestBuilderCommitStatusContext",
+            "methods": [
+                {
+                    "name": "completedStatus",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "buildResult",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "message",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Use a custom status for when a build is completed. Can be called multiple times to set messages for different\r\n build results. Valid build results are <TT>'SUCCESS'</TT>, <TT>'FAILURE'</TT>, and <TT>'ERROR'</TT>.",
+                            "firstSentenceCommentText": "Use a custom status for when a build is completed. "
+                        }
+                    ]
+                },
+                {
+                    "name": "context",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "context",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "A string label to differentiate this status from the status of other systems.",
+                            "firstSentenceCommentText": "A string label to differentiate this status from the status of other systems."
+                        }
+                    ]
+                },
+                {
+                    "name": "startedStatus",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "startedStatus",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Use a custom status for when a build is started.",
+                            "firstSentenceCommentText": "Use a custom status for when a build is started."
+                        }
+                    ]
+                },
+                {
+                    "name": "statusUrl",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "statusUrl",
+                                    "type": "String"
+                                }
+                            ],
+                            "availableSince": "1.40",
+                            "html": "Use a custom URL instead of the job default.\r\n     ",
+                            "firstSentenceCommentText": "Use a custom URL instead of the job default."
+                        }
+                    ]
+                },
+                {
+                    "name": "triggeredStatus",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "triggeredStatus",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Use a custom status for when a build is triggered.",
+                            "firstSentenceCommentText": "Use a custom status for when a build is triggered."
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.helpers.triggers.GitHubPullRequestBuilderExtensionContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.triggers.GitHubPullRequestBuilderExtensionContext",
+            "methods": [
+                {
+                    "name": "commitStatus",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Updates the commit status during the build.",
+                            "firstSentenceCommentText": "Updates the commit status during the build.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.GitHubPullRequestBuilderCommitStatusContext"
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.helpers.triggers.PullRequestBuilderContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.triggers.PullRequestBuilderContext",
+            "methods": [
+                {
+                    "name": "admin",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "admin",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Adds admins for this job.",
+                            "firstSentenceCommentText": "Adds admins for this job."
+                        }
+                    ]
+                },
+                {
+                    "name": "admins",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "admins",
+                                    "type": "Iterable<String>"
+                                }
+                            ],
+                            "html": "Adds admins for this job.",
+                            "firstSentenceCommentText": "Adds admins for this job."
+                        }
+                    ]
+                },
+                {
+                    "name": "allowMembersOfWhitelistedOrgsAsAdmin",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "allowMembersOfWhitelistedOrgsAsAdmin",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "availableSince": "1.35",
+                            "html": "Allows members of whitelisted organisations to behave like admins.\r\n     ",
+                            "firstSentenceCommentText": "Allows members of whitelisted organisations to behave like admins."
+                        }
+                    ]
+                },
+                {
+                    "name": "autoCloseFailedPullRequests",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "autoCloseFailedPullRequests",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Close pull request automatically when the build fails.",
+                            "firstSentenceCommentText": "Close pull request automatically when the build fails."
+                        }
+                    ]
+                },
+                {
+                    "name": "commentFilePath",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "commentFilePath",
+                                    "type": "String"
+                                }
+                            ],
+                            "availableSince": "1.31",
+                            "html": "Extends the standard build comment message on github with a custom message file.\r\n     ",
+                            "firstSentenceCommentText": "Extends the standard build comment message on github with a custom message file."
+                        }
+                    ]
+                },
+                {
+                    "name": "cron",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "cron",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "This schedules polling to GitHub for new changes in pull requests.",
+                            "firstSentenceCommentText": "This schedules polling to GitHub for new changes in pull requests."
+                        }
+                    ]
+                },
+                {
+                    "name": "extensions",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.38",
+                            "html": "Adds additional trigger options.\r\n     ",
+                            "firstSentenceCommentText": "Adds additional trigger options.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.GitHubPullRequestBuilderExtensionContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "onlyTriggerPhrase",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "onlyTriggerPhrase",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "When set, only commenting the trigger phrase in the pull request will trigger a build.",
+                            "firstSentenceCommentText": "When set, only commenting the trigger phrase in the pull request will trigger a build."
+                        }
+                    ]
+                },
+                {
+                    "name": "orgWhitelist",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "organization",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Adds organisation names whose members are considered whitelisted for this specific job.",
+                            "firstSentenceCommentText": "Adds organisation names whose members are considered whitelisted for this specific job."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "organizations",
+                                    "type": "Iterable<String>"
+                                }
+                            ],
+                            "html": "Adds organisation names whose members are considered whitelisted for this specific job.",
+                            "firstSentenceCommentText": "Adds organisation names whose members are considered whitelisted for this specific job."
+                        }
+                    ]
+                },
+                {
+                    "name": "permitAll",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "permitAll",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Build every pull request automatically without asking.",
+                            "firstSentenceCommentText": "Build every pull request automatically without asking."
+                        }
+                    ]
+                },
+                {
+                    "name": "triggerPhrase",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "triggerPhrase",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "When filled, commenting this phrase in the pull request will trigger a build.",
+                            "firstSentenceCommentText": "When filled, commenting this phrase in the pull request will trigger a build."
+                        }
+                    ]
+                },
+                {
+                    "name": "useGitHubHooks",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "useGitHubHooks",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Checking this option will disable regular polling for changes in GitHub and will try to create a GitHub hook.",
+                            "firstSentenceCommentText": "Checking this option will disable regular polling for changes in GitHub and will try to create a GitHub hook."
+                        }
+                    ]
+                },
+                {
+                    "name": "userWhitelist",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "user",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Adds whitelisted users for this job.",
+                            "firstSentenceCommentText": "Adds whitelisted users for this job."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "users",
+                                    "type": "Iterable<String>"
+                                }
+                            ],
+                            "html": "Adds whitelisted users for this job.",
+                            "firstSentenceCommentText": "Adds whitelisted users for this job."
+                        }
+                    ]
+                }
+            ]
+        },
         "javaposse.jobdsl.dsl.helpers.triggers.RundeckTriggerContext": {
             "type": "javaposse.jobdsl.dsl.helpers.triggers.RundeckTriggerContext",
             "methods": [
@@ -24437,6 +25018,29 @@
                     "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            addNoteOnMergeRequest(false)\r\n            rebuildOpenMergeRequest('never')\r\n            addVoteOnMergeRequest(false)\r\n            useCiFeatures(false)\r\n            acceptMergeRequestOnSuccess()\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}\r\n"
                 },
                 {
+                    "name": "pullRequest",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "contextClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.22",
+                            "plugin": {
+                                "id": "ghprb",
+                                "minimumVersion": "1.26"
+                            },
+                            "html": "Builds pull requests from GitHub and will report the results back to the pull request.\r\n\r\n The pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for\r\n details.\r\n     ",
+                            "firstSentenceCommentText": "Builds pull requests from GitHub and will report the results back to the pull request.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.PullRequestBuilderContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    scm {\r\n        git {\r\n            remote {\r\n                github('test-owner/test-project')\r\n                refspec('+refs/pull/*:refs/remotes/origin/pr/*')\r\n            }\r\n            branch('${sha1}')\r\n        }\r\n    }\r\n    triggers {\r\n        pullRequest {\r\n            admin('USER_ID')\r\n            userWhitelist('you@you.com')\r\n            orgWhitelist(['your_github_org', 'another_org'])\r\n            cron('H/5 * * * *')\r\n            triggerPhrase('Ok to test')\r\n            onlyTriggerPhrase()\r\n            useGitHubHooks()\r\n            permitAll()\r\n            autoCloseFailedPullRequests()\r\n            allowMembersOfWhitelistedOrgsAsAdmin()\r\n            extensions {\r\n                commitStatus {\r\n                    context('deploy to staging site')\r\n                    startedStatus('deploying to staging site...')\r\n                    statusUrl('http://mystatussite.com/prs')\r\n                    completedStatus('SUCCESS', 'All is well')\r\n                    completedStatus('FAILURE', 'Something went wrong. Investigate!')\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n"
+                },
+                {
                     "name": "rundeck",
                     "signatures": [
                         {
@@ -24644,6 +25248,10 @@
                                 }
                             ],
                             "availableSince": "1.43",
+                            "plugin": {
+                                "id": "docker-custom-build-environment",
+                                "minimumVersion": "1.6.2"
+                            },
                             "html": "Always pull the image from the repository. Defaults to <TT>false</TT>.\r\n     ",
                             "firstSentenceCommentText": "Always pull the image from the repository. "
                         }
@@ -25860,26 +26468,6 @@
                     ]
                 },
                 {
-                    "name": "credentials",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "credentialsId",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.49",
-                            "plugin": {
-                                "id": "sauce-ondemand",
-                                "minimumVersion": "1.148"
-                            },
-                            "html": "Sets the credentials a build should use.\r\n     ",
-                            "firstSentenceCommentText": "Sets the credentials a build should use."
-                        }
-                    ]
-                },
-                {
                     "name": "enableSauceConnect",
                     "signatures": [
                         {
@@ -26433,7 +27021,7 @@
                             "availableSince": "1.39",
                             "plugin": {
                                 "id": "docker-custom-build-environment",
-                                "minimumVersion": "1.6.2"
+                                "minimumVersion": "1.5.1"
                             },
                             "html": "Builds inside a Docker container.\r\n     ",
                             "firstSentenceCommentText": "Builds inside a Docker container.",
@@ -27691,8 +28279,7 @@
                             ],
                             "availableSince": "1.26",
                             "plugin": {
-                                "id": "notification",
-                                "minimumVersion": "1.8"
+                                "id": "notification"
                             },
                             "html": "Configures notifications for the build.\r\n     ",
                             "firstSentenceCommentText": "Configures notifications for the build.",
@@ -29214,26 +29801,6 @@
                             ],
                             "html": "Adds a column showing the status of the last build.",
                             "firstSentenceCommentText": "Adds a column showing the status of the last build."
-                        }
-                    ]
-                },
-                {
-                    "name": "testResult",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "format",
-                                    "type": "int"
-                                }
-                            ],
-                            "availableSince": "1.49",
-                            "plugin": {
-                                "id": "extra-columns",
-                                "minimumVersion": "1.6"
-                            },
-                            "html": "Adds a column showing test results.\r\n     ",
-                            "firstSentenceCommentText": "Adds a column showing test results."
                         }
                     ]
                 },
@@ -31215,8 +31782,7 @@
                             ],
                             "availableSince": "1.26",
                             "plugin": {
-                                "id": "notification",
-                                "minimumVersion": "1.8"
+                                "id": "notification"
                             },
                             "html": "Configures notifications for the build.\r\n     ",
                             "firstSentenceCommentText": "Configures notifications for the build.",
@@ -32124,8 +32690,7 @@
                             ],
                             "availableSince": "1.26",
                             "plugin": {
-                                "id": "notification",
-                                "minimumVersion": "1.8"
+                                "id": "notification"
                             },
                             "html": "Configures notifications for the build.\r\n     ",
                             "firstSentenceCommentText": "Configures notifications for the build.",
@@ -33348,8 +33913,7 @@
                             ],
                             "availableSince": "1.26",
                             "plugin": {
-                                "id": "notification",
-                                "minimumVersion": "1.8"
+                                "id": "notification"
                             },
                             "html": "Configures notifications for the build.\r\n     ",
                             "firstSentenceCommentText": "Configures notifications for the build.",
@@ -34174,8 +34738,7 @@
                             ],
                             "availableSince": "1.26",
                             "plugin": {
-                                "id": "junit",
-                                "minimumVersion": "1.10"
+                                "id": "junit"
                             },
                             "html": "Publishes JUnit test result reports.\r\n     ",
                             "firstSentenceCommentText": "Publishes JUnit test result reports.",
@@ -34846,6 +35409,79 @@
                             "html": "Sends customizable email notifications.\r\n     ",
                             "firstSentenceCommentText": "Sends customizable email notifications.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.ExtendedEmailContext"
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "recipients",
+                                    "type": "String",
+                                    "defaultValue": "null"
+                                },
+                                {
+                                    "name": "emailClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugin": {
+                                "id": "email-ext"
+                            },
+                            "html": "Sends customizable email notifications.",
+                            "firstSentenceCommentText": "Sends customizable email notifications.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.EmailContext"
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "recipients",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "subjectTemplate",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "emailClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugin": {
+                                "id": "email-ext"
+                            },
+                            "html": "Sends customizable email notifications.",
+                            "firstSentenceCommentText": "Sends customizable email notifications.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.EmailContext"
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "recipients",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "subjectTemplate",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "contentTemplate",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "emailClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugin": {
+                                "id": "email-ext"
+                            },
+                            "html": "Sends customizable email notifications.",
+                            "firstSentenceCommentText": "Sends customizable email notifications.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.EmailContext"
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        extendedEmail {\r\n            recipientList('me@halfempty.org')\r\n            defaultSubject('Oops')\r\n            defaultContent('Something broken')\r\n            contentType('text/html')\r\n            triggers {\r\n                beforeBuild()\r\n                stillUnstable {\r\n                    subject('Subject')\r\n                    content('Body')\r\n                    sendTo {\r\n                        developers()\r\n                        requester()\r\n                        culprits()\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n"
@@ -35391,8 +36027,7 @@
                             ],
                             "availableSince": "1.31",
                             "plugin": {
-                                "id": "postbuildscript",
-                                "minimumVersion": "0.17"
+                                "id": "postbuildscript"
                             },
                             "html": "Execute a set of scripts at the end of the build.\r\n     ",
                             "firstSentenceCommentText": "Execute a set of scripts at the end of the build.",
@@ -35805,8 +36440,7 @@
                             ],
                             "availableSince": "1.24",
                             "plugin": {
-                                "id": "rundeck",
-                                "minimumVersion": "3.4"
+                                "id": "rundeck"
                             },
                             "html": "Triggers a Rundeck job.\r\n     ",
                             "firstSentenceCommentText": "Triggers a Rundeck job.",
@@ -36050,8 +36684,7 @@
                             ],
                             "availableSince": "1.17",
                             "plugin": {
-                                "id": "tasks",
-                                "minimumVersion": "4.41"
+                                "id": "tasks"
                             },
                             "html": "Scans the workspace for open tasks.\r\n     ",
                             "firstSentenceCommentText": "Scans the workspace for open tasks.",
@@ -36344,6 +36977,29 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            addNoteOnMergeRequest(false)\r\n            rebuildOpenMergeRequest('never')\r\n            addVoteOnMergeRequest(false)\r\n            useCiFeatures(false)\r\n            acceptMergeRequestOnSuccess()\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}\r\n"
+                },
+                {
+                    "name": "pullRequest",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "contextClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.22",
+                            "plugin": {
+                                "id": "ghprb",
+                                "minimumVersion": "1.26"
+                            },
+                            "html": "Builds pull requests from GitHub and will report the results back to the pull request.\r\n\r\n The pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for\r\n details.\r\n     ",
+                            "firstSentenceCommentText": "Builds pull requests from GitHub and will report the results back to the pull request.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.PullRequestBuilderContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    scm {\r\n        git {\r\n            remote {\r\n                github('test-owner/test-project')\r\n                refspec('+refs/pull/*:refs/remotes/origin/pr/*')\r\n            }\r\n            branch('${sha1}')\r\n        }\r\n    }\r\n    triggers {\r\n        pullRequest {\r\n            admin('USER_ID')\r\n            userWhitelist('you@you.com')\r\n            orgWhitelist(['your_github_org', 'another_org'])\r\n            cron('H/5 * * * *')\r\n            triggerPhrase('Ok to test')\r\n            onlyTriggerPhrase()\r\n            useGitHubHooks()\r\n            permitAll()\r\n            autoCloseFailedPullRequests()\r\n            allowMembersOfWhitelistedOrgsAsAdmin()\r\n            extensions {\r\n                commitStatus {\r\n                    context('deploy to staging site')\r\n                    startedStatus('deploying to staging site...')\r\n                    statusUrl('http://mystatussite.com/prs')\r\n                    completedStatus('SUCCESS', 'All is well')\r\n                    completedStatus('FAILURE', 'Something went wrong. Investigate!')\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n"
                 },
                 {
                     "name": "rundeck",
@@ -36655,7 +37311,7 @@
                             "availableSince": "1.39",
                             "plugin": {
                                 "id": "docker-custom-build-environment",
-                                "minimumVersion": "1.6.2"
+                                "minimumVersion": "1.5.1"
                             },
                             "html": "Builds inside a Docker container.\r\n     ",
                             "firstSentenceCommentText": "Builds inside a Docker container.",
@@ -38020,8 +38676,7 @@
                             ],
                             "availableSince": "1.26",
                             "plugin": {
-                                "id": "notification",
-                                "minimumVersion": "1.8"
+                                "id": "notification"
                             },
                             "html": "Configures notifications for the build.\r\n     ",
                             "firstSentenceCommentText": "Configures notifications for the build.",
@@ -40615,8 +41270,7 @@
                             ],
                             "availableSince": "1.26",
                             "plugin": {
-                                "id": "notification",
-                                "minimumVersion": "1.8"
+                                "id": "notification"
                             },
                             "html": "Configures notifications for the build.\r\n     ",
                             "firstSentenceCommentText": "Configures notifications for the build.",
@@ -41239,6 +41893,29 @@
                         }
                     ],
                     "examples": "multibranchWorkflowJob('example') {\r\n    triggers {\r\n        periodic(5)\r\n    }\r\n}\r\n"
+                },
+                {
+                    "name": "pullRequest",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "contextClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.22",
+                            "plugin": {
+                                "id": "ghprb",
+                                "minimumVersion": "1.26"
+                            },
+                            "html": "Builds pull requests from GitHub and will report the results back to the pull request.\r\n\r\n The pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for\r\n details.\r\n     ",
+                            "firstSentenceCommentText": "Builds pull requests from GitHub and will report the results back to the pull request.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.PullRequestBuilderContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    scm {\r\n        git {\r\n            remote {\r\n                github('test-owner/test-project')\r\n                refspec('+refs/pull/*:refs/remotes/origin/pr/*')\r\n            }\r\n            branch('${sha1}')\r\n        }\r\n    }\r\n    triggers {\r\n        pullRequest {\r\n            admin('USER_ID')\r\n            userWhitelist('you@you.com')\r\n            orgWhitelist(['your_github_org', 'another_org'])\r\n            cron('H/5 * * * *')\r\n            triggerPhrase('Ok to test')\r\n            onlyTriggerPhrase()\r\n            useGitHubHooks()\r\n            permitAll()\r\n            autoCloseFailedPullRequests()\r\n            allowMembersOfWhitelistedOrgsAsAdmin()\r\n            extensions {\r\n                commitStatus {\r\n                    context('deploy to staging site')\r\n                    startedStatus('deploying to staging site...')\r\n                    statusUrl('http://mystatussite.com/prs')\r\n                    completedStatus('SUCCESS', 'All is well')\r\n                    completedStatus('FAILURE', 'Something went wrong. Investigate!')\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n"
                 },
                 {
                     "name": "urlTrigger",
@@ -42585,8 +43262,7 @@
                             ],
                             "availableSince": "1.26",
                             "plugin": {
-                                "id": "notification",
-                                "minimumVersion": "1.8"
+                                "id": "notification"
                             },
                             "html": "Configures notifications for the build.\r\n     ",
                             "firstSentenceCommentText": "Configures notifications for the build.",
