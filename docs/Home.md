@@ -29,6 +29,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.50 (unreleased)
  * Fixed regression when updating views
    ([JENKINS-37450](https://issues.jenkins-ci.org/browse/JENKINS-37450))
+ * Removed unnecessary transitive dependencies to `xmlpull:xmlpull` and `xpp3:xpp3_min`
 * 1.49 (August 16 2016)
  * Enhanced support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)
    ([JENKINS-36370](https://issues.jenkins-ci.org/browse/JENKINS-36370))
