@@ -26,7 +26,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.50 (unreleased)
+* 1.50 (August 17 2016)
  * Fixed regression when updating views
    ([JENKINS-37450](https://issues.jenkins-ci.org/browse/JENKINS-37450))
  * Removed unnecessary transitive dependencies to `xmlpull:xmlpull` and `xpp3:xpp3_min`
