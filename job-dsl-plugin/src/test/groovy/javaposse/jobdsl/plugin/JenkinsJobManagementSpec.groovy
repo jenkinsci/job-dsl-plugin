@@ -859,6 +859,21 @@ class JenkinsJobManagementSpec extends Specification {
         !parameters.containsKey('SEED_JOB')
     }
 
+    def 'create nested view JENKINS-37450'() {
+        setup:
+        jobManagement.createOrUpdateView(
+                'test', loadResource('javaposse/jobdsl/dsl/views/NestedView-template.xml'), false
+        )
+
+        when:
+        jobManagement.createOrUpdateView(
+                'test', loadResource('javaposse/jobdsl/dsl/views/NestedView-template.xml'), false
+        )
+
+        then:
+        noExceptionThrown()
+    }
+
     private static boolean isXmlIdentical(String expected, Node actual) throws Exception {
         XMLUnit.ignoreWhitespace = true
         XMLUnit.compareXML(loadResource(expected), nodeToString(actual)).identical()

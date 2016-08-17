@@ -3,6 +3,7 @@ package javaposse.jobdsl.plugin;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
+import com.thoughtworks.xstream.io.xml.XppDriver;
 import groovy.util.Node;
 import groovy.util.XmlParser;
 import hudson.FilePath;
@@ -512,23 +513,9 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     private void checkItemType(View view, InputStream config) {
-        Node newConfig;
-
-        try {
-            newConfig = new XmlParser().parse(config);
-        } catch (Exception e) {
-            throw new DslException(format(
-                    Messages.UpdateExistingView_CouldNotParseConfig(),
-                    view.getViewName()
-            ), e);
-        }
-
-        Class viewType = Jenkins.XSTREAM2.getMapper().realClass(newConfig.name().toString());
+        Class viewType = Jenkins.XSTREAM2.getMapper().realClass(new XppDriver().createReader(config).getNodeName());
         if (!viewType.equals(view.getClass())) {
-            throw new DslException(format(
-                    Messages.UpdateExistingView_ViewTypeDoesNotMatch(),
-                    view.getViewName()
-            ));
+            throw new DslException(format(Messages.UpdateExistingView_ViewTypeDoesNotMatch(), view.getViewName()));
         }
     }
 
