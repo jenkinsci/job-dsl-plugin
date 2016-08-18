@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.toplevel
 
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperEnvironmentVariableContext
 
@@ -11,9 +12,9 @@ class EnvironmentVariableContext extends WrapperEnvironmentVariableContext {
     boolean overrideBuildParameters = false
     EnvironmentVariableContributorsContext contributorsContext
 
-    EnvironmentVariableContext(JobManagement jobManagement) {
+    EnvironmentVariableContext(JobManagement jobManagement, Item item) {
         super(jobManagement)
-        this.contributorsContext = new EnvironmentVariableContributorsContext(jobManagement)
+        this.contributorsContext = new EnvironmentVariableContributorsContext(jobManagement, item)
     }
 
     /**

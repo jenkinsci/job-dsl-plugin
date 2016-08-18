@@ -1,10 +1,11 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
 import javaposse.jobdsl.dsl.Context
-import javaposse.jobdsl.dsl.WithXmlAction
+import javaposse.jobdsl.dsl.Item
+import javaposse.jobdsl.dsl.Job
 
 class RemoteContext implements Context {
-    private final List<WithXmlAction> withXmlActions
+    private final Item item
 
     String name
     String url
@@ -12,8 +13,8 @@ class RemoteContext implements Context {
     String refspec
     Node browser
 
-    RemoteContext(List<WithXmlAction> withXmlActions) {
-        this.withXmlActions = withXmlActions
+    RemoteContext(Item item) {
+        this.item = item
     }
 
     /**
@@ -68,9 +69,9 @@ class RemoteContext implements Context {
         browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.GithubWeb') {
             delegate.url(webUrl)
         }
-        withXmlActions << WithXmlAction.create {
-            it / 'properties' / 'com.coravy.hudson.plugins.github.GithubProjectProperty' {
-                projectUrl webUrl
+        if (item instanceof Job) {
+            ((Job) item).properties {
+                githubProjectUrl(webUrl)
             }
         }
     }

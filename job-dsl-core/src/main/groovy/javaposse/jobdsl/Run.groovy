@@ -32,8 +32,9 @@ class Run {
         }
 
         args.each { String scriptName ->
-            ScriptRequest request = new ScriptRequest(scriptName, null, cwdURL, false)
-            GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm)
+            String scriptPath = new File(scriptName).absolutePath
+            ScriptRequest request = new ScriptRequest(scriptName, null, cwdURL, false, scriptPath)
+            GeneratedItems generatedItems = new DslScriptLoader(jm).runScripts([request])
 
             for (GeneratedJob job : generatedItems.jobs) {
                 LOG.info("From $scriptName, Generated item: $job")

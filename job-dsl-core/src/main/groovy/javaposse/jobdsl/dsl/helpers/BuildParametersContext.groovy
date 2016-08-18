@@ -1,9 +1,11 @@
 package javaposse.jobdsl.dsl.helpers
 
-import hudson.util.VersionNumber
-import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.parameter.AbstractActiveChoiceContext
@@ -18,11 +20,27 @@ import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
-class BuildParametersContext extends AbstractContext {
+@ContextType('hudson.model.ParameterDefinition')
+class BuildParametersContext extends AbstractExtensibleContext {
     Map<String, Node> buildParameterNodes = [:]
 
-    BuildParametersContext(JobManagement jobManagement) {
-        super(jobManagement)
+    BuildParametersContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
+    }
+
+    /**
+     * We expect any parameter definition node to have a <code>name</code> field containing
+     * the name of the parameter so we can add it in the map of nodes.
+     */
+    @Override
+    protected void addExtensionNode(Node node) {
+        Object nameNodes = node.get('name')
+        String name = (nameNodes instanceof NodeList && nameNodes.size() == 1) ? nameNodes.text() : null
+        if (name) {
+            buildParameterNodes[name] = node
+        } else {
+            throw new DslScriptException("Can only add nodes with a 'name' field.")
+        }
     }
 
     /**
@@ -35,7 +53,7 @@ class BuildParametersContext extends AbstractContext {
     /**
      * Defines a parameter that allows to select a Subversion tag from which to create the working copy for the project.
      */
-    @RequiresPlugin(id = 'subversion')
+    @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
     void listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
                        boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
                        String description = null) {
@@ -54,10 +72,8 @@ class BuildParametersContext extends AbstractContext {
      *
      * @since 1.39
      */
-    @RequiresPlugin(id = 'subversion')
+    @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
     void listTagsParam(String parameterName, String scmUrl, @DslContext(ListTagsParamContext) Closure closure = null) {
-        jobManagement.logPluginDeprecationWarning('subversion', '2.1')
-
         checkParameterName(parameterName)
         checkNotNullOrEmpty(scmUrl, 'scmUrl cannot be null or empty')
 
@@ -74,9 +90,7 @@ class BuildParametersContext extends AbstractContext {
                     maxTags(context.maxTagsToDisplay ?: '')
                     defaultValue(context.defaultValue ?: '')
                     description(context.description ?: '')
-                    if (!jobManagement.getPluginVersion('subversion')?.isOlderThan(new VersionNumber('2.1'))) {
-                        credentialsId(context.credentialsId ?: '')
-                    }
+                    credentialsId(context.credentialsId ?: '')
                     uuid(randomUUID())
                 }
     }
@@ -355,6 +369,22 @@ class BuildParametersContext extends AbstractContext {
                     if (defaultValue) {
                         defaultCombinationFilter(defaultValue)
                     }
+                }
+    }
+
+    /**
+     * Defines a parameter that allows to take in a user's password.
+     *
+     * @since 1.44
+     */
+    @RequiresPlugin(id = 'mask-passwords', minimumVersion = '2.6')
+    void nonStoredPasswordParam(String parameterName, String description = null) {
+        checkParameterName(parameterName)
+
+        buildParameterNodes[parameterName] = new NodeBuilder().
+                'com.michelin.cio.hudson.plugins.passwordparam.PasswordParameterDefinition' {
+                    name(parameterName)
+                    delegate.description(description ?: '')
                 }
     }
 

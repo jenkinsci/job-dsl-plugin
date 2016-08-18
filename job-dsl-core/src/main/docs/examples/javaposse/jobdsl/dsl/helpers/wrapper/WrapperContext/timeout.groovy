@@ -44,3 +44,12 @@ job('example-5') {
         }
     }
 }
+
+// defines an absolute timeout using an environment variable
+job('example-6') {
+    wrappers {
+        timeout {
+          absolute('${JOB_TIMEOUT}')
+        }
+    }
+}

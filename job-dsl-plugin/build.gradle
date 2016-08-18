@@ -1,16 +1,6 @@
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            url 'http://repo.jenkins-ci.org/releases/'
-        }
-    }
-    dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.14.1'
-    }
+plugins {
+    id 'org.jenkins-ci.jpi' version '0.18.1'
 }
-
-apply plugin: 'org.jenkins-ci.jpi'
 
 description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
 
@@ -18,12 +8,13 @@ description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jo
 def generatedSourcesDir = 'generated'
 
 jenkinsPlugin {
-    coreVersion = '1.609'
+    coreVersion = jenkinsVersion
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
-    compatibleSinceVersion = '1.40'
+    compatibleSinceVersion = '1.49'
     localizerOutputDir = "$generatedSourcesDir/localizer"
+    disabledTestInjection = false
     developers {
         developer {
             id 'quidryan'
@@ -52,11 +43,29 @@ clean {
     delete generatedSourcesDir
 }
 
+configurations {
+    // workaround for JENKINS-32978
+    compile.exclude group: 'org.kohsuke', module: 'windows-package-checker'
+}
+
+jpi {
+    into('api-viewer') {
+        from(project(':job-dsl-api-viewer').projectDir) {
+            include 'index.html'
+            include 'build/dist/**'
+        }
+    }
+    dependsOn tasks.getByPath(':job-dsl-api-viewer:build')
+}
+
 dependencies {
     compile project(':job-dsl-core')
-    optionalJenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:4.4@jar'
-    optionalJenkinsPlugins 'org.jenkins-ci.plugins:credentials:1.9.4@jar'
+    compile 'org.jenkins-ci:symbol-annotation:1.1'
+    jenkinsPlugins 'org.jenkins-ci.plugins:structs:1.2@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:vsphere-cloud:1.1.11@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:config-file-provider:2.8.1@jar'
     optionalJenkinsPlugins 'org.jenkinsci.plugins:managed-scripts:1.2.1@jar'
+    jenkinsTest 'org.jenkins-ci.plugins:cloudbees-folder:5.0@jar'
+    jenkinsTest 'org.jenkins-ci.plugins:nested-view:1.14@jar'
+    jenkinsTest 'org.jenkins-ci.main:jenkins-test-harness:2.7@jar'
 }

@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.AxisContext
 
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
@@ -21,14 +20,12 @@ class MatrixJob extends Job {
         AxisContext context = new AxisContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node axesNode = project / 'axes'
             context.axisNodes.each {
                 axesNode << it
             }
-            context.configureBlocks.each {
-                new WithXmlAction(it).execute(axesNode)
-            }
+            ContextHelper.executeConfigureBlocks(axesNode, context.configureBlocks)
         }
     }
 
@@ -41,7 +38,7 @@ class MatrixJob extends Job {
     void childCustomWorkspace(String workspacePath) {
         checkNotNull(workspacePath, 'Workspace path must not be null')
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('childCustomWorkspace', workspacePath)
             project / node
         }
@@ -51,7 +48,7 @@ class MatrixJob extends Job {
      * Set an expression to limit which combinations can be run.
      */
     void combinationFilter(String filterExpression) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('combinationFilter', filterExpression)
             project / node
         }
@@ -61,7 +58,7 @@ class MatrixJob extends Job {
      * Runs each matrix combination in sequence. Defaults to {@code false}.
      */
     void runSequentially(boolean sequentially = true) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             Node node = methodMissing('runSequentially', sequentially)
             project / 'executionStrategy' / node
         }
@@ -71,7 +68,7 @@ class MatrixJob extends Job {
      * Sets an expression of which combination to run first.
      */
     void touchStoneFilter(String filter, boolean continueOnUnstable = false) {
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             project / 'executionStrategy' / 'touchStoneCombinationFilter'(filter)
             project / 'executionStrategy' / 'touchStoneResultCondition' {
                 name continueOnUnstable ? 'UNSTABLE' : 'STABLE'

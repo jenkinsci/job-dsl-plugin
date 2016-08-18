@@ -1,3 +1,4 @@
 javaposse.jobdsl.dsl.transform.ContextASTTransformation
 javaposse.jobdsl.dsl.transform.PluginASTTransformation
 javaposse.jobdsl.dsl.transform.CoreVersionASTTransformation
+javaposse.jobdsl.dsl.transform.DeprecationWarningASTTransformation

@@ -2,17 +2,21 @@ package javaposse.jobdsl.plugin
 
 import com.cloudbees.hudson.plugins.folder.Folder
 import com.google.common.io.Resources
-import hudson.EnvVars
+import hudson.FilePath
+import hudson.LocalPluginManager
 import hudson.model.AbstractBuild
+import hudson.model.AllView
+import hudson.model.Cause
 import hudson.model.Failure
 import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
+import hudson.model.Job
 import hudson.model.ListView
+import hudson.model.Run
 import hudson.model.View
 import hudson.model.listeners.SaveableListener
 import hudson.tasks.ArtifactArchiver
-import hudson.tasks.test.AggregatedTestResultPublisher
-import hudson.util.VersionNumber
+import hudson.tasks.Fingerprinter
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
@@ -23,10 +27,14 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import javaposse.jobdsl.dsl.UserContent
 import javaposse.jobdsl.dsl.helpers.step.StepContext
+import javaposse.jobdsl.dsl.views.ColumnsContext
+import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint
+import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint2
 import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
+import org.jvnet.hudson.test.recipes.WithPluginManager
 import spock.lang.Specification
 
 import static com.google.common.base.Charsets.UTF_8
@@ -40,9 +48,24 @@ class JenkinsJobManagementSpec extends Specification {
     @Rule
     JenkinsRule jenkinsRule = new JenkinsRule()
 
-    ByteArrayOutputStream buffer = new ByteArrayOutputStream()
-    AbstractBuild build = Mock(AbstractBuild)
-    JenkinsJobManagement jobManagement = new JenkinsJobManagement(new PrintStream(buffer), new EnvVars(), build)
+    ByteArrayOutputStream buffer
+    Job seedJob
+    Run build
+    JenkinsJobManagement jobManagement
+    JenkinsJobManagement testJobManagement
+
+    def setup() {
+        seedJob = Mock(Job)
+        build = Mock(Run)
+
+        build.parent >> seedJob
+
+        buffer = new ByteArrayOutputStream()
+        jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), [:], build, new FilePath(new File('.')), LookupStrategy.JENKINS_ROOT
+        )
+        testJobManagement = new JenkinsJobManagement(new PrintStream(buffer), [:], new File('.'))
+    }
 
     @WithoutJenkins
     def 'createOrUpdateView without name'() {
@@ -114,6 +137,15 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         1 * build.setResult(UNSTABLE)
         buffer.size() > 0
+    }
+
+    def 'requirePlugin not installed (without build)'() {
+        when:
+        testJobManagement.requirePlugin('foo')
+
+        then:
+        buffer.size() > 0
+        noExceptionThrown()
     }
 
     def 'fail requirePlugin not installed'() {
@@ -267,6 +299,14 @@ class JenkinsJobManagementSpec extends Specification {
         result == JobManagement.NO_VALUE
     }
 
+    def 'callExtension for view'() {
+        when:
+        Node result = jobManagement.callExtension('myColumn', null, ColumnsContext)
+
+        then:
+        isXmlIdentical('view-extension.xml', result)
+    }
+
     def 'extension is being notified'() {
         when:
         jobManagement.createOrUpdateConfig(createItem('test-123', '/config.xml'), false)
@@ -283,9 +323,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'create job with nonexisting parent'() {
         when:
-        jobManagement.createOrUpdateConfig(
-                'nonexistingfolder/project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true
-        )
+        jobManagement.createOrUpdateConfig(createItem('nonexistingfolder/project', '/minimal-job.xml'), true)
 
         then:
         DslException e = thrown()
@@ -322,7 +360,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject seedJob = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = seedJob.scheduleBuild2(0).get()
         JobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -340,7 +378,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject seedJob = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = seedJob.scheduleBuild2(0).get()
         JobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -383,14 +421,22 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = project.scheduleBuild2(0).get()
         JenkinsJobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.SEED_JOB
         )
 
         when:
-        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true)
+        jobManagement.createOrUpdateConfig(createItem('project', ('/minimal-job.xml')), true)
 
         then:
         jenkinsRule.jenkins.getItemByFullName('/folder/project') != null
+    }
+
+    def 'createOrUpdateConfig without build'() {
+        when:
+        testJobManagement.createOrUpdateConfig(createItem('project', ('/minimal-job.xml')), true)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('/project') != null
     }
 
     def 'createOrUpdateConfig with absolute path'() {
@@ -399,11 +445,11 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = project.scheduleBuild2(0).get()
         JenkinsJobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.SEED_JOB
         )
 
         when:
-        jobManagement.createOrUpdateConfig('/project', Resources.toString(getResource('minimal-job.xml'), UTF_8), true)
+        jobManagement.createOrUpdateConfig(createItem('/project', ('/minimal-job.xml')), true)
 
         then:
         jenkinsRule.jenkins.getItemByFullName('/project') != null
@@ -415,7 +461,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject project = folder.createProject(FreeStyleProject, 'seed')
         AbstractBuild build = project.scheduleBuild2(0).get()
         JenkinsJobManagement jobManagement = new JenkinsJobManagement(
-                new PrintStream(buffer), new EnvVars(), build, LookupStrategy.SEED_JOB
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.SEED_JOB
         )
 
         when:
@@ -432,13 +478,13 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         FreeStyleProject job = jenkinsRule.jenkins.getItemByFullName('project') as FreeStyleProject
         job.publishersList[0] instanceof ArtifactArchiver
-        job.publishersList[1] instanceof AggregatedTestResultPublisher
+        job.publishersList[1] instanceof Fingerprinter
 
         when:
         jobManagement.createOrUpdateConfig(createItem('project', '/order-b.xml'), false)
 
         then:
-        job.publishersList[0] instanceof AggregatedTestResultPublisher
+        job.publishersList[0] instanceof Fingerprinter
         job.publishersList[1] instanceof ArtifactArchiver
     }
 
@@ -447,14 +493,14 @@ class JenkinsJobManagementSpec extends Specification {
         SaveableListener saveableListener = Mock(SaveableListener)
 
         when:
-        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('config.xml'), UTF_8), false)
+        jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
 
         then:
         FreeStyleProject job = jenkinsRule.jenkins.getItemByFullName('project') as FreeStyleProject
         SaveableListener.all().add(0, saveableListener)
 
         when:
-        jobManagement.createOrUpdateConfig('project', Resources.toString(getResource('config.xml'), UTF_8), false)
+        jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
 
         then:
         0 * saveableListener.onChange(job, _)
@@ -462,7 +508,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'createOrUpdateConfig should fail if item type does not match'() {
         setup:
-        jenkinsRule.createMatrixProject('my-job')
+        jenkinsRule.createFolder('my-job')
 
         when:
         jobManagement.createOrUpdateConfig(createItem('my-job', '/minimal-job.xml'), false)
@@ -472,28 +518,40 @@ class JenkinsJobManagementSpec extends Specification {
         e.message == 'Type of item "my-job" does not match existing type, item type can not be changed'
     }
 
-    def 'get plugin version'() {
+    def 'createOrUpdateView should fail if view type does not match'() {
+        setup:
+        jenkinsRule.jenkins.addView(new AllView('foo'))
+
         when:
-        VersionNumber version = jobManagement.getPluginVersion('cvs')
+        jobManagement.createOrUpdateView(
+                'foo',
+                JenkinsJobManagementSpec.getResourceAsStream('/javaposse/jobdsl/dsl/views/ListView-template.xml').text,
+                false
+        )
 
         then:
-        version != null
+        Exception e = thrown(DslException)
+        e.message == 'Type of view "foo" does not match existing type, view type can not be changed'
     }
 
-    def 'get plugin version of unknown plugin'() {
+    def isMinimumPluginVersionInstalled() {
         when:
-        VersionNumber version = jobManagement.getPluginVersion('foo')
+        boolean result = jobManagement.isMinimumPluginVersionInstalled('cvs', '0.1')
 
         then:
-        version == null
-    }
+        result
 
-    def 'getJenkinsVersion returns a version'() {
         when:
-        VersionNumber versionNumber = jobManagement.jenkinsVersion
+        result = jobManagement.isMinimumPluginVersionInstalled('cvs', '10.0')
 
         then:
-        versionNumber != null
+        !result
+
+        when:
+        result = jobManagement.isMinimumPluginVersionInstalled('foo', '0.1')
+
+        then:
+        !result
     }
 
     def 'get vSphere cloud hash without vSphere cloud plugin'() {
@@ -560,6 +618,7 @@ class JenkinsJobManagementSpec extends Specification {
         id == null
     }
 
+    @WithPluginManager(LocalPluginManager)
     def 'create config file without config files provider plugin'() {
         setup:
         ConfigFile configFile = Mock(ConfigFile)
@@ -584,17 +643,18 @@ class JenkinsJobManagementSpec extends Specification {
         thrown(NameNotProvidedException)
     }
 
-    def 'getCredentialsId without Credentials Plugin'() {
-        when:
-        String id = jobManagement.getCredentialsId('test')
-
-        then:
-        id == null
-    }
-
     def 'create view'() {
         when:
         jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView/>', false)
+
+        then:
+        View view = jenkinsRule.instance.getView('test-view')
+        view instanceof ListView
+    }
+
+    def 'create view without build'() {
+        when:
+        testJobManagement.createOrUpdateView('test-view', '<hudson.model.ListView/>', false)
 
         then:
         View view = jenkinsRule.instance.getView('test-view')
@@ -646,7 +706,7 @@ class JenkinsJobManagementSpec extends Specification {
     def 'readFileFromWorkspace with exception'() {
         setup:
         AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject())
-        jobManagement = new JenkinsJobManagement(System.out, new EnvVars(), build)
+        jobManagement = new JenkinsJobManagement(System.out, [:], build, build.workspace, LookupStrategy.JENKINS_ROOT)
         String fileName = 'test.txt'
 
         when:
@@ -738,6 +798,80 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').exists()
         jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString() == 'lorem ipsum'
+    }
+
+    @SuppressWarnings('BusyWait')
+    def 'queue job'() {
+        setup:
+        FreeStyleProject project = jenkinsRule.createProject(FreeStyleProject, 'project')
+        FreeStyleProject seedJob = jenkinsRule.createProject(FreeStyleProject, 'seed')
+        AbstractBuild build = seedJob.scheduleBuild2(0).get()
+        JobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.JENKINS_ROOT
+        )
+        jenkinsRule.instance.quietPeriod = 0
+
+        when:
+        jobManagement.queueJob(project.name)
+        while (project.builds.lastBuild == null) {
+            Thread.sleep(100)
+        }
+
+        then:
+        project.builds.lastBuild.causes.size() == 1
+        project.builds.lastBuild.causes[0] instanceof Cause.UpstreamCause
+        Cause.UpstreamCause upstreamCause = project.builds.lastBuild.causes[0] as Cause.UpstreamCause
+        upstreamCause.upstreamBuild == 1
+        upstreamCause.upstreamProject == 'seed'
+    }
+
+    @SuppressWarnings('BusyWait')
+    def 'queue job without build'() {
+        setup:
+        FreeStyleProject project = jenkinsRule.createProject(FreeStyleProject, 'project')
+        jenkinsRule.instance.quietPeriod = 0
+
+        when:
+        testJobManagement.queueJob(project.name)
+        while (project.builds.lastBuild == null) {
+            Thread.sleep(100)
+        }
+
+        then:
+        project.builds.lastBuild.causes.size() == 1
+        project.builds.lastBuild.causes[0].shortDescription == 'Started by a Job DSL script'
+    }
+
+    def 'parameters include SEED_JOB'() {
+        when:
+        Map<String, Object> parameters = jobManagement.parameters
+
+        then:
+        parameters.containsKey('SEED_JOB')
+        parameters.SEED_JOB == seedJob
+    }
+
+    def 'parameters do not include SEED_JOB for testing'() {
+        when:
+        Map<String, Object> parameters = testJobManagement.parameters
+
+        then:
+        !parameters.containsKey('SEED_JOB')
+    }
+
+    def 'create nested view JENKINS-37450'() {
+        setup:
+        jobManagement.createOrUpdateView(
+                'test', loadResource('javaposse/jobdsl/dsl/views/NestedView-template.xml'), false
+        )
+
+        when:
+        jobManagement.createOrUpdateView(
+                'test', loadResource('javaposse/jobdsl/dsl/views/NestedView-template.xml'), false
+        )
+
+        then:
+        noExceptionThrown()
     }
 
     private static boolean isXmlIdentical(String expected, Node actual) throws Exception {

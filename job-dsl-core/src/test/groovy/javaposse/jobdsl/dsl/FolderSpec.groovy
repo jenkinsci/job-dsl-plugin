@@ -67,6 +67,16 @@ class FolderSpec extends Specification {
         permissions[3].text() == 'hudson.model.Item.Configure:anonymous'
     }
 
+    def 'call properties'() {
+        when:
+        folder.properties {
+            propertiesNodes << new Node(null, 'hack')
+        }
+
+        then:
+        folder.node.properties[0].children()[0].name() == 'hack'
+    }
+
     def 'configure'() {
         when:
         folder.configure {

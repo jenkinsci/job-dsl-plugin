@@ -23,10 +23,8 @@ class BuildPipelineContext extends AbstractContext {
      *
      * @since 1.23
      */
-    @RequiresPlugin(id = 'parameterized-trigger')
+    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.26')
     void parameters(@DslContext(DownstreamTriggerParameterContext) Closure closure) {
-        jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-
         DownstreamTriggerParameterContext context = new DownstreamTriggerParameterContext(jobManagement, item)
         ContextHelper.executeInContext(closure, context)
         parameterNodes.addAll(context.configs)

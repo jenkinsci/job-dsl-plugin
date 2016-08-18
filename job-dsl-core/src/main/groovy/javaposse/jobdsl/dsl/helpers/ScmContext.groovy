@@ -1,14 +1,16 @@
 package javaposse.jobdsl.dsl.helpers
 
-import hudson.util.VersionNumber
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
 import javaposse.jobdsl.dsl.helpers.scm.HgContext
+import javaposse.jobdsl.dsl.helpers.scm.P4Context
 import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
 import javaposse.jobdsl.dsl.helpers.scm.RTCContext
 import javaposse.jobdsl.dsl.helpers.scm.SvnContext
@@ -20,20 +22,19 @@ import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 import static javaposse.jobdsl.dsl.Preconditions.checkState
 import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
 
+@ContextType('hudson.scm.SCM')
 class ScmContext extends AbstractExtensibleContext {
     private static final PerforcePasswordEncryptor PERFORCE_ENCRYPTOR = new PerforcePasswordEncryptor()
 
     final List<Node> scmNodes = []
-    private final List<WithXmlAction> withXmlActions
 
-    ScmContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement, Item item) {
+    ScmContext(JobManagement jobManagement, Item item) {
         super(jobManagement, item)
-        this.withXmlActions = withXmlActions
     }
 
     @Override
     protected void addExtensionNode(Node node) {
-        scmNodes << toNamedNode('scm', node)
+        scmNodes << ContextHelper.toNamedNode('scm', node)
     }
 
     /**
@@ -75,10 +76,7 @@ class ScmContext extends AbstractExtensibleContext {
         if (hgContext.subdirectory) {
             scmNode.appendNode('subdir', hgContext.subdirectory)
         }
-        if (hgContext.withXmlClosure) {
-            WithXmlAction action = new WithXmlAction(hgContext.withXmlClosure)
-            action.execute(scmNode)
-        }
+        ContextHelper.executeConfigureBlock(scmNode, hgContext.configureBlock)
         scmNodes << scmNode
     }
 
@@ -87,25 +85,22 @@ class ScmContext extends AbstractExtensibleContext {
      *
      * @since 1.20
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void git(@DslContext(GitContext) Closure gitClosure) {
-        jobManagement.logPluginDeprecationWarning('git', '2.2.6')
-
-        GitContext gitContext = new GitContext(withXmlActions, jobManagement)
+        GitContext gitContext = new GitContext(jobManagement, item)
         executeInContext(gitClosure, gitContext)
 
         if (gitContext.branches.empty) {
             gitContext.branches << '**'
         }
 
-        if (!jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
-            if (gitContext.shallowClone || gitContext.reference || gitContext.cloneTimeout) {
-                gitContext.extensions << new NodeBuilder().'hudson.plugins.git.extensions.impl.CloneOption' {
-                    shallow gitContext.shallowClone
-                    reference gitContext.reference
-                    if (gitContext.cloneTimeout) {
-                        timeout gitContext.cloneTimeout
-                    }
+        if (gitContext.shallowClone || gitContext.reference || gitContext.cloneTimeout) {
+            gitContext.extensionContext.extensions << new NodeBuilder().
+                    'hudson.plugins.git.extensions.impl.CloneOption' {
+                shallow(gitContext.shallowClone)
+                reference(gitContext.reference)
+                if (gitContext.cloneTimeout) {
+                    timeout(gitContext.cloneTimeout)
                 }
             }
         }
@@ -140,17 +135,8 @@ class ScmContext extends AbstractExtensibleContext {
                 localBranch gitContext.localBranch
             }
             skipTag !gitContext.createTag
-            if (jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
-                if (gitContext.reference) {
-                    reference gitContext.reference
-                }
-                if (gitContext.shallowClone) {
-                    useShallowClone gitContext.shallowClone
-                }
-            } else {
-                if (gitContext.extensions) {
-                    extensions gitContext.extensions
-                }
+            if (gitContext.extensionContext.extensions) {
+                extensions(gitContext.extensionContext.extensions)
             }
         }
 
@@ -158,39 +144,33 @@ class ScmContext extends AbstractExtensibleContext {
             gitNode.children().add(gitContext.gitBrowserContext.browser)
         }
 
-        if (gitContext.mergeOptions) {
-            gitNode.children().add(gitContext.mergeOptions)
-        }
         if (gitContext.strategyContext.buildChooser) {
             gitNode.children().add(gitContext.strategyContext.buildChooser)
         }
 
-        // Apply Context
-        if (gitContext.withXmlClosure) {
-            WithXmlAction action = new WithXmlAction(gitContext.withXmlClosure)
-            action.execute(gitNode)
-        }
+        ContextHelper.executeConfigureBlock(gitNode, gitContext.configureBlock)
+
         scmNodes << gitNode
     }
 
     /**
-     * Adds a Git SCM source.
+     * Adds a Git SCM source. The "Create a tag for every build" option will be enabled by default.
      *
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void git(String url, Closure configure = null) {
         git(url, null, configure)
     }
 
     /**
-     * Adds a Git SCM source.
+     * Adds a Git SCM source. The "Create a tag for every build" option will be enabled by default.
      *
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void git(String url, String branch, Closure configure = null) {
         git {
             remote {
@@ -202,7 +182,9 @@ class ScmContext extends AbstractExtensibleContext {
             if (configure) {
                 delegate.configure(configure)
             }
-            delegate.createTag()
+            extensions {
+                perBuildTag()
+            }
         }
     }
 
@@ -212,7 +194,7 @@ class ScmContext extends AbstractExtensibleContext {
      * @since 1.15
      * @see #github(java.lang.String, java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void github(String ownerAndProject, String branch = null, String protocol = 'https', Closure closure) {
         github(ownerAndProject, branch, protocol, 'github.com', closure)
     }
@@ -231,7 +213,7 @@ class ScmContext extends AbstractExtensibleContext {
      * @since 1.15
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    @RequiresPlugin(id = 'git')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void github(String ownerAndProject, String branch = null, String protocol = 'https', String host = 'github.com',
                 Closure closure = null) {
         git {
@@ -253,7 +235,7 @@ class ScmContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'subversion')
+    @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
     void svn(String svnUrl, Closure configure = null) {
         svn(svnUrl, '.', configure)
     }
@@ -264,7 +246,7 @@ class ScmContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
      * node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'subversion')
+    @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
     void svn(String svnUrl, String localDir, Closure configure = null) {
         checkNotNull(svnUrl, 'svnUrl must not be null')
         checkNotNull(localDir, 'localDir must not be null')
@@ -282,10 +264,8 @@ class ScmContext extends AbstractExtensibleContext {
      *
      * @since 1.30
      */
-    @RequiresPlugin(id = 'subversion')
+    @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
     void svn(@DslContext(SvnContext) Closure svnClosure) {
-        jobManagement.logPluginDeprecationWarning('subversion', '2.1')
-
         SvnContext svnContext = new SvnContext(jobManagement)
         executeInContext(svnClosure, svnContext)
 
@@ -301,10 +281,7 @@ class ScmContext extends AbstractExtensibleContext {
             excludedRevprop(svnContext.excludedRevisionProperty ?: '')
         }
 
-        if (svnContext.configureClosure) {
-            WithXmlAction action = new WithXmlAction(svnContext.configureClosure)
-            action.execute(svnNode)
-        }
+        ContextHelper.executeConfigureBlock(svnNode, svnContext.configureBlock)
 
         scmNodes << svnNode
     }
@@ -315,6 +292,7 @@ class ScmContext extends AbstractExtensibleContext {
      * @see #p4(java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
      */
     @RequiresPlugin(id = 'perforce')
+    @Deprecated
     void p4(String viewspec, Closure configure = null) {
         p4(viewspec, 'rolem', '', configure)
     }
@@ -346,7 +324,7 @@ class ScmContext extends AbstractExtensibleContext {
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
     @RequiresPlugin(id = 'perforce')
-    void p4(String viewspec, String user, String password, Closure configure = null) {
+    void p4(String viewspec, String user, String password, Closure configureBlock = null) {
         checkNotNull(viewspec, 'viewspec must not be null')
 
         Node p4Node = new NodeBuilder().scm(class: 'hudson.plugins.perforce.PerforceSCM') {
@@ -382,11 +360,43 @@ class ScmContext extends AbstractExtensibleContext {
             pollOnlyOnMaster 'true'
         }
 
-        // Apply Context
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
-            action.execute(p4Node)
+        ContextHelper.executeConfigureBlock(p4Node, configureBlock)
+
+        scmNodes << p4Node
+    }
+
+    /**
+     * Add Perforce SCM source using Perforce p4 plugin.
+     *
+     * This must use Jenkins credentials.
+     *
+     * The configure block must be used to set additional options.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'p4', minimumVersion = '1.3.5')
+    void perforceP4(String credentials, @DslContext(P4Context) Closure p4Closure) {
+        checkNotNull(credentials, 'credentials must not be null')
+
+        P4Context p4Context = new P4Context()
+        executeInContext(p4Closure, p4Context)
+
+        Node p4Node = new NodeBuilder().scm(class: 'org.jenkinsci.plugins.p4.PerforceScm') {
+            credential(credentials)
+            populate(class: 'org.jenkinsci.plugins.p4.populate.AutoCleanImpl') {
+                have(true)
+                force(false)
+                modtime(false)
+                quiet(true)
+                pin()
+                replace(true)
+                delete(true)
+            }
         }
+        p4Node.children().add(p4Context.workspaceContext.workspaceConfig)
+
+        ContextHelper.executeConfigureBlock(p4Node, p4Context.configureBlock)
+
         scmNodes << p4Node
     }
 

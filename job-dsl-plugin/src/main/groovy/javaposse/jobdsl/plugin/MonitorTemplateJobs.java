@@ -1,13 +1,13 @@
 package javaposse.jobdsl.plugin;
 
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import hudson.Extension;
 import hudson.Util;
 import hudson.XmlFile;
-import hudson.model.AbstractBuild;
+import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
+import hudson.model.BuildableItem;
 import hudson.model.Cause;
 import hudson.model.Saveable;
 import hudson.model.listeners.SaveableListener;
@@ -26,9 +26,6 @@ import static com.google.common.collect.Collections2.transform;
 public class MonitorTemplateJobs extends SaveableListener {
     private static final Logger LOGGER = Logger.getLogger(MonitorTemplateJobs.class.getName());
 
-    public MonitorTemplateJobs() {
-    }
-
     @SuppressWarnings("rawtypes")
     @Override
     public void onChange(Saveable saveable, XmlFile file) {
@@ -40,7 +37,7 @@ public class MonitorTemplateJobs extends SaveableListener {
         }
 
         // Look for template jobs
-        AbstractProject project = (AbstractProject) saveable;
+        AbstractItem project = (AbstractItem) saveable;
         String possibleTemplateName = project.getName();
 
         DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
@@ -58,24 +55,19 @@ public class MonitorTemplateJobs extends SaveableListener {
             return;
         }
 
-        Collection<AbstractProject> changed = filter(
+        Collection<BuildableItem> changed = filter(
                 transform(
                         filter(seedJobReferences, new SeedReferenceDigestPredicate(digest)),
                         new LookupProjectFunction()),
                 Predicates.notNull());
 
-        for (AbstractProject seedProject : changed) {
+        for (BuildableItem seedProject : changed) {
             seedProject.scheduleBuild(30, new TemplateTriggerCause());
         }
     }
 
     public static class TemplateTriggerCause extends Cause {
-        public TemplateTriggerCause() {
-        }
-
-        @Override
-        public void onAddedTo(AbstractBuild build) {
-            LOGGER.info("TemplateTriggerCause.onAddedTo");
+        TemplateTriggerCause() {
         }
 
         @Override
@@ -94,11 +86,10 @@ public class MonitorTemplateJobs extends SaveableListener {
         }
     }
 
-    private static class LookupProjectFunction implements Function<SeedReference, AbstractProject> {
-
+    private static class LookupProjectFunction implements Function<SeedReference, BuildableItem> {
         @Override
-        public AbstractProject apply(SeedReference input) {
-            return (AbstractProject) Jenkins.getInstance().getItem(input.getSeedJobName());
+        public BuildableItem apply(SeedReference input) {
+            return (BuildableItem) Jenkins.getInstance().getItem(input.getSeedJobName());
         }
     }
 }

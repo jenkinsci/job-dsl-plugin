@@ -6,8 +6,10 @@ job('example-1') {
                 name('remoteB')
                 url('git@server:account/repo1.git')
             }
-            clean()
-            relativeTargetDir('repo1')
+            extensions {
+                cleanAfterCheckout()
+                relativeTargetDirectory('repo1')
+            }
         }
     }
 }
@@ -26,7 +28,12 @@ job('example-2') {
                 url('git@serverB:account/repo1.git')
             }
             branch('featureA')
-            mergeOptions('upstream', 'master')
+            extensions {
+                mergeOptions {
+                    remote('upstream')
+                    branch('master')
+                }
+            }
         }
     }
 }
@@ -48,6 +55,23 @@ job('example-4') {
             remote {
                 github('account/repo', 'ssh')
                 credentials('github-ci-key')
+            }
+        }
+    }
+}
+
+// checkout at a specific branch using the alternative build choosing strategy
+job('example-5') {
+    scm {
+        git {
+            remote {
+                github('account/repo', 'ssh')
+            }
+            branches('branch-that-may-not-exist', 'master')
+            extensions {
+                choosingStrategy {
+                    alternative()
+                }
             }
         }
     }

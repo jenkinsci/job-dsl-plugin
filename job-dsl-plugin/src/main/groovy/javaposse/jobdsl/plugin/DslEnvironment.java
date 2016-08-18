@@ -1,5 +1,7 @@
 package javaposse.jobdsl.plugin;
 
+import javaposse.jobdsl.dsl.Context;
+
 import java.util.Map;
 
 /**
@@ -10,4 +12,10 @@ import java.util.Map;
  * @since 1.33
  */
 public interface DslEnvironment extends Map<String, Object> {
+    /**
+     * Creates an instance of the specified {@link Context} type.
+     *
+     * @since 1.44
+     */
+    <T extends Context> T createContext(Class<T> contextClass);
 }

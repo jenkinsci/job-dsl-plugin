@@ -1,0 +1,10 @@
+version: '2'
+services:
+  master:
+    image: jenkins:1.625.1
+    ports:
+     - "8081:8080"
+    volumes:
+     - data:/var/jenkins_home
+volumes:
+  data:

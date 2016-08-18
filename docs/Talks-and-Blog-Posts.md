@@ -1,12 +1,53 @@
 This is a collection of talks, presentations and blog posts about the Job DSL plugin.
 
+* August 2016
+    * [Jenkins-as-code: comparing job-dsl and Pipelines](http://marcesher.com/2016/08/04/jenkins-as-code-comparing-job-dsl-and-pipelines/)
+      by [Marc Esher](http://marcesher.com)
+* July 2016
+    * [Jenkins-as-code: creating jobs from the command line during development](http://marcesher.com/2016/07/01/jenkins-as-code-creating-jobs-from-the-command-line-during-development/)
+      by [Marc Esher](http://marcesher.com)
+* June 2016
+    * [Jenkins-as-code: registering jobs for automatic seed job creation](http://marcesher.com/2016/06/21/jenkins-as-code-registering-jobs-for-automatic-seed-job-creation/)
+      by [Marc Esher](http://marcesher.com)
+    * [Jenkins-as-code: creating reusable builders](http://marcesher.com/2016/06/13/jenkins-as-code-creating-reusable-builders/)
+      by [Marc Esher](http://marcesher.com)
+    * [Jenkins-as-code: job-dsl-plugin](http://marcesher.com/2016/06/09/jenkins-as-code-job-dsl/)
+      by [Marc Esher](http://marcesher.com)
+    * [Jenkins-as-code: Creating Jenkins jobs with text, not clicks](http://marcesher.com/2016/06/08/jenkins-as-code-creating-jenkins-jobs-with-text-not-clicks/)
+      by [Marc Esher](http://marcesher.com)
+    * ePages devBlog:
+      [How to empower your Jenkins with Gradle](https://developer.epages.com/blog/2016/06/07/gradle-jenkins-plugin.html)
+      by Renato
+* April 2016
+    * Diabol: [The power of Jenkins Job DSL](http://blog.diabol.se/?p=906)
+      by [Tommy Tynjä](https://twitter.com/tommysdk)
+    * Mesosphere Documentation:
+      [Using the Jenkins Job DSL plugin](https://docs.mesosphere.com/usage/managing-services/velocity/jenkins-job-dsl-plugin/)
+* March 2016
+    * Slalom:
+      [Automatically generating Jenkins jobs](https://www.slalom.com/thinking/automatically-generating-jenkins-jobs)
+      by [Jim Graf](https://twitter.com/jamesggraf)
+* February 2016
+    * DZone DevOps:
+      [The Jenkins Job DSL Plugin in Practice](https://dzone.com/articles/the-jenkins-job-dsl-plugin-in-practice)
+      by [Kamil Szymański](https://twitter.com/kszdev)
+* January 2016
+    * FOSDEM:
+      [Jenkins as a Code](https://fosdem.org/2016/schedule/event/jenkins_as_code/)
+      by [Łukasz Szczęsny](https://twitter.com/wybczu) and [Marcin Zajączkowski](https://twitter.com/SolidSoftBlog)
+    * Praqma:
+      [Delving into Job DSL](http://www.praqma.com/stories/delving-into-job-dsl/)
 * December 2015
     * Under the hood blog:
       [Jenkins job DSL](http://kamilszymanski.github.io/jenkins-job-dsl/)
-      by [Kamil Szymanski](https://twitter.com/kszdev)
+      by [Kamil Szymański](https://twitter.com/kszdev)
 * November 2015
     * eBay Dev Blog: Taming the Hydra ([part 3](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-3.html))
-      by [Marc G�nther](https://github.com/marc-guenther)
+      by [Marc Günther](https://github.com/marc-guenther)
+* October 2015
+    * codecentric Blog:
+      [Using Jenkins Job DSL for Job Lifecycle Management](https://blog.codecentric.de/en/2015/10/using-jenkins-job-dsl-for-job-lifecycle-management/)
+      by [Marcel Birkner](https://github.com/MarcelBirkner)
 * August 2015
     * Gradle Summit 2015:
       [Managing Jenkins with Gradle](http://gradle.org/managing-jenkins-with-gradle/)
@@ -18,7 +59,7 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
       by [Scott Hickey](https://twitter.com/jshickey)
     * eBay Dev Blog: Taming the Hydra ([part 1](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-1.html)
       and [part 2](http://www.technology-ebay.de/the-teams/mobile-de/blog/taming-the-hydra-part-2.html))
-      by [Marc G�nther](https://github.com/marc-guenther)
+      by [Marc Günther](https://github.com/marc-guenther)
     * JUES 15: [Configuration as code and JobDSL](http://www.code-conf.com/jues15/program/#configuration-as-code-and-jobdsl)
       by [Niels Bech Nielsen](https://twitter.com/nielsbech)
       ([Slides](https://drive.google.com/file/d/0B7COmBHPVvgEcGdsY1dXMFgtNUE/view?usp=sharing))
@@ -35,13 +76,33 @@ This is a collection of talks, presentations and blog posts about the Job DSL pl
     * codecentric Blog:
       [Generated Jenkins Jobs and automatic Branch Merging for Feature Branches](https://blog.codecentric.de/en/2015/04/generated-jenkins-jobs-and-automatic-branch-merging-for-feature-branches/)
       by [Daniel Reuter](https://github.com/ReuDa)
+    * Hard Mock Cafe:
+      Job DSL ([part 3](http://hardmockcafe.blogspot.de/2015/04/job-dsl-part-iii.html))
+      by [Ralf Stuckert](https://www.blogger.com/profile/16798858616821611604)
+* March 2015
+    * Hard Mock Cafe:
+      Job DSL ([part 1](http://hardmockcafe.blogspot.de/2015/03/job-dsl-part-i.html) and
+      [part 2](http://hardmockcafe.blogspot.de/2015/03/job-dsl-part-ii.html))
+      by [Ralf Stuckert](https://www.blogger.com/profile/16798858616821611604)
 * January 2015
     * codecentric Blog:
       [Continuous Delivery for Microservices with Jenkins and the Job DSL Plugin](https://blog.codecentric.de/en/2015/01/continuous-delivery-microservices-jenkins-job-dsl-plugin/)
       by [Dennis Schulte](https://github.com/denschu)
+* October 2014
+    * Devexp:
+      [Use unsupported Jenkins plugins with Jenkins DSL](http://www.devexp.eu/2014/10/26/use-unsupported-jenkins-plugins-with-jenkins-dsl/)
+      by [Toni Van de Voorde](https://twitter.com/tonivdv)
+* September 2014
+    * Devexp:
+      [Automate Jenkins](http://www.devexp.eu/2014/09/23/automate-jenkins/)
+      by [Toni Van de Voorde](https://twitter.com/tonivdv)
 * June 2014
     * JUC Berlin: [Configuration as Code: The Job DSL Plugin](https://www.cloudbees.com/event/topic/lightning-talk-2-configuration-code-job-dsl-plugin)
       by [Daniel Spilker](https://github.com/daspilker)
+* April 2014
+    * Dan Tehranian's Blog:
+      [Jenkins Job DSL Plugin Saves the Day](https://dantehranian.wordpress.com/2014/04/03/jenkins-job-dsl-plugin-saves-the-day/)
+      by [Dan Tehranian](http://tehranian.net/)
 * January 2014
     * Twitter University: [Adoption of the Job DSL Plugin at Netflix](https://engineering.twitter.com/university/videos/adoption-of-the-job-dsl-plugin-at-netflix)
       by [Justin Ryan](https://github.com/quidryan)

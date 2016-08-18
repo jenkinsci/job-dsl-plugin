@@ -4,7 +4,6 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.WithXmlAction
 import javaposse.jobdsl.dsl.helpers.step.MultiJobStepContext
 
 class MultiJob extends Job {
@@ -16,7 +15,7 @@ class MultiJob extends Job {
         MultiJobStepContext context = new MultiJobStepContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        withXmlActions << WithXmlAction.create { Node project ->
+        configure { Node project ->
             context.stepNodes.each {
                 project / 'builders' << it
             }

@@ -1,14 +1,21 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class ColumnsContext extends AbstractContext {
+@ContextType('hudson.views.ListViewColumn')
+class ColumnsContext extends AbstractExtensibleContext {
     List<Node> columnNodes = []
 
     ColumnsContext(JobManagement jobManagement) {
-        super(jobManagement)
+        super(jobManagement, null)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        columnNodes << node
     }
 
     /**
@@ -81,6 +88,18 @@ class ColumnsContext extends AbstractContext {
     }
 
     /**
+     * Adds a column showing test results.
+     *
+     * @since 1.49
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.6')
+    void testResult(int format) {
+        columnNodes << new NodeBuilder().'jenkins.plugins.extracolumns.TestResultColumn' {
+            testResultFormat(format)
+        }
+    }
+
+    /**
      * Adds a column for showing that a build has been claimed.
      *
      * @since 1.29
@@ -92,12 +111,18 @@ class ColumnsContext extends AbstractContext {
 
     /**
      * Adds a column for showing the node which executed the last build.
+     * Requires version 1.16 or later of the Extra Columns plugin.
      *
      * @since 1.31
      */
-    @RequiresPlugin(id = 'build-node-column', minimumVersion = '0.1')
     void lastBuildNode() {
-        columnNodes << new Node(null, 'org.jenkins.plugins.column.LastBuildNodeColumn')
+        if (jobManagement.isMinimumPluginVersionInstalled('build-node-column', '0.1')) {
+            jobManagement.logDeprecationWarning('support for build-node-column plugin')
+            columnNodes << new Node(null, 'org.jenkins.plugins.column.LastBuildNodeColumn')
+        } else {
+            jobManagement.requireMinimumPluginVersion('extra-columns', '1.16')
+            columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastBuildNodeColumn')
+        }
     }
 
     /**
@@ -130,7 +155,7 @@ class ColumnsContext extends AbstractContext {
     }
 
     /**
-     * Adds a column showing showing job's cron trigger expression.
+     * Adds a column showing job's cron trigger expression.
      *
      * @since 1.39
      */
@@ -147,5 +172,90 @@ class ColumnsContext extends AbstractContext {
     @RequiresPlugin(id = 'progress-bar-column-plugin', minimumVersion = '1.0')
     void progressBar() {
         columnNodes << new Node(null, 'org.jenkins.ci.plugins.progress__bar.ProgressBarColumn')
+    }
+
+    /**
+     * Adds a column showing a release button.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'release', minimumVersion = '2.3')
+    void releaseButton() {
+        columnNodes << new Node(null, 'hudson.plugins.release.ReleaseButtonColumn')
+    }
+
+    /**
+     * Adds a column showing JaCoCo line coverage.
+     *
+     * @since 1.43
+     */
+    @RequiresPlugin(id = 'jacoco', minimumVersion = '1.0.10')
+    void jacoco() {
+        columnNodes << new Node(null, 'hudson.plugins.jacococoveragecolumn.JaCoCoColumn')
+    }
+
+    /**
+     * Adds a column showing build processor or build processor label restrictions of a job.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.14')
+    void slaveOrLabel() {
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.SlaveOrLabelColumn')
+    }
+
+    /**
+     * Adds a column showing the name of the user that started the last build.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.16')
+    void userName() {
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.UserNameColumn')
+    }
+
+    /**
+     * Adds a column showing the date of the last job configuration modification.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.14')
+    void lastConfigurationModification() {
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastJobConfigurationModificationColumn')
+    }
+
+    /**
+     * Adds a column showing a single build parameter or all build parameters of the current/last build.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.13')
+    void buildParameters(String parameter = null) {
+        columnNodes << new NodeBuilder().'jenkins.plugins.extracolumns.BuildParametersColumn' {
+            singlePara(parameter as boolean)
+            parameterName(parameter ?: '')
+        }
+    }
+
+    /**
+     * Adds a column showing a link to the workspace.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.15')
+    void workspace() {
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.WorkspaceColumn')
+    }
+
+    /**
+     * Adds a column showing a button or an icon for disabling/enabling a project.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.7')
+    void disableProject(boolean icon = false) {
+        columnNodes << new NodeBuilder().'jenkins.plugins.extracolumns.DisableProjectColumn' {
+            useIcon(icon)
+        }
     }
 }

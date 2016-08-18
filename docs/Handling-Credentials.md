@@ -99,7 +99,9 @@ like build variables as in the examples above.
             github('foo/ci-configuration')
         }
         wrappers {
-            injectPasswords()
+            injectPasswords {
+                injectGlobalPasswords()
+            }
         }
         steps {
             dsl {

@@ -17,7 +17,7 @@ Maven:
             <dependency>
                 <groupId>org.jenkins-ci.plugins</groupId>
                 <artifactId>job-dsl</artifactId>
-                <version>1.40</version>
+                <version>@version@</version>
                 <optional>true</optional>
             </dependency>
             ...
@@ -30,7 +30,7 @@ Gradle:
     ...
     dependencies {
         ...
-        optionalJenkinsPlugins 'org.jenkins-ci.plugins:job-dsl:1.41@jar'
+        optionalJenkinsPlugins 'org.jenkins-ci.plugins:job-dsl:@version@@jar'
         ...
     }
     ...
@@ -47,9 +47,12 @@ contexts:
 * `javaposse.jobdsl.dsl.helpers.ScmContext` for the `scm` and `multiscm` contexts
 * `javaposse.jobdsl.dsl.helpers.step.StepsContext` for the `steps` context
 * `javaposse.jobdsl.dsl.helpers.triggers.TriggerContext` for the `triggers` context
+* `javaposse.jobdsl.dsl.helpers.triggers.MultibranchWorkflowTriggerContext` for the `triggers` context, but only for
+  multibranch workflow jobs
 * `javaposse.jobdsl.dsl.helpers.properties.PropertiesContext` for the `properties` context
 * `javaposse.jobdsl.dsl.helpers.publisher.PublisherContext` for the `publisher` context
 * `javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext` for the `wrappers` context
+* `javaposse.jobdsl.dsl.helpers.BuildParametersContext` for the `parameters` context
 * `javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext` for the `publishers` context, but only for Maven jobs
 * `javaposse.jobdsl.dsl.helpers.triggers.MavenTriggerContext` for the `triggers` context, but only for Maven jobs
 * `javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext` for the `wrappers` context, but only for Maven jobs 
@@ -57,6 +60,8 @@ contexts:
 * `javaposse.jobdsl.dsl.helpers.IvyBuilderContext` for the `ivyBuilder` context of Ivy jobs
 * `javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerParameterContext` for the `parameters` context of parameterized
   triggers
+* `javaposse.jobdsl.dsl.helpers.toplevel.EnvironmentVariableContributorsContext` for the `contributors` context within
+  the `environmentVariables` context
 
 The parameters of the `@DslExtensionMethod` annotated method are the same parameters that will be available in the DSL.
 Have a look at the [DSL Design](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md#dsl-design)

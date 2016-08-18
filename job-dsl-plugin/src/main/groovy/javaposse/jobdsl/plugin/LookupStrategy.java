@@ -1,6 +1,5 @@
 package javaposse.jobdsl.plugin;
 
-import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import jenkins.model.Jenkins;
@@ -33,7 +32,8 @@ public enum LookupStrategy {
     SEED_JOB("Seed Job") {
         @Override
         public <T extends Item> T getItem(Item seedJob, String path, Class<T> type) {
-            return Jenkins.getInstance().getItem(path, seedJob.getParent(), type);
+            String fullName = path.startsWith("/") ? path : seedJob.getParent().getFullName() + "/" + path;
+            return Jenkins.getInstance().getItemByFullName(fullName, type);
         }
 
         @Override
@@ -79,7 +79,8 @@ public enum LookupStrategy {
             case 0:
                 return jenkins;
             default:
-                return jenkins.getItem(path.substring(0, i), getContext(seedJob), Folder.class);
+                Item item = jenkins.getItem(path.substring(0, i), getContext(seedJob));
+                return item instanceof ItemGroup ? (ItemGroup) item : null;
         }
     }
 

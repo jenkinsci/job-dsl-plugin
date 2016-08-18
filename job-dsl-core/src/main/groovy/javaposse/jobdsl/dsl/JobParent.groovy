@@ -8,9 +8,11 @@ import javaposse.jobdsl.dsl.jobs.MatrixJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
+import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
 import javaposse.jobdsl.dsl.views.BuildMonitorView
 import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.CategorizedJobsView
+import javaposse.jobdsl.dsl.views.DashboardView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
@@ -41,7 +43,7 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     FreeStyleJob freeStyleJob(String name, @DslContext(FreeStyleJob) Closure closure = null) {
-        processJob(name, FreeStyleJob, closure)
+        processItem(name, FreeStyleJob, closure)
     }
 
     /**
@@ -49,7 +51,7 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure = null) {
-        processJob(name, BuildFlowJob, closure)
+        processItem(name, BuildFlowJob, closure)
     }
 
     /**
@@ -57,7 +59,7 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     IvyJob ivyJob(String name, @DslContext(IvyJob) Closure closure = null) {
-        processJob(name, IvyJob, closure)
+        processItem(name, IvyJob, closure)
     }
 
     /**
@@ -65,7 +67,7 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     MatrixJob matrixJob(String name, @DslContext(MatrixJob) Closure closure = null) {
-        processJob(name, MatrixJob, closure)
+        processItem(name, MatrixJob, closure)
     }
 
     /**
@@ -73,7 +75,7 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     MavenJob mavenJob(String name, @DslContext(MavenJob) Closure closure = null) {
-        processJob(name, MavenJob, closure)
+        processItem(name, MavenJob, closure)
     }
 
     /**
@@ -81,21 +83,49 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure = null) {
-        jm.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.16')
-
-        processJob(name, MultiJob, closure)
+        processItem(name, MultiJob, closure)
     }
 
     /**
      * @since 1.30
+     * @deprecated as of 1.47. Use #pipelineJob(java.lang.String, groovy.lang.Closure) instead.
      */
+    @Deprecated
     @Override
     WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
-        processJob(name, WorkflowJob, closure)
+        pipelineJob(name, closure)
+    }
+
+    /**
+     * @since 1.47
+     */
+    @Override
+    WorkflowJob pipelineJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
+        processItem(name, WorkflowJob, closure)
+    }
+
+    /**
+     * @since 1.42
+     * @deprecated as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.
+     */
+    @Deprecated
+    @Override
+    MultibranchWorkflowJob multibranchWorkflowJob(String name,
+                                                  @DslContext(MultibranchWorkflowJob) Closure closure = null) {
+        multibranchPipelineJob(name, closure)
+    }
+
+    /**
+     * @since 1.47
+     */
+    @Override
+    MultibranchWorkflowJob multibranchPipelineJob(String name,
+                                                  @DslContext(MultibranchWorkflowJob) Closure closure = null) {
+        processItem(name, MultibranchWorkflowJob, closure)
     }
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
-    protected <T extends Job> T processJob(String name, Class<T> jobClass, Closure closure) {
+    protected <T extends Item> T processItem(String name, Class<T> jobClass, Closure closure) {
         checkNotNullOrEmpty(name, 'name must be specified')
 
         T job = jobClass.newInstance(jm)
@@ -163,6 +193,14 @@ abstract class JobParent extends Script implements DslFactory {
         processView(name, CategorizedJobsView, closure)
     }
 
+    /**
+     * @since 1.42
+     */
+    @Override
+    DashboardView dashboardView(String name, @DslContext(DashboardView) Closure closure = null) {
+        processView(name, DashboardView, closure)
+    }
+
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     protected <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
         checkNotNullOrEmpty(name, 'name must be specified')
@@ -181,17 +219,7 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     Folder folder(String name, @DslContext(Folder) Closure closure = null) {
-        jm.logPluginDeprecationWarning('cloudbees-folder', '5.0')
-
-        checkNotNullOrEmpty(name, 'name must be specified')
-
-        Folder folder = new Folder(jm)
-        folder.name = name
-        if (closure) {
-            folder.with(closure)
-        }
-        referencedJobs << folder
-        folder
+        processItem(name, Folder, closure)
     }
 
     /**

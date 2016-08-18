@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 buildscript {
     repositories {
         jcenter()
@@ -29,7 +31,7 @@ configure(subprojects - project(':job-dsl-api-viewer')) {
     }
 
     codenarc {
-        toolVersion = '0.24'
+        toolVersion = '0.25.2'
         configFile = file('../config/codenarc/rules.groovy')
     }
 
@@ -48,7 +50,7 @@ project(':job-dsl-core') {
     repositories {
         jcenter()
         maven {
-            url('http://repo.jenkins-ci.org/releases/')
+            url('https://repo.jenkins-ci.org/releases/')
         }
     }
 
@@ -71,21 +73,24 @@ project(':job-dsl-core') {
             }
         }
         main.compileClasspath += sourceSets.ast.output
+        test.compileClasspath += sourceSets.ast.output
     }
 
     description = 'Generates Jenkins jobs via a DSL'
     mainClassName = 'javaposse.jobdsl.Run'
 
     ext {
-        apiDocData = "${project.buildDir}/dsl-${version}.json"
+        apiDocData = "${project.buildDir}/dsl.json"
     }
 
     dependencies {
         astCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
         compile 'commons-codec:commons-codec:1.8' // for Perforce
         compile 'xmlunit:xmlunit:1.4' // for runtime use, not just for testing
-        compile 'org.jenkins-ci:version-number:1.1'
-        compile 'org.jvnet.hudson:xstream:1.4.7-jenkins-1'
+        compile('org.jvnet.hudson:xstream:1.4.7-jenkins-1') {
+            exclude group: 'xmlpull'
+            exclude group: 'xpp3'
+        }
     }
 
     codenarcExamples {
@@ -127,6 +132,12 @@ project(':job-dsl-core') {
         outputs.file apiDocData
     }
 
+    jar {
+        from(tasks.generateApiDoc) {
+            into 'javaposse/jobdsl/dsl'
+        }
+    }
+
     run {
         if (project.hasProperty('args')) {
             args project.args.split('\\s+')
@@ -150,9 +161,9 @@ project(':job-dsl-core') {
             maven {
                 name 'jenkins'
                 if (project.version.toString().endsWith('-SNAPSHOT')) {
-                    url 'http://maven.jenkins-ci.org:8081/content/repositories/snapshots'
+                    url 'https://repo.jenkins-ci.org/snapshots'
                 } else {
-                    url 'http://maven.jenkins-ci.org:8081/content/repositories/releases'
+                    url 'https://repo.jenkins-ci.org/releases'
                 }
             }
         }
@@ -183,10 +194,6 @@ private Map loadCredentialsForJenkinsCommunityRepository() {
     [userName: props.userName, password: props.password]
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
-}
-
 apply plugin: 'org.ajoberstar.github-pages'
 
 githubPages {
@@ -196,6 +203,9 @@ githubPages {
     workingPath = "$buildDir/wiki"
     pages {
         from 'docs'
+        filesMatching('*.md') {
+            filter(ReplaceTokens, tokens: [version: version, jenkinsVersion: jenkinsVersion])
+        }
     }
 }
 

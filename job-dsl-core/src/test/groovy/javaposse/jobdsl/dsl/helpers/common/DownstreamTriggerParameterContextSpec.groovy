@@ -33,31 +33,6 @@ class DownstreamTriggerParameterContextSpec extends Specification {
         }
     }
 
-    def 'boolean parameters, deprecated variant'() {
-        when:
-        context.boolParam('one')
-        context.boolParam('two', true)
-        context.boolParam('three', false)
-
-        then:
-        context.configs.size() == 1
-        with(context.configs[0]) {
-            name() == 'hudson.plugins.parameterizedtrigger.BooleanParameters'
-            children().size() == 1
-            configs[0].children().size() == 3
-            configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0].children().size() == 2
-            configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0].name.text() == 'one'
-            configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[0].value.text() == 'false'
-            configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1].children().size() == 2
-            configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1].name.text() == 'two'
-            configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[1].value.text() == 'true'
-            configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2].children().size() == 2
-            configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2].name.text() == 'three'
-            configs[0].'hudson.plugins.parameterizedtrigger.BooleanParameterConfig'[2].value.text() == 'false'
-        }
-        3 * jobManagement.logDeprecationWarning()
-    }
-
     def 'same node'() {
         when:
         context.sameNode()
@@ -68,26 +43,6 @@ class DownstreamTriggerParameterContextSpec extends Specification {
             name() == 'hudson.plugins.parameterizedtrigger.NodeParameters'
             children().size() == 0
         }
-    }
-
-    def 'same node, deprecated variant'() {
-        when:
-        context.sameNode(true)
-
-        then:
-        context.configs.size() == 1
-        with(context.configs[0]) {
-            name() == 'hudson.plugins.parameterizedtrigger.NodeParameters'
-            children().size() == 0
-        }
-        1 * jobManagement.logDeprecationWarning()
-
-        when:
-        context.sameNode(false)
-
-        then:
-        context.configs.size() == 0
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'current build'() {
@@ -181,16 +136,14 @@ class DownstreamTriggerParameterContextSpec extends Specification {
         when:
         context.predefinedProp('one', 'two')
         context.predefinedProps(three: 'four', five: 'six')
-        context.predefinedProps('seven=eight\nnine=ten')
 
         then:
         context.configs.size() == 1
         with(context.configs[0]) {
             name() == 'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'
             children().size() == 1
-            properties[0].text() == 'one=two\nthree=four\nfive=six\nseven=eight\nnine=ten'
+            properties[0].text() == 'one=two\nthree=four\nfive=six'
         }
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'matrix subset'() {

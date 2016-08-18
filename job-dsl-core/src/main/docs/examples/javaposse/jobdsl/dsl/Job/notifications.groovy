@@ -4,6 +4,7 @@ job('example') {
         endpoint('10.100.2.3:3434', 'TCP', 'XML') {
             event('started')
             timeout(60000)
+            logLines(100)
         }
     }
 }

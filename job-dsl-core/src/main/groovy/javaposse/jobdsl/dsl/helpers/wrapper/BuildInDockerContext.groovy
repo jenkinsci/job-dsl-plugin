@@ -1,8 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
 
-class BuildInDockerContext implements Context {
+class BuildInDockerContext extends AbstractContext {
     Node selector
     String dockerHostURI
     String serverCredentials
@@ -10,10 +11,12 @@ class BuildInDockerContext implements Context {
     List<Node> volumes = []
     boolean privilegedMode
     boolean verbose
+    boolean forcePull
     String userGroup
     String startCommand = '/bin/cat'
 
-    BuildInDockerContext() {
+    BuildInDockerContext(JobManagement jobManagement) {
+        super(jobManagement)
         dockerfile()
     }
 
@@ -57,6 +60,15 @@ class BuildInDockerContext implements Context {
 
     void verbose(boolean verbose = true) {
         this.verbose = verbose
+    }
+
+    /**
+     * Always pull the image from the repository. Defaults to {@code false}.
+     *
+     * @since 1.43
+     */
+    void forcePull(boolean forcePull = true) {
+        this.forcePull = forcePull
     }
 
     void userGroup(String userGroup) {

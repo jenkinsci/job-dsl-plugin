@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.DslContext
 
 class GerritContext implements Context {
     GerritEventContext eventContext = new GerritEventContext()
-    Closure configureClosure
+    Closure configureBlock
     List projects = []
 
     Integer startedCodeReview = null
@@ -80,8 +80,8 @@ class GerritContext implements Context {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure configureClosure) {
-        this.configureClosure = configureClosure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 
     /**
@@ -92,7 +92,9 @@ class GerritContext implements Context {
     }
 
     /**
-     * Specifies on which Gerrit projects to trigger a build on.
+     * Specifies on which Gerrit projects to trigger a build on. Use a {@code '<type>:<pattern>'} notation to specify
+     * a project or branch name pattern. Supported types are {@code plain} (default), {@code ant} (called "Path" in the
+     * UI) and {@code reg_exp}.
      */
     void project(String projectName, List<String> branches) {
         projects << [
@@ -102,7 +104,9 @@ class GerritContext implements Context {
     }
 
     /**
-     * Specifies on which Gerrit projects to trigger a build on.
+     * Specifies on which Gerrit projects to trigger a build on. Use a {@code '<type>:<pattern>'} notation to specify
+     * a project or branch name pattern. Supported types are {@code plain} (default), {@code ant} (called "Path" in the
+     * UI) and {@code reg_exp}.
      */
     void project(String projectName, String branch) {
         project(projectName, [branch])

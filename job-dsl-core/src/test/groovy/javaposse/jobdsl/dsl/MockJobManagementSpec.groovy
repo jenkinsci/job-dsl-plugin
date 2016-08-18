@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import hudson.util.VersionNumber
 import spock.lang.Specification
 
 class MockJobManagementSpec extends Specification {
@@ -26,6 +25,15 @@ class MockJobManagementSpec extends Specification {
         'hudson.scm.SCM.Tag' in permissions
     }
 
+    def 'job permissions are never null'() {
+        when:
+        Set<String> permissions = mockJobManagement.getPermissions('someClass')
+
+        then:
+        permissions != null
+        permissions.empty
+    }
+
     def 'queueJob validates name argument'() {
         when:
         mockJobManagement.queueJob(name)
@@ -35,13 +43,5 @@ class MockJobManagementSpec extends Specification {
 
         where:
         name << ['', null]
-    }
-
-    def 'getJenkinsVersion returns a version'() {
-        when:
-        VersionNumber versionNumber = mockJobManagement.jenkinsVersion
-
-        then:
-        versionNumber != null
     }
 }

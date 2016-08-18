@@ -34,7 +34,7 @@ class ApiDocGenerator {
         File file = new File(outputPath)
         file.parentFile.mkdirs()
 
-        file.withWriter { it << builder.toPrettyString() }
+        file.withWriter('UTF-8') { it << builder.toPrettyString() }
     }
 
     JsonBuilder generateApi(String version) {

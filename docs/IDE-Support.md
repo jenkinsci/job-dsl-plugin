@@ -37,16 +37,18 @@ installation.
     }
 
     repositories {
-        mavenCentral()
+        jcenter()
         maven {
-            url 'http://repo.jenkins-ci.org/releases/'
+            url 'https://repo.jenkins-ci.org/public/'
         }
     }
 
     dependencies {
-        compile 'org.jenkins-ci.plugins:job-dsl-core:1.41'
+        compile 'org.jenkins-ci.plugins:job-dsl-core:@version@'
     }
 
 In this example, the GroovyDSL script from above must be stored in `src/main/resources/idea.gdsl`.
 
 For a complete example, have a look at the [Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example).
+
+IDE Support is currently not available for the [[Automatically Generated DSL]] or [[The Configure Block]].

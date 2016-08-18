@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.view.dashboard.Dashboard>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+    </jobNames>
+    <jobFilters/>
+    <columns/>
+    <recurse>false</recurse>
+    <useCssStyle>false</useCssStyle>
+    <includeStdJobList>false</includeStdJobList>
+    <hideJenkinsPanels>false</hideJenkinsPanels>
+    <leftPortletWidth>50%</leftPortletWidth>
+    <rightPortletWidth>50%</rightPortletWidth>
+    <leftPortlets/>
+    <rightPortlets/>
+    <topPortlets/>
+    <bottomPortlets/>
+</hudson.plugins.view.dashboard.Dashboard>

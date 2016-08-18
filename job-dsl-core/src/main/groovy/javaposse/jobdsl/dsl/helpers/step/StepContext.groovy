@@ -1,20 +1,21 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import hudson.util.VersionNumber
+import groovy.transform.PackageScope
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
 import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORKSPACE
 
+@ContextType('hudson.tasks.Builder')
 class StepContext extends AbstractExtensibleContext {
     private final static VALID_BUILD_RESULTS = ['SUCCESS', 'UNSTABLE', 'FAILURE', 'ABORTED', 'CYCLE']
 
@@ -121,10 +122,8 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.27
      */
-    @RequiresPlugin(id = 'gradle')
+    @RequiresPlugin(id = 'gradle', minimumVersion = '1.23')
     void gradle(@DslContext(GradleContext) Closure gradleClosure) {
-        jobManagement.logPluginDeprecationWarning('gradle', '1.23')
-
         GradleContext gradleContext = new GradleContext(jobManagement)
         ContextHelper.executeInContext(gradleClosure, gradleContext)
 
@@ -138,15 +137,13 @@ class StepContext extends AbstractExtensibleContext {
             useWrapper gradleContext.useWrapper
             makeExecutable gradleContext.makeExecutable
             fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir
-            if (!jobManagement.getPluginVersion('gradle')?.isOlderThan(new VersionNumber('1.23'))) {
-                useWorkspaceAsHome gradleContext.useWorkspaceAsHome
+            useWorkspaceAsHome gradleContext.useWorkspaceAsHome
+            if (jobManagement.isMinimumPluginVersionInstalled('gradle', '1.25')) {
+                passAsProperties gradleContext.passAsProperties
             }
         }
 
-        if (gradleContext.configureBlock) {
-            WithXmlAction action = new WithXmlAction(gradleContext.configureBlock)
-            action.execute(gradleNode)
-        }
+        ContextHelper.executeConfigureBlock(gradleNode, gradleContext.configureBlock)
 
         stepNodes << gradleNode
     }
@@ -183,7 +180,7 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'sbt')
     void sbt(String sbtName, String actions = null, String sbtFlags = null, String jvmFlags = null,
-             String subdirPath = null, Closure configure = null) {
+             String subdirPath = null, Closure configureBlock = null) {
         Preconditions.checkNotNull(sbtName, 'Please provide the name of the SBT to use')
 
         Node sbtNode = new NodeBuilder().'org.jvnet.hudson.plugins.SbtPluginBuilder' {
@@ -194,10 +191,7 @@ class StepContext extends AbstractExtensibleContext {
             delegate.subdirPath(subdirPath ?: '')
         }
 
-        if (configure) {
-            WithXmlAction action = new WithXmlAction(configure)
-            action.execute(sbtNode)
-        }
+        ContextHelper.executeConfigureBlock(sbtNode, configureBlock)
 
         stepNodes << sbtNode
     }
@@ -412,10 +406,8 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.20
      */
-    @RequiresPlugin(id = 'maven-plugin')
+    @RequiresPlugin(id = 'maven-plugin', minimumVersion = '2.3')
     void maven(@DslContext(MavenContext) Closure closure) {
-        jobManagement.logPluginDeprecationWarning('maven-plugin', '2.3')
-
         MavenContext mavenContext = new MavenContext(jobManagement)
         ContextHelper.executeInContext(closure, mavenContext)
 
@@ -442,10 +434,7 @@ class StepContext extends AbstractExtensibleContext {
             }
         }
 
-        if (mavenContext.configureBlock) {
-            WithXmlAction action = new WithXmlAction(mavenContext.configureBlock)
-            action.execute(mavenNode)
-        }
+        ContextHelper.executeConfigureBlock(mavenNode, mavenContext.configureBlock)
 
         stepNodes << mavenNode
     }
@@ -456,7 +445,7 @@ class StepContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The
      * {@code hudson.tasks.Maven} node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'maven-plugin')
+    @RequiresPlugin(id = 'maven-plugin', minimumVersion = '2.3')
     void maven(String targets = null, String pom = null, Closure configure = null) {
         maven {
             delegate.goals(targets)
@@ -513,7 +502,7 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.31')
     void copyArtifacts(String jobName, @DslContext(CopyArtifactContext) Closure copyArtifactClosure = null) {
-        CopyArtifactContext copyArtifactContext = new CopyArtifactContext(jobManagement)
+        CopyArtifactContext copyArtifactContext = new CopyArtifactContext(jobManagement, item)
         ContextHelper.executeInContext(copyArtifactClosure, copyArtifactContext)
 
         Node copyArtifactNode = new NodeBuilder().'hudson.plugins.copyartifact.CopyArtifact' {
@@ -530,6 +519,9 @@ class StepContext extends AbstractExtensibleContext {
                 optional(true)
             }
             doNotFingerprintArtifacts(!copyArtifactContext.fingerprint)
+            if (copyArtifactContext.parameterFilters) {
+                parameters(copyArtifactContext.parameterFilters.join(', '))
+            }
         }
         copyArtifactNode.append(copyArtifactContext.selectorContext.selector)
         stepNodes << copyArtifactNode
@@ -627,10 +619,8 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.20
      */
-    @RequiresPlugin(id = 'parameterized-trigger')
+    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.26')
     void downstreamParameterized(@DslContext(DownstreamContext) Closure downstreamClosure) {
-        jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-
         DownstreamContext downstreamContext = new DownstreamContext(jobManagement, item)
         ContextHelper.executeInContext(downstreamClosure, downstreamContext)
 
@@ -649,13 +639,12 @@ class StepContext extends AbstractExtensibleContext {
         ConditionalStepsContext conditionalStepsContext = new ConditionalStepsContext(jobManagement, newInstance())
         ContextHelper.executeInContext(conditionalStepsClosure, conditionalStepsContext)
 
-        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
-            runCondition(class: conditionalStepsContext.runCondition.conditionClass) {
-                conditionalStepsContext.runCondition.addArgs(delegate)
-            }
+        Node builder = new NodeBuilder().'org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder' {
             runner(class: conditionalStepsContext.runnerClass)
             conditionalbuilders(conditionalStepsContext.stepContext.stepNodes)
         }
+        builder.append(ContextHelper.toNamedNode('runCondition', conditionalStepsContext.runCondition))
+        stepNodes << builder
     }
 
     /**
@@ -884,11 +873,14 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'http_request')
     void httpRequest(String requestUrl, @DslContext(HttpRequestContext) Closure closure = null) {
-        HttpRequestContext context = new HttpRequestContext()
+        HttpRequestContext context = new HttpRequestContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         stepNodes << new NodeBuilder().'jenkins.plugins.http__request.HttpRequest' {
             url(requestUrl)
+            if (context.passBuildParameters != null) {
+                passBuildParameters(context.passBuildParameters)
+            }
             if (context.httpMode != null) {
                 httpMode(context.httpMode)
             }
@@ -1014,7 +1006,9 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.0')
     void dockerBuildAndPublish(@DslContext(DockerBuildAndPublishContext) Closure closure) {
-        DockerBuildAndPublishContext context = new DockerBuildAndPublishContext()
+        jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
+
+        DockerBuildAndPublishContext context = new DockerBuildAndPublishContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         stepNodes << new NodeBuilder().'com.cloudbees.dockerpublish.DockerBuilder' {
@@ -1044,6 +1038,11 @@ class StepContext extends AbstractExtensibleContext {
             skipPush(context.skipPush)
             createFingerprint(context.createFingerprints)
             skipTagLatest(context.skipTagAsLatest)
+            if (jobManagement.isMinimumPluginVersionInstalled('docker-build-publish', '1.2')) {
+                buildContext(context.buildContext ?: '')
+                buildAdditionalArgs(context.additionalBuildArgs ?: '')
+                forceTag(context.forceTag)
+            }
         }
     }
 
@@ -1135,9 +1134,173 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Lints JavaScript files.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'jslint', minimumVersion = '0.8.2')
+    void jsLint(@DslContext(JSLintContext) Closure closure = null) {
+        JSLintContext context = new JSLintContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'com.boxuk.jenkins.jslint.JSLintBuilder' {
+            includePattern(context.includePattern ?: '')
+            excludePattern(context.excludePattern ?: '')
+            logfile(context.logFile ?: '')
+            arguments(context.arguments ?: '')
+        }
+    }
+
+    /**
+     * Performs a JIRA workflow action for every issue that matches the JQL query.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void progressJiraIssues(@DslContext(ProgressJiraIssuesContext) Closure closure) {
+        ProgressJiraIssuesContext context = new ProgressJiraIssuesContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueUpdateBuilder' {
+            jqlSearch(context.jqlSearch ?: '')
+            workflowActionName(context.workflowActionName ?: '')
+            comment(context.comment ?: '')
+        }
+    }
+
+    /**
+     * Extracts JIRA information for the build to environment variables.
+     *
+     * @since 1.46
+    */
+    @RequiresPlugin(id = 'jira', minimumVersion = '2.2')
+    void extractJiraEnvironmentVariables() {
+        stepNodes << new NodeBuilder().'hudson.plugins.jira.JiraEnvironmentVariableBuilder'()
+    }
+
+    /**
+     * Invokes a CMake build script.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'cmakebuilder', minimumVersion = '2.4.1')
+    void cmake(@DslContext(CMakeContext) Closure closure) {
+        CMakeContext context = new CMakeContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Node cmakeNode = new NodeBuilder().'hudson.plugins.cmake.CmakeBuilder' {
+            installationName(context.cmakeName ?: '')
+            generator(context.generator)
+            cleanBuild(context.cleanBuild)
+
+            if (context.sourceDir) {
+                sourceDir(context.sourceDir ?: '')
+            }
+            if (context.buildDir) {
+                workingDir(context.buildDir ?: '')
+            }
+            if (context.buildType) {
+                buildType(context.buildType ?: '')
+            }
+            if (context.preloadScript) {
+                preloadScript(context.preloadScript ?: '')
+            }
+            if (context.args) {
+                toolArgs(context.args.join('\n'))
+            }
+            if (context.buildToolStepNodes) {
+                toolSteps(context.buildToolStepNodes)
+            }
+        }
+
+        stepNodes << cmakeNode
+    }
+
+    /**
+     * Exports runtime parameters into a properties file.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'job-exporter', minimumVersion = '0.4')
+    void exportRuntimeParameters() {
+        stepNodes << new NodeBuilder().'com.meyling.hudson.plugin.job__exporter.ExporterBuilder'()
+    }
+
+    /**
+     * Runs a Jython script.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'jython', minimumVersion = '1.9')
+    void jython(String command) {
+        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.Jython' {
+            delegate.command(command)
+        }
+    }
+
+    /**
+     * Invokes a MSBuild build script.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'msbuild', minimumVersion = '1.25')
+    void msBuild(@DslContext(MSBuildContext) Closure closure) {
+        MSBuildContext context = new MSBuildContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'hudson.plugins.msbuild.MsBuildBuilder' {
+            msBuildName(context.msBuildName ?: '')
+            cmdLineArgs(context.args.join(' '))
+            msBuildFile(context.buildFile ?: '')
+            buildVariablesAsProperties(context.passBuildVariables)
+            continueOnBuildFailure(context.continueOnBuildFailure)
+            unstableIfWarnings(context.unstableIfWarnings)
+        }
+    }
+
+    /**
+     * Invokes a Phing build script.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'phing', minimumVersion = '0.13.3')
+    void phing(@DslContext(PhingContext) Closure closure) {
+        PhingContext context = new PhingContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'hudson.plugins.phing.PhingBuilder' {
+            name(context.phingName ?: '')
+            useModuleRoot(context.useModuleRoot)
+            if (context.buildFile) {
+                buildFile(context.buildFile)
+            }
+            if (context.targets) {
+                targets(context.targets.join('\n'))
+            }
+            if (context.properties) {
+                properties(context.properties.collect { k, v -> "$k=$v" }.join('\n'))
+            }
+            if (context.options) {
+                options(context.options.join('\n'))
+            }
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
         new StepContext(jobManagement, item)
+    }
+
+    /**
+     * @since 1.47
+     */
+    @PackageScope
+    Item getItem() {
+        super.item
     }
 }

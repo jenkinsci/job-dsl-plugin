@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 abstract class Item extends AbstractContext {
     String name
 
-    List<WithXmlAction> withXmlActions = []
+    private final List<Closure> configureBlocks = []
 
     protected Item(JobManagement jobManagement) {
         super(jobManagement)
@@ -14,8 +14,8 @@ abstract class Item extends AbstractContext {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure withXmlClosure) {
-        withXmlActions.add(new WithXmlAction(withXmlClosure))
+    void configure(Closure configureBlock) {
+        configureBlocks << configureBlock
     }
 
     /**
@@ -40,5 +40,18 @@ abstract class Item extends AbstractContext {
         throw new UnsupportedOperationException()
     }
 
-    abstract Node getNode()
+    Node getNode() {
+        Node node = nodeTemplate
+        ContextHelper.executeConfigureBlocks(node, configureBlocks)
+        node
+    }
+
+    protected Node getNodeTemplate() {
+        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
+    }
+
+    @Deprecated
+    void executeWithXmlActions(Node root) {
+        ContextHelper.executeConfigureBlocks(root, configureBlocks)
+    }
 }

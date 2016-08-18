@@ -1,13 +1,14 @@
 package javaposse.jobdsl.dsl.helpers
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.DslScriptException
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class BuildParametersContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    BuildParametersContext context = new BuildParametersContext(jobManagement)
+    Item item = Mock(Item)
+    BuildParametersContext context = new BuildParametersContext(jobManagement, item)
 
     def 'base booleanParam usage'() {
         when:
@@ -113,35 +114,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text().empty
             !uuid.text().empty
         }
-        (1.._) * jobManagement.requirePlugin('subversion')
-    }
-
-    def 'base listTagsParam usage with older plugin version'() {
-        given:
-        jobManagement.getPluginVersion('subversion') >> new VersionNumber('2.0')
-
-        when:
-        context.listTagsParam('myParameterName', 'http://kenai.com/svn/myProject/tags', '^mytagsfilterregex', true,
-                true, 'maximumNumberOfTagsToDisplay', 'theDefaultValue', 'myListTagsParameterDescription')
-
-        then:
-        context.buildParameterNodes != null
-        context.buildParameterNodes.size() == 1
-        with(context.buildParameterNodes['myParameterName']) {
-            name() == 'hudson.scm.listtagsparameter.ListSubversionTagsParameterDefinition'
-            children().size() == 9
-            name.text() == 'myParameterName'
-            defaultValue.text() == 'theDefaultValue'
-            tagsDir.text() == 'http://kenai.com/svn/myProject/tags'
-            tagsFilter.text() == '^mytagsfilterregex'
-            reverseByDate.text() == 'true'
-            reverseByName.text() == 'true'
-            maxTags.text() == 'maximumNumberOfTagsToDisplay'
-            description.text() == 'myListTagsParameterDescription'
-            !uuid.text().empty
-        }
-        (1.._) * jobManagement.requirePlugin('subversion')
-        1 * jobManagement.logPluginDeprecationWarning('subversion', '2.1')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'simplified listTagsParam usage'() {
@@ -166,7 +139,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text().empty
             !uuid.text().empty
         }
-        (1.._) * jobManagement.requirePlugin('subversion')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'simplest listTagsParam usage'() {
@@ -190,7 +163,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text().empty
             !uuid.text().empty
         }
-        (1.._) * jobManagement.requirePlugin('subversion')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'simplest closure listTagsParam usage'() {
@@ -215,7 +188,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text().empty
             !uuid.text().empty
         }
-        1 * jobManagement.requirePlugin('subversion')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'listTagsParam with all closure options'() {
@@ -247,7 +220,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text() == 'CREDENTIALS'
             !uuid.text().empty
         }
-        1 * jobManagement.requirePlugin('subversion')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'listTagsParam with maxTagsToDisplay int argument'() {
@@ -279,7 +252,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text() == 'CREDENTIALS'
             !uuid.text().empty
         }
-        1 * jobManagement.requirePlugin('subversion')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
     def 'listTagsParam name argument cant be null'() {
@@ -331,7 +304,7 @@ class BuildParametersContextSpec extends Specification {
             reverseByName.text() == 'false'
             maxTags.text() == 'all'
         }
-        (1.._) * jobManagement.requirePlugin('subversion')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
 
         where:
         filter << [null, '']
@@ -1420,6 +1393,83 @@ class BuildParametersContextSpec extends Specification {
         when:
         context.stringParam('one')
         context.matrixCombinationsParam('one')
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'extension parameter'() {
+        given:
+        Node paramNode = new NodeBuilder().'my.custom.ParamDefinition' {
+            name('myParameterName')
+        }
+
+        when:
+        context.addExtensionNode(paramNode)
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() == 'my.custom.ParamDefinition'
+        context.buildParameterNodes['myParameterName'].children().size() == 1
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+    }
+
+    def 'extension parameter must have a name'() {
+        given:
+        Node paramNode = new NodeBuilder().'my.custom.ParamDefinition' {
+        }
+
+        when:
+        context.addExtensionNode(paramNode)
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'base nonStoredPasswordParameter usage'() {
+        when:
+        context.nonStoredPasswordParam('myParameterName', 'my parameter description')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].children().size() == 2
+        context.buildParameterNodes['myParameterName'].name() ==
+                'com.michelin.cio.hudson.plugins.passwordparam.PasswordParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].description.text() == 'my parameter description'
+    }
+
+    def 'simplified nonStoredPasswordParameter usage'() {
+        when:
+        context.nonStoredPasswordParam('myParameterName')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].children().size() == 2
+        context.buildParameterNodes['myParameterName'].name() ==
+                'com.michelin.cio.hudson.plugins.passwordparam.PasswordParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].description.text() == ''
+    }
+
+    def 'nonStoredPasswordParameter name argument cant be null or empty'() {
+        when:
+        context.nonStoredPasswordParam(name)
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        name << [null, '']
+    }
+
+    def 'nonStoredPasswordParameter already defined'() {
+        when:
+        context.booleanParam('one')
+        context.nonStoredPasswordParam('one')
 
         then:
         thrown(DslScriptException)

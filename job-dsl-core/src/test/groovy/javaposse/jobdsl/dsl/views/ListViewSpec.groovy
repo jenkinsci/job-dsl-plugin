@@ -2,6 +2,9 @@ package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.views.jobfilter.AmountType
+import javaposse.jobdsl.dsl.views.jobfilter.BuildCountType
+import javaposse.jobdsl.dsl.views.jobfilter.BuildStatusType
 import javaposse.jobdsl.dsl.views.jobfilter.RegexMatchValue
 import javaposse.jobdsl.dsl.views.jobfilter.Status
 import spock.lang.Specification
@@ -16,9 +19,9 @@ import static javaposse.jobdsl.dsl.views.jobfilter.MatchType.INCLUDE_UNMATCHED
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
-class ListViewSpec extends Specification {
+class ListViewSpec<T extends ListView> extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    ListView view = new ListView(jobManagement)
+    T view = new ListView(jobManagement)
 
     def 'defaults'() {
         when:
@@ -195,42 +198,27 @@ class ListViewSpec extends Specification {
         root.columns[0].children.size() == 0
     }
 
-    def 'add all columns'() {
+    def 'add several columns'() {
         when:
         view.columns {
             status()
             weather()
-            name()
             lastSuccess()
             lastFailure()
             lastDuration()
             buildButton()
-            claim()
-            lastBuildNode()
-            categorizedJob()
-            cronTrigger()
-            progressBar()
         }
 
         then:
         Node root = view.node
         root.columns.size() == 1
-        root.columns[0].value().size() == 12
+        root.columns[0].value().size() == 6
         root.columns[0].value()[0].name() == 'hudson.views.StatusColumn'
         root.columns[0].value()[1].name() == 'hudson.views.WeatherColumn'
-        root.columns[0].value()[2].name() == 'hudson.views.JobColumn'
-        root.columns[0].value()[3].name() == 'hudson.views.LastSuccessColumn'
-        root.columns[0].value()[4].name() == 'hudson.views.LastFailureColumn'
-        root.columns[0].value()[5].name() == 'hudson.views.LastDurationColumn'
-        root.columns[0].value()[6].name() == 'hudson.views.BuildButtonColumn'
-        root.columns[0].value()[7].name() == 'hudson.plugins.claim.ClaimColumn'
-        root.columns[0].value()[8].name() == 'org.jenkins.plugins.column.LastBuildNodeColumn'
-        root.columns[0].value()[9].name() == 'org.jenkinsci.plugins.categorizedview.IndentedJobColumn'
-        root.columns[0].value()[10].name() == 'hudson.plugins.CronViewColumn'
-        root.columns[0].value()[11].name() == 'org.jenkins.ci.plugins.progress__bar.ProgressBarColumn'
-        1 * jobManagement.requireMinimumPluginVersion('build-node-column', '0.1')
-        1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
-        1 * jobManagement.requirePlugin('claim')
+        root.columns[0].value()[2].name() == 'hudson.views.LastSuccessColumn'
+        root.columns[0].value()[3].name() == 'hudson.views.LastFailureColumn'
+        root.columns[0].value()[4].name() == 'hudson.views.LastDurationColumn'
+        root.columns[0].value()[5].name() == 'hudson.views.BuildButtonColumn'
     }
 
     def 'call columns twice'() {
@@ -276,6 +264,37 @@ class ListViewSpec extends Specification {
         root.columns[0].value().size() == 1
         root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.ConfigureProjectColumn'
         1 * jobManagement.requirePlugin('extra-columns')
+    }
+
+    def 'last build node column with deprecated build-node-column'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('build-node-column', '0.1') >> true
+
+        when:
+        view.columns {
+            lastBuildNode()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'org.jenkins.plugins.column.LastBuildNodeColumn'
+        1 * jobManagement.logDeprecationWarning('support for build-node-column plugin')
+    }
+
+    def 'last build node column'() {
+        when:
+        view.columns {
+            lastBuildNode()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.LastBuildNodeColumn'
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.16')
     }
 
     def 'robotResults column'() {
@@ -363,6 +382,120 @@ class ListViewSpec extends Specification {
         ]
     }
 
+    def 'most recent jobs filter'(Closure filter, Map children) {
+        when:
+        view.jobFilters(filter)
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node mostRecentJobsFilter = filters[0]
+        mostRecentJobsFilter.name() == 'hudson.views.MostRecentJobsFilter'
+        mostRecentJobsFilter.children().size() == children.size()
+        children.eachWithIndex { name, value, idx ->
+            assert mostRecentJobsFilter.children()[idx].name() == name
+            assert mostRecentJobsFilter.children()[idx].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('view-job-filters', '1.27')
+
+        where:
+        filter || children
+                { ->
+                    mostRecent()
+                } | [
+                maxToInclude  : 0,
+                checkStartTime: false
+        ]
+                { ->
+                    mostRecent {
+                        maxToInclude(5)
+                        checkStartTime()
+                    }
+                } | [
+                maxToInclude  : 5,
+                checkStartTime: true
+        ]
+    }
+
+    def 'unclassified jobs filter'(Closure filter, Map children) {
+        when:
+        view.jobFilters(filter)
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node unclassifiedJobsFilter = filters[0]
+        unclassifiedJobsFilter.name() == 'hudson.views.UnclassifiedJobsFilter'
+        unclassifiedJobsFilter.children().size() == children.size()
+        children.eachWithIndex { name, value, idx ->
+            assert unclassifiedJobsFilter.children()[idx].name() == name
+            assert unclassifiedJobsFilter.children()[idx].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('view-job-filters', '1.27')
+
+        where:
+        filter || children
+                { ->
+                    unclassified()
+                } | [
+                includeExcludeTypeString: 'includeMatched'
+        ]
+                { ->
+                    unclassified {
+                        matchType(INCLUDE_UNMATCHED)
+                    }
+                } | [
+                includeExcludeTypeString: 'includeUnmatched'
+        ]
+    }
+
+    def 'build trend filter'(Closure filter, Map children) {
+        when:
+        view.jobFilters(filter)
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node buildTrendFilter = filters[0]
+        buildTrendFilter.name() == 'hudson.views.BuildTrendFilter'
+        buildTrendFilter.children().size() == children.size()
+        children.eachWithIndex { name, value, idx ->
+            assert buildTrendFilter.children()[idx].name() == name
+            assert buildTrendFilter.children()[idx].value() == value
+        }
+        1 * jobManagement.requireMinimumPluginVersion('view-job-filters', '1.27')
+
+        where:
+        filter || children
+                { ->
+                    buildTrend()
+                } | [
+                includeExcludeTypeString: 'includeMatched',
+                buildCountTypeString    : 'Latest',
+                amountTypeString        : 'Hours',
+                amount                  : 0.0,
+                statusTypeString        : 'Completed'
+        ]
+                { ->
+                    buildTrend {
+                        matchType(INCLUDE_UNMATCHED)
+                        buildCountType(BuildCountType.AT_LEAST_ONE)
+                        amountType(AmountType.DAYS)
+                        amount(2.5)
+                        status(BuildStatusType.TRIGGERED_BY_REMOTE)
+                    }
+                } | [
+                includeExcludeTypeString: 'includeUnmatched',
+                buildCountTypeString    : 'AtLeastOne',
+                amountTypeString        : 'Days',
+                amount                  : 2.5,
+                statusTypeString        : 'TriggeredByRemote'
+        ]
+    }
+
     def 'regex job filter'(RegexMatchValue regexType, String regexString) {
         when:
         view.jobFilters {
@@ -393,6 +526,75 @@ class ListViewSpec extends Specification {
         RegexMatchValue.NAME | '.*'
     }
 
+    def 'all jobs filter'() {
+        when:
+        view.jobFilters {
+            all()
+        }
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node allJobsFilter = filters[0]
+        allJobsFilter.name() == 'hudson.views.AllJobsFilter'
+        allJobsFilter.children().size() == 0
+
+        jobManagement.requireMinimumPluginVersion('view-job-filters', '1.27')
+    }
+
+    def 'all release jobs filter'() {
+        when:
+        view.jobFilters {
+            allRelease()
+        }
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node allJobsFilter = filters[0]
+        allJobsFilter.name() == 'hudson.plugins.release.AllReleaseJobsFilter'
+        allJobsFilter.children().size() == 0
+
+        1 * jobManagement.requireMinimumPluginVersion('release', '2.5.3')
+    }
+
+    def 'release jobs filter'() {
+        when:
+        view.jobFilters {
+            release()
+        }
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+
+        Node releaseJobsFilter = filters[0]
+        releaseJobsFilter.name() == 'hudson.plugins.release.ReleaseJobsFilter'
+        releaseJobsFilter.children().size() == 0
+
+        1 * jobManagement.requireMinimumPluginVersion('release', '2.5.3')
+    }
+
+    def 'job filter extension'() {
+        setup:
+        jobManagement.callExtension('extension', null, JobFiltersContext) >> new Node(null, 'foo')
+
+        when:
+        view.jobFilters {
+            extension()
+        }
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+        with(filters[0]) {
+            name() == 'foo'
+            children().size() == 0
+        }
+    }
+
     def 'recurse folders'() {
         when:
         view.recurse()
@@ -415,6 +617,187 @@ class ListViewSpec extends Specification {
         root.columns[0].value().size() == 1
         root.columns[0].value()[0].name() == 'jenkins.plugins.jobicon.CustomIconColumn'
         1 * jobManagement.requireMinimumPluginVersion('custom-job-icon', '0.2')
+    }
+
+    def 'release button column'() {
+        when:
+        view.columns {
+            releaseButton()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'hudson.plugins.release.ReleaseButtonColumn'
+        1 * jobManagement.requireMinimumPluginVersion('release', '2.3')
+    }
+
+    def 'jacoco column'() {
+        when:
+        view.columns {
+            jacoco()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'hudson.plugins.jacococoveragecolumn.JaCoCoColumn'
+        1 * jobManagement.requireMinimumPluginVersion('jacoco', '1.0.10')
+    }
+
+    def 'slave or label column'() {
+        when:
+        view.columns {
+            slaveOrLabel()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.SlaveOrLabelColumn'
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.14')
+    }
+
+    def 'user name column'() {
+        when:
+        view.columns {
+            userName()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.UserNameColumn'
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.16')
+    }
+
+    def 'last configuration modification column'() {
+        when:
+        view.columns {
+            lastConfigurationModification()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.LastJobConfigurationModificationColumn'
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.14')
+    }
+
+    def 'build parameters column'() {
+        when:
+        view.columns {
+            buildParameters()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        def columns = root.columns[0].value()
+        columns.size() == 1
+
+        Node column = columns[0]
+        column.name() == 'jenkins.plugins.extracolumns.BuildParametersColumn'
+        column.children().size() == 2
+        column.singlePara[0].value() == false
+        column.parameterName[0].value() == ''
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.13')
+    }
+
+    def 'build parameters column for a single parameter'() {
+        when:
+        view.columns {
+            buildParameters('PARAM')
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        def columns = root.columns[0].value()
+        columns.size() == 1
+
+        Node column = columns[0]
+        column.name() == 'jenkins.plugins.extracolumns.BuildParametersColumn'
+        column.children().size() == 2
+        column.singlePara[0].value() == true
+        column.parameterName[0].value() == 'PARAM'
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.13')
+    }
+
+    def 'workspace column'() {
+        when:
+        view.columns {
+            workspace()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'jenkins.plugins.extracolumns.WorkspaceColumn'
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.15')
+    }
+
+    def 'disable project column with button'() {
+        when:
+        view.columns {
+            disableProject()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        def columns = root.columns[0].value()
+        columns.size() == 1
+
+        Node column = columns[0]
+        column.name() == 'jenkins.plugins.extracolumns.DisableProjectColumn'
+        column.children().size() == 1
+        column.useIcon[0].value() == false
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.7')
+    }
+
+    def 'disable project column with icon'() {
+        when:
+        view.columns {
+            disableProject(true)
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        def columns = root.columns[0].value()
+        columns.size() == 1
+
+        Node column = columns[0]
+        column.name() == 'jenkins.plugins.extracolumns.DisableProjectColumn'
+        column.children().size() == 1
+        column.useIcon[0].value() == true
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.7')
+    }
+
+    def 'test result column'() {
+        when:
+        view.columns {
+            testResult(2)
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        def columns = root.columns[0].value()
+        columns.size() == 1
+
+        Node column = columns[0]
+        column.name() == 'jenkins.plugins.extracolumns.TestResultColumn'
+        column.children().size() == 1
+        column.testResultFormat[0].value() == 2
+        1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.6')
     }
 
     protected String getDefaultXml() {

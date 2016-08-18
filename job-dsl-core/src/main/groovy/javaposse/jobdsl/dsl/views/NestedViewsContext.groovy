@@ -70,6 +70,14 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
         processView(name, CategorizedJobsView, closure)
     }
 
+    /**
+     * @since 1.42
+     */
+    @Override
+    DashboardView dashboardView(String name, @DslContext(DashboardView) Closure closure = null) {
+        processView(name, DashboardView, closure)
+    }
+
     private <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
         Preconditions.checkNotNullOrEmpty(name, 'name must be specified')
 

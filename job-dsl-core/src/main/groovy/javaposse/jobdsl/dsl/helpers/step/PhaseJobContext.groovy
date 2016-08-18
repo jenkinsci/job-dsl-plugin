@@ -19,7 +19,7 @@ class PhaseJobContext extends AbstractContext {
     boolean disableJob = false
     boolean abortAllJobs = false
     String killPhaseCondition = 'FAILURE'
-    Closure configureClosure
+    Closure configureBlock
 
     PhaseJobContext(JobManagement jobManagement, Item item, String jobName) {
         super(jobManagement)
@@ -27,30 +27,11 @@ class PhaseJobContext extends AbstractContext {
         this.paramTrigger = new DownstreamTriggerParameterContext(jobManagement, item)
     }
 
-    @Deprecated
-    PhaseJobContext(JobManagement jobManagement, Item item, String jobName, boolean currentJobParameters,
-                    boolean exposedScm) {
-        this(jobManagement, item, jobName)
-        this.currentJobParameters = currentJobParameters
-        this.exposedScm = exposedScm
-    }
-
-    /**
-     * Defines the name of the job.
-     */
-    @Deprecated
-    void jobName(String jobName) {
-        jobManagement.logDeprecationWarning()
-
-        this.jobName = jobName
-    }
-
     /**
      * Copies parameters from the current build, except for file parameters. Defaults to [@code true}.
      */
     void currentJobParameters(boolean currentJobParameters = true) {
         this.currentJobParameters = currentJobParameters
-        paramTrigger.currentBuild()
     }
 
     /**
@@ -65,95 +46,9 @@ class PhaseJobContext extends AbstractContext {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'parameterized-trigger')
+    @RequiresPlugin(id = 'parameterized-trigger', minimumVersion = '2.26')
     void parameters(@DslContext(DownstreamTriggerParameterContext) Closure closure) {
-        jobManagement.logPluginDeprecationWarning('parameterized-trigger', '2.26')
-
         ContextHelper.executeInContext(closure, paramTrigger)
-    }
-
-    /**
-     * Adds a boolean parameter. Can be called multiple times to add more parameters.
-     */
-    @Deprecated
-    void boolParam(String paramName, boolean defaultValue = false) {
-        jobManagement.logDeprecationWarning()
-        paramTrigger.boolParam(paramName, defaultValue)
-    }
-
-    /**
-     * Reads parameters from a properties file.
-     */
-    @Deprecated
-    void fileParam(String propertyFile, boolean failTriggerOnMissing = false) {
-        jobManagement.logDeprecationWarning()
-        paramTrigger.propertiesFile(propertyFile, failTriggerOnMissing)
-    }
-
-    /**
-     * Uses the same node for the triggered builds that was used for this build.
-     */
-    @Deprecated
-    void sameNode(boolean nodeParam = true) {
-        jobManagement.logDeprecationWarning()
-        paramTrigger.sameNode = nodeParam
-    }
-
-    /**
-     * Specifies a Groovy filter expression that restricts the subset of combinations that the downstream project will
-     * run.
-     */
-    @Deprecated
-    void matrixParam(String filter) {
-        jobManagement.logDeprecationWarning()
-        paramTrigger.matrixSubset(filter)
-    }
-
-    /**
-     * Passes the Subversion revisions that were used in this build to the downstream builds.
-     */
-    @Deprecated
-    void subversionRevision(boolean includeUpstreamParameters = false) {
-        jobManagement.logDeprecationWarning()
-        paramTrigger.subversionRevision(includeUpstreamParameters)
-    }
-
-    /**
-     * Passes the Git commit that was used in this build to the downstream builds.
-     */
-    @Deprecated
-    void gitRevision(boolean combineQueuedCommits = false) {
-        jobManagement.logDeprecationWarning()
-        paramTrigger.gitRevision(combineQueuedCommits)
-    }
-
-    /**
-     * Adds a parameter. Can be called multiple times to add more parameters.
-     */
-    @Deprecated
-    void prop(Object key, Object value) {
-        jobManagement.logDeprecationWarning()
-        paramTrigger.predefinedProp(key, value)
-    }
-
-    /**
-     * Adds parameters. Can be called multiple times to add more parameters.
-     */
-    @Deprecated
-    void props(Map<String, String> map) {
-        jobManagement.logDeprecationWarning()
-        paramTrigger.predefinedProps(map)
-    }
-
-    /**
-     * Defines where the target job should be executed, the value must match either a label or a node name.
-     *
-     * @since 1.26
-     */
-    @Deprecated
-    void nodeLabel(String paramName, String nodeLabel) {
-        jobManagement.logDeprecationWarning()
-        paramTrigger.nodeLabel(paramName, nodeLabel)
     }
 
     /**
@@ -161,7 +56,6 @@ class PhaseJobContext extends AbstractContext {
      *
      * @since 1.25
      */
-    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
     void disableJob(boolean disableJob = true) {
         this.disableJob = disableJob
     }
@@ -171,7 +65,6 @@ class PhaseJobContext extends AbstractContext {
      *
      * @since 1.37
      */
-    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.14')
     void abortAllJobs(boolean abortAllJob = true) {
         this.abortAllJobs = abortAllJob
     }
@@ -182,7 +75,6 @@ class PhaseJobContext extends AbstractContext {
      * Must be one of {@code 'FAILURE'} (default), {@code 'NEVER'} or [@code 'UNSTABLE'}.
      * @since 1.25
      */
-    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.11')
     void killPhaseCondition(String killPhaseCondition) {
         Preconditions.checkArgument(
                 VALID_KILL_CONDITIONS.contains(killPhaseCondition),
@@ -199,7 +91,7 @@ class PhaseJobContext extends AbstractContext {
      * @since 1.30
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure configureClosure) {
-        this.configureClosure = configureClosure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 }

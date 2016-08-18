@@ -2,14 +2,10 @@ package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.WithXmlAction
 
 class MavenTriggerContext extends TriggerContext {
-    protected final List<WithXmlAction> withXmlActions
-
-    MavenTriggerContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement, Item item) {
+    MavenTriggerContext(JobManagement jobManagement, Item item) {
         super(jobManagement, item)
-        this.withXmlActions = withXmlActions
     }
 
     /**
@@ -21,7 +17,7 @@ class MavenTriggerContext extends TriggerContext {
      * @param checkSnapshotDependencies set to <code>true</code> to check snapshot dependencies
      */
     void snapshotDependencies(boolean checkSnapshotDependencies) {
-        withXmlActions << WithXmlAction.create {
+        item.configure {
             it.children().removeAll { it instanceof Node && it.name() == 'ignoreUpstremChanges' }
             it.appendNode 'ignoreUpstremChanges', !checkSnapshotDependencies
         }

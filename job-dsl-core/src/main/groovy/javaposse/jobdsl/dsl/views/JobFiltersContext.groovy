@@ -1,20 +1,30 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
+import javaposse.jobdsl.dsl.views.jobfilter.BuildTrendFilter
 import javaposse.jobdsl.dsl.views.jobfilter.JobStatusesFilter
+import javaposse.jobdsl.dsl.views.jobfilter.MostRecentJobsFilter
 import javaposse.jobdsl.dsl.views.jobfilter.RegexFilter
 import javaposse.jobdsl.dsl.views.jobfilter.Status
+import javaposse.jobdsl.dsl.views.jobfilter.UnclassifiedJobsFilter
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
-class JobFiltersContext extends AbstractContext {
+@ContextType('hudson.views.ViewJobFilter')
+class JobFiltersContext extends AbstractExtensibleContext {
     List<Node> filterNodes = []
 
     protected JobFiltersContext(JobManagement jobManagement) {
-        super(jobManagement)
+        super(jobManagement, null)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        filterNodes << node
     }
 
     /**
@@ -34,6 +44,25 @@ class JobFiltersContext extends AbstractContext {
     }
 
     /**
+     * Adds a build trend job filter.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'view-job-filters', minimumVersion = '1.27')
+    void buildTrend(@DslContext(BuildTrendFilter) Closure buildTrendFilterClosure) {
+        BuildTrendFilter buildTrendFilter = new BuildTrendFilter()
+        executeInContext(buildTrendFilterClosure, buildTrendFilter)
+
+        filterNodes << new NodeBuilder().'hudson.views.BuildTrendFilter' {
+            includeExcludeTypeString(buildTrendFilter.matchType.value)
+            buildCountTypeString(buildTrendFilter.buildCountType.value)
+            amountTypeString(buildTrendFilter.amountType.value)
+            amount(buildTrendFilter.amount)
+            statusTypeString(buildTrendFilter.status.value)
+        }
+    }
+
+    /**
      * Adds a regular expression filter.
      */
     @RequiresPlugin(id = 'view-job-filters')
@@ -46,5 +75,66 @@ class JobFiltersContext extends AbstractContext {
             valueTypeString(regexFilter.matchValue.name())
             delegate.regex(regexFilter.regex)
         }
+    }
+
+    /**
+     * Adds a most recent job filter.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'view-job-filters', minimumVersion = '1.27')
+    void mostRecent(@DslContext(MostRecentJobsFilter) Closure mostRecentFilterClosure) {
+        MostRecentJobsFilter mostRecentFilter = new MostRecentJobsFilter()
+        executeInContext(mostRecentFilterClosure, mostRecentFilter)
+
+        filterNodes << new NodeBuilder().'hudson.views.MostRecentJobsFilter' {
+            maxToInclude(mostRecentFilter.maxToInclude)
+            checkStartTime(mostRecentFilter.checkStartTime)
+        }
+    }
+
+    /**
+     * Adds an unclassified jobs filter.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'view-job-filters', minimumVersion = '1.27')
+    void unclassified(@DslContext(UnclassifiedJobsFilter) Closure unclassifiedJobsFilterClosure) {
+        UnclassifiedJobsFilter unclassifiedJobsFilter = new UnclassifiedJobsFilter()
+        executeInContext(unclassifiedJobsFilterClosure, unclassifiedJobsFilter)
+
+        filterNodes << new NodeBuilder().'hudson.views.UnclassifiedJobsFilter' {
+            includeExcludeTypeString(unclassifiedJobsFilter.matchType.value)
+        }
+    }
+
+    /**
+     * Adds an all jobs to the view.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'view-job-filters', minimumVersion = '1.27')
+    void all() {
+        filterNodes << new NodeBuilder().'hudson.views.AllJobsFilter'()
+    }
+
+    /**
+     * Adds to the view all the jobs using the 'release' build wrapper.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'release', minimumVersion = '2.5.3')
+    void allRelease() {
+        filterNodes << new NodeBuilder().'hudson.plugins.release.AllReleaseJobsFilter'()
+    }
+
+    /**
+     * Filters the view to only keep the jobs using the 'release' build wrapper.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'release', minimumVersion = '2.5.3')
+    void release() {
+        filterNodes << new NodeBuilder().'hudson.plugins.release.ReleaseJobsFilter'()
     }
 }

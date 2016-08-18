@@ -12,7 +12,9 @@
     <concurrentBuild>false</concurrentBuild>
     <builders/>
     <publishers>
-        <hudson.tasks.test.AggregatedTestResultPublisher/>
+        <hudson.tasks.Fingerprinter>
+            <targets>foo</targets>
+        </hudson.tasks.Fingerprinter>
         <hudson.tasks.ArtifactArchiver/>
     </publishers>
     <buildWrappers/>

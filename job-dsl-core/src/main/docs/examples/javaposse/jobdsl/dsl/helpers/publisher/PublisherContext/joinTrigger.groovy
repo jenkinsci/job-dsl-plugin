@@ -12,7 +12,9 @@ job('example-2') {
             publishers {
                 downstreamParameterized {
                     trigger('upload-to-staging') {
-                        currentBuild()
+                        parameters {
+                            currentBuild()
+                        }
                     }
                 }
             }

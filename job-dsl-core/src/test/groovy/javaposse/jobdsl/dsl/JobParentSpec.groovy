@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.IvyJob
@@ -8,9 +7,11 @@ import javaposse.jobdsl.dsl.jobs.MatrixJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
+import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
 import javaposse.jobdsl.dsl.views.BuildMonitorView
 import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.CategorizedJobsView
+import javaposse.jobdsl.dsl.views.DashboardView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
@@ -198,6 +199,31 @@ class JobParentSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('categorized-view', '1.8')
     }
 
+    def 'should add dashboard view'() {
+        when:
+        View view = parent.dashboardView('test') {
+            description('foo')
+        }
+
+        then:
+        view.name == 'test'
+        view instanceof DashboardView
+        parent.referencedViews.contains(view)
+        view.node.description[0].text() == 'foo'
+        1 * jobManagement.requireMinimumPluginVersion('dashboard-view', '2.9.7')
+    }
+
+    def 'should add dashboard view without closure'() {
+        when:
+        View view = parent.dashboardView('test')
+
+        then:
+        view.name == 'test'
+        view instanceof DashboardView
+        parent.referencedViews.contains(view)
+        1 * jobManagement.requireMinimumPluginVersion('dashboard-view', '2.9.7')
+    }
+
     def 'folder'() {
         when:
         Folder folder = parent.folder('test') {
@@ -208,8 +234,7 @@ class JobParentSpec extends Specification {
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
         folder.node.displayName[0].text() == 'foo'
-        1 * jobManagement.requirePlugin('cloudbees-folder')
-        1 * jobManagement.logPluginDeprecationWarning('cloudbees-folder', '5.0')
+        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.0')
     }
 
     def 'folder without closure'() {
@@ -219,8 +244,7 @@ class JobParentSpec extends Specification {
         then:
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
-        1 * jobManagement.requirePlugin('cloudbees-folder')
-        1 * jobManagement.logPluginDeprecationWarning('cloudbees-folder', '5.0')
+        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.0')
     }
 
     def 'custom config file'() {
@@ -476,21 +500,7 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
-        1 * jobManagement.requirePlugin('maven-plugin')
-    }
-
-    def 'mavenJob with older plugin version'() {
-        setup:
-        jobManagement.getPluginVersion('maven-plugin') >> new VersionNumber('2.2')
-
-        when:
-        MavenJob job = parent.mavenJob('test') {
-        }
-
-        then:
-        job.name == 'test'
-        parent.referencedJobs.contains(job)
-        1 * jobManagement.requirePlugin('maven-plugin')
+        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'multiJob'() {
@@ -501,8 +511,7 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
-        1 * jobManagement.requirePlugin('jenkins-multijob-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.16')
+        1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.16')
     }
 
     def 'workflow'() {
@@ -513,6 +522,41 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
+        (1.._) * jobManagement.requirePlugin('workflow-aggregator')
+        1 * jobManagement.logDeprecationWarning()
+    }
+
+    def 'pipeline'() {
+        when:
+        WorkflowJob job = parent.pipelineJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
         1 * jobManagement.requirePlugin('workflow-aggregator')
+    }
+
+    def 'multibranchWorkflowJob'() {
+        when:
+        MultibranchWorkflowJob job = parent.multibranchWorkflowJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        (1.._) * jobManagement.requireMinimumPluginVersion('workflow-multibranch', '1.12')
+        1 * jobManagement.logDeprecationWarning()
+    }
+
+    def 'multibranchPipelineJob'() {
+        when:
+        MultibranchWorkflowJob job = parent.multibranchPipelineJob('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        1 * jobManagement.requireMinimumPluginVersion('workflow-multibranch', '1.12')
     }
 }

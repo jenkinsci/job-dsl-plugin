@@ -1,15 +1,15 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
 
+@ContextType('hudson.tasks.BuildWrapper')
 class WrapperContext extends AbstractExtensibleContext {
     List<Node> wrapperNodes = []
 
@@ -201,7 +201,7 @@ class WrapperContext extends AbstractExtensibleContext {
 
         wrapperNodes << new NodeBuilder().'hudson.plugins.xvnc.Xvnc' {
             takeScreenshot(xvncContext.takeScreenshot)
-            if (!jobManagement.getPluginVersion('xvnc')?.isOlderThan(new VersionNumber('1.16'))) {
+            if (jobManagement.isMinimumPluginVersionInstalled('xvnc', '1.16')) {
                 useXauthority(xvncContext.useXauthority)
             }
         }
@@ -268,11 +268,29 @@ class WrapperContext extends AbstractExtensibleContext {
      *
      * @since 1.23
      */
+    @Deprecated
     @RequiresPlugin(id = 'envinject')
     void injectPasswords() {
         wrapperNodes << new NodeBuilder().'EnvInjectPasswordWrapper' {
             'injectGlobalPasswords'(true)
             'passwordEntries'()
+        }
+    }
+
+    /**
+     * Injects passwords as environment variables into the job.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'envinject', minimumVersion = '1.90')
+    void injectPasswords(@DslContext(EnvInjectPasswordsContext) Closure injectPasswordsClosure) {
+        EnvInjectPasswordsContext injectPasswordsContext = new EnvInjectPasswordsContext(jobManagement)
+        ContextHelper.executeInContext(injectPasswordsClosure, injectPasswordsContext)
+
+        wrapperNodes << new NodeBuilder().EnvInjectPasswordWrapper {
+            injectGlobalPasswords(injectPasswordsContext.injectGlobalPasswords)
+            maskPasswordParameters(injectPasswordsContext.maskPasswordParameters)
+            passwordEntries()
         }
     }
 
@@ -297,10 +315,7 @@ class WrapperContext extends AbstractExtensibleContext {
             postFailedBuildSteps(releaseContext.postFailedBuildSteps)
         }
 
-        if (releaseContext.configureBlock) {
-            WithXmlAction action = new WithXmlAction(releaseContext.configureBlock)
-            action.execute(releaseNode)
-        }
+        ContextHelper.executeConfigureBlock(releaseNode, releaseContext.configureBlock)
 
         wrapperNodes << releaseNode
     }
@@ -562,9 +577,9 @@ class WrapperContext extends AbstractExtensibleContext {
      *
      * @since 1.39
      */
-    @RequiresPlugin(id = 'docker-custom-build-environment', minimumVersion = '1.5.1')
+    @RequiresPlugin(id = 'docker-custom-build-environment', minimumVersion = '1.6.2')
     void buildInDocker(@DslContext(BuildInDockerContext) Closure closure) {
-        BuildInDockerContext context = new BuildInDockerContext()
+        BuildInDockerContext context = new BuildInDockerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         Node node = new NodeBuilder().'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper' {
@@ -580,6 +595,7 @@ class WrapperContext extends AbstractExtensibleContext {
             verbose(context.verbose)
             volumes(context.volumes)
             privileged(context.privilegedMode)
+            forcePull(context.forcePull)
             group(context.userGroup ?: '')
             command(context.startCommand ?: '')
         }
@@ -594,7 +610,7 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'sauce-ondemand', minimumVersion = '1.142')
     void sauceOnDemand(@DslContext(SauceOnDemandContext) Closure closure) {
-        SauceOnDemandContext context = new SauceOnDemandContext()
+        SauceOnDemandContext context = new SauceOnDemandContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'hudson.plugins.sauce__ondemand.SauceOnDemandBuildWrapper' {
@@ -619,8 +635,29 @@ class WrapperContext extends AbstractExtensibleContext {
             useLatestVersion(context.useLatestVersion)
             launchSauceConnectOnSlave(context.launchSauceConnectOnSlave)
             options(context.options ?: '')
+            if (jobManagement.isMinimumPluginVersionInstalled('sauce-ondemand', '1.148')) {
+                credentialId(context.credentialsId ?: '')
+            }
             verboseLogging(context.verboseLogging)
             condition(class: 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun')
+        }
+    }
+
+    /**
+     * Generates JIRA release notes.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void generateJiraReleaseNotes(@DslContext(GenerateJiraReleaseNotesContext) Closure closure) {
+        GenerateJiraReleaseNotesContext context = new GenerateJiraReleaseNotesContext()
+        ContextHelper.executeInContext(closure, context)
+
+        wrapperNodes << new NodeBuilder().'hudson.plugins.jira.JiraCreateReleaseNotes' {
+            jiraEnvironmentVariable(context.environmentVariable ?: '')
+            jiraProjectKey(context.projectKey ?: '')
+            jiraRelease(context.release ?: '')
+            jiraFilter(context.filter ?: '')
         }
     }
 }

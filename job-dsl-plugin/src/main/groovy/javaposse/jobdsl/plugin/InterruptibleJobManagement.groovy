@@ -1,7 +1,6 @@
 package javaposse.jobdsl.plugin
 
 import groovy.transform.ThreadInterrupt
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
@@ -10,7 +9,7 @@ import javaposse.jobdsl.dsl.JobConfigurationNotFoundException
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import javaposse.jobdsl.dsl.UserContent
-import javaposse.jobdsl.dsl.helpers.ExtensibleContext
+import javaposse.jobdsl.dsl.ExtensibleContext
 
 /**
  * Checks the thread's {@link Thread#interrupted() interrupted} flag before delegating each call and throws an
@@ -31,12 +30,6 @@ class InterruptibleJobManagement implements JobManagement {
     @Override
     String getConfig(String jobName) throws JobConfigurationNotFoundException {
         delegate.getConfig(jobName)
-    }
-
-    @Override
-    boolean createOrUpdateConfig(String jobName, String config, boolean ignoreExisting) throws NameNotProvidedException,
-            ConfigurationMissingException {
-        delegate.createOrUpdateConfig(jobName, config, ignoreExisting)
     }
 
     @Override
@@ -91,13 +84,8 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
-    Map<String, String> getParameters() {
+    Map<String, Object> getParameters() {
         delegate.parameters
-    }
-
-    @Override
-    String getCredentialsId(String credentialsDescription) {
-        delegate.getCredentialsId(credentialsDescription)
     }
 
     @Override
@@ -146,13 +134,8 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
-    VersionNumber getPluginVersion(String pluginShortName) {
-        delegate.getPluginVersion(pluginShortName)
-    }
-
-    @Override
-    VersionNumber getJenkinsVersion() {
-        delegate.jenkinsVersion
+    boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
+        delegate.isMinimumPluginVersionInstalled(pluginShortName, version)
     }
 
     @Override

@@ -41,34 +41,27 @@ class PluginASTTransformation implements ASTTransformation {
                 }
             }
 
-            annotations.each { AnnotationNode requiresPluginAnnotation ->
-                if (!method.declaringClass.getField('jobManagement') && !method.declaringClass.getField('jm')) {
-                    sourceUnit.errorCollector.addError(
-                            "no jobManagement field in $method.declaringClass",
-                            Token.newString(
-                                    requiresPluginAnnotation.text,
-                                    requiresPluginAnnotation.lineNumber,
-                                    requiresPluginAnnotation.columnNumber
-                            ),
-                            sourceUnit
-                    )
-                }
-                String jobManagementVariable = method.declaringClass.getField('jobManagement') ? 'jobManagement' : 'jm'
+            annotations.each { AnnotationNode annotationNode ->
+                VariableExpression jobManagementVariable = ASTTransformationHelper.getJobManagementVariable(
+                        sourceUnit,
+                        method.declaringClass,
+                        Token.newString(annotationNode.text, annotationNode.lineNumber, annotationNode.columnNumber)
+                )
 
-                ArgumentListExpression argumentList = new ArgumentListExpression(requiresPluginAnnotation.members.id)
+                ArgumentListExpression argumentList = new ArgumentListExpression(annotationNode.members.id)
                 Expression methodExpression
-                if (requiresPluginAnnotation.members.minimumVersion) {
-                    argumentList.addExpression(requiresPluginAnnotation.members.minimumVersion)
+                if (annotationNode.members.minimumVersion) {
+                    argumentList.addExpression(annotationNode.members.minimumVersion)
                     methodExpression = new ConstantExpression('requireMinimumPluginVersion')
                 } else {
                     methodExpression = new ConstantExpression('requirePlugin')
                 }
-                if (requiresPluginAnnotation.members.failIfMissing) {
-                    argumentList.addExpression(requiresPluginAnnotation.members.failIfMissing)
+                if (annotationNode.members.failIfMissing) {
+                    argumentList.addExpression(annotationNode.members.failIfMissing)
                 }
 
                 MethodCallExpression pluginCheckStatement = new MethodCallExpression(
-                        new VariableExpression(jobManagementVariable),
+                        jobManagementVariable,
                         methodExpression,
                         argumentList
                 )

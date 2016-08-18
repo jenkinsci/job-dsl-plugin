@@ -63,12 +63,17 @@ The `configure` method can be stated multiple times and configure blocks are run
 See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) for details about the configure blocks supported by
 DSL methods.
 
+[This article](http://www.devexp.eu/2014/10/26/use-unsupported-jenkins-plugins-with-jenkins-dsl/) provides a
+step-by-step tutorial on how to create a configure block.
+
 # Transforming XML
 
-All standard documentation for Node applies here, but transforming XML via Node is no fun, and quite ugly. The general
-groovy use-cases are to consume this structure or build it up via NodeBuilder. Use the samples below to help navigate
-the Jenkins XML, but keep in mind that the actual syntax is Groovy syntax:
-http://groovy.codehaus.org/Updating+XML+with+XmlParser.
+All standard documentation for [Node](http://docs.groovy-lang.org/latest/html/gapi/groovy/util/Node.html) applies here,
+but transforming XML via Node is no fun, and quite ugly. The general
+Groovy use-cases are to consume this structure or build it up via
+[NodeBuilder](http://docs.groovy-lang.org/latest/html/gapi/groovy/util/NodeBuilder.html). Use the samples below to help
+navigate the Jenkins XML, but keep in mind that the actual syntax is Groovy syntax. See
+[Processing XML](http://groovy-lang.org/processing-xml.html) for more information about manipulating XML with Groovy.
 
 Things to keep in mind:
 
@@ -572,7 +577,6 @@ Result:
 
 DSL:
 ```groovy
-// this creates XML for version 1.x of the Git Plugin, but version 2.x is backwards compatible
 job('example') {
     scm {
         git {
@@ -580,8 +584,10 @@ job('example') {
                 name 'remoteB'
                 url 'git@server:account/repo1.git'
             }
-            clean()
-            relativeTargetDir('repo1')
+            extensions {
+                relativeTargetDirectory('repo1')
+                cleanAfterCheckout()
+            }
         }
     }
 }
@@ -867,6 +873,69 @@ Result:
             <deployArtifacts>true</deployArtifacts>
             <evenIfUnstable>true</evenIfUnstable>
         </org.jfrog.hudson.ArtifactoryRedeployPublisher>
+    </publishers>
+</project>
+```
+
+## Configure Post Build Confluence Publisher
+
+In order to update Confluence Pages, you can use the Confluence Publisher.
+The requirements are:
+
+* Have a Confluence Wiki installed.
+* Install Confluence Publisher plugin in Jenkins.
+* Configure access to Confluence in Jenkins (Jenkins >> Manage Jenkins >> configure >> Confluence Publisher)
+
+Configure block:
+```groovy
+job('example') {
+    configure { project ->
+        project / publishers << 'com.myyearbook.hudson.plugins.confluence.ConfluencePublisher' {
+            siteName('confluence.company.com')
+            attachArchivedArtifacts(false)
+            buildIfUnstable(false)
+            spaceName('TEST')
+            pageName('Jenkins Confluence Publisher Integration Test')
+            editors {
+                'com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor' {
+                    generator(class: 'com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator') {
+                        text('Jenkins Publisher Job Build Number: $BUILD_NUMBER')
+                    }                
+                }
+                'com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor' {
+                    generator(class: 'com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator') {
+                        text('Jenkins Publisher Job Build Number: $BUILD_NUMBER')
+                    }                
+                }
+            }
+        }
+    }
+}
+```
+
+Result:
+```xml
+<project>
+    <publishers>
+        <com.myyearbook.hudson.plugins.confluence.ConfluencePublisher>
+            <siteName>confluence.company.com</siteName>
+            <attachArchivedArtifacts>false</attachArchivedArtifacts>
+            <buildIfUnstable>false</buildIfUnstable>
+            <spaceName>TEST</spaceName>
+            <pageName>Jenkins Confluence Publisher Integration Test</pageName>
+            <editors>
+                <com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor>
+                    <generator class='com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator'>
+                        <text>Jenkins Publisher Job Build Number: $BUILD_NUMBER</text>
+                    </generator>
+                </com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor>
+                <com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor>
+                    <generator class='com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator'>
+                        <text>Jenkins Publisher Job Build Number: $BUILD_NUMBER</text>
+                    </generator>
+                </com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor>
+            </editors>
+        </com.myyearbook.hudson.plugins.confluence.ConfluencePublisher>
     </publishers>
 </project>
 ```

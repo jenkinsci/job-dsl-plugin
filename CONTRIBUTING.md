@@ -17,10 +17,14 @@ We are always happy for folk to help us out on this project. Please follow these
   component.
 * Feature Implementations - Even better than a JIRA issue is an implementation. If the implementation requires design
   or architectural changes or would need refactoring, send a mail to the
-  [the group](https://groups.google.com/forum/?fromgroups#!forum/job-dsl-plugin) with a proposal. Otherwise simply fork
+  [group](https://groups.google.com/forum/?fromgroups#!forum/job-dsl-plugin) with a proposal. Otherwise simply fork
   the repo, create a branch (named after the JIRA "New Feature" you created earlier), implement it yourself and submit a
   Pull Request.
-    
+* Open a feature request for adding support for a specific plugin only if the plugin is not supported by the
+  [Automatically Generated DSL](docs/Automatically-Generated-DSL.md) and if the plugin does not implement the
+  [Job DSL Extension Point](docs/Extending-the-DSL.md). Contact the
+  [mailing list](https://groups.google.com/forum/?fromgroups#!forum/job-dsl-plugin) if uncertain.
+
 ### Bugs
 
 * Bug Reports - Create a new "Bug" issue on the
@@ -47,6 +51,8 @@ GitHub account in order to do this):
 Try to focus. It's not required to add all options for a certain plugin to get the pull request merged. In fact, it may
 even delay the merge until someone finds time to review a huge change. Only implement the options you really need and
 leave room so that the remaining options can be added when needed.
+
+If the author of a pull request does not respond to comments within 4 weeks, the pull request will be closed. 
 
 ## Our Basic Design Decisions / Conventions
 
@@ -153,12 +159,32 @@ class FooContext {
 }
 ```
 
+## Compatibility
+
+Any DSL changes should be compatible with release Job DSL Plugin versions. It is possible to introduce incompatible
+changes or remove feature, but only after a deprecation phase. See
+[Deprecation Policy](docs/Deprecation-Policy.md) for details.
+
+Commit [5f14949](https://github.com/jenkinsci/job-dsl-plugin/commit/5f14949d386314691270645eb85513254f010400) shows how
+to introduce new configuration options in a backwards-compatible way. A new DSL method must have a
+`@since 1.xy` GroovyDoc tag to indicate the version which introduces the method. And it must have a `@RequiresPlugin`
+annotation to indicate the minimum required plugin version if that version is newer than the version required by the
+parent context. New XML elements must only be generated if a matching plugin version is installed. Use
+`JobManagement#isMinimumPluginVersionInstalled(String pluginShortName, String version)` to check the installed plugin
+version. Separate tests for feature requiring a new plugin version must be added.
+
+To deprecate support for older plugin versions,
+`JobManagement#logPluginDeprecationWarning(String pluginShortName, String minimumVersion)` must be used to print a
+warning to the console log during the deprecation phase. A section on the [Migration](docs/Migration.md) page gives
+users a hint about what to expect when upgrading. See commit
+[bc64d98](https://github.com/jenkinsci/job-dsl-plugin/commit/bc64d9831c34350d36552727a5dead572d24b70e) for an example.   
+
 ## Code Style
 
 * Indentation: use 4 spaces, no tabs.
 * Use a maximum line length of 120 characters.
 * We roughly follow the [Java](http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html) and
-  [Groovy](http://groovy.codehaus.org/Groovy+style+and+language+feature+guidelines+for+Java+developers) style
+  [Groovy](http://groovy-lang.org/style-guide.html) style
   guidelines.
 * When using IntelliJ IDEA, use the default code style, but disable star imports for Java and Groovy.
 * Add a CRLF at the end of a file.

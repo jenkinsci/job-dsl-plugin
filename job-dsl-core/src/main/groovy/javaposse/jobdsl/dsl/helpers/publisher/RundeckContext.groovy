@@ -1,13 +1,19 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
 
-class RundeckContext implements Context {
+class RundeckContext extends AbstractContext {
     Map<String, String> options = [:]
     Map<String, String> nodeFilters = [:]
-    String tag = ''
+    String tag
     boolean shouldWaitForRundeckJob
     boolean shouldFailTheBuild
+    boolean includeRundeckLogs
+
+    RundeckContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Adds options for the Rundeck job to execute. Can be called multiple times to add more options.
@@ -59,5 +65,19 @@ class RundeckContext implements Context {
      */
     void shouldFailTheBuild(boolean shouldFailTheBuild = true) {
         this.shouldFailTheBuild = shouldFailTheBuild
+    }
+
+    /**
+     * If set, job execution logs from Rundeck are included in the console output. Defaults to {@code false}.
+     *
+     * This also enables waiting for Rundeck job executions to finish.
+     *
+     * @since 1.43
+     */
+    void includeRundeckLogs(boolean includeRundeckLogs = true) {
+        this.includeRundeckLogs = includeRundeckLogs
+        if (includeRundeckLogs) {
+            this.shouldWaitForRundeckJob = true
+        }
     }
 }

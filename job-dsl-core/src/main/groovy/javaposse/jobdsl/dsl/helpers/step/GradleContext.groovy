@@ -14,6 +14,7 @@ class GradleContext extends AbstractContext {
     boolean fromRootBuildScriptDir = true
     boolean makeExecutable
     boolean useWorkspaceAsHome
+    boolean passAsProperties
     String gradleName = '(Default)'
     Closure configureBlock
 
@@ -85,11 +86,20 @@ class GradleContext extends AbstractContext {
     }
 
     /**
+     * Passes job parameters as Gradle properties. Defaults to {@code false}.
+     *
+     * @since 1.49
+     */
+    @RequiresPlugin(id = 'gradle', minimumVersion = '1.25')
+    void passAsProperties(boolean passAsProperties = true) {
+        this.passAsProperties = passAsProperties
+    }
+
+    /**
      * If set, uses the workspace as {@code GRADLE_USER_HOME}. Defaults to {@code false}.
      *
      * @since 1.40
      */
-    @RequiresPlugin(id = 'gradle', minimumVersion = '1.23')
     void useWorkspaceAsHome(boolean useWorkspaceAsHome = true) {
         this.useWorkspaceAsHome  = useWorkspaceAsHome
     }
@@ -100,7 +110,7 @@ class GradleContext extends AbstractContext {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure closure) {
-        this.configureBlock = closure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
     }
 }

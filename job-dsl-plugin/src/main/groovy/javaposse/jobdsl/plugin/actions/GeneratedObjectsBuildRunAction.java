@@ -1,15 +1,19 @@
 package javaposse.jobdsl.plugin.actions;
 
-import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import jenkins.model.RunAction2;
 
 import java.util.Collection;
 
-public abstract class GeneratedObjectsBuildRunAction<T> extends GeneratedObjectsBuildAction<T> implements RunAction2 {
-    protected transient AbstractBuild owner;
+/**
+ * @deprecated use {@code javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction} instead
+ */
+@Deprecated
+@SuppressWarnings("Deprecation")
+abstract class GeneratedObjectsBuildRunAction<T> extends GeneratedObjectsBuildAction<T> implements RunAction2 {
+    transient Run owner;
 
-    public GeneratedObjectsBuildRunAction(Collection<T> modifiedObjects) {
+    GeneratedObjectsBuildRunAction(Collection<T> modifiedObjects) {
         super(modifiedObjects);
     }
 
@@ -20,8 +24,6 @@ public abstract class GeneratedObjectsBuildRunAction<T> extends GeneratedObjects
 
     @Override
     public void onAttached(Run run) {
-        if (run instanceof AbstractBuild) {
-            owner = (AbstractBuild) run;
-        }
+        owner = run;
     }
 }

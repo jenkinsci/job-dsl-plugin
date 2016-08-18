@@ -1,5 +1,7 @@
 job('example') {
     wrappers {
-        injectPasswords()
+        injectPasswords {
+            injectGlobalPasswords()
+        }
     }
 }

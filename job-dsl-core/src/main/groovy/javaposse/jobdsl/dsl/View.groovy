@@ -4,7 +4,7 @@ package javaposse.jobdsl.dsl
  * DSL element representing a Jenkins view.
  */
 abstract class View extends AbstractContext {
-    private final List<WithXmlAction> withXmlActions = []
+    private final List<Closure> configureBlocks = []
 
     String name
 
@@ -16,7 +16,7 @@ abstract class View extends AbstractContext {
      * Sets a description for the view.
      */
     void description(String description) {
-        execute {
+        configure {
             it / methodMissing('description', description)
         }
     }
@@ -25,7 +25,7 @@ abstract class View extends AbstractContext {
      * If set to {@code true}. only jobs in this view will be shown in the build queue. Defaults to {@code false}.
      */
     void filterBuildQueue(boolean filterBuildQueue = true) {
-        execute {
+        configure {
             it / methodMissing('filterQueue', filterBuildQueue)
         }
     }
@@ -35,7 +35,7 @@ abstract class View extends AbstractContext {
      * Defaults to {@code false}.
      */
     void filterExecutors(boolean filterExecutors = true) {
-        execute {
+        configure {
             it / methodMissing('filterExecutors', filterExecutors)
         }
     }
@@ -45,8 +45,8 @@ abstract class View extends AbstractContext {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure withXmlClosure) {
-        withXmlActions.add(new WithXmlAction(withXmlClosure))
+    void configure(Closure configureBlock) {
+        configureBlocks << configureBlock
     }
 
     /**
@@ -68,12 +68,12 @@ abstract class View extends AbstractContext {
 
     Node getNode() {
         Node root = new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
-
-        withXmlActions.each { it.execute(root) }
+        ContextHelper.executeConfigureBlocks(root, configureBlocks)
         root
     }
 
+    @Deprecated
     protected void execute(Closure rootClosure) {
-        withXmlActions << new WithXmlAction(rootClosure)
+        configure(rootClosure)
     }
 }

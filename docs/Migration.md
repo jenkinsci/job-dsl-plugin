@@ -1,4 +1,623 @@
+## Migrating to 1.49
+
+### ScriptLocation
+
+The `scriptLocation` property of `javaposse.jobdsl.plugin.ExecuteDslScripts` and the
+`javaposse.jobdsl.plugin.ExecuteDslScripts.ScriptLocation` class have been [[deprecated|Deprecation-Policy]] and will be
+removed. The properties of `scriptLocation` can now be set directly on `ExecuteDslScripts`.
+
+Pipeline syntax prior to 1.49
+```groovy
+node {
+    step([
+        $class: 'ExecuteDslScripts',
+        scriptLocation: [scriptText: 'job("example-2")'],
+    ])
+    step([
+        $class: 'ExecuteDslScripts',
+        scriptLocation: [
+            targets: ['jobs/projectA/*.groovy', 'jobs/common.groovy'].join('\n'),
+            ignoreMissingFiles: true
+        ]
+    ])
+}
+```
+
+Pipeline syntax since to 1.49
+```groovy
+node {
+    step([
+        $class: 'ExecuteDslScripts',
+        scriptText: 'job("example-2")'
+    ])
+    step([
+        $class: 'ExecuteDslScripts',
+        targets: ['jobs/projectA/*.groovy', 'jobs/common.groovy'].join('\n'),
+        ignoreMissingFiles: true
+    ])
+}
+```
+
+### JobManagement
+
+The return type of the `getParameters()` method in `javaposse.jobdsl.dsl.JobManagement` changed from
+`Map<String, String>` to `Map<String, Object>`.
+
+## Migrating to 1.48
+
+### Pipeline Compatibility
+
+The classes `javaposse.jobdsl.plugin.WorkspaceProtocol`, `javaposse.jobdsl.plugin.WorkspaceUrlConnection` and
+`javaposse.jobdsl.plugin.WorkspaceUrlHandler` as well as some constructors in
+`javaposse.jobdsl.plugin.JenkinsJobManagement`, `javaposse.jobdsl.plugin.ExecuteDslScripts` and
+`javaposse.jobdsl.plugin.ScriptRequestGenerator` are [[deprecated|Deprecation-Policy]] and will be removed. These
+classes are part of the internal implementation and should not affect DSL scripts.
+
+The classes `javaposse.jobdsl.plugin.actions.GeneratedObjectsBuildAction` and
+`javaposse.jobdsl.plugin.actions.GeneratedObjectsBuildRunAction` are also deprecated and will be removed. Use
+`javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction` instead.
+
+## Migrating to 1.47
+
+### Pipeline
+
+The Workflow Plugin has been renamed to [Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Pipeline+Plugin).
+New `pipelineJob` and `multibranchPipelineJob` methods have been added as replacements for `workflowJob` and
+`multibranchWorkflowJob` which are [[deprecated|Deprecation-Policy]] and will be removed.
+
+DSL prior to 1.47
+```groovy
+workflowJob('example-1') {
+    definition {
+        cps {
+            script(readFileFromWorkspace('project-a-workflow.groovy'))
+            sandbox()
+        }
+    }
+}
+
+multibranchWorkflowJob('example-2') {
+    branchSources {
+        git {
+            remote('https://github.com/jenkinsci/job-dsl-plugin.git')
+            credentialsId('github-ci')
+            includes('JENKINS-*')
+        }
+    }
+    orphanedItemStrategy {
+        discardOldItems {
+            numToKeep(20)
+        }
+    }
+}
+```
+
+DSL since 1.47
+```groovy
+pipelineJob('example-1') {
+    definition {
+        cps {
+            script(readFileFromWorkspace('project-a-workflow.groovy'))
+            sandbox()
+        }
+    }
+}
+
+multibranchPipelineJob('example-2') {
+    branchSources {
+        git {
+            remote('https://github.com/jenkinsci/job-dsl-plugin.git')
+            credentialsId('github-ci')
+            includes('JENKINS-*')
+        }
+    }
+    orphanedItemStrategy {
+        discardOldItems {
+            numToKeep(20)
+        }
+    }
+}
+```
+ 
+### GitLab
+
+Support for versions older than 1.2 of the [Gitlab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### Slack
+
+Support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin) is
+[[deprecated|Deprecation-Policy]] because it is incompatible with newer versions of that plugin. It has been replaced by
+the [[Automatically Generated DSL]].
+
+DSL prior to 1.47
+```groovy
+job('example') {
+    publishers {
+        slackNotifications {
+            projectChannel('Dev Team A')
+            notifyAborted()
+            notifyFailure()
+            notifyNotBuilt()
+            notifyUnstable()
+            notifyBackToNormal()
+        }
+    }
+}
+```
+
+DSL since 1.47
+```groovy
+job('example') {
+  publishers {
+    slackNotifier {
+      room('Dev Team A')
+      notifyAborted(true)
+      notifyFailure(true)
+      notifyNotBuilt(true)
+      notifyUnstable(true)
+      notifyBackToNormal(true)
+      notifySuccess(false)
+      notifyRepeatedFailure(false)
+      startNotification(false)
+      includeTestSummary(false)
+      includeCustomMessage(false)
+      customMessage(null)
+      buildServerUrl(null)
+      sendAs(null)
+      commitInfoChoice('NONE')
+      teamDomain(null)
+      authToken(null)
+    }
+  }
+}
+```
+
+### HipChat
+
+Support for the [HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin) is
+[[deprecated|Deprecation-Policy]] because it is incompatible with newer versions of that plugin. It has been replaced by
+the [[Automatically Generated DSL]].
+
+DSL prior to 1.47
+```groovy
+job('example') {
+    publishers {
+        hipChat {
+            rooms('Dev Team A', 'QA')
+            notifyAborted()
+            notifyNotBuilt()
+            notifyUnstable()
+            notifyFailure()
+            notifyBackToNormal()
+        }
+    }
+}
+```
+
+DSL since 1.47
+```groovy
+job('example') {
+  publishers {
+    hipChatNotifier {
+      room('Dev Team A, QA')
+      matrixTriggerMode('ONLY_PARENT')
+      startJobMessage(null)
+      completeJobMessage(null)
+      token(null)
+      notifications {
+        notificationConfig {
+          notifyEnabled(true)
+          textFormat(true)
+          notificationType('ABORTED')
+          color('GRAY')
+          messageTemplate(null)
+        }
+        notificationConfig {
+          notifyEnabled(true)
+          textFormat(true)
+          notificationType('NOT_BUILT')
+          color('GRAY')
+          messageTemplate(null)
+        }
+        notificationConfig {
+          notifyEnabled(true)
+          textFormat(true)
+          notificationType('UNSTABLE')
+          color('YELLOW')
+          messageTemplate(null)
+        }
+        notificationConfig {
+          notifyEnabled(true)
+          textFormat(true)
+          notificationType('FAILURE')
+          color('RED')
+          messageTemplate(null)
+        }
+        notificationConfig {
+          notifyEnabled(true)
+          textFormat(true)
+          notificationType('BACK_TO_NORMAL')
+          color('GREEN')
+          messageTemplate(null)
+        }
+      }
+    }
+  }
+}
+```
+
+### Run Condition
+
+The enum `javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir` is [[deprecated|Deprecation-Policy]]
+and will be removed. Use `javaposse.jobdsl.dsl.helpers.step.RunConditionContext.BaseDir` instead.
+
+## Migrating to 1.46
+
+### MultiJob
+
+The behavior of the `currentJobParameters` method in the `phaseJob` context has changed. Prior to 1.46, the method
+generated a `Current build parameters` job parameter. Since 1.46 the parameter is not generated when calling
+`currentJobParameters` and must be created explicitly.
+
+DSL prior to 1.46
+```groovy
+multiJob('example') {
+    steps {
+        phase('first') {
+            phaseJob('job-a') {
+                currentJobParameters()
+            }
+        }
+    }
+}
+```
+
+DSL since 1.46
+```groovy
+multiJob('example') {
+    steps {
+        phase('first') {
+            phaseJob('job-a') {
+                currentJobParameters()
+                parameters {
+                    currentBuild()
+                }
+            }
+        }
+    }
+}
+```
+
+## Migrating to 1.45
+
+### Docker Build and Publish
+
+Support for versions older than 1.2 of the [CloudBees Docker Build and Publish
+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Build+and+Publish+plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### DslScriptLoader
+
+The `runDslEngine` methods in `DslScriptLoader` are [[deprecated|Deprecation-Policy]] and will be removed. Use the new
+`runScripts` method instead.
+
+### EnvInject
+
+Support for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin) has changed to enable
+masking passwords and enabling / disabling global passwords injection. Global passwords injection is disabled by default
+to match the plugin's default configuration.
+
+DSL prior to 1.45
+```groovy
+job('example') {
+    wrappers {
+        injectPasswords()
+    }
+}
+```
+
+DSL since 1.45
+```groovy
+job('example') {
+    wrappers {
+        injectPasswords {
+            injectGlobalPasswords()
+        }
+    }
+}
+```
+
+### Priority Sorter
+
+Support for versions older than 3.4 of the
+[Priority Sorter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed. The top-level `priority` method is deprecated and only supports
+plugin version prior to 3.0. A new `priority` method has been added to the `properties` context which will support
+plugin versions starting from 3.4.
+
+DSL prior to 1.45
+```groovy
+job('example') {
+    priority(5)
+}
+```
+
+DSL since 1.45
+```groovy
+job('example') {
+    properties {
+        priority(5)
+    }
+}
+```
+
+### Build Node Column
+
+The [Build Node Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Node+Column+Plugin) is deprecated and
+has been replaced by the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin). DSL
+support for the Build Node Column Plugin is [[deprecated|Deprecation-Policy]] as well and will be removed. Use the Extra
+Columns Plugin instead, the DSL syntax stays the same.
+
+## Migrating to 1.44
+
+### Git
+
+DSL support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin) has been changed to reflect the
+configuration style of version 2.0 of the Git plugin.
+
+DSL prior to 1.44
+```groovy
+job('example') {
+    scm {
+        git {
+            strategy {
+                inverse()
+            }
+            mergeOptions {
+                remote('origin')
+                branch('feature')
+            }
+            createTag()
+            clean()
+            wipeOutWorkspace()
+            remotePoll(false)
+            shallowClone()
+            reference('/git/repo.git')
+            cloneTimeout(10)
+            recursiveSubmodules()
+            trackingSubmodules()
+            pruneBranches()
+            localBranch('ci')
+            relativeTargetDir('ws')
+            ignoreNotifyCommit()
+        }
+    }
+}
+```
+
+DSL since 1.44
+```groovy
+job('example') {
+    scm {
+        git {
+            extensions {
+                choosingStrategy {
+                    inverse()
+                }
+                mergeOptions {
+                    remote('origin')
+                    branch('feature')
+                }
+                perBuildTag()
+                cleanAfterCheckout()
+                wipeOutWorkspace()
+                disableRemotePoll()
+                cloneOptions {
+                    shallow()
+                    reference('/git/repo.git')
+                    timeout(10)
+                }
+                submoduleOptions {
+                    recursive()
+                    tracking()
+                }
+                pruneBranches()
+                localBranch('ci')
+                relativeTargetDirectory('ws')
+                ignoreNotifyCommit()
+            }
+        }
+    }
+}
+```
+
+### Lockable Resources
+
+Support for versions older than 1.7 of the
+[Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### IRC
+
+Support for versions older than 2.27 of the [IRC Plugin](https://wiki.jenkins-ci.org/display/JENKINS/IRC+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### JobManagement
+
+The method `JobManagement#createOrUpdateConfig(String path, String config, boolean ignoreExisting)` has been
+[[deprecated|Deprecation-Policy]] since 1.33 and has been removed. Use
+`JobManagement#createOrUpdateConfig(Item item, boolean ignoreExisting)` instead.
+
+### Moved Classes
+
+The classes `javaposse.jobdsl.dsl.helpers.WorkflowDefinitionContext` and `javaposse.jobdsl.dsl.helpers.CpsContext` have
+been moved to the `javaposse.jobdsl.dsl.helpers.workflow` package.
+
+### WithXmlAction
+
+The class `javaposse.jobdsl.dsl.WithXmlAction` is [[deprecated|Deprecation-Policy]] and will be removed. Use
+`javaposse.jobdsl.dsl.ContextHelper#executeConfigureBlock` to evaluate a configure block.
+
+### Perforce
+
+The method `p4(String viewSpec, Closure closure)` in the SCM context is [[deprecated|Deprecation-Policy]] and will be
+removed.
+
+DSL prior to 1.44
+```groovy
+job('example') {
+    scm {
+        p4('//depot/example/... //workspace/...')
+    }
+}
+```
+
+DSL since 1.44
+```groovy
+job('example') {
+    scm {
+        p4('//depot/example/... //workspace/...', 'rolem')
+    }
+}
+```
+
+## Migrating to 1.43
+
+### Extended Email
+
+The DSL support for the [Email-ext Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin) has changed to
+address several issues.
+
+DSL prior to 1.43
+```groovy
+job('example') {
+    publishers {
+        extendedEmail('me@halfempty.org', 'Oops', 'Something broken') {
+            trigger('PreBuild')
+            trigger(triggerName: 'StillUnstable', subject: 'Subject', body: 'Body', recipientList: 'RecipientList',
+                    sendToDevelopers: true, sendToRequester: true, includeCulprits: true, sendToRecipientList: false)
+            configure { node ->
+                node / contentType << 'text/html'
+            }
+        }
+    }
+}
+```
+
+DSL since 1.43
+```groovy
+job('example') {
+    publishers {
+        extendedEmail {
+            recipientList('me@halfempty.org')
+            defaultSubject('Oops')
+            defaultContent('Something broken')
+            contentType('text/html')
+            triggers {
+                beforeBuild()
+                stillUnstable {
+                    subject('Subject')
+                    content('Body')
+                    sendTo {
+                        developers()
+                        requester()
+                        culprits()
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### GitHub Pull Request Builder
+
+Built-in support for the
+[GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed. The GitHub Pull Request Builder Plugin implements the Job DSL
+extension point and provides it's own Job DSL syntax since version 1.29.7.
+
+DSL prior to 1.43
+```groovy
+job('example') {
+    triggers {
+        pullRequest {
+        }
+    }
+    publishers {
+        mergePullRequest {
+        }
+    }
+}
+```
+
+DSL since 1.43
+```groovy
+job('example') {
+    triggers {
+        githubPullRequest {
+        }
+    }
+    publishers {
+        mergeGithubPullRequest {
+        }
+    }
+}
+```
+
+### Docker Custom Build Environment
+
+Support for versions older than 1.6.2 of the [CloudBees Docker Custom Build Environment
+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### Rundeck
+
+Support for versions older than 3.4 of the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
+is [[deprecated|Deprecation-Policy]] and will be removed.
+
+### JUnit
+
+Support for versions older than 1.10 of the [JUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin)
+is [[deprecated|Deprecation-Policy]] and will be removed.
+
+### Notification
+
+Support for versions older than 1.8 of the
+[Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### JobManagement
+
+Two methods in the `JobManagement` interface, `getPluginVersion` and `getJenkinsVersion`, are
+[[deprecated|Deprecation-Policy]] and will be removed to get rid of the `org.jenkins-ci:version-number` dependency in
+`job-dsl-core`. Use `isMinimumPluginVersionInstalled` as a replacement for `getPluginVersion`.
+
+API prior to 1.43
+```groovy
+if (!jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.4.0'))) {
+}
+```
+
+API since 1.43
+```groovy
+if (jobManagement.isMinimumPluginVersionInstalled('git', '2.4.0')) {
+}
+```
+
+### ExtensibleContext
+
+The classes `ExtensibleContext` and `AbstractExtensibleContext` have been moved from the `javaposse.jobdsl.dsl.helpers`
+package to `javaposse.jobdsl.dsl`. This should not affect DSL scripts.
+
 ## Migrating to 1.42
+
+### Task Scanner
+
+Support for versions older than 4.41 of the
+[Task Scanner Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Task+Scanner+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
 
 ### PostBuildScript
 

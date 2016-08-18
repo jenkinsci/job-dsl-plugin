@@ -1,108 +1,19 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
-import javaposse.jobdsl.dsl.helpers.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.helpers.common.Threshold
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
-class TriggerContext extends AbstractExtensibleContext {
-    final List<Node> triggerNodes = []
-
+@ContextType('hudson.triggers.Trigger')
+class TriggerContext extends ItemTriggerContext {
     TriggerContext(JobManagement jobManagement, Item item) {
         super(jobManagement, item)
-    }
-
-    @Override
-    protected void addExtensionNode(Node node) {
-        triggerNodes << node
-    }
-
-    /**
-     * Adds DSL for adding and configuring the URL trigger plugin to a job.
-     *
-     * @param crontab crontab execution spec
-     * @param contextClosure closure for configuring the context
-     * @since 1.16
-     */
-    @RequiresPlugin(id = 'urltrigger')
-    void urlTrigger(String crontab = null, @DslContext(UrlTriggerContext) Closure contextClosure) {
-        UrlTriggerContext urlTriggerContext = new UrlTriggerContext(crontab)
-        ContextHelper.executeInContext(contextClosure, urlTriggerContext)
-
-        Node urlTriggerNode = new NodeBuilder().'org.jenkinsci.plugins.urltrigger.URLTrigger' {
-            spec urlTriggerContext.crontab
-            if (urlTriggerContext.label) {
-                labelRestriction true
-                triggerLabel urlTriggerContext.label
-            } else {
-                labelRestriction false
-            }
-            if (urlTriggerContext.entries) {
-                entries {
-                    urlTriggerContext.entries.each { entry ->
-                        'org.jenkinsci.plugins.urltrigger.URLTriggerEntry' {
-                            url entry.url
-                            statusCode entry.statusCode
-                            timeout entry.timeout
-                            proxyActivated entry.proxyActivated
-
-                            checkStatus entry.checks.contains(UrlTriggerEntryContext.Check.status)
-                            checkETag entry.checks.contains(UrlTriggerEntryContext.Check.etag)
-                            checkLastModificationDate entry.checks.contains(UrlTriggerEntryContext.Check.lastModified)
-
-                            if ((!entry.inspections.empty)) {
-                                inspectingContent true
-                                contentTypes {
-                                    entry.inspections.each { insp ->
-                                        "${insp.type.node}" {
-                                            if (insp.type != UrlTriggerInspectionContext.Inspection.change) {
-                                                "${insp.type.list}" {
-                                                    insp.expressions.each { p ->
-                                                        "${insp.type.entry}" {
-                                                            "${insp.type.path}"(p)
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-
-                }
-            }
-        }
-
-        // Apply their overrides
-        if (urlTriggerContext.configureClosure) {
-            WithXmlAction action = new WithXmlAction(urlTriggerContext.configureClosure)
-            action.execute(urlTriggerNode)
-        }
-
-        triggerNodes << urlTriggerNode
-    }
-
-    /**
-     * Triggers the job based on regular intervals.
-     *
-     * To configure a multi-line entry, use a single trigger string with entries separated by {@code \n}.
-     */
-    void cron(String cronString) {
-        Preconditions.checkNotNull(cronString, 'cronString must be specified')
-
-        triggerNodes << new NodeBuilder().'hudson.triggers.TimerTrigger' {
-            spec cronString
-        }
     }
 
     /**
@@ -131,44 +42,6 @@ class TriggerContext extends AbstractExtensibleContext {
     void githubPush() {
         triggerNodes << new NodeBuilder().'com.cloudbees.jenkins.GitHubPushTrigger' {
             spec ''
-        }
-    }
-
-    /**
-     * Builds pull requests from GitHub and will report the results back to the pull request.
-     *
-     * The pull request builder plugin requires a special Git SCM configuration, see the plugin documentation for
-     * details.
-     *
-     * @since 1.22
-     */
-    @RequiresPlugin(id = 'ghprb')
-    void pullRequest(@DslContext(PullRequestBuilderContext) Closure contextClosure) {
-        jobManagement.logPluginDeprecationWarning('ghprb', '1.26')
-
-        PullRequestBuilderContext pullRequestBuilderContext = new PullRequestBuilderContext(jobManagement)
-        ContextHelper.executeInContext(contextClosure, pullRequestBuilderContext)
-
-        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbTrigger' {
-            adminlist pullRequestBuilderContext.admins.join('\n')
-            whitelist pullRequestBuilderContext.userWhitelist.join('\n')
-            orgslist pullRequestBuilderContext.orgWhitelist.join('\n')
-            delegate.cron(pullRequestBuilderContext.cron)
-            spec pullRequestBuilderContext.cron
-            triggerPhrase pullRequestBuilderContext.triggerPhrase ?: ''
-            onlyTriggerPhrase pullRequestBuilderContext.onlyTriggerPhrase
-            useGitHubHooks pullRequestBuilderContext.useGitHubHooks
-            permitAll pullRequestBuilderContext.permitAll
-            autoCloseFailedPullRequests pullRequestBuilderContext.autoCloseFailedPullRequests
-            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.14'))) {
-                commentFilePath pullRequestBuilderContext.commentFilePath ?: ''
-            }
-            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.15-0'))) {
-                allowMembersOfWhitelistedOrgsAsAdmin pullRequestBuilderContext.allowMembersOfWhitelistedOrgsAsAdmin
-            }
-            if (!jobManagement.getPluginVersion('ghprb')?.isOlderThan(new VersionNumber('1.26'))) {
-                extensions(pullRequestBuilderContext.extensionContext.extensionNodes)
-            }
         }
     }
 
@@ -255,11 +128,7 @@ class TriggerContext extends AbstractExtensibleContext {
             triggerInformationAction ''
         }
 
-        // Apply their overrides
-        if (gerritContext.configureClosure) {
-            WithXmlAction action = new WithXmlAction(gerritContext.configureClosure)
-            action.execute(gerritNode)
-        }
+        ContextHelper.executeConfigureBlock(gerritNode, gerritContext.configureBlock)
 
         triggerNodes << gerritNode
     }
@@ -329,32 +198,15 @@ class TriggerContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Trigger a build with a DOS script.
-     *
-     * @since 1.42
-     */
-    @RequiresPlugin(id = 'dos-trigger', minimumVersion = '1.23')
-    void dos(String cronString, @DslContext(DosTriggerContext) Closure closure) {
-        Preconditions.checkNotNullOrEmpty(cronString, 'cronString must be specified')
-
-        DosTriggerContext context = new DosTriggerContext()
-        ContextHelper.executeInContext(closure, context)
-
-        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.dostrigger.DosTrigger' {
-            spec(cronString)
-            script(context.triggerScript ?: '')
-            nextBuildNum(0)
-        }
-    }
-
-    /**
      * Trigger that runs jobs on push notifications from GitLab.
      *
      * @since 1.42
      */
     @RequiresPlugin(id = 'gitlab-plugin', minimumVersion = '1.1.28')
     void gitlabPush(@DslContext(GitLabTriggerContext) Closure closure) {
-        GitLabTriggerContext context = new GitLabTriggerContext()
+        jobManagement.logPluginDeprecationWarning('gitlab-plugin', '1.2.0')
+
+        GitLabTriggerContext context = new GitLabTriggerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         triggerNodes << new NodeBuilder().'com.dabsquared.gitlabjenkins.GitLabPushTrigger' {
@@ -367,10 +219,49 @@ class TriggerContext extends AbstractExtensibleContext {
             addNoteOnMergeRequest(context.addNoteOnMergeRequest)
             addCiMessage(context.useCiFeatures)
             addVoteOnMergeRequest(context.addVoteOnMergeRequest)
-            allowAllBranches(context.allowAllBranches)
             includeBranchesSpec(context.includeBranches ?: '')
             excludeBranchesSpec(context.excludeBranches ?: '')
             acceptMergeRequestOnSuccess(context.acceptMergeRequestOnSuccess)
+            if (jobManagement.isMinimumPluginVersionInstalled('gitlab-plugin', '1.2.0')) {
+                branchFilterType(context.branchFilterType)
+                targetBranchRegex(context.targetBranchRegex ?: '')
+            } else {
+                allowAllBranches(context.allowAllBranches)
+            }
+        }
+    }
+
+    /**
+     * Trigger that runs jobs on build results of others jobs
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'buildresult-trigger', minimumVersion = '0.17')
+    void buildResult(String crontab, @DslContext(BuildResultTriggerContext) Closure closure) {
+        BuildResultTriggerContext context = new BuildResultTriggerContext()
+        ContextHelper.executeInContext(closure, context)
+
+        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.buildresulttrigger.BuildResultTrigger' {
+            spec(crontab ?: '')
+            combinedJobs(context.combinedJobs)
+            if (context.buildResultInfos) {
+                jobsInfo {
+                    context.buildResultInfos.each { jobsNames, buildResults ->
+                        'org.jenkinsci.plugins.buildresulttrigger.model.BuildResultTriggerInfo' {
+                            jobNames(jobsNames)
+                            if (buildResults) {
+                                checkedResults {
+                                    buildResults.each { buildResult ->
+                                        'org.jenkinsci.plugins.buildresulttrigger.model.CheckedResult' {
+                                            checked(buildResult.name())
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

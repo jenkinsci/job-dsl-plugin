@@ -1,16 +1,14 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import hudson.util.VersionNumber
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.WithXmlAction
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class GitContext extends AbstractContext {
-    private final List<WithXmlAction> withXmlActions
+    private final Item item
 
     List<Node> remoteConfigs = []
     List<String> branches = []
@@ -26,23 +24,22 @@ class GitContext extends AbstractContext {
     String localBranch
     String relativeTargetDir
     String reference = ''
-    Closure withXmlClosure
-    final GitBrowserContext gitBrowserContext = new GitBrowserContext()
-    Node mergeOptions
+    Closure configureBlock
+    final GitBrowserContext gitBrowserContext = new GitBrowserContext(jobManagement)
     Integer cloneTimeout
-    List<Node> extensions = []
+    GitExtensionContext extensionContext = new GitExtensionContext(jobManagement, item)
     final StrategyContext strategyContext = new StrategyContext(jobManagement)
 
-    GitContext(List<WithXmlAction> withXmlActions, JobManagement jobManagement) {
+    GitContext(JobManagement jobManagement, Item item) {
         super(jobManagement)
-        this.withXmlActions = withXmlActions
+        this.item = item
     }
 
     /**
      * Adds a remote. Can be repeated to add multiple remotes.
      */
     void remote(@DslContext(RemoteContext) Closure remoteClosure) {
-        RemoteContext remoteContext = new RemoteContext(withXmlActions)
+        RemoteContext remoteContext = new RemoteContext(item)
         executeInContext(remoteClosure, remoteContext)
 
         remoteConfigs << NodeBuilder.newInstance().'hudson.plugins.git.UserRemoteConfig' {
@@ -68,6 +65,7 @@ class GitContext extends AbstractContext {
      *
      * @since 1.30
      */
+    @Deprecated
     void strategy(@DslContext(StrategyContext) Closure strategyClosure) {
         executeInContext(strategyClosure, strategyContext)
     }
@@ -75,36 +73,26 @@ class GitContext extends AbstractContext {
     /**
      * Allows to perform a merge to a particular branch before building.
      */
+    @Deprecated
     void mergeOptions(String remote = null, String branch) {
-        mergeOptions {
-            delegate.remote(remote)
-            delegate.branch(branch)
+        extensions {
+            delegate.mergeOptions {
+                delegate.remote(remote)
+                delegate.branch(branch)
+            }
         }
     }
 
     /**
      * Allows to perform a merge to a particular branch before building.
-     * When Git Plugin version 2.0 or later is used, this can be called multiple times to merge more than one branch.
+     * Can be called multiple times to merge more than one branch.
      *
      * @since 1.37
      */
+    @Deprecated
     void mergeOptions(@DslContext(GitMergeOptionsContext) Closure gitMergeOptionsClosure) {
-        GitMergeOptionsContext gitMergeOptionsContext = new GitMergeOptionsContext(jobManagement)
-        executeInContext(gitMergeOptionsClosure, gitMergeOptionsContext)
-
-        if (jobManagement.getPluginVersion('git')?.isOlderThan(new VersionNumber('2.0.0'))) {
-            mergeOptions = NodeBuilder.newInstance().'userMergeOptions' {
-                mergeRemote(gitMergeOptionsContext.remote ?: '')
-                mergeTarget(gitMergeOptionsContext.branch)
-            }
-        } else {
-            extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.PreBuildMerge' {
-                options {
-                    mergeRemote(gitMergeOptionsContext.remote ?: '')
-                    mergeTarget(gitMergeOptionsContext.branch)
-                    mergeStrategy(gitMergeOptionsContext.strategy)
-                }
-            }
+        extensions {
+            delegate.mergeOptions(gitMergeOptionsClosure)
         }
     }
 
@@ -126,14 +114,16 @@ class GitContext extends AbstractContext {
      * Create a tag in the workspace for every build to unambiguously mark the commit that was built.
      * Defaults to {@code false}.
      */
+    @Deprecated
     void createTag(boolean createTag = true) {
         this.createTag = createTag
     }
 
     /**
-     * Clean up the workspace before every checkout by deleting all untracked files and directories, including those
+     * Clean up the workspace after every checkout by deleting all untracked files and directories, including those
      * which are specified in {@code .gitignore}. Defaults to {@code false}.
      */
+    @Deprecated
     void clean(boolean clean = true) {
         this.clean = clean
     }
@@ -142,6 +132,7 @@ class GitContext extends AbstractContext {
      * Delete the contents of the workspace before building, ensuring a fully fresh workspace.
      * Defaults to {@code false}.
      */
+    @Deprecated
     void wipeOutWorkspace(boolean wipeOutWorkspace = true) {
         this.wipeOutWorkspace = wipeOutWorkspace
     }
@@ -150,6 +141,7 @@ class GitContext extends AbstractContext {
      * Uses {@code git ls-remote} polling mechanism to compare the latest built commit SHA with the remote branch
      * without cloning a local copy of the repo. Defaults to {@code false}.
      */
+    @Deprecated
     void remotePoll(boolean remotePoll = true) {
         this.remotePoll = remotePoll
     }
@@ -157,6 +149,7 @@ class GitContext extends AbstractContext {
     /**
      * Perform shallow clone, so that git will not download history of the project. Defaults to {@code false}.
      */
+    @Deprecated
     void shallowClone(boolean shallowClone = true) {
         this.shallowClone = shallowClone
     }
@@ -166,6 +159,7 @@ class GitContext extends AbstractContext {
      *
      * @since 1.33
      */
+    @Deprecated
     void recursiveSubmodules(boolean recursive = true) {
         this.recursiveSubmodules = recursive
     }
@@ -175,7 +169,7 @@ class GitContext extends AbstractContext {
      *
      * @since 1.40
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.2.0')
+    @Deprecated
     void trackingSubmodules(boolean tracking = true) {
         this.trackingSubmodules = tracking
     }
@@ -183,6 +177,7 @@ class GitContext extends AbstractContext {
     /**
      * Prunes obsolete local branches. Defaults to {@code false}.
      */
+    @Deprecated
     void pruneBranches(boolean pruneBranches = true) {
         this.pruneBranches = pruneBranches
     }
@@ -191,6 +186,7 @@ class GitContext extends AbstractContext {
      * If given, checkout the revision to build as HEAD on this branch.
      * @since 1.25
      */
+    @Deprecated
     void localBranch(String localBranch) {
         this.localBranch = localBranch
     }
@@ -198,6 +194,7 @@ class GitContext extends AbstractContext {
     /**
      * Specify a local directory (relative to the workspace root) where the Git repository will be checked out.
      */
+    @Deprecated
     void relativeTargetDir(String relativeTargetDir) {
         this.relativeTargetDir = relativeTargetDir
     }
@@ -205,6 +202,7 @@ class GitContext extends AbstractContext {
     /**
      * Specify a folder containing a repository that will be used by Git as a reference during clone operations.
      */
+    @Deprecated
     void reference(String reference) {
         this.reference = reference
     }
@@ -214,7 +212,7 @@ class GitContext extends AbstractContext {
      *
      * @since 1.28
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.0.0')
+    @Deprecated
     void cloneTimeout(int cloneTimeout) {
         this.cloneTimeout = cloneTimeout
     }
@@ -233,6 +231,7 @@ class GitContext extends AbstractContext {
      *
      * @since 1.33
      */
+    @Deprecated
     void ignoreNotifyCommit(boolean ignoreNotifyCommit = true) {
         this.ignoreNotifyCommit = ignoreNotifyCommit
     }
@@ -242,7 +241,16 @@ class GitContext extends AbstractContext {
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
-    void configure(Closure withXmlClosure) {
-        this.withXmlClosure = withXmlClosure
+    void configure(Closure configureBlock) {
+        this.configureBlock = configureBlock
+    }
+
+    /**
+     * Adds additional behaviors.
+     *
+     * @since 1.44
+     */
+    void extensions(@DslContext(GitExtensionContext) Closure closure) {
+        executeInContext(closure, extensionContext)
     }
 }

@@ -16,22 +16,24 @@ class ScriptRequest {
     // Ignore existing jobs
     final boolean ignoreExisting
 
-    ScriptRequest(String location, String body, URL urlRoot) {
-        this(location, body, [urlRoot] as URL[])
+    // Path to the script in the local filesystem, optional
+    final String scriptPath
+
+    ScriptRequest(String body) {
+        this(null, body, new File('.').toURI().toURL())
     }
 
-    ScriptRequest(String location, String body, URL[] urlRoots) {
-        this(location, body, urlRoots, false)
+    ScriptRequest(String location, String body, URL urlRoot, boolean ignoreExisting = false,
+                  String scriptPath = null) {
+        this(location, body, [urlRoot] as URL[], ignoreExisting, scriptPath)
     }
 
-    ScriptRequest(String location, String body, URL urlRoot, boolean ignoreExisting) {
-        this(location, body, [urlRoot] as URL[], ignoreExisting)
-    }
-
-    ScriptRequest(String location, String body, URL[] urlRoots, boolean ignoreExisting) {
+    ScriptRequest(String location, String body, URL[] urlRoots, boolean ignoreExisting = false,
+                  String scriptPath = null) {
         this.location = location
         this.body = body
         this.urlRoots = urlRoots
         this.ignoreExisting = ignoreExisting
+        this.scriptPath = scriptPath
     }
 }

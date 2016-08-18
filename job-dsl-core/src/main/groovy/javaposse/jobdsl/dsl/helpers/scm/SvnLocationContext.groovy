@@ -2,12 +2,12 @@ package javaposse.jobdsl.dsl.helpers.scm
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class SvnLocationContext extends AbstractContext {
     String directory = '.'
     String credentials
     SvnDepth depth = SvnDepth.INFINITY
+    boolean ignoreExternals
 
     SvnLocationContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -23,7 +23,6 @@ class SvnLocationContext extends AbstractContext {
     /**
      * Sets credentials for authentication with the remote server.
      */
-    @RequiresPlugin(id = 'subversion', minimumVersion = '2.0')
     void credentials(String credentials) {
         this.credentials = credentials
     }
@@ -33,5 +32,14 @@ class SvnLocationContext extends AbstractContext {
      */
     void depth(SvnDepth depth) {
         this.depth = depth
+    }
+
+    /**
+     * If set, disables externals definition processing.
+     *
+     * @since 1.48
+     */
+    void ignoreExternals(boolean ignoreExternals = true) {
+        this.ignoreExternals = ignoreExternals
     }
 }

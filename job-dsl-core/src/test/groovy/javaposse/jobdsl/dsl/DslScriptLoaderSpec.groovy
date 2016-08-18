@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -9,6 +10,7 @@ class DslScriptLoaderSpec extends Specification {
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream()
     private final PrintStream ps = new PrintStream(baos)
     private final MemoryJobManagement jm = new MemoryJobManagement(ps)
+    private DslScriptLoader dslScriptLoader = new DslScriptLoader(jm)
 
     @Ignore
     def getContent() {
@@ -44,7 +46,7 @@ class DslScriptLoaderSpec extends Specification {
         ScriptRequest request = new ScriptRequest('simple.dsl', null, resourcesDir, false)
 
         when:
-        def jobs = DslScriptLoader.runDslEngine(request, jm).jobs
+        def jobs = dslScriptLoader.runScripts([request]).jobs
 
         then:
         jobs != null
@@ -52,12 +54,37 @@ class DslScriptLoaderSpec extends Specification {
         jobs.iterator().next().jobName == 'test'
     }
 
+    def 'run engine for single script'() {
+        when:
+        def jobs = dslScriptLoader.runScript(new URL(resourcesDir, 'simple.dsl').text).jobs
+
+        then:
+        jobs != null
+        jobs.size() == 1
+        jobs.iterator().next().jobName == 'test'
+    }
+
+    def 'run engine with multiple scripts'() {
+        setup:
+        ScriptRequest request1 = new ScriptRequest('simple.dsl', null, resourcesDir, false)
+        ScriptRequest request2 = new ScriptRequest('simple2.dsl', null, resourcesDir, false)
+
+        when:
+        def jobs = dslScriptLoader.runScripts([request1, request2]).jobs
+
+        then:
+        jobs != null
+        jobs.size() == 2
+        jobs.find { it.jobName == 'test' }
+        jobs.find { it.jobName == 'test2' }
+    }
+
     def 'run engine with reference to other class'() {
         setup:
         ScriptRequest request = new ScriptRequest('caller.dsl', null, resourcesDir, false)
 
         when:
-        def jobs = DslScriptLoader.runDslEngine(request, jm).jobs
+        def jobs = dslScriptLoader.runScripts([request]).jobs
 
         then:
         jobs != null
@@ -77,7 +104,7 @@ job('project-b') {
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
-        GeneratedItems generatedItems = DslScriptLoader.runDslEngine(request, jm)
+        GeneratedItems generatedItems = dslScriptLoader.runScripts([request])
 
         then:
         generatedItems != null
@@ -100,10 +127,11 @@ job('project-b') {
 '''
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
         MemoryJobManagement jm = Spy(MemoryJobManagement)
+        dslScriptLoader = new DslScriptLoader(jm)
         jm.availableFiles['4-project'] = ''
 
         when:
-        DslScriptLoader.runDslEngine(request, jm)
+        dslScriptLoader.runScripts([request])
 
         then:
         1 * jm.renameJobMatching(/\d-project/, '5-project')
@@ -120,7 +148,7 @@ Callee.makeJob(this, 'test2')
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
-        def jobs = DslScriptLoader.runDslEngine(request, jm).jobs
+        def jobs = dslScriptLoader.runScripts([request]).jobs
 
         then:
         jobs != null
@@ -140,7 +168,7 @@ queue 'JobB'
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine(request, jm)
+        dslScriptLoader.runScripts([request])
 
         then:
         jm.scheduledJobs.size() == 2
@@ -163,7 +191,7 @@ println content
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine(request, sm)
+        new DslScriptLoader(sm).runScripts([request])
 
         then:
         noExceptionThrown()
@@ -182,7 +210,7 @@ readFileFromWorkspace('bar.txt')
         ScriptRequest request = new ScriptRequest(null, scriptStr, resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine(request, sm)
+        new DslScriptLoader(sm).runScripts([request])
 
         then:
         thrown(IOException)
@@ -197,7 +225,7 @@ listView('view-b') {
 '''
 
         when:
-        def views = DslScriptLoader.runDslEngine(scriptStr, jm).views
+        def views = new DslScriptLoader(jm).runScripts([new ScriptRequest(scriptStr)]).views
 
         then:
         views.size() == 2
@@ -214,7 +242,7 @@ folder('folder-b') {
 '''
 
         when:
-        def jobs = DslScriptLoader.runDslEngine(scriptStr, jm).jobs
+        def jobs = new DslScriptLoader(jm).runScripts([new ScriptRequest(scriptStr)]).jobs
 
         then:
         jobs.size() == 2
@@ -222,17 +250,51 @@ folder('folder-b') {
         jobs.any { it.jobName == 'folder-b' }
     }
 
+    def 'JENKINS-32941'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('JENKINS_32941.groovy', null, resourcesDir, false)
+
+        when:
+        dslScriptLoader.runScripts([request])
+
+        then:
+        XMLUnit.compareXML(getClass().getResource('/JENKINS_32941.xml').text, jm.savedConfigs['example']).similar()
+    }
+
     def 'script name which is not a valid class name'() {
         setup:
         ScriptRequest request = new ScriptRequest('test-script.dsl', null, resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine(request, jm)
+        dslScriptLoader.runScripts([request])
+
+        then:
+        Exception e = thrown(DslException)
+        e.message =~ /invalid script name/
+        e.message =~ /test-script\.dsl/
+    }
+
+    def 'JENKINS-32628 script name which collides with package name'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('java.dsl', null, resourcesDir, false)
+
+        when:
+        dslScriptLoader.runScripts([request])
+
+        then:
+        content =~ /identical to a package name/
+        content =~ /java\.dsl/
+    }
+
+    def 'script in directory'() {
+        setup:
+        ScriptRequest request = new ScriptRequest('foo/test.dsl', null, resourcesDir, false)
+
+        when:
+        dslScriptLoader.runScripts([request])
 
         then:
         noExceptionThrown()
-        baos.toString() =~ /support for arbitrary names is deprecated/
-        baos.toString() =~ /test-script\.dsl/
     }
 
     def 'script with method'() {
@@ -242,7 +304,7 @@ folder('folder-b') {
         )
 
         when:
-        DslScriptLoader.runDslEngine(request, jm)
+        dslScriptLoader.runScripts([request])
 
         then:
         noExceptionThrown()
@@ -253,7 +315,7 @@ folder('folder-b') {
         ScriptRequest request = new ScriptRequest('configfiles.dsl', null, resourcesDir, false)
 
         when:
-        List<GeneratedConfigFile> files = DslScriptLoader.runDslEngine(request, jm).configFiles.toList()
+        List<GeneratedConfigFile> files = dslScriptLoader.runScripts([request]).configFiles.toList()
 
         then:
         files.size() == 1
@@ -265,7 +327,7 @@ folder('folder-b') {
         ScriptRequest request = new ScriptRequest('userContent.dsl', null, resourcesDir, false)
 
         when:
-        List<GeneratedUserContent> userContents = DslScriptLoader.runDslEngine(request, jm).userContents.toList()
+        List<GeneratedUserContent> userContents = dslScriptLoader.runScripts([request]).userContents.toList()
 
         then:
         userContents.size() == 1
@@ -284,7 +346,7 @@ folder('folder-b') {
         ScriptRequest request = new ScriptRequest(null, script, resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine request, jm
+        new DslScriptLoader(jm).runScripts([request])
 
         then:
         thrown UnsupportedOperationException
@@ -295,7 +357,7 @@ folder('folder-b') {
         ScriptRequest request = new ScriptRequest(null, 'import foo.bar', resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine(request, jm)
+        dslScriptLoader.runScripts([request])
 
         then:
         thrown(DslException)
@@ -306,7 +368,7 @@ folder('folder-b') {
         ScriptRequest request = new ScriptRequest(null, 'foo("bar")', resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine(request, jm)
+        dslScriptLoader.runScripts([request])
 
         then:
         Exception e = thrown(DslScriptException)
@@ -318,7 +380,7 @@ folder('folder-b') {
         ScriptRequest request = new ScriptRequest(null, 'job("foo").bar = 1', resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine(request, jm)
+        dslScriptLoader.runScripts([request])
 
         then:
         Exception e = thrown(DslScriptException)
@@ -336,10 +398,22 @@ job('foo') {
         ScriptRequest request = new ScriptRequest(null, script, resourcesDir, false)
 
         when:
-        DslScriptLoader.runDslEngine(request, jm)
+        dslScriptLoader.runScripts([request])
 
         then:
         Exception e = thrown(DslScriptException)
         e.message == '(script, line 4) Can only use "using" once'
+    }
+
+    def '__FILE__ is set'() {
+        setup:
+        def scriptPath = new File(new URL(resourcesDir, 'file.dsl').toURI()).absolutePath
+        ScriptRequest request = new ScriptRequest('file.dsl', null, resourcesDir, false, scriptPath)
+
+        when:
+        dslScriptLoader.runScripts([request])
+
+        then:
+        content.contains("Script: ${ scriptPath}")
     }
 }
