@@ -1119,6 +1119,271 @@ class StepContextSpec extends Specification {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def 'call copyS3Artifacts selector variants'() {
+        when:
+        context.copyS3Artifacts('upstream') {
+            buildSelector {
+                latestSuccessful()
+            }
+        }
+
+        then:
+        Node selectorNode = context.stepNodes[0].selector[0]
+        selectorNode.attribute('class') == 'hudson.plugins.copyartifact.StatusBuildSelector'
+        selectorNode.children().size() == 0
+
+        when:
+        context.copyS3Artifacts('upstream') {
+            buildSelector {
+                latestSaved()
+            }
+        }
+
+        then:
+        def selectorNode2 = context.stepNodes[1].selector[0]
+        selectorNode2.attribute('class') == 'hudson.plugins.copyartifact.SavedBuildSelector'
+        selectorNode2.children().size() == 0
+
+        when:
+        context.copyS3Artifacts('upstream') {
+            buildSelector {
+                permalink('lastBuild')
+            }
+        }
+
+        then:
+        def selectorNode3 = context.stepNodes[2].selector[0]
+        selectorNode3.attribute('class') == 'hudson.plugins.copyartifact.PermalinkBuildSelector'
+        selectorNode3.id[0].value() == 'lastBuild'
+
+        when:
+        context.copyS3Artifacts('upstream') {
+            buildSelector {
+                buildNumber(43)
+            }
+        }
+
+        then:
+        def selectorNode4 = context.stepNodes[3].selector[0]
+        selectorNode4.attribute('class') == 'hudson.plugins.copyartifact.SpecificBuildSelector'
+        selectorNode4.buildNumber[0].value() == '43'
+
+        when:
+        context.copyS3Artifacts('upstream') {
+            buildSelector {
+                workspace()
+            }
+        }
+
+        then:
+        def selectorNode5 = context.stepNodes[4].selector[0]
+        selectorNode5.attribute('class') == 'hudson.plugins.copyartifact.WorkspaceSelector'
+        selectorNode5.children().size() == 0
+
+        when:
+        context.copyS3Artifacts('upstream') {
+            buildSelector {
+                buildParameter('BUILD_PARAM')
+            }
+        }
+
+        then:
+        def selectorNode6 = context.stepNodes[5].selector[0]
+        selectorNode6.attribute('class') == 'hudson.plugins.copyartifact.ParameterizedBuildSelector'
+        selectorNode6.parameterName[0].value() == 'BUILD_PARAM'
+
+        when:
+        context.copyS3Artifacts('upstream') {
+            buildSelector {
+                buildNumber('$SOME_PARAMTER')
+            }
+        }
+
+        then:
+        def selectorNode7 = context.stepNodes[6].selector[0]
+        selectorNode7.attribute('class') == 'hudson.plugins.copyartifact.SpecificBuildSelector'
+        selectorNode7.buildNumber[0].value() == '$SOME_PARAMTER'
+
+        when:
+        context.copyS3Artifacts('upstream') {
+            buildSelector {
+                latestSuccessful(true)
+            }
+        }
+
+        then:
+        Node selectorNode8 = context.stepNodes[7].selector[0]
+        selectorNode8.attribute('class') == 'hudson.plugins.copyartifact.StatusBuildSelector'
+        selectorNode8.children().size() == 1
+        selectorNode8.stable[0].value() == true
+
+        when:
+        context.copyS3Artifacts('upstream') {
+            buildSelector {
+                multiJobBuild()
+            }
+        }
+
+        then:
+        Node selectorNode9 = context.stepNodes[8].selector[0]
+        selectorNode9.attribute('class') == 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector'
+        selectorNode9.children().size() == 0
+        1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.17')
+    }
+
+    def 'call minimal copyS3Artifacts'() {
+        when:
+        context.copyS3Artifacts('upstream')
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.s3.S3CopyArtifact'
+            children().size() == 4
+            projectName[0].value() == 'upstream'
+            filter[0].value() == ''
+            target[0].value() == ''
+            with(selector[0]) {
+                attribute('class') == 'hudson.plugins.copyartifact.StatusBuildSelector'
+                children().size() == 0
+            }
+        }
+    }
+
+    def 'call copyS3Artifacts all options'() {
+        when:
+        context.copyS3Artifacts('upstream') {
+            includePatterns('*.xml', '*.txt')
+            excludePatterns('foo.xml', 'foo.txt')
+            targetDirectory('target/')
+            flatten()
+            optional()
+            buildSelector {
+                upstreamBuild(true)
+            }
+        }
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.s3.S3CopyArtifact'
+            children().size() == 7
+            projectName[0].value() == 'upstream'
+            filter[0].value() == '*.xml, *.txt'
+            excludeFilter[0].value() == 'foo.xml, foo.txt'
+            flatten[0].value() == true
+            optional[0].value() == true
+            target[0].value() == 'target/'
+            with(selector[0]) {
+                children().size() == 1
+                attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
+                fallbackToLastSuccessful[0].value() == true
+            }
+        }
+    }
+
+    def 'call copyS3Artifacts with upstreamBuild closure'() {
+        when:
+        context.copyS3Artifacts('upstream') {
+            buildSelector {
+                upstreamBuild {
+                    fallbackToLastSuccessful()
+                    allowUpstreamDependencies()
+                }
+            }
+        }
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.s3.S3CopyArtifact'
+            children().size() == 4
+            projectName[0].value() == 'upstream'
+            filter[0].value() == ''
+            target[0].value() == ''
+            with(selector[0]) {
+                children().size() == 2
+                attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
+                fallbackToLastSuccessful[0].value() == true
+                allowUpstreamDependencies[0].value() == true
+            }
+        }
+    }
+
+    def 'call copyS3Artifacts all options no fingerprint'() {
+        when:
+        context.copyS3Artifacts('upstream') {
+            includePatterns('*.xml', '*.txt')
+            excludePatterns('foo.xml', 'foo.txt')
+            targetDirectory('target/')
+            flatten()
+            optional()
+            buildSelector {
+                upstreamBuild(true)
+            }
+        }
+
+        then:
+        1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.s3.S3CopyArtifact'
+            children().size() == 7
+            projectName[0].value() == 'upstream'
+            filter[0].value() == '*.xml, *.txt'
+            excludeFilter[0].value() == 'foo.xml, foo.txt'
+            flatten[0].value() == true
+            optional[0].value() == true
+            target[0].value() == 'target/'
+            with(selector[0]) {
+                children().size() == 1
+                attribute('class') == 'hudson.plugins.copyartifact.TriggeredBuildSelector'
+                fallbackToLastSuccessful[0].value() == true
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     def 'call resolveArtifacts with minimal arguments'() {
         when:
         context.resolveArtifacts {

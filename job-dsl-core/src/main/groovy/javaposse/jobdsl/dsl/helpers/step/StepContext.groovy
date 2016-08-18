@@ -536,6 +536,35 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Copies artifacts from another project.
+     *
+     * @since 1.51
+     */
+    @RequiresPlugin(id = 's3', minimumVersion = '0.7')
+    void copyS3Artifacts(String jobName, @DslContext(CopyS3ArtifactContext) Closure copyS3ArtifactClosure = null) {
+        CopyS3ArtifactContext copyS3ArtifactContext = new CopyS3ArtifactContext(jobManagement)
+        ContextHelper.executeInContext(copyS3ArtifactClosure, copyS3ArtifactContext)
+
+        Node copyS3ArtifactNode = new NodeBuilder().'hudson.plugins.s3.S3CopyArtifact' {
+            projectName(jobName)
+            filter(copyS3ArtifactContext.includePatterns.join(', '))
+            target(copyS3ArtifactContext.targetDirectory ?: '')
+            if (copyS3ArtifactContext.excludePatterns) {
+                excludeFilter(copyS3ArtifactContext.excludePatterns.join(', '))
+            }
+            if (copyS3ArtifactContext.flatten) {
+                flatten(true)
+            }
+            if (copyS3ArtifactContext.optional) {
+                optional(true)
+            }
+        }
+        copyS3ArtifactNode.append(copyS3ArtifactContext.selectorContext.selector)
+        stepNodes << copyS3ArtifactNode
+    }
+
+
+    /**
      * Resolves artifacts from a Maven repository.
      *
      * @since 1.29
