@@ -1105,7 +1105,7 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('copyartifact', '1.31')
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.copyartifact.CopyArtifact'
-            children().size() == 9
+            children().size() == 8
             project[0].value() == 'upstream'
             filter[0].value() == '*.xml, *.txt'
             excludes[0].value() == 'foo.xml, foo.txt'
@@ -1120,23 +1120,6 @@ class StepContextSpec extends Specification {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     def 'call copyS3Artifacts selector variants'() {
         when:
@@ -1360,31 +1343,6 @@ class StepContextSpec extends Specification {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     def 'call resolveArtifacts with minimal arguments'() {
         when:
@@ -3665,7 +3623,7 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.0')
         1 * jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
         3 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.2')
-        1 * jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
+//        1 * jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
     }
 
     def 'call artifactDeployer with no options'() {
