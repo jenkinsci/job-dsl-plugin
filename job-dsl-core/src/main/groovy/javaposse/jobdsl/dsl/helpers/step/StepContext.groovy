@@ -523,9 +523,40 @@ class StepContext extends AbstractExtensibleContext {
                 parameters(copyArtifactContext.parameterFilters.join(', '))
             }
         }
+            }
+        }
         copyArtifactNode.append(copyArtifactContext.selectorContext.selector)
         stepNodes << copyArtifactNode
     }
+
+    /**
+     * Copies artifacts from another project.
+     *
+     * @since 1.51
+     */
+    @RequiresPlugin(id = 's3', minimumVersion = '0.7')
+    void copyS3Artifacts(String jobName, @DslContext(CopyS3ArtifactContext) Closure copyS3ArtifactClosure = null) {
+        CopyS3ArtifactContext copyS3ArtifactContext = new CopyS3ArtifactContext(jobManagement)
+        ContextHelper.executeInContext(copyS3ArtifactClosure, copyS3ArtifactContext)
+
+        Node copyS3ArtifactNode = new NodeBuilder().'hudson.plugins.s3.S3CopyArtifact' {
+            projectName(jobName)
+            filter(copyS3ArtifactContext.includePatterns.join(', '))
+            target(copyS3ArtifactContext.targetDirectory ?: '')
+            if (copyS3ArtifactContext.excludePatterns) {
+                excludeFilter(copyS3ArtifactContext.excludePatterns.join(', '))
+            }
+            if (copyS3ArtifactContext.flatten) {
+                flatten(true)
+            }
+            if (copyS3ArtifactContext.optional) {
+                optional(true)
+            }
+        }
+        copyS3ArtifactNode.append(copyS3ArtifactContext.selectorContext.selector)
+        stepNodes << copyS3ArtifactNode
+    }
+
 
     /**
      * Resolves artifacts from a Maven repository.
@@ -1016,6 +1047,9 @@ class StepContext extends AbstractExtensibleContext {
             }
         }
     }
+            }
+        }
+    }
 
     /**
      * Deploys artifacts from the build workspace to remote locations.
@@ -1100,6 +1134,162 @@ class StepContext extends AbstractExtensibleContext {
             nantBuildFile(context.buildFile ?: '')
             if (context.props) {
                 properties(context.props.join('\n'))
+            }
+        }
+    }
+
+    /**
+     * Lints JavaScript files.
+     *
+     * @since 1.42
+     */
+    @RequiresPlugin(id = 'jslint', minimumVersion = '0.8.2')
+    void jsLint(@DslContext(JSLintContext) Closure closure = null) {
+        JSLintContext context = new JSLintContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'com.boxuk.jenkins.jslint.JSLintBuilder' {
+            includePattern(context.includePattern ?: '')
+            excludePattern(context.excludePattern ?: '')
+            logfile(context.logFile ?: '')
+            arguments(context.arguments ?: '')
+        }
+    }
+
+    /**
+     * Performs a JIRA workflow action for every issue that matches the JQL query.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'jira', minimumVersion = '1.39')
+    void progressJiraIssues(@DslContext(ProgressJiraIssuesContext) Closure closure) {
+        ProgressJiraIssuesContext context = new ProgressJiraIssuesContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'hudson.plugins.jira.JiraIssueUpdateBuilder' {
+            jqlSearch(context.jqlSearch ?: '')
+            workflowActionName(context.workflowActionName ?: '')
+            comment(context.comment ?: '')
+        }
+    }
+
+    /**
+     * Extracts JIRA information for the build to environment variables.
+     *
+     * @since 1.46
+    */
+    @RequiresPlugin(id = 'jira', minimumVersion = '2.2')
+    void extractJiraEnvironmentVariables() {
+        stepNodes << new NodeBuilder().'hudson.plugins.jira.JiraEnvironmentVariableBuilder'()
+    }
+
+    /**
+     * Invokes a CMake build script.
+     *
+     * @since 1.45
+     */
+    @RequiresPlugin(id = 'cmakebuilder', minimumVersion = '2.4.1')
+    void cmake(@DslContext(CMakeContext) Closure closure) {
+        CMakeContext context = new CMakeContext()
+        ContextHelper.executeInContext(closure, context)
+
+        Node cmakeNode = new NodeBuilder().'hudson.plugins.cmake.CmakeBuilder' {
+            installationName(context.cmakeName ?: '')
+            generator(context.generator)
+            cleanBuild(context.cleanBuild)
+
+            if (context.sourceDir) {
+                sourceDir(context.sourceDir ?: '')
+            }
+            if (context.buildDir) {
+                workingDir(context.buildDir ?: '')
+            }
+            if (context.buildType) {
+                buildType(context.buildType ?: '')
+            }
+            if (context.preloadScript) {
+                preloadScript(context.preloadScript ?: '')
+            }
+            if (context.args) {
+                toolArgs(context.args.join('\n'))
+            }
+            if (context.buildToolStepNodes) {
+                toolSteps(context.buildToolStepNodes)
+            }
+        }
+
+        stepNodes << cmakeNode
+    }
+
+    /**
+     * Exports runtime parameters into a properties file.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'job-exporter', minimumVersion = '0.4')
+    void exportRuntimeParameters() {
+        stepNodes << new NodeBuilder().'com.meyling.hudson.plugin.job__exporter.ExporterBuilder'()
+    }
+
+    /**
+     * Runs a Jython script.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'jython', minimumVersion = '1.9')
+    void jython(String command) {
+        stepNodes << new NodeBuilder().'org.jvnet.hudson.plugins.Jython' {
+            delegate.command(command)
+        }
+    }
+
+    /**
+     * Invokes a MSBuild build script.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'msbuild', minimumVersion = '1.25')
+    void msBuild(@DslContext(MSBuildContext) Closure closure) {
+        MSBuildContext context = new MSBuildContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'hudson.plugins.msbuild.MsBuildBuilder' {
+            msBuildName(context.msBuildName ?: '')
+            cmdLineArgs(context.args.join(' '))
+            msBuildFile(context.buildFile ?: '')
+            buildVariablesAsProperties(context.passBuildVariables)
+            continueOnBuildFailure(context.continueOnBuildFailure)
+            unstableIfWarnings(context.unstableIfWarnings)
+        }
+    }
+
+    /**
+     * Invokes a Phing build script.
+     *
+     * @since 1.46
+     */
+    @RequiresPlugin(id = 'phing', minimumVersion = '0.13.3')
+    void phing(@DslContext(PhingContext) Closure closure) {
+        PhingContext context = new PhingContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'hudson.plugins.phing.PhingBuilder' {
+            name(context.phingName ?: '')
+            useModuleRoot(context.useModuleRoot)
+            if (context.buildFile) {
+                buildFile(context.buildFile)
+            }
+            if (context.targets) {
+                targets(context.targets.join('\n'))
+            }
+            if (context.properties) {
+                properties(context.properties.collect { k, v -> "$k=$v" }.join('\n'))
+            }
+            if (context.options) {
+                options(context.options.join('\n'))
             }
         }
     }
