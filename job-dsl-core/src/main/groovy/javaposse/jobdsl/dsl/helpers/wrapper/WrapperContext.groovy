@@ -87,8 +87,7 @@ class WrapperContext extends AbstractExtensibleContext {
         Preconditions.checkArgument(rubySpecification as Boolean, 'Please specify at least the ruby version')
 
         wrapperNodes << new NodeBuilder().'ruby-proxy-object' {
-            'ruby-object'('ruby-class': 'Jenkins::Plugin::Proxies::BuildWrapper', pluginid: 'rvm') {
-
+            'ruby-object'('ruby-class': 'Jenkins::Tasks::BuildWrapperProxy', pluginid: 'rvm') {
                 pluginid('rvm', [pluginid: 'rvm', 'ruby-class': 'String'])
                 object('ruby-class': 'RvmWrapper', pluginid: 'rvm') {
                     impl(rubySpecification, [pluginid: 'rvm', 'ruby-class': 'String'])
