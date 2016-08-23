@@ -27,6 +27,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.51 (unreleased)
+ * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
+   ([JENKINS-37620](https://issues.jenkins-ci.org/browse/JENKINS-37620))
 * 1.50 (August 17 2016)
  * Fixed regression when updating views
    ([JENKINS-37450](https://issues.jenkins-ci.org/browse/JENKINS-37450))
