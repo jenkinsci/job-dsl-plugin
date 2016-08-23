@@ -1058,7 +1058,6 @@ class StepContextSpec extends Specification {
         }
     }
 
-
     def 'call copyArtifacts with downstreamBuild'() {
         when:
         context.copyArtifacts('upstream') {
