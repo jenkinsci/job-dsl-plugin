@@ -53,6 +53,19 @@ class CopyArtifactSelectorContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Selects a specific build of a downstream project given a upstream project and build number
+     *
+     * @since 1.51
+     */
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.32')
+    void downstreamBuildOf(String upstreamProjectName, String upstreamBuildNumber) {
+        createSelectorNode('DownstreamBuild') {
+            delegate.upstreamProjectName(upstreamProjectName)
+            delegate.upstreamBuildNumber(upstreamBuildNumber)
+        }
+    }
+
+    /**
      * Selects the latest successful build. This is the default selector.
      */
     void latestSuccessful(boolean stable = false) {

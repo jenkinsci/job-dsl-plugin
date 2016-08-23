@@ -1058,6 +1058,32 @@ class StepContextSpec extends Specification {
         }
     }
 
+
+    def 'call copyArtifacts with downstreamBuild'() {
+        when:
+        context.copyArtifacts('upstream') {
+            buildSelector {
+                downstreamBuildOf ('UpDown', '$LATEST')
+            }
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.copyartifact.CopyArtifact'
+            children().size() == 5
+            project[0].value() == 'upstream'
+            filter[0].value() == ''
+            target[0].value() == ''
+            doNotFingerprintArtifacts[0].value() == false
+            with(selector[0]) {
+                children().size() == 2
+                attribute('class') == 'hudson.plugins.copyartifact.DownstreamBuildSelector'
+                upstreamProjectName[0].value() == 'UpDown'
+                upstreamBuildNumber[0].value() == '$LATEST'
+            }
+        }
+    }
+
     def 'call copyArtifacts with upstreamBuild closure'() {
         when:
         context.copyArtifacts('upstream') {
