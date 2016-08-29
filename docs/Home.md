@@ -41,6 +41,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [Migration](Migration#migrating-to-151)
  * Support for the older versions of the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-151)
+ * Removed anything that has been deprecated in 1.44, see [Migration](Migration#migrating-to-144)
 * 1.50 (August 17 2016)
  * Fixed regression when updating views
    ([JENKINS-37450](https://issues.jenkins-ci.org/browse/JENKINS-37450))

@@ -155,17 +155,8 @@ class DslSampleSpec extends Specification {
     <mavenOpts>-Xmx1024m</mavenOpts>
     <scm class='hudson.plugins.git.GitSCM'>
         <configVersion>2</configVersion>
-        <disableSubmodules>false</disableSubmodules>
-        <recursiveSubmodules>false</recursiveSubmodules>
         <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-        <authorOrCommitter>false</authorOrCommitter>
-        <clean>false</clean>
-        <wipeOutWorkspace>false</wipeOutWorkspace>
-        <pruneBranches>false</pruneBranches>
-        <remotePoll>false</remotePoll>
-        <ignoreNotifyCommit>false</ignoreNotifyCommit>
         <gitTool>Default</gitTool>
-        <skipTag>false</skipTag>
         <userRemoteConfigs>
             <hudson.plugins.git.UserRemoteConfig>
                 <url>git://github.com/JavaPosseRoundup/job-dsl-plugin.git</url>
@@ -298,17 +289,8 @@ mavenJob('PROJ-maven-with-template') {
     <mavenOpts>-Xmx1024m</mavenOpts>
     <scm class='hudson.plugins.git.GitSCM'>
         <configVersion>2</configVersion>
-        <disableSubmodules>false</disableSubmodules>
-        <recursiveSubmodules>false</recursiveSubmodules>
         <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-        <authorOrCommitter>false</authorOrCommitter>
-        <clean>false</clean>
-        <wipeOutWorkspace>false</wipeOutWorkspace>
-        <pruneBranches>false</pruneBranches>
-        <remotePoll>false</remotePoll>
-        <ignoreNotifyCommit>false</ignoreNotifyCommit>
         <gitTool>Default</gitTool>
-        <skipTag>true</skipTag>
         <userRemoteConfigs>
             <hudson.plugins.git.UserRemoteConfig>
                 <url>git://github.com/JavaPosseRoundup/job-dsl-plugin.git</url>
@@ -354,17 +336,8 @@ mavenJob('PROJ-maven-with-template') {
     <jdk>JDK1.7.0_12</jdk>
     <scm class='hudson.plugins.git.GitSCM'>
         <configVersion>2</configVersion>
-        <disableSubmodules>false</disableSubmodules>
-        <recursiveSubmodules>false</recursiveSubmodules>
         <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-        <authorOrCommitter>false</authorOrCommitter>
-        <clean>false</clean>
-        <wipeOutWorkspace>false</wipeOutWorkspace>
-        <pruneBranches>false</pruneBranches>
-        <remotePoll>false</remotePoll>
-        <ignoreNotifyCommit>false</ignoreNotifyCommit>
         <gitTool>Default</gitTool>
-        <skipTag>false</skipTag>
         <userRemoteConfigs>
             <hudson.plugins.git.UserRemoteConfig>
                 <url>git://github.com/JavaPosseRoundup/job-dsl-plugin.git</url>

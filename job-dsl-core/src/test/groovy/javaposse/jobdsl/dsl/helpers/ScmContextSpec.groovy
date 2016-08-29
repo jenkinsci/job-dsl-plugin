@@ -227,23 +227,6 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
-    def 'call git scm with relativeTargetDir'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            relativeTargetDir('checkout')
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].relativeTargetDir.size() == 1
-        context.scmNodes[0].relativeTargetDir[0].text() == 'checkout'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
     def 'call git scm with RelativeTargetDirectory extension'() {
         when:
         context.git {
@@ -319,112 +302,6 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
-    def 'call git scm with reference'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            reference('/foo/bar')
-        }
-
-        then:
-        context.scmNodes[0] != null
-        with(context.scmNodes[0]) {
-            reference.size() == 0
-            extensions.size() == 1
-            extensions[0].children().size() == 1
-            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].children().size() == 2
-            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].reference[0].value() == '/foo/bar'
-            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].shallow[0].value() == false
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with shallowClone'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            shallowClone()
-        }
-
-        then:
-        context.scmNodes[0] != null
-        with(context.scmNodes[0]) {
-            reference.size() == 0
-            extensions.size() == 1
-            extensions[0].children().size() == 1
-            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].children().size() == 2
-            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].reference[0].value() == ''
-            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].shallow[0].value() == true
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with cloneTimeout, plugin version 2.x'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            cloneTimeout(50)
-        }
-
-        then:
-        context.scmNodes[0] != null
-        with(context.scmNodes[0]) {
-            reference.size() == 0
-            extensions.size() == 1
-            extensions[0].children().size() == 1
-            with (extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0]) {
-              children().size() == 3
-              reference[0].value() == ''
-              shallow[0].value() == false
-              timeout[0].value() == 50
-            }
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with pruneBranches'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            pruneBranches(true)
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].pruneBranches.size() == 1
-        context.scmNodes[0].pruneBranches[0].text() == 'true'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with pruneBranches, no argument'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            pruneBranches()
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].pruneBranches.size() == 1
-        context.scmNodes[0].pruneBranches[0].text() == 'true'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
     def 'call git scm with PruneStaleBranch extension'() {
         when:
         context.git {
@@ -445,23 +322,6 @@ class ScmContextSpec extends Specification {
             extensions[0].children()[0].name() == 'hudson.plugins.git.extensions.impl.PruneStaleBranch'
         }
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-    }
-
-    def 'call git scm with localBranch'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            localBranch('bugfix')
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].localBranch.size() == 1
-        context.scmNodes[0].localBranch[0].text() == 'bugfix'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
     }
 
     def 'call git scm with LocalBranch extension'() {
@@ -487,40 +347,6 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
-    def 'call git scm with createTag'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            createTag(true)
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].skipTag.size() == 1
-        context.scmNodes[0].skipTag[0].text() == 'false'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with skipTag, no argument'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            createTag()
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].skipTag.size() == 1
-        context.scmNodes[0].skipTag[0].text() == 'false'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
     def 'call git scm with PerBuildTag extension'() {
         when:
         context.git {
@@ -540,40 +366,6 @@ class ScmContextSpec extends Specification {
             extensions[0].children()[0].name() == 'hudson.plugins.git.extensions.impl.PerBuildTag'
         }
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-    }
-
-    def 'call git scm with clean'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            clean(true)
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].clean.size() == 1
-        context.scmNodes[0].clean[0].text() == 'true'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with clean, no argument'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            clean()
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].clean.size() == 1
-        context.scmNodes[0].clean[0].text() == 'true'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
     }
 
     def 'call git scm with clean before checkout'() {
@@ -620,40 +412,6 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
-    def 'call git scm with wipeOutWorkspace'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            wipeOutWorkspace(true)
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].wipeOutWorkspace.size() == 1
-        context.scmNodes[0].wipeOutWorkspace[0].text() == 'true'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with wipeOutWorkspace, no argument'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            wipeOutWorkspace()
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].wipeOutWorkspace.size() == 1
-        context.scmNodes[0].wipeOutWorkspace[0].text() == 'true'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
     def 'call git scm with WipeWorkspace extension'() {
         when:
         context.git {
@@ -674,40 +432,6 @@ class ScmContextSpec extends Specification {
             extensions[0].children()[0].name() == 'hudson.plugins.git.extensions.impl.WipeWorkspace'
         }
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-    }
-
-    def 'call git scm with remotePoll'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            remotePoll(true)
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].remotePoll.size() == 1
-        context.scmNodes[0].remotePoll[0].text() == 'true'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with remotePoll, no argument'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            remotePoll()
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].remotePoll.size() == 1
-        context.scmNodes[0].remotePoll[0].text() == 'true'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
     }
 
     def 'call git scm with DisableRemotePoll extension'() {
@@ -766,167 +490,6 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].branches[0].'hudson.plugins.git.BranchSpec'[1].name[0].text() == 'bar'
         context.scmNodes[0].branches[0].'hudson.plugins.git.BranchSpec'[2].name[0].text() == 'test'
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-    }
-
-    def 'call git scm with mergeOptions'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            mergeOptions('acme-plugin')
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].extensions.size() == 1
-        context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 1
-        with(context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
-            options.size() == 1
-            options[0].children().size() == 3
-            options[0].mergeRemote.size() == 1
-            options[0].mergeRemote[0].text() == ''
-            options[0].mergeTarget.size() == 1
-            options[0].mergeTarget[0].text() == 'acme-plugin'
-            options[0].mergeStrategy.size() == 1
-            options[0].mergeStrategy[0].text() == 'default'
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with second mergeOptions'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            mergeOptions('testing')
-            mergeOptions('acme-plugin')
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].extensions.size() == 1
-        context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 2
-        with(context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
-            options.size() == 1
-            options[0].children().size() == 3
-            options[0].mergeRemote.size() == 1
-            options[0].mergeRemote[0].text() == ''
-            options[0].mergeTarget.size() == 1
-            options[0].mergeTarget[0].text() == 'testing'
-            options[0].mergeStrategy.size() == 1
-            options[0].mergeStrategy[0].text() == 'default'
-        }
-        with(context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[1]) {
-            options.size() == 1
-            options[0].children().size() == 3
-            options[0].mergeRemote.size() == 1
-            options[0].mergeRemote[0].text() == ''
-            options[0].mergeTarget.size() == 1
-            options[0].mergeTarget[0].text() == 'acme-plugin'
-            options[0].mergeStrategy.size() == 1
-            options[0].mergeStrategy[0].text() == 'default'
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        2 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with complex mergeOptions'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            remote {
-                name('other')
-                url('https://github.com/daspilker/job-dsl-plugin.git')
-            }
-            mergeOptions('other', 'acme-plugin')
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].extensions.size() == 1
-        context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 1
-        with(context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
-            options.size() == 1
-            options[0].children().size() == 3
-            options[0].mergeRemote.size() == 1
-            options[0].mergeRemote[0].text() == 'other'
-            options[0].mergeTarget.size() == 1
-            options[0].mergeTarget[0].text() == 'acme-plugin'
-            options[0].mergeStrategy.size() == 1
-            options[0].mergeStrategy[0].text() == 'default'
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with mergeOptions default mergeStrategy'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            mergeOptions('acme-plugin')
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].extensions.size() == 1
-        context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 1
-        with(context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
-            options.size() == 1
-            options[0].children().size() == 3
-            options[0].mergeRemote.size() == 1
-            options[0].mergeRemote[0].text() == ''
-            options[0].mergeTarget.size() == 1
-            options[0].mergeTarget[0].text() == 'acme-plugin'
-            options[0].mergeStrategy.size() == 1
-            options[0].mergeStrategy[0].text() == 'default'
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with mergeOptions given mergeStrategy'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            remote {
-                name('other')
-                url('https://github.com/daspilker/job-dsl-plugin.git')
-            }
-            mergeOptions {
-                remote('other')
-                branch('acme-plugin')
-                strategy(mergeStrategy)
-            }
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].extensions.size() == 1
-        context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'.size() == 1
-        with(context.scmNodes[0].extensions[0].'hudson.plugins.git.extensions.impl.PreBuildMerge'[0]) {
-            options.size() == 1
-            options[0].children().size() == 3
-            options[0].mergeRemote.size() == 1
-            options[0].mergeRemote[0].text() == 'other'
-            options[0].mergeTarget.size() == 1
-            options[0].mergeTarget[0].text() == 'acme-plugin'
-            options[0].mergeStrategy.size() == 1
-            options[0].mergeStrategy[0].text() == mergeStrategy
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-
-        where:
-        mergeStrategy << ['default', 'resolve', 'recursive', 'octopus', 'ours', 'subtree']
     }
 
     def 'call git scm with minimal mergeOptions'() {
@@ -1084,87 +647,6 @@ class ScmContextSpec extends Specification {
         mergeStrategy << ['default', 'resolve', 'recursive', 'octopus', 'ours', 'subtree']
     }
 
-    def 'call git scm with invalid merge strategy'() {
-        when:
-        context.git {
-            mergeOptions {
-                strategy(mergeStrategy)
-            }
-        }
-
-        then:
-        Exception e = thrown(DslScriptException)
-        e.message =~ /strategy must be one of .+/
-
-        where:
-        mergeStrategy << [null, '', 'test']
-    }
-
-    def 'call git scm with inverse build chooser'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            strategy {
-                inverse()
-            }
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].buildChooser.size() == 1
-        context.scmNodes[0].buildChooser[0].attribute('class') == 'hudson.plugins.git.util.InverseBuildChooser'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with ancestry build chooser'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            strategy {
-                ancestry(5, 'sha1')
-            }
-        }
-
-        then:
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.3.1')
-        context.scmNodes[0] != null
-        context.scmNodes[0].buildChooser.size() == 1
-        context.scmNodes[0].buildChooser[0].attribute('class') == 'hudson.plugins.git.util.AncestryBuildChooser'
-        context.scmNodes[0].buildChooser[0].children().size() == 2
-        context.scmNodes[0].buildChooser[0].maximumAgeInDays[0].text() == '5'
-        context.scmNodes[0].buildChooser[0].ancestorCommitSha1[0].text() == 'sha1'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with gerrit trigger build chooser'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            strategy {
-                gerritTrigger()
-            }
-        }
-
-        then:
-        1 * mockJobManagement.requireMinimumPluginVersion('gerrit-trigger', '2.0')
-        context.scmNodes[0] != null
-        context.scmNodes[0].buildChooser.size() == 1
-        context.scmNodes[0].buildChooser[0].attribute('class') ==
-                    'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTriggerBuildChooser'
-        context.scmNodes[0].buildChooser[0].children().size() == 1
-        context.scmNodes[0].buildChooser[0].separator[0].text() == '#'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
     def 'call git scm with inverse build chooser extension'() {
         when:
         context.git {
@@ -1298,7 +780,7 @@ class ScmContextSpec extends Specification {
         then:
         context.scmNodes[0] != null
         with(context.scmNodes[0]) {
-            children().size() == 15
+            children().size() == 6
             userRemoteConfigs[0].'hudson.plugins.git.UserRemoteConfig'[0].url[0].value() == GIT_REPO_URL
             branches[0].'hudson.plugins.git.BranchSpec'[0].name[0].value() == '**'
             createTag.size() == 0
@@ -1417,40 +899,6 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
-    def 'call git scm with ignoreNotifyCommit'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            ignoreNotifyCommit(true)
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].ignoreNotifyCommit.size() == 1
-        context.scmNodes[0].ignoreNotifyCommit[0].text() == 'true'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with ignoreNotifyCommit, no argument'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            ignoreNotifyCommit()
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].ignoreNotifyCommit.size() == 1
-        context.scmNodes[0].ignoreNotifyCommit[0].text() == 'true'
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
     def 'call git scm with ignoreNotifyCommit extension'() {
         when:
         context.git {
@@ -1470,60 +918,6 @@ class ScmContextSpec extends Specification {
             extensions[0].children()[0].name() == 'hudson.plugins.git.extensions.impl.IgnoreNotifyCommit'
         }
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-    }
-
-    def 'call git scm with recursiveSubmodules with default true'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            recursiveSubmodules()
-        }
-
-        then:
-        with(context.scmNodes[0]) {
-            recursiveSubmodules[0].value() == true
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
-    def 'call git scm with recursiveSubmodules with param'(boolean value) {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            recursiveSubmodules(value)
-        }
-
-        then:
-        with(context.scmNodes[0]) {
-            recursiveSubmodules[0].value() == value
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
-
-        where:
-        value << [true, false]
-    }
-
-    def 'call git scm with trackingSubmodules with default true'() {
-        when:
-        context.git {
-            remote {
-                url('https://github.com/jenkinsci/job-dsl-plugin.git')
-            }
-            trackingSubmodules()
-        }
-
-        then:
-        with(context.scmNodes[0]) {
-            trackingSubmodules[0].value() == true
-        }
-        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * mockJobManagement.logDeprecationWarning()
     }
 
     def 'call git scm with minimal submodule options'() {
@@ -1664,9 +1058,8 @@ class ScmContextSpec extends Specification {
         }
 
         then:
-        context.scmNodes[0].authorOrCommitter.size() == 2
-        context.scmNodes[0].authorOrCommitter[0].text() == 'false'
-        context.scmNodes[0].authorOrCommitter[1].text() == 'true'
+        context.scmNodes[0].authorOrCommitter.size() == 1
+        context.scmNodes[0].authorOrCommitter[0].text() == 'true'
         context.scmNodes[0].gitTool.size() == 2
         context.scmNodes[0].gitTool[0].text() == 'Default'
         context.scmNodes[0].gitTool[1].text() == 'NotDefault'
@@ -2355,25 +1748,6 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].projectPath.size() == 1
         context.scmNodes[0].projectPath[0].value().contains('//depot')
         1 * mockJobManagement.requirePlugin('perforce')
-    }
-
-    def 'call p4 with few parameters'() {
-        setup:
-        def viewspec = '//depot/Tools/build/...\n//depot/webapplications/helloworld/...'
-
-        when:
-        context.p4(viewspec)
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].p4User[0].value() == 'rolem'
-        context.scmNodes[0].p4Passwd[0].value() == ''
-        context.scmNodes[0].p4Port[0].value() == 'perforce:1666'
-        context.scmNodes[0].alwaysForceSync[0].value() == 'false'
-        context.scmNodes[0].projectPath.size() == 1
-        context.scmNodes[0].projectPath[0].value().contains('//depot')
-        (1.._) * mockJobManagement.requirePlugin('perforce')
-        1 * mockJobManagement.logDeprecationWarning()
     }
 
     def 'call perforceP4 with all options'() {
