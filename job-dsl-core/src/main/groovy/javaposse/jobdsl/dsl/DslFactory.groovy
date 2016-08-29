@@ -158,7 +158,7 @@ interface DslFactory extends ViewFactory {
     WorkflowJob pipelineJob(String name)
 
     /**
-     * Create or updates a workflow job.
+     * Create or updates a pipeline job.
      * Alias for #workflowJob(java.lang.String, groovy.lang.Closure)
      *
      * @since 1.47
