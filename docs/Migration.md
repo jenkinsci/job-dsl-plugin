@@ -1,3 +1,16 @@
+## Migrating to 1.51
+
+### RVM
+
+Support for versions older than 0.6 of the [RVM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RVM+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### Ruby Runtime
+
+Support for versions older than 0.13 of the
+[Ruby Runtime Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ruby+Runtime+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.49
 
 ### ScriptLocation
