@@ -10,11 +10,12 @@
     <div class="method-detail">
         <h2>
             {{name}}
-            {{#if methodNode.plugin}}<a href="{{methodNode.plugin.wiki}}"><span class="glyphicon glyphicon-new-window"></span> {{methodNode.plugin.title}}</a>{{/if}}
         </h2>
         <div class="signatures">
             {{#each signatures}}
-                {{#if plugin.minimumVersion}}<span class="label label-min-version">Requires {{plugin.title}} v{{plugin.minimumVersion}}+</span>{{/if}}
+                {{#each plugins}}
+                    <a href="{{wiki}}"><span class="label label-plugin">Requires {{title}}{{#if minimumVersion}} v{{minimumVersion}}+{{/if}}</span></a>
+                {{/each}}
                 {{#if availableSince}}
                     <span class="label label-since">Since {{availableSince}}</span>
                 {{/if}}

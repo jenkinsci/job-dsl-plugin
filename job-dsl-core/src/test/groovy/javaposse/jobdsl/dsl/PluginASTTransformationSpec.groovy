@@ -61,4 +61,18 @@ class PluginASTTransformationSpec extends Specification {
         then:
         1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1', true)
     }
+
+    def 'require plugins'() {
+        setup:
+        jobParent.jm = jobManagement
+
+        when:
+        job.wrappers {
+            rvm('test')
+        }
+
+        then:
+        1 * jobManagement.requirePlugin('rvm')
+        1 * jobManagement.requirePlugin('ruby-runtime')
+    }
 }
