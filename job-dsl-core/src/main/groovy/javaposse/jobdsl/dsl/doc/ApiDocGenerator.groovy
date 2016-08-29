@@ -8,6 +8,7 @@ import org.codehaus.groovy.groovydoc.GroovyAnnotationRef
 import org.codehaus.groovy.groovydoc.GroovyClassDoc
 import org.codehaus.groovy.groovydoc.GroovyMethodDoc
 import org.codehaus.groovy.groovydoc.GroovyParameter
+import org.codehaus.groovy.groovydoc.GroovyTag
 import org.codehaus.groovy.tools.groovydoc.ArrayClassDocWrapper
 
 import java.lang.annotation.Annotation
@@ -158,15 +159,20 @@ class ApiDocGenerator {
     private Map processMethod(Method method, GroovyMethodDoc methodDoc) {
         Map map = [parameters: []]
         Type[] types = method.genericParameterTypes
+        GroovyTag[] tags = methodDoc.tags()
         methodDoc.parameters().eachWithIndex { GroovyParameter parameter, int index ->
             map.parameters << processParameter(parameter, types[index])
         }
 
-        if (method.getAnnotation(Deprecated)) {  // TODO or comment deprecated
+        if (method.getAnnotation(Deprecated) || tags.any { it.name() == 'deprecated' }) {
             map.deprecated = true
+            String deprecatedText = tags.find { it.name() == 'deprecated' }?.text()?.trim()
+            if (deprecatedText) {
+                map.deprecatedText = deprecatedText
+            }
         }
 
-        String availableSince = methodDoc.tags().find { it.name() == 'since' }?.text()
+        String availableSince = tags.find { it.name() == 'since' }?.text()
         if (availableSince) {
             map.availableSince = availableSince
         }

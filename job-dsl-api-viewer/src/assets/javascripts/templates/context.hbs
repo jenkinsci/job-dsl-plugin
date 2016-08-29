@@ -3,7 +3,7 @@
         <li>
             {{# if comment}}
                 <div class="firstSentenceCommentText">
-                    // {{comment}} {{#if deprecated}}Deprecated.{{/if}}
+                    // {{comment}} {{#if deprecated}}Deprecated{{#if deprecatedText}} {{deprecatedText}}{{/if}}.{{/if}}
                 </div>
             {{/if}}
             <a href="#path/{{path}}">{{name}}</a><span class="highlight groovy inline">{{text}}</span>
