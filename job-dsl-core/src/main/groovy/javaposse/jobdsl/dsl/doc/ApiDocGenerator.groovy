@@ -117,7 +117,7 @@ class ApiDocGenerator {
 
         String examples = getExamples(clazz, methodName)
         if (examples) {
-            methodMap.examples = examples
+            methodMap.examples = examples.trim()
         }
 
         methodMap
@@ -174,7 +174,7 @@ class ApiDocGenerator {
 
         String availableSince = tags.find { it.name() == 'since' }?.text()
         if (availableSince) {
-            map.availableSince = availableSince
+            map.availableSince = availableSince.trim()
         }
 
         RequiresPlugin requiresPluginAnnotation = method.getAnnotation(RequiresPlugin)
@@ -195,7 +195,7 @@ class ApiDocGenerator {
                 comment = comment[0..<defListIndex]
             }
             if (comment) {
-                map.html = comment
+                map.html = comment.trim()
             }
 
             String firstSentenceCommentText = methodDocWithComment.firstSentenceCommentText()
