@@ -164,6 +164,10 @@ _.extend(App.Dsl.prototype, {
             if (paramTokens.length || !signature.context) {
                 text = '(' + text + ')';
             }
+            var deprecatedText = signature.deprecatedText;
+            if (deprecatedText && deprecatedText.substring(deprecatedText.length - 1) === '.') {
+                deprecatedText = deprecatedText.substring(0, deprecatedText.length - 1);
+            }
 
             var data = {
                 name: method.name,
@@ -172,6 +176,7 @@ _.extend(App.Dsl.prototype, {
                 index: index,
                 availableSince: signature.availableSince,
                 deprecated: signature.deprecated,
+                deprecatedText: deprecatedText,
                 generated: signature.generated,
                 extension: signature.extension,
                 required: signature.required,
