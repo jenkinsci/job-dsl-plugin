@@ -237,6 +237,17 @@ When used in a script directly, `out` can be omitted.
 println('Hello from a Job DSL script!')
 ```
 
+If the log output should go to the Jenkins log, `java.util.logging` must be used.
+
+```groovy
+import java.util.logging.Logger
+
+Logger logger = Logger.getLogger('org.example.jobdsl')
+logger.info('Hello from a Job DSL script!')
+```
+
+This works in scripts and classes. See [Logging](https://wiki.jenkins-ci.org/display/JENKINS/Logging) for details.
+
 # Configure
 
 When an option is not supported by the Job DSL, then [[The Configure Block]] can be used for extending the DSL.
