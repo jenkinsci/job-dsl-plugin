@@ -76,7 +76,7 @@ import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvide
 public class JenkinsJobManagement extends AbstractJobManagement {
     private static final Logger LOGGER = Logger.getLogger(JenkinsJobManagement.class.getName());
 
-    private final Map<String, String> envVars;
+    private final Map<String, ?> envVars;
     private final Run<?, ?> run;
     private final FilePath workspace;
     private final Item project;
@@ -85,12 +85,12 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
 
     @Deprecated
-    public JenkinsJobManagement(PrintStream outputLogger, Map<String, String> envVars, AbstractBuild<?, ?> build,
+    public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, AbstractBuild<?, ?> build,
                                 LookupStrategy lookupStrategy) {
         this(outputLogger, envVars, build, build.getWorkspace(), lookupStrategy);
     }
 
-    public JenkinsJobManagement(PrintStream outputLogger, Map<String, String> envVars, Run<?, ?> run,
+    public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, Run<?, ?> run,
                                 FilePath workspace, LookupStrategy lookupStrategy) {
         super(outputLogger);
         this.envVars = envVars;
@@ -101,11 +101,11 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Deprecated
-    public JenkinsJobManagement(PrintStream outputLogger, Map<String, String> envVars, AbstractBuild<?, ?> build) {
+    public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, AbstractBuild<?, ?> build) {
         this(outputLogger, envVars, build, build.getWorkspace(), LookupStrategy.JENKINS_ROOT);
     }
 
-    public JenkinsJobManagement(PrintStream outputLogger, Map<String, String> envVars, File workspace) {
+    public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, File workspace) {
         this(outputLogger, envVars, null, new FilePath(workspace.getAbsoluteFile()), LookupStrategy.JENKINS_ROOT);
     }
 
