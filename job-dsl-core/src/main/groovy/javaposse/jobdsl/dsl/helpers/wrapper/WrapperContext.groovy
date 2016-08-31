@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.RequiresPlugins
 
 @ContextType('hudson.tasks.BuildWrapper')
 class WrapperContext extends AbstractExtensibleContext {
@@ -51,13 +52,16 @@ class WrapperContext extends AbstractExtensibleContext {
      *
      * @since 1.27
      */
-    @RequiresPlugin(id = 'rbenv')
+    @RequiresPlugins([
+            @RequiresPlugin(id = 'rbenv'),
+            @RequiresPlugin(id = 'ruby-runtime')
+    ])
     void rbenv(String rubyVersion, @DslContext(RbenvContext) Closure rbenvClosure = null) {
         RbenvContext rbenvContext = new RbenvContext()
         ContextHelper.executeInContext(rbenvClosure, rbenvContext)
 
         wrapperNodes << new NodeBuilder().'ruby-proxy-object' {
-            'ruby-object'('ruby-class': 'Jenkins::Tasks::BuildWrapperProxy', pluginid: 'rbenv') {
+            'ruby-object'('ruby-class': rubyWrapperClass, pluginid: 'rbenv') {
                 pluginid('rbenv', [pluginid: 'rbenv', 'ruby-class': 'String'])
                 object('ruby-class': 'RbenvWrapper', pluginid: 'rbenv') {
                     version(rubyVersion, [pluginid: 'rbenv', 'ruby-class': 'String'])
@@ -82,12 +86,17 @@ class WrapperContext extends AbstractExtensibleContext {
      *                          optionally containing a gemset
      *                          (i.e. ruby-1.9.3, ruby-2.0.0@gemset-foo)
      */
-    @RequiresPlugin(id = 'rvm')
+    @RequiresPlugins([
+            @RequiresPlugin(id = 'rvm'),
+            @RequiresPlugin(id = 'ruby-runtime')
+    ])
     void rvm(String rubySpecification) {
+        jobManagement.logPluginDeprecationWarning('rvm', '0.6')
+
         Preconditions.checkArgument(rubySpecification as Boolean, 'Please specify at least the ruby version')
 
         wrapperNodes << new NodeBuilder().'ruby-proxy-object' {
-            'ruby-object'('ruby-class': 'Jenkins::Plugin::Proxies::BuildWrapper', pluginid: 'rvm') {
+            'ruby-object'('ruby-class': rubyWrapperClass, pluginid: 'rvm') {
 
                 pluginid('rvm', [pluginid: 'rvm', 'ruby-class': 'String'])
                 object('ruby-class': 'RvmWrapper', pluginid: 'rvm') {
@@ -95,6 +104,13 @@ class WrapperContext extends AbstractExtensibleContext {
                 }
             }
         }
+    }
+
+    private String getRubyWrapperClass() {
+        jobManagement.logPluginDeprecationWarning('ruby-runtime', '0.13')
+
+        jobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.13') ? 'Jenkins::Tasks::BuildWrapperProxy' :
+                'Jenkins::Plugin::Proxies::BuildWrapper'
     }
 
     /**

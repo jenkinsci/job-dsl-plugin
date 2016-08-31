@@ -135,7 +135,7 @@ Marionette.Renderer.render = function(template, data) {
 
                 var matches = this.allItems.filter(function(item) {
                     return item.name.toLowerCase().indexOf(val.toLowerCase()) !== -1 &&
-                        (!item.method.plugin || !this.settings.isPluginExcluded(item.method.plugin.name));
+                        !this.settings.isPluginsExcluded(item.method.plugins);
                 }, this);
                 var html = Handlebars.templates['searchResults']({results: matches});
                 $searchResults.html(html);
@@ -221,7 +221,7 @@ Marionette.Renderer.render = function(template, data) {
             var signatures = this.dsl.getContextSignatures(parentSignature.contextClass, path);
 
             signatures = _.filter(signatures, function(sig) {
-                return !sig.methodPlugin || !this.settings.isPluginExcluded(sig.methodPlugin.name);
+                return !this.settings.isPluginsExcluded(sig.methodPlugins);
             }, this);
 
             var contextView = new App.ContextView({signatures: signatures});

@@ -18,7 +18,7 @@ App.HomeView = Marionette.LayoutView.extend({
         var methodNode = pathInfo.methodNode;
         var signatures = this.dsl.getContextSignatures(methodNode.contextClass);
         signatures = _.filter(signatures, function(sig) {
-            return !sig.plugin || !this.settings.isPluginExcluded(sig.plugin.id);
+            return !this.settings.isPluginsExcluded(sig.plugins);
         }, this);
         var contextView = new App.ContextView({signatures: signatures});
         this.contextRegion.show(contextView);

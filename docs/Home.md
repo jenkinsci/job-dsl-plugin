@@ -27,6 +27,13 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.51 (unreleased)
+ * Fixed compatibility issue with [Ruby Runtime Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ruby+Runtime+Plugin)
+   ([JENKINS-37422](https://issues.jenkins-ci.org/browse/JENKINS-37422))
+ * Support for the older versions of the [RVM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RVM+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-151)
+ * Support for the older versions of the
+   [Ruby Runtime Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ruby+Runtime+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-151)
 * 1.50 (August 17 2016)
  * Fixed regression when updating views
    ([JENKINS-37450](https://issues.jenkins-ci.org/browse/JENKINS-37450))

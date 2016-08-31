@@ -12,6 +12,15 @@ _.extend(App.Dsl.prototype, {
         context.simpleClassName = tokens[tokens.length - 1];
 
         context.methods.forEach(function(method) {
+            method.signatures.forEach(function (signature) {
+                // maintain compatibility with older data
+                if (signature.plugin) {
+                    signature.plugins = [signature.plugin];
+                } else {
+                    signature.plugins = signature.plugins || [];
+                }
+            });
+
             if (method.signatures.every(function(sig) { return sig.deprecated; })) {
                 method.deprecated = true;
             }
@@ -25,10 +34,11 @@ _.extend(App.Dsl.prototype, {
                 method.contextClass = signatureWithContext.contextClass;
             }
 
-            var signatureWithPlugin = _.find(method.signatures, function(signature) { return signature.plugin; });
-            if (signatureWithPlugin) {
-                method.plugin = window.updateCenter.data.plugins[signatureWithPlugin.plugin.id];
-            }
+            method.plugins = _.chain(method.signatures)
+                .pluck('plugins')
+                .flatten()
+                .map(function(plugin) { return window.updateCenter.data.plugins[plugin.id] })
+                .value();
         });
     },
 
@@ -48,8 +58,9 @@ _.extend(App.Dsl.prototype, {
         return _.chain(this.data.contexts)
             .pluck('methods')
             .flatten()
-            .pluck('plugin')
+            .pluck('plugins')
             .filter()
+            .flatten()
             .unique()
             .sortBy(function (item) {
                 return item.title.toLowerCase();
@@ -77,9 +88,11 @@ _.extend(App.Dsl.prototype, {
         var usages = [];
         _.forEach(this.data.contexts, function(context) {
             context.methods.forEach(function(method) {
-                if (method.plugin === plugin) {
-                    usages.push({method: method, context: context});
-                }
+                method.plugins.forEach(function(methodPlugin) {
+                    if (methodPlugin === plugin) {
+                        usages.push({method: method, context: context});
+                    }
+                });
             });
         });
         return usages;
@@ -202,15 +215,20 @@ _.extend(App.Dsl.prototype, {
                 data.enums = enums;
             }
 
-            data.methodPlugin = method.plugin;
-            if (signature.plugin) {
-                data.plugin = signature.plugin;
-                var pluginData = window.updateCenter.data.plugins[signature.plugin.id];
-                if (pluginData) {
-                    data.plugin.title = pluginData.title;
-                } else {
-                    console.log('plugin not found', signature.plugin.id);
-                }
+            data.methodPlugins = method.plugins;
+            if (signature.plugins) {
+                data.plugins = signature.plugins;
+                data.plugins.forEach(function (plugin) {
+                    plugin.name = plugin.id;
+
+                    var pluginData = window.updateCenter.data.plugins[plugin.id];
+                    if (pluginData) {
+                        plugin.title = pluginData.title;
+                        plugin.wiki = pluginData.wiki;
+                    } else {
+                        console.log('plugin not found', plugin.id);
+                    }
+                });
             }
 
             return data;

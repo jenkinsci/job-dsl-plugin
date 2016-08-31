@@ -48,7 +48,7 @@ App.TreeView = Marionette.ItemView.extend({
         var contextClass = node.id === '#' ? this.dsl.getRootContextClass() : node.original.methodNode.contextClass;
         var methods = _.chain(this.dsl.getContext(contextClass).methods)
             .filter(function (method) {
-                return !method.plugin || !this.settings.isPluginExcluded(method.plugin.name);
+                return !this.settings.isPluginsExcluded(method.plugins);
             }.bind(this))
             .sortBy(function (method) {
                 return method.name.toLowerCase();

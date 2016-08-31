@@ -4,6 +4,7 @@ import groovy.json.JsonBuilder
 import javaposse.jobdsl.dsl.DslFactory
 import javaposse.jobdsl.dsl.NoDoc
 import javaposse.jobdsl.dsl.RequiresPlugin
+import javaposse.jobdsl.dsl.RequiresPlugins
 import org.codehaus.groovy.groovydoc.GroovyAnnotationRef
 import org.codehaus.groovy.groovydoc.GroovyClassDoc
 import org.codehaus.groovy.groovydoc.GroovyMethodDoc
@@ -177,12 +178,17 @@ class ApiDocGenerator {
             map.availableSince = availableSince.trim()
         }
 
+        List plugins = []
         RequiresPlugin requiresPluginAnnotation = method.getAnnotation(RequiresPlugin)
         if (requiresPluginAnnotation) {
-            map.plugin = [id: requiresPluginAnnotation.id()]
-            if (requiresPluginAnnotation.minimumVersion()) {
-                map.plugin.minimumVersion = requiresPluginAnnotation.minimumVersion()
-            }
+            plugins << createPlugin(requiresPluginAnnotation)
+        }
+        RequiresPlugins requiresPluginsAnnotation = method.getAnnotation(RequiresPlugins)
+        if (requiresPluginsAnnotation) {
+            requiresPluginsAnnotation.value().each { plugins << createPlugin(it) }
+        }
+        if (plugins) {
+            map.plugins = plugins
         }
 
         GroovyMethodDoc methodDocWithComment = getMethodHierarchy(method, methodDoc).find {
@@ -275,5 +281,13 @@ class ApiDocGenerator {
             }
         }
         name
+    }
+
+    private static Map createPlugin(RequiresPlugin requiresPluginAnnotation) {
+        Map plugin = [id: requiresPluginAnnotation.id()]
+        if (requiresPluginAnnotation.minimumVersion()) {
+            plugin.minimumVersion = requiresPluginAnnotation.minimumVersion()
+        }
+        plugin
     }
 }
