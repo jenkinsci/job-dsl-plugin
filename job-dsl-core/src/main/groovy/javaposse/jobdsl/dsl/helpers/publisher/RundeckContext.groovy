@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 class RundeckContext extends AbstractContext {
     Map<String, String> options = [:]
@@ -10,6 +11,7 @@ class RundeckContext extends AbstractContext {
     boolean shouldWaitForRundeckJob
     boolean shouldFailTheBuild
     boolean includeRundeckLogs
+    String rundeckInstance
 
     RundeckContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -79,5 +81,15 @@ class RundeckContext extends AbstractContext {
         if (includeRundeckLogs) {
             this.shouldWaitForRundeckJob = true
         }
+    }
+
+    /**
+     * If set, selects the configured Rundeck instance from the global config.
+     *
+     * @since 1.51
+     */
+    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.5.4')
+    void rundeckInstance(String rundeckInstance) {
+        this.rundeckInstance = rundeckInstance
     }
 }

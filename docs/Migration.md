@@ -1,5 +1,11 @@
 ## Migrating to 1.51
 
+### Rundeck
+
+Support for versions older than 3.5.4 of the
+[RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin) is [[deprecated|Deprecation-Policy]] and
+will be removed.
+
 ### RVM
 
 Support for versions older than 0.6 of the [RVM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RVM+Plugin) is

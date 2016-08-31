@@ -27,6 +27,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.51 (unreleased)
+ * Enhanced support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
+   ([#885](https://github.com/jenkinsci/job-dsl-plugin/pull/885))
  * Fixed compatibility issue with [Ruby Runtime Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ruby+Runtime+Plugin)
    ([JENKINS-37422](https://issues.jenkins-ci.org/browse/JENKINS-37422))
  * Support for the older versions of the [RVM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RVM+Plugin) is
@@ -34,6 +36,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Support for the older versions of the
    [Ruby Runtime Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ruby+Runtime+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-151)
+ * Support for the older versions of the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-151)
 * 1.50 (August 17 2016)
  * Fixed regression when updating views
    ([JENKINS-37450](https://issues.jenkins-ci.org/browse/JENKINS-37450))
@@ -283,7 +287,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-32419](https://issues.jenkins-ci.org/browse/JENKINS-32419))
  * Enhanced support for the [JaCoCo Plugins](https://wiki.jenkins-ci.org/display/JENKINS/JaCoCo+Plugin)
    ([#729](https://github.com/jenkinsci/job-dsl-plugin/pull/729))
- * Enchanced support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
+ * Enhanced support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
    ([#493](https://github.com/jenkinsci/job-dsl-plugin/pull/493))
  * Enhanced support for the [JUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin)
    ([#734](https://github.com/jenkinsci/job-dsl-plugin/pull/734))

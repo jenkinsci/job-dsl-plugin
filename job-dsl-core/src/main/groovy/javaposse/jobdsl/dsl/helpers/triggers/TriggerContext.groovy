@@ -166,6 +166,8 @@ class TriggerContext extends ItemTriggerContext {
      */
     @RequiresPlugin(id = 'rundeck', minimumVersion = '3.4')
     void rundeck(@DslContext(RundeckTriggerContext) Closure closure = null) {
+        jobManagement.logPluginDeprecationWarning('rundeck', '3.5.4')
+
         RundeckTriggerContext context = new RundeckTriggerContext()
         ContextHelper.executeInContext(closure, context)
 
