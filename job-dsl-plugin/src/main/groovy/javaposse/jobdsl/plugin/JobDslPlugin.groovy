@@ -11,8 +11,6 @@ import org.kohsuke.stapler.StaplerResponse
 
 import javax.servlet.ServletException
 
-import static hudson.model.UpdateCenter.ID_DEFAULT
-
 class JobDslPlugin extends Plugin {
     private volatile String cachedApi
 
@@ -32,7 +30,7 @@ class JobDslPlugin extends Plugin {
         if (path == '/api-viewer') {
             response.sendRedirect("${request.requestURI}${request.requestURI.endsWith('/') ? '' : '/'}index.html")
         } else if (path == '/api-viewer/build/data/update-center.jsonp') {
-            JSONObject data = Jenkins.instance.updateCenter.getById(ID_DEFAULT).JSONObject
+            JSONObject data = Jenkins.instance.updateCenter.coreSource.JSONObject
             response.contentType = 'application/javascript'
             response.writer.print("updateCenter.post(${data.toString()})")
         } else if (path == '/api-viewer/build/data/dsl.json') {

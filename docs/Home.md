@@ -31,6 +31,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#885](https://github.com/jenkinsci/job-dsl-plugin/pull/885))
  * Fixed compatibility issue with [Ruby Runtime Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ruby+Runtime+Plugin)
    ([JENKINS-37422](https://issues.jenkins-ci.org/browse/JENKINS-37422))
+ * Fixed problem with API viewer when no default Update Center is used
+   ([JENKINS-37103](https://issues.jenkins-ci.org/browse/JENKINS-37103))
  * Support for the older versions of the [RVM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RVM+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-151)
  * Support for the older versions of the
