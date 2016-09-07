@@ -30,9 +30,8 @@ class JobDslPlugin extends Plugin {
         if (path == '/api-viewer') {
             response.sendRedirect("${request.requestURI}${request.requestURI.endsWith('/') ? '' : '/'}index.html")
         } else if (path == '/api-viewer/build/data/update-center.jsonp') {
-            JSONObject data = Jenkins.instance.updateCenter.coreSource.JSONObject
             response.contentType = 'application/javascript'
-            response.writer.print("updateCenter.post(${data.toString()})")
+            response.writer.print(generateUpdateCenter())
         } else if (path == '/api-viewer/build/data/dsl.json') {
             response.contentType = 'application/json'
             response.writer.print(generateApi())
@@ -48,5 +47,17 @@ class JobDslPlugin extends Plugin {
             cachedApi = api
         }
         api
+    }
+
+    private static String generateUpdateCenter() {
+        Map<String, Object> plugins = [:]
+        Jenkins.instance.updateCenter.sites.each {
+            plugins.putAll(it.JSONObject.getJSONObject('plugins'))
+        }
+
+        JSONObject data = new JSONObject()
+        data['plugins'] = plugins
+
+        "updateCenter.post(${data.toString()})"
     }
 }
