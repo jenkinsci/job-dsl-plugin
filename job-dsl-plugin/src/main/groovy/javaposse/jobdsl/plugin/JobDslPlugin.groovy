@@ -12,7 +12,8 @@ import org.kohsuke.stapler.StaplerResponse
 import javax.servlet.ServletException
 
 class JobDslPlugin extends Plugin {
-    private volatile String cachedApi
+    private volatile CachedFile cachedApi
+    private volatile CachedFile cachedUpdateCenter
 
     @Override
     void postInitialize() throws Exception {
@@ -30,34 +31,59 @@ class JobDslPlugin extends Plugin {
         if (path == '/api-viewer') {
             response.sendRedirect("${request.requestURI}${request.requestURI.endsWith('/') ? '' : '/'}index.html")
         } else if (path == '/api-viewer/build/data/update-center.jsonp') {
-            response.contentType = 'application/javascript'
-            response.writer.print(generateUpdateCenter())
+            serveCachedFile(response, request, generateUpdateCenter(), 'update-center.js')
         } else if (path == '/api-viewer/build/data/dsl.json') {
-            response.contentType = 'application/json'
-            response.writer.print(generateApi())
+            serveCachedFile(response, request, generateApi(), 'dsl.json')
         } else {
             super.doDynamic(request, response)
         }
     }
 
-    private String generateApi() {
-        String api = cachedApi
+    private CachedFile generateApi() {
+        CachedFile api = cachedApi
         if (api == null) {
-            api = new EmbeddedApiDocGenerator().generateApi()
+            api = new CachedFile(new EmbeddedApiDocGenerator().generateApi(), System.currentTimeMillis())
             cachedApi = api
         }
         api
     }
 
-    private static String generateUpdateCenter() {
-        Map<String, Object> plugins = [:]
-        Jenkins.instance.updateCenter.sites.each {
-            plugins.putAll(it.JSONObject.getJSONObject('plugins'))
+    private CachedFile generateUpdateCenter() {
+        long lastModified = Jenkins.instance.updateCenter.sites*.dataTimestamp.max()
+        CachedFile updateCenter = cachedUpdateCenter
+        if (updateCenter == null || lastModified > updateCenter.timestamp) {
+            Map<String, Object> plugins = [:]
+            Jenkins.instance.updateCenter.sites.each {
+                plugins.putAll(it.JSONObject.getJSONObject('plugins'))
+            }
+
+            JSONObject data = new JSONObject()
+            data['plugins'] = plugins
+
+            updateCenter = new CachedFile("updateCenter.post(${data.toString()})", lastModified)
+            cachedUpdateCenter = updateCenter
         }
+        updateCenter
+    }
 
-        JSONObject data = new JSONObject()
-        data['plugins'] = plugins
+    private static serveCachedFile(StaplerResponse response, StaplerRequest request, CachedFile file, String fileName) {
+        response.serveFile(
+                request,
+                new ByteArrayInputStream(file.data),
+                file.timestamp,
+                0,
+                file.data.length as long,
+                fileName
+        )
+    }
 
-        "updateCenter.post(${data.toString()})"
+    private static class CachedFile {
+        final byte[] data
+        final long timestamp
+
+        CachedFile(String data, long timestamp) {
+            this.data = data.getBytes('UTF-8')
+            this.timestamp = timestamp
+        }
     }
 }
