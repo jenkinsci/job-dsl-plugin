@@ -1573,8 +1573,7 @@ class PublisherContextSpec extends Specification {
         targets.value()[1].name() == 'hudson.plugins.im.GroupChatIMMessageTarget'
         targets.value()[1].value()[0].name() == 'name'
         targets.value()[1].value()[0].value() == '#c2'
-        1 * jobManagement.requirePlugin('ircbot')
-        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+        1 * jobManagement.requireMinimumPluginVersion('ircbot', '2.27')
     }
 
     def 'irc notification strategy is set'() {
@@ -1585,8 +1584,7 @@ class PublisherContextSpec extends Specification {
 
         then:
         context.publisherNodes[0].strategy[0].value() == 'STATECHANGE_ONLY'
-        1 * jobManagement.requirePlugin('ircbot')
-        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+        1 * jobManagement.requireMinimumPluginVersion('ircbot', '2.27')
     }
 
     def 'irc notification strategy is set to NEW_FAILURE_AND_FIXED'() {
@@ -1597,8 +1595,7 @@ class PublisherContextSpec extends Specification {
 
         then:
         context.publisherNodes[0].strategy[0].value() == 'NEW_FAILURE_AND_FIXED'
-        1 * jobManagement.requirePlugin('ircbot')
-        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+        1 * jobManagement.requireMinimumPluginVersion('ircbot', '2.27')
         1 * jobManagement.requireMinimumPluginVersion('instant-messaging', '1.26')
     }
 
@@ -1620,8 +1617,7 @@ class PublisherContextSpec extends Specification {
 
         then:
         context.publisherNodes[0].notifyFixers[0].value() == true
-        1 * jobManagement.requirePlugin('ircbot')
-        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+        1 * jobManagement.requireMinimumPluginVersion('ircbot', '2.27')
     }
 
     def 'irc notification message is set'() {
@@ -1637,8 +1633,7 @@ class PublisherContextSpec extends Specification {
         ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
         ircPublisher.'buildToChatNotifier'[0].attributes()['class'] ==
                 'hudson.plugins.im.build_notify.SummaryOnlyBuildToChatNotifier'
-        1 * jobManagement.requirePlugin('ircbot')
-        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+        1 * jobManagement.requireMinimumPluginVersion('ircbot', '2.27')
     }
 
     def 'default notification message is set if not specified'() {
@@ -1653,8 +1648,7 @@ class PublisherContextSpec extends Specification {
         ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
         ircPublisher.'buildToChatNotifier'[0].attributes()['class'] ==
                 'hudson.plugins.im.build_notify.DefaultBuildToChatNotifier'
-        1 * jobManagement.requirePlugin('ircbot')
-        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+        1 * jobManagement.requireMinimumPluginVersion('ircbot', '2.27')
     }
 
     def 'default notification strategy is set if not specified'() {
@@ -1666,8 +1660,7 @@ class PublisherContextSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].strategy[0].value() == 'ALL'
-        1 * jobManagement.requirePlugin('ircbot')
-        1 * jobManagement.logPluginDeprecationWarning('ircbot', '2.27')
+        1 * jobManagement.requireMinimumPluginVersion('ircbot', '2.27')
     }
 
     def 'given the required cobertura report file name all defaults are set for your pleasure'() {

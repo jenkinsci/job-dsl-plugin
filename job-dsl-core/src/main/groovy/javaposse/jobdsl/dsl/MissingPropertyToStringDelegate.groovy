@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 import java.util.logging.Logger
 
 /**
- * Works like NodeBuilder, but in the context of a parent node. Used as the delegate for WithXmlAction closure.
+ * Works like NodeBuilder, but in the context of a parent node. Used as the delegate for configure block closures.
  */
 class MissingPropertyToStringDelegate {
     private static final Logger LOGGER = Logger.getLogger(MissingPropertyToStringDelegate.name)

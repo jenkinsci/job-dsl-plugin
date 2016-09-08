@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.toplevel
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class LockableResourcesContext extends AbstractContext {
     String resourcesVariable
@@ -32,7 +31,6 @@ class LockableResourcesContext extends AbstractContext {
      *
      * @since 1.44
      */
-    @RequiresPlugin(id = 'lockable-resources', minimumVersion = '1.7')
     void label(String label) {
         this.label = label
     }

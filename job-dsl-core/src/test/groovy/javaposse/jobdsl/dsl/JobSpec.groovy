@@ -546,7 +546,7 @@ class JobSpec extends Specification {
             children().size() == 1
             resourceNames[0].value() == 'lock-resource'
         }
-        1 * jobManagement.requirePlugin('lockable-resources')
+        1 * jobManagement.requireMinimumPluginVersion('lockable-resources', '1.7')
     }
 
     def 'lockable resources with all parameters'() {
@@ -565,9 +565,7 @@ class JobSpec extends Specification {
             resourceNumber[0].value() == 1
             labelName[0].value() == 'foo'
         }
-        1 * jobManagement.requirePlugin('lockable-resources')
         1 * jobManagement.requireMinimumPluginVersion('lockable-resources', '1.7')
-        1 * jobManagement.logPluginDeprecationWarning('lockable-resources', '1.7')
     }
 
     def 'lockable resources with label only'() {
@@ -581,8 +579,7 @@ class JobSpec extends Specification {
             children().size() == 1
             labelName[0].value() == 'HEAVY_RESOURCE'
         }
-        1 * jobManagement.requirePlugin('lockable-resources')
-        1 * jobManagement.logPluginDeprecationWarning('lockable-resources', '1.7')
+        2 * jobManagement.requireMinimumPluginVersion('lockable-resources', '1.7')
     }
 
     def 'lockable resources resource or label have to be defined'() {

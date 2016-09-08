@@ -94,17 +94,6 @@ class ScmContext extends AbstractExtensibleContext {
             gitContext.branches << '**'
         }
 
-        if (gitContext.shallowClone || gitContext.reference || gitContext.cloneTimeout) {
-            gitContext.extensionContext.extensions << new NodeBuilder().
-                    'hudson.plugins.git.extensions.impl.CloneOption' {
-                shallow(gitContext.shallowClone)
-                reference(gitContext.reference)
-                if (gitContext.cloneTimeout) {
-                    timeout(gitContext.cloneTimeout)
-                }
-            }
-        }
-
         Node gitNode = new NodeBuilder().scm(class: 'hudson.plugins.git.GitSCM') {
             userRemoteConfigs(gitContext.remoteConfigs)
             branches {
@@ -114,27 +103,9 @@ class ScmContext extends AbstractExtensibleContext {
                     }
                 }
             }
-            configVersion '2'
-            disableSubmodules 'false'
-            recursiveSubmodules gitContext.recursiveSubmodules
-            if (gitContext.trackingSubmodules) {
-                trackingSubmodules gitContext.trackingSubmodules
-            }
-            doGenerateSubmoduleConfigurations 'false'
-            authorOrCommitter 'false'
-            clean gitContext.clean
-            wipeOutWorkspace gitContext.wipeOutWorkspace
-            pruneBranches gitContext.pruneBranches
-            remotePoll gitContext.remotePoll
-            ignoreNotifyCommit gitContext.ignoreNotifyCommit
-            gitTool 'Default'
-            if (gitContext.relativeTargetDir) {
-                relativeTargetDir gitContext.relativeTargetDir
-            }
-            if (gitContext.localBranch) {
-                localBranch gitContext.localBranch
-            }
-            skipTag !gitContext.createTag
+            configVersion(2)
+            doGenerateSubmoduleConfigurations(false)
+            gitTool('Default')
             if (gitContext.extensionContext.extensions) {
                 extensions(gitContext.extensionContext.extensions)
             }
@@ -142,10 +113,6 @@ class ScmContext extends AbstractExtensibleContext {
 
         if (gitContext.gitBrowserContext.browser) {
             gitNode.children().add(gitContext.gitBrowserContext.browser)
-        }
-
-        if (gitContext.strategyContext.buildChooser) {
-            gitNode.children().add(gitContext.strategyContext.buildChooser)
         }
 
         ContextHelper.executeConfigureBlock(gitNode, gitContext.configureBlock)
@@ -284,17 +251,6 @@ class ScmContext extends AbstractExtensibleContext {
         ContextHelper.executeConfigureBlock(svnNode, svnContext.configureBlock)
 
         scmNodes << svnNode
-    }
-
-    /**
-     * Add Perforce SCM source.
-     *
-     * @see #p4(java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
-     */
-    @RequiresPlugin(id = 'perforce')
-    @Deprecated
-    void p4(String viewspec, Closure configure = null) {
-        p4(viewspec, 'rolem', '', configure)
     }
 
     /**

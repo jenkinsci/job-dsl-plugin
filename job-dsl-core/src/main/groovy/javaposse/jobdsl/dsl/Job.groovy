@@ -145,10 +145,8 @@ abstract class Job extends Item {
      *
      * @since 1.25
      */
-    @RequiresPlugin(id = 'lockable-resources')
+    @RequiresPlugin(id = 'lockable-resources', minimumVersion = '1.7')
     void lockableResources(String resources, @DslContext(LockableResourcesContext) Closure lockClosure = null) {
-        jobManagement.logPluginDeprecationWarning('lockable-resources', '1.7')
-
         LockableResourcesContext lockContext = new LockableResourcesContext(jobManagement)
         ContextHelper.executeInContext(lockClosure, lockContext)
 
