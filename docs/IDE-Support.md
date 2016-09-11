@@ -32,6 +32,7 @@ installation.
         jobs {
             groovy {
                 srcDirs 'jobs'
+                compileClasspath += main.compileClasspath
             }
         }
     }
