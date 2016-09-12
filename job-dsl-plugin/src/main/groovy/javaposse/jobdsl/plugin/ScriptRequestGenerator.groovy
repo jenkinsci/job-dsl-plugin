@@ -32,10 +32,11 @@ class ScriptRequestGenerator implements Closeable {
         if (additionalClasspath) {
             String expandedClasspath = env.expand(additionalClasspath)
             expandedClasspath.split('\n').each {
-                if (it.contains('*') || it.contains('?')) {
-                    classpath.addAll(workspace.list(it).collect { createClasspathURL(it) })
+                String classpathLine = it.trim()
+                if (classpathLine.contains('*') || classpathLine.contains('?')) {
+                    classpath.addAll(workspace.list(classpathLine).collect { createClasspathURL(it) })
                 } else {
-                    classpath << createClasspathURL(workspace.child(it))
+                    classpath << createClasspathURL(workspace.child(classpathLine))
                 }
             }
         }

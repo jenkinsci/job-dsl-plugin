@@ -10,9 +10,11 @@ import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import static javaposse.jobdsl.plugin.ScriptRequestGenerator.getAbsolutePath
 
+@Unroll
 class ScriptRequestGeneratorSpec extends Specification {
     private static final String SCRIPT = 'my script'
 
@@ -327,6 +329,25 @@ class ScriptRequestGeneratorSpec extends Specification {
         then:
         !(new File(requests[0].urlRoots[1].toURI()).exists())
         !(new File(requests[0].urlRoots[2].toURI()).exists())
+    }
+
+    def 'multiple additional classpath entries with indentation #additionalClasspath'() {
+        setup:
+        EnvVars env = new EnvVars()
+        ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
+
+        when:
+        List<ScriptRequest> requests = generator.getScriptRequests(
+                null, true, SCRIPT, false, additionalClasspath
+        ).toList()
+
+        then:
+        requests.size() == 1
+        requests[0].urlRoots[1] == new URL(build.workspace.toURI().toURL(), 'lib/a.jar')
+        requests[0].urlRoots[2] == new URL(build.workspace.toURI().toURL(), 'lib/b.jar')
+
+        where:
+        additionalClasspath << ['lib/a.jar\n\tlib/b.jar', 'lib/a.jar\nlib/b.jar\t', 'lib/a.jar   \n   lib/b.jar']
     }
 
     def 'file not found'() {
