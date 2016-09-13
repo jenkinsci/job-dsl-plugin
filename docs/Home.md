@@ -26,6 +26,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
+* 1.52 (unreleased)
 * 1.51 (September 13 2016)
  * Enhanced support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
    ([#885](https://github.com/jenkinsci/job-dsl-plugin/pull/885))
