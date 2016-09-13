@@ -39,6 +39,9 @@ class ScmContext extends AbstractExtensibleContext {
 
     /**
      * Adds a Mercurial SCM source.
+     *
+     * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
+     * node is passed into the configure block.
      */
     @RequiresPlugin(id = 'mercurial', minimumVersion = '1.50.1')
     void hg(String url, String branch = null, Closure configure = null) {
