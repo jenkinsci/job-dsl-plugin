@@ -33,6 +33,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-37422](https://issues.jenkins-ci.org/browse/JENKINS-37422))
  * Fixed problem with embedded API viewer when no default Update Center is used
    ([JENKINS-37103](https://issues.jenkins-ci.org/browse/JENKINS-37103))
+ * Fixed problem with whitespace in additional classpath
+   ([#911](https://github.com/jenkinsci/job-dsl-plugin/pull/911))
  * Improved performance for embedded API viewer with caching, compression and conditional GET requests
  * Support for the older versions of the [RVM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RVM+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-151)
