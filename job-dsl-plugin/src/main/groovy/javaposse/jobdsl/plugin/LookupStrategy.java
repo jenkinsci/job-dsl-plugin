@@ -51,6 +51,8 @@ public enum LookupStrategy {
      *
      * @param seedJob the seed job
      * @param path    the path name
+     * @param type    the type of the item
+     * @param <T>     the type of the item
      * @return the item for the given path
      */
     public abstract <T extends Item> T getItem(Item seedJob, String path, Class<T> type);
