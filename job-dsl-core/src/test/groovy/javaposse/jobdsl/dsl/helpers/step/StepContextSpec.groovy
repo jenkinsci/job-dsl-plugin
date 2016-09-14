@@ -2642,6 +2642,7 @@ class StepContextSpec extends Specification {
         context.stepNodes[1].name() == 'hudson.tasks.Shell'
         context.stepNodes[2].name() == 'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'
         1 * jobManagement.requirePlugin('Exclusion')
+        1 * jobManagement.logPluginDeprecationWarning('Exclusion', '0.12')
     }
 
     def 'call rake method'() {

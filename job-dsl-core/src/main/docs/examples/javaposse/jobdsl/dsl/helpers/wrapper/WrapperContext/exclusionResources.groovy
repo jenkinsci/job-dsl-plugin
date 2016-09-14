@@ -1,6 +1,6 @@
 job('example') {
     wrappers {
-        exclusionResources('first', 'second')
+        exclusionResources('FIRST', 'SECOND')
     }
     steps {
         criticalBlock {

@@ -1094,9 +1094,10 @@ class WrapperContextSpec extends Specification {
         then:
         with(context.wrapperNodes[0]) {
             name() == 'org.jvnet.hudson.plugins.exclusion.IdAllocator'
-            ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[0].name[0].value() == 'first'
+            ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[0].name[0].value() == 'FIRST'
         }
         (1.._) * mockJobManagement.requirePlugin('Exclusion')
+        1 * mockJobManagement.logPluginDeprecationWarning('Exclusion', '0.12')
     }
 
     def 'call exclusion with multiple args'() {
@@ -1106,11 +1107,12 @@ class WrapperContextSpec extends Specification {
         then:
         with(context.wrapperNodes[0]) {
             name() == 'org.jvnet.hudson.plugins.exclusion.IdAllocator'
-            ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[0].name[0].value() == 'first'
-            ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[1].name[0].value() == 'second'
-            ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[2].name[0].value() == 'third'
+            ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[0].name[0].value() == 'FIRST'
+            ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[1].name[0].value() == 'SECOND'
+            ids[0].'org.jvnet.hudson.plugins.exclusion.DefaultIdType'[2].name[0].value() == 'THIRD'
         }
         1 * mockJobManagement.requirePlugin('Exclusion')
+        1 * mockJobManagement.logPluginDeprecationWarning('Exclusion', '0.12')
     }
 
     def 'set delivery pipeline version'() {
