@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import org.apache.commons.codec.digest.DigestUtils
 import org.codehaus.groovy.control.CompilationFailedException
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
@@ -14,6 +15,8 @@ import java.util.logging.Logger
 class DslScriptLoader {
     private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.name)
     private static final Comparator<? super Item> ITEM_COMPARATOR = new ItemProcessingOrderComparator()
+    private static final Map<String, JobParent> JOB_PARENT_CACHE = new HashMap<>();
+    private static final int MAX_CACHE_SIZE = 100;
 
     private final JobManagement jobManagement
     private final PrintStream logger
@@ -75,7 +78,7 @@ class DslScriptLoader {
                     engineCache[key] = engine
                 }
 
-                JobParent jobParent = runScriptEngine(scriptRequest, engine)
+                JobParent jobParent = executeOrTakeFromCache(scriptRequest, engine)
 
                 generatedItems.configFiles.addAll(
                         extractGeneratedConfigFiles(jobParent.referencedConfigFiles, scriptRequest.ignoreExisting)
@@ -103,13 +106,48 @@ class DslScriptLoader {
         generatedItems
     }
 
+
+    private static boolean useBody(ScriptRequest scriptRequest) {
+        return scriptRequest.body != null;
+    }
+
+    private JobParent executeOrTakeFromCache(ScriptRequest scriptRequest, GroovyScriptEngine engine) {
+        JobParent jobParent
+        String scriptHash
+
+        if (useBody(scriptRequest)) {
+            scriptHash = DigestUtils.md5Hex(scriptRequest.body)
+        } else {
+            Class clazz = engine.loadScriptByName(scriptRequest.location);
+            scriptHash = clazz.getName() + '@' + Integer.toHexString(clazz.hashCode());
+        }
+
+        if (JOB_PARENT_CACHE.containsKey(scriptHash) && JOB_PARENT_CACHE.get(scriptHash).canBeCached()) {
+            jobParent = JOB_PARENT_CACHE.get(scriptHash)
+            LOGGER.log(Level.FINE, String.format("From cache: ${scriptHash}"));
+            return jobParent
+        } else {
+            jobParent = runScriptEngine(scriptRequest, engine)
+            LOGGER.log(Level.FINE, String.format("Compiled: ${scriptHash}"));
+
+            if (JOB_PARENT_CACHE.size() > MAX_CACHE_SIZE) {
+                JOB_PARENT_CACHE.clear()
+            }
+
+            JOB_PARENT_CACHE.put(scriptHash, jobParent)
+        }
+
+        return jobParent
+    }
+
+
     private JobParent runScriptEngine(ScriptRequest scriptRequest, GroovyScriptEngine engine) {
         LOGGER.log(Level.FINE, String.format("Request for ${scriptRequest.location}"))
 
         Binding binding = createBinding(scriptRequest)
         try {
             Script script
-            if (scriptRequest.body != null) {
+            if (useBody(scriptRequest)) {
                 logger.println('Processing provided DSL script')
                 Class cls = engine.groovyClassLoader.parseClass(scriptRequest.body, 'script')
                 script = InvokerHelper.createScript(cls, binding)
