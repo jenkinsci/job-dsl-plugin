@@ -15,6 +15,11 @@ class JobDslPlugin extends Plugin {
     private volatile CachedFile cachedApi
     private volatile CachedFile cachedUpdateCenter
 
+    @SuppressWarnings(['deprecation', 'UnnecessaryConstructor'])
+    JobDslPlugin() {
+        super()
+    }
+
     @Override
     void postInitialize() throws Exception {
         ExtensionList.lookup(Descriptor).addListener(new ExtensionListListener() {

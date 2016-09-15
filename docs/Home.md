@@ -27,6 +27,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.52 (unreleased)
+ * Increased the minimum supported Jenkins version to 1.642
 * 1.51 (September 13 2016)
  * Enhanced support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
    ([#885](https://github.com/jenkinsci/job-dsl-plugin/pull/885))
