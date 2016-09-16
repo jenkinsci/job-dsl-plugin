@@ -1,3 +1,11 @@
+## Migrating to 1.52
+
+### Exclusion
+
+Support for versions older than 0.12 of the
+[Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin) is [[deprecated|Deprecation-Policy]]
+and will be removed.
+
 ## Migrating to 1.51
 
 ### Rundeck

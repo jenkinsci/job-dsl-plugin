@@ -690,6 +690,8 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'Exclusion')
     void criticalBlock(@DslContext(StepContext) Closure closure) {
+        jobManagement.logPluginDeprecationWarning('Exclusion', '0.12')
+
         StepContext stepContext = new StepContext(jobManagement, item)
         ContextHelper.executeInContext(closure, stepContext)
 
