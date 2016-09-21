@@ -1,6 +1,6 @@
-multiJob('a') {
-    publishers {
-        mergePullRequest {
+job('a') {
+    steps {
+        criticalBlock {
         }
     }
 }

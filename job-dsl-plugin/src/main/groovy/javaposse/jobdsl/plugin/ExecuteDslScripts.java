@@ -135,6 +135,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private boolean failOnMissingPlugin;
 
+    private boolean unstableOnDeprecation;
+
     private RemovedJobAction removedJobAction = RemovedJobAction.IGNORE;
 
     private RemovedViewAction removedViewAction = RemovedViewAction.IGNORE;
@@ -256,6 +258,15 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.failOnMissingPlugin = failOnMissingPlugin;
     }
 
+    public boolean isUnstableOnDeprecation() {
+        return unstableOnDeprecation;
+    }
+
+    @DataBoundSetter
+    public void setUnstableOnDeprecation(boolean unstableOnDeprecation) {
+        this.unstableOnDeprecation = unstableOnDeprecation;
+    }
+
     public RemovedJobAction getRemovedJobAction() {
         return removedJobAction;
     }
@@ -328,6 +339,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                     listener.getLogger(), env, run, workspace, getLookupStrategy()
             );
             jenkinsJobManagement.setFailOnMissingPlugin(failOnMissingPlugin);
+            jenkinsJobManagement.setUnstableOnDeprecation(unstableOnDeprecation);
             JobManagement jobManagement = new InterruptibleJobManagement(jenkinsJobManagement);
 
             ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env);

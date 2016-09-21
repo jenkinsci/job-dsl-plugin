@@ -41,5 +41,9 @@
         <f:entry title="Fail build if a plugin must be installed or updated:" field="failOnMissingPlugin">
             <f:checkbox name="failOnMissingPlugin" checked="${instance.failOnMissingPlugin}"/>
         </f:entry>
+
+        <f:entry title="Mark build as unstable when using deprecated features:" field="unstableOnDeprecation">
+            <f:checkbox name="unstableOnDeprecation" checked="${instance.unstableOnDeprecation}"/>
+        </f:entry>
     </f:advanced>
 </j:jelly>

@@ -63,7 +63,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static hudson.model.Result.FAILURE;
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static java.lang.String.format;
@@ -85,6 +84,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments =
             new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
     private boolean failOnMissingPlugin;
+    private boolean unstableOnDeprecation;
 
     @Deprecated
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, AbstractBuild<?, ?> build,
@@ -113,6 +113,10 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     void setFailOnMissingPlugin(boolean failOnMissingPlugin) {
         this.failOnMissingPlugin = failOnMissingPlugin;
+    }
+
+    void setUnstableOnDeprecation(boolean unstableOnDeprecation) {
+        this.unstableOnDeprecation = unstableOnDeprecation;
     }
 
     @Override
@@ -303,6 +307,14 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             logDeprecationWarning(
                     "support for " + plugin.getWrapper().getDisplayName() + " versions older than " + minimumVersion
             );
+        }
+    }
+
+    @Override
+    protected void logDeprecationWarning(String subject, String details) {
+        super.logDeprecationWarning(subject, details);
+        if (unstableOnDeprecation && run != null) {
+            run.setResult(UNSTABLE);
         }
     }
 
