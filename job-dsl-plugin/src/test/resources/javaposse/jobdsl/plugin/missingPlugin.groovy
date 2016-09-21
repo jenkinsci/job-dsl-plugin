@@ -1,0 +1,6 @@
+job('a') {
+    publishers {
+        extendedEmail {
+        }
+    }
+}

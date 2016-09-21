@@ -133,6 +133,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private boolean ignoreMissingFiles;
 
+    private boolean failOnMissingPlugin;
+
     private RemovedJobAction removedJobAction = RemovedJobAction.IGNORE;
 
     private RemovedViewAction removedViewAction = RemovedViewAction.IGNORE;
@@ -245,6 +247,15 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.ignoreExisting = ignoreExisting;
     }
 
+    public boolean isFailOnMissingPlugin() {
+        return failOnMissingPlugin;
+    }
+
+    @DataBoundSetter
+    public void setFailOnMissingPlugin(boolean failOnMissingPlugin) {
+        this.failOnMissingPlugin = failOnMissingPlugin;
+    }
+
     public RemovedJobAction getRemovedJobAction() {
         return removedJobAction;
     }
@@ -313,9 +324,11 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 env.putAll(((AbstractBuild<?, ?>) run).getBuildVariables());
             }
 
-            JobManagement jm = new InterruptibleJobManagement(
-                    new JenkinsJobManagement(listener.getLogger(), env, run, workspace, getLookupStrategy())
+            JenkinsJobManagement jenkinsJobManagement = new JenkinsJobManagement(
+                    listener.getLogger(), env, run, workspace, getLookupStrategy()
             );
+            jenkinsJobManagement.setFailOnMissingPlugin(failOnMissingPlugin);
+            JobManagement jobManagement = new InterruptibleJobManagement(jenkinsJobManagement);
 
             ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env);
             try {
@@ -323,7 +336,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                         getTargets(), isUsingScriptText(), getScriptText(), ignoreExisting, isIgnoreMissingFiles(), additionalClasspath
                 );
 
-                DslScriptLoader dslScriptLoader = new DslScriptLoader(jm);
+                DslScriptLoader dslScriptLoader = new DslScriptLoader(jobManagement);
                 GeneratedItems generatedItems = dslScriptLoader.runScripts(scriptRequests);
                 Set<GeneratedJob> freshJobs = generatedItems.getJobs();
                 Set<GeneratedView> freshViews = generatedItems.getViews();
@@ -352,7 +365,6 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             throw new AbortException(e.getMessage());
         }
     }
-
 
     /**
      * Uses generatedJobs as existing data, so call before updating generatedJobs.
@@ -413,7 +425,6 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         }
         return freshTemplates;
     }
-
 
     private void updateGeneratedJobs(final Job seedJob, TaskListener listener,
                                      Set<GeneratedJob> freshJobs) throws IOException, InterruptedException {
