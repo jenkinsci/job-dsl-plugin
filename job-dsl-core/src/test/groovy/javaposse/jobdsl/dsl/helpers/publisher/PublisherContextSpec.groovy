@@ -3242,8 +3242,9 @@ class PublisherContextSpec extends Specification {
         context.rundeck('jobId')
 
         then:
-        Exception e = thrown(DslScriptException)
-        e.message =~ 'rundeckInstance cannot be null or empty'
+        with(context.publisherNodes[0]) {
+            rundeckInstance[0].value() == 'Default'
+        }
     }
 
     def 'call s3 without profile'(String profile) {
