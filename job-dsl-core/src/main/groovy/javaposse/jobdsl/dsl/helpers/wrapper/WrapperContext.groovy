@@ -537,7 +537,7 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'credentials-binding')
     void credentialsBinding(@DslContext(CredentialsBindingContext) Closure closure) {
-        CredentialsBindingContext context = new CredentialsBindingContext(jobManagement)
+        CredentialsBindingContext context = new CredentialsBindingContext(jobManagement, item)
         ContextHelper.executeInContext(closure, context)
 
         wrapperNodes << new NodeBuilder().'org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper' {
