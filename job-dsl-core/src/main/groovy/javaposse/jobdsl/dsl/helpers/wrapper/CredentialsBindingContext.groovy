@@ -1,14 +1,17 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextType
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
-class CredentialsBindingContext extends AbstractContext {
+@ContextType('org.jenkinsci.plugins.credentialsbinding.MultiBinding')
+class CredentialsBindingContext extends AbstractExtensibleContext {
     final List<Node> nodes = []
 
-    CredentialsBindingContext(JobManagement jobManagement) {
-        super(jobManagement)
+    CredentialsBindingContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
     }
 
     /**
@@ -58,5 +61,10 @@ class CredentialsBindingContext extends AbstractContext {
             variable(variableName)
             credentialsId(credentials)
         }
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        nodes << node
     }
 }
