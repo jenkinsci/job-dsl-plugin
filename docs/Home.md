@@ -30,6 +30,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Increased the minimum supported Jenkins version to 1.642
  * Enhanced support for the [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin)
    ([JENKINS-36683](https://issues.jenkins-ci.org/browse/JENKINS-36683))
+ * Added an option to mark a seed job build as failed if a plugin must be installed or updated to support all feature
+   used in DSL scripts
+   ([JENKINS-37417](https://issues.jenkins-ci.org/browse/JENKINS-37417))
  * Support for the older versions of the
    [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin) is deprecated, see
    [Migration](Migration#migrating-to-152)

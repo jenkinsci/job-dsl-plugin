@@ -37,5 +37,9 @@
         <f:entry title="Additional classpath" field="additionalClasspath">
             <f:expandableTextbox/>
         </f:entry>
+
+        <f:entry title="Fail build if a plugin must be installed or updated:" field="failOnMissingPlugin">
+            <f:checkbox name="failOnMissingPlugin" checked="${instance.failOnMissingPlugin}"/>
+        </f:entry>
     </f:advanced>
 </j:jelly>

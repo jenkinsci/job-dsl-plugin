@@ -26,7 +26,9 @@ import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.Specification
 
+import static hudson.model.Result.FAILURE
 import static hudson.model.Result.SUCCESS
+import static hudson.model.Result.UNSTABLE
 import static org.junit.Assert.assertTrue
 
 class ExecuteDslScriptsSpec extends Specification {
@@ -1210,6 +1212,29 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         freeStyleBuild.getLog(25).join('\n') =~ /Warning: \(script, line 3\) mergePullRequest is deprecated/
+    }
+
+    def 'unstable or failure on missing plugin'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(
+                scriptText: this.class.getResourceAsStream('missingPlugin.groovy').text,
+                failOnMissingPlugin: failOnMissingPlugin
+        ))
+        job.onCreatedFromScratch()
+
+        when:
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
+
+        then:
+        build.getLog(25).join('\n') =~
+                /${message}: \(script, line 3\) version .+ or later of plugin 'email-ext' needs to be installed/
+        build.result == result
+
+        where:
+        failOnMissingPlugin || result   | message
+        true                || FAILURE  | 'ERROR'
+        false               || UNSTABLE | 'Warning'
     }
 
     def 'JENKINS-32995'() {

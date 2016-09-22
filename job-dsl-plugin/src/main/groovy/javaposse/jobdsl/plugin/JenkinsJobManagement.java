@@ -63,6 +63,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static hudson.model.Result.FAILURE;
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static java.lang.String.format;
@@ -83,6 +84,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private final LookupStrategy lookupStrategy;
     private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments =
             new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
+    private boolean failOnMissingPlugin;
 
     @Deprecated
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, AbstractBuild<?, ?> build,
@@ -107,6 +109,10 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, File workspace) {
         this(outputLogger, envVars, null, new FilePath(workspace.getAbsoluteFile()), LookupStrategy.JENKINS_ROOT);
+    }
+
+    void setFailOnMissingPlugin(boolean failOnMissingPlugin) {
+        this.failOnMissingPlugin = failOnMissingPlugin;
     }
 
     @Override
@@ -309,7 +315,10 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     public void requirePlugin(String pluginShortName, boolean failIfMissing) {
         Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
         if (plugin == null) {
-            failOrMarkBuildAsUnstable("plugin '" + pluginShortName + "' needs to be installed", failIfMissing);
+            failOrMarkBuildAsUnstable(
+                    "plugin '" + pluginShortName + "' needs to be installed",
+                    failIfMissing || failOnMissingPlugin
+            );
         }
     }
 
@@ -324,12 +333,12 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         if (plugin == null) {
             failOrMarkBuildAsUnstable(
                     "version " + version + " or later of plugin '" + pluginShortName + "' needs to be installed",
-                    failIfMissing
+                    failIfMissing || failOnMissingPlugin
             );
         } else if (plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(version))) {
             failOrMarkBuildAsUnstable(
                     "plugin '" + pluginShortName + "' needs to be updated to version " + version + " or later",
-                    failIfMissing
+                    failIfMissing || failOnMissingPlugin
             );
         }
     }
