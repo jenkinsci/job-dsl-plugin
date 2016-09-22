@@ -10,6 +10,7 @@ import hudson.model.FreeStyleProject
 import hudson.model.Items
 import hudson.model.Label
 import hudson.model.ListView
+import hudson.model.Result
 import hudson.model.View
 import hudson.slaves.DumbSlave
 import javaposse.jobdsl.dsl.GeneratedJob
@@ -25,12 +26,14 @@ import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import static hudson.model.Result.FAILURE
 import static hudson.model.Result.SUCCESS
 import static hudson.model.Result.UNSTABLE
 import static org.junit.Assert.assertTrue
 
+@Unroll
 class ExecuteDslScriptsSpec extends Specification {
     private static final String UTF_8 = 'UTF-8'
 
@@ -1201,17 +1204,27 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.rootPath.child('userContent').child('foo.txt').readToString().trim() == 'lorem ipsum'
     }
 
-    def 'deprecation warning in DSL script'() {
+    def 'deprecation warning in DSL script with unstableOnDeprecation set to #{unstableOnDeprecation}'() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
-        job.buildersList.add(new ExecuteDslScripts(this.class.getResourceAsStream('deprecation.groovy').text))
+        job.buildersList.add(new ExecuteDslScripts(
+                scriptText: this.class.getResourceAsStream('deprecation.groovy').text,
+                unstableOnDeprecation: unstableOnDeprecation
+        ))
         job.onCreatedFromScratch()
 
         when:
-        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
 
         then:
-        freeStyleBuild.getLog(25).join('\n') =~ /Warning: \(script, line 3\) mergePullRequest is deprecated/
+        build.getLog(25).join('\n') =~
+                /Warning: \(script, line 3\) support for Exclusion Plug-in versions older than 0.12 is deprecated/
+        build.result == result
+
+        where:
+        unstableOnDeprecation || result
+        true                  || Result.UNSTABLE
+        false                 || Result.SUCCESS
     }
 
     def 'unstable or failure on missing plugin'() {
