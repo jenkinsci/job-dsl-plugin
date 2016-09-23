@@ -35,8 +35,8 @@ assets {
 }
 
 combineJs {
-    source 'build/assets'
-    include '**/*.js'
+    def jsFiles = fileTree(dir: "build/assets", include: "**/*.js")
+    source jsFiles.files.sort() // ensure App.js comes first
     dest = file("${buildDir}/dist/js/app.js")
     dependsOn 'assetCompile'
 }
