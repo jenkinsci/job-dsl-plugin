@@ -5,6 +5,7 @@ import hudson.ExtensionListListener
 import hudson.Plugin
 import hudson.PluginWrapper
 import hudson.model.Descriptor
+import hudson.model.UpdateSite
 import jenkins.model.Jenkins
 import net.sf.json.JSONObject
 import org.kohsuke.stapler.StaplerRequest
@@ -55,11 +56,12 @@ class JobDslPlugin extends Plugin {
     }
 
     private CachedFile generateUpdateCenter() {
-        long lastModified = Jenkins.instance.updateCenter.sites*.dataTimestamp.max()
+        Collection<UpdateSite> sites = Jenkins.instance.updateCenter.sites.findAll { it.JSONObject != null }
+        long lastModified = sites*.dataTimestamp.max() ?: 0
         CachedFile updateCenter = cachedUpdateCenter
         if (updateCenter == null || lastModified > updateCenter.timestamp) {
             Map<String, Object> plugins = [:]
-            Jenkins.instance.updateCenter.sites.each {
+            sites.each {
                 plugins.putAll(it.JSONObject.getJSONObject('plugins'))
             }
 
