@@ -17,7 +17,9 @@ App.Settings = Marionette.Object.extend({
     },
 
     isPluginsExcluded: function(plugins) {
-        return plugins.length > 0 && _.pluck(plugins, 'name').some(this.isPluginExcluded.bind(this));
+        return _.isEmpty(plugins)
+            || _.some(plugins, _.isUndefined)
+            || _.pluck(plugins, 'name').some(this.isPluginExcluded.bind(this));
     },
 
     setPluginExcluded: function(name, isExcluded) {
