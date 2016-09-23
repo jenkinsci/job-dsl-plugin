@@ -3,6 +3,7 @@ package javaposse.jobdsl.plugin
 import hudson.ExtensionList
 import hudson.ExtensionListListener
 import hudson.Plugin
+import hudson.PluginWrapper
 import hudson.model.Descriptor
 import jenkins.model.Jenkins
 import net.sf.json.JSONObject
@@ -60,6 +61,26 @@ class JobDslPlugin extends Plugin {
             Map<String, Object> plugins = [:]
             Jenkins.instance.updateCenter.sites.each {
                 plugins.putAll(it.JSONObject.getJSONObject('plugins'))
+            }
+
+            // remove unused keys
+            plugins.values().each { JSONObject plugin ->
+                Set keys = new HashSet(plugin.keySet())
+                keys.removeAll('name', 'title', 'wiki', 'excerpt')
+                keys.each { plugin.remove(it) }
+            }
+
+            // add plugins that are not available in the Update Center
+            Jenkins.instance.pluginManager.plugins.each { PluginWrapper plugin ->
+                if (!plugins.containsKey(plugin.shortName)) {
+                    JSONObject pluginJson = new JSONObject()
+                    pluginJson.put('name', plugin.shortName)
+                    pluginJson.put('title', plugin.displayName)
+                    if (plugin.url) {
+                        pluginJson.put('wiki', plugin.url)
+                    }
+                    plugins.put(plugin.shortName, pluginJson)
+                }
             }
 
             JSONObject data = new JSONObject()

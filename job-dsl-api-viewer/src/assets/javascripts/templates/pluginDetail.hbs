@@ -3,9 +3,13 @@
         <h2>
             {{plugin.title}}
 
-            <a href="{{plugin.wiki}}"><span class="glyphicon glyphicon-new-window"></span> Wiki</a></h2>
+            {{#if plugin.wiki}}
+                <a href="{{plugin.wiki}}"><span class="glyphicon glyphicon-new-window"></span> Wiki</a>
+            {{/if}}
         </h2>
-        <div class="method-doc">{{{plugin.excerpt}}}</div>
+        {{#if plugin.excerpt}}
+            <div class="method-doc">{{{plugin.excerpt}}}</div>
+        {{/if}}
 
         <h3 class="section-header">DSL Methods</h3>
         <ul class="usages">
