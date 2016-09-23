@@ -37,7 +37,13 @@ _.extend(App.Dsl.prototype, {
             method.plugins = _.chain(method.signatures)
                 .pluck('plugins')
                 .flatten()
-                .map(function(plugin) { return window.updateCenter.data.plugins[plugin.id] })
+                .map(function(plugin) {
+                    var data = window.updateCenter.data.plugins[plugin.id];
+                    if (!data) {
+                        console.log('plugin not found', plugin.id);
+                    }
+                    return data;
+                })
                 .value();
         });
     },
@@ -61,6 +67,7 @@ _.extend(App.Dsl.prototype, {
             .pluck('plugins')
             .filter()
             .flatten()
+            .filter()
             .unique()
             .sortBy(function (item) {
                 return item.title.toLowerCase();
@@ -226,6 +233,7 @@ _.extend(App.Dsl.prototype, {
                         plugin.title = pluginData.title;
                         plugin.wiki = pluginData.wiki;
                     } else {
+                        plugin.title = plugin.id;
                         console.log('plugin not found', plugin.id);
                     }
                 });

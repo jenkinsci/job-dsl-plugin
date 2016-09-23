@@ -37,6 +37,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-37418](https://issues.jenkins-ci.org/browse/JENKINS-37418))
  * Allow `CredentialsBindingContext` to be extended
    ([#920](https://github.com/jenkinsci/job-dsl-plugin/pull/920))
+ * Fixed problem with embedded API viewer when a plugin is not available in the Update Center
+   ([JENKINS-38456](https://issues.jenkins-ci.org/browse/JENKINS-38456))
  * Support for the older versions of the
    [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin) is deprecated, see
    [Migration](Migration#migrating-to-152)

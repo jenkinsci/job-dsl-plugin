@@ -14,7 +14,13 @@
         <div class="signatures">
             {{#each signatures}}
                 {{#each plugins}}
-                    <a href="{{wiki}}"><span class="label label-plugin">Requires {{title}}{{#if minimumVersion}} v{{minimumVersion}}+{{/if}}</span></a>
+                    {{#if wiki}}
+                        <a href="{{wiki}}">
+                    {{/if}}
+                    <span class="label label-plugin">Requires {{title}}{{#if minimumVersion}} v{{minimumVersion}}+{{/if}}</span>
+                    {{#if wiki}}
+                        </a>
+                    {{/if}}
                 {{/each}}
                 {{#if availableSince}}
                     <span class="label label-since">Since {{availableSince}}</span>
