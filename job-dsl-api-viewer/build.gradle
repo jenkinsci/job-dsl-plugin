@@ -35,6 +35,7 @@ assets {
 }
 
 combineJs {
+    source 'build/assets/App.js'
     source 'build/assets'
     include '**/*.js'
     dest = file("${buildDir}/dist/js/app.js")
