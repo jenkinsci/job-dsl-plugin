@@ -912,6 +912,35 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Configures a Join Trigger
+     *
+     * <publishers>
+     *     <join.JoinTrigger>
+     *         <joinProjects></joinProjects>
+     *         <evenIfDownstreamUnstable>false</evenIfDownstreamUnstable>
+     *     </join.JoinTrigger>
+     * </publishers>
+     */
+    void joinTrigger(@DslContext(PublisherContext) Closure closure = null) {
+        joinTrigger('', false, closure)
+    }
+
+    void joinTrigger(String projects, @DslContext(PublisherContext) Closure closure = null) {
+        joinTrigger(projects, false, closure)
+    }
+
+    void joinTrigger(String projects, boolean unstable, @DslContext(PublisherContext) Closure closure = null) {
+        PublisherContext publisherContext = new PublisherContext(jobManagement, item)
+        ContextHelper.executeInContext(closure, publisherContext)
+
+        publisherNodes << new NodeBuilder().'join.JoinTrigger' {
+            joinProjects(projects)
+            evenIfDownstreamUnstable(unstable)
+            joinPublishers(publisherContext.publisherNodes)
+        }
+    }
+
+    /**
      * Create commit status notifications on the commits based on the outcome of the build.
      *
      * @since 1.21
