@@ -11,6 +11,27 @@ class BuildFlowJob extends Job {
     BuildFlowJob(JobManagement jobManagement) {
         super(jobManagement)
     }
+   
+    /**
+     * Controls the "Build Flow Needs Workspace" checkbox, see Build Flow Plugin for more details.
+     */
+    void buildFlowNeedsWorkspace(boolean needsWorkspace) {
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / buildNeedsWorkspace(Boolean.valueOf(needsWorkspace).toString())
+        }
+    }
+
+    /**
+     * Causes the Build Flow Plugin to process a DSL script from a file within the job's WORKSPACE
+     * Enables {@link #buildFlowNeedsWorkspace} automatically.
+     * @param fileName The DSL file to load from the job's workspace.
+     */
+    void buildFlowFile(String fileName) {
+        buildFlowNeedsWorkspace(true) //File requires a workspace
+        withXmlActions << WithXmlAction.create { Node project ->
+            project / dslFile(fileName)
+        }
+    }
 
     /**
      * Sets the build flow DSL script.
