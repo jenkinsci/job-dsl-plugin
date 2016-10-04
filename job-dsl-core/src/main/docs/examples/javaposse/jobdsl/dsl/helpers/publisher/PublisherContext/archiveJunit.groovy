@@ -9,6 +9,7 @@ job('example-2') {
         archiveJunit('**/minitest-reports/*.xml') {
             allowEmptyResults()
             retainLongStdout()
+            healthScaleFactor()
             testDataPublishers {
                 publishTestStabilityData()
             }

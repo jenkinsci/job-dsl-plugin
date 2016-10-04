@@ -9,6 +9,7 @@ class ArchiveJUnitContext extends AbstractContext {
     final TestDataPublishersContext testDataPublishersContext
     boolean allowEmptyResults
     boolean retainLongStdout
+    double healthScaleFactor = 1.0
 
     ArchiveJUnitContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -30,6 +31,16 @@ class ArchiveJUnitContext extends AbstractContext {
      */
     void retainLongStdout(boolean retain = true) {
         retainLongStdout = retain
+    }
+
+    /**
+     * The amplification factor to apply to test failures when computing the test result contribution to the
+     * build health score.
+     * The default factor is {@code 1.0}.
+     * @param factor
+     */
+    void healthScaleFactor(double factor = 1.0) {
+        healthScaleFactor = factor
     }
 
     /**

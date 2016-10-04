@@ -345,6 +345,7 @@ class PublisherContextSpec extends Specification {
         context.archiveJunit('include/*') {
             allowEmptyResults()
             retainLongStdout()
+            healthScaleFactor()
             testDataPublishers {
                 allowClaimingOfFailedTests()
                 publishTestAttachments()
@@ -356,10 +357,11 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.junit.JUnitResultArchiver'
-            children().size() == 4
+            children().size() == 5
             testResults[0].value() == 'include/*'
             allowEmptyResults[0].value() == true
             keepLongStdio[0].value() == true
+            healthScaleFactor[0].value() == 1.0
             testDataPublishers[0].children().size() == 4
             testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
             testDataPublishers[0].'hudson.plugins.junitattachments.AttachmentPublisher'[0] != null
@@ -381,10 +383,11 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.junit.JUnitResultArchiver'
-            children().size() == 4
+            children().size() == 5
             testResults[0].value() == 'include/*'
             keepLongStdio[0].value() == false
             allowEmptyResults[0].value() == false
+            healthScaleFactor[0].value() == 1.0
             testDataPublishers[0].children().size() == 0
         }
         1 * jobManagement.requireMinimumPluginVersion('junit', '1.10')
