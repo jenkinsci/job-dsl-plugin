@@ -11,14 +11,19 @@ class PhaseContext extends AbstractContext {
 
     String phaseName
     String continuationCondition
+    String executionType
 
     List<PhaseJobContext> jobsInPhase = []
 
-    PhaseContext(JobManagement jobManagement, Item item, String phaseName, String continuationCondition) {
+    PhaseContext(
+        JobManagement jobManagement, Item item, String phaseName, String continuationCondition,
+        String executionType
+    ) {
         super(jobManagement)
         this.item = item
         this.phaseName = phaseName
         this.continuationCondition = continuationCondition
+        this.executionType = executionType
     }
 
     /**
@@ -33,6 +38,13 @@ class PhaseContext extends AbstractContext {
      */
     void continuationCondition(String continuationCondition) {
         this.continuationCondition = continuationCondition
+    }
+
+    /**
+     * Defines how to run the whole MultiJob phase.
+     */
+    void executionType(String executionType) {
+        this.executionType = executionType
     }
 
     /**

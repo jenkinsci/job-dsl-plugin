@@ -11,6 +11,10 @@ class MultiJobStepContext extends StepContext {
             'SUCCESSFUL', 'UNSTABLE', 'COMPLETED', 'FAILURE', 'ALWAYS'
     ]
 
+    private static final List<String> VALID_EXECUTION_TYPES = [
+            'PARALLEL', 'SEQUENTIALLY'
+    ]
+
     MultiJobStepContext(JobManagement jobManagement, Item item) {
         super(jobManagement, item)
     }
@@ -19,14 +23,14 @@ class MultiJobStepContext extends StepContext {
      * Adds a MultiJob phase.
      */
     void phase(@DslContext(PhaseContext) Closure phaseContext) {
-        phase(null, 'SUCCESSFUL', phaseContext)
+        phase(null, 'SUCCESSFUL', 'PARALLEL', phaseContext)
     }
 
     /**
      * Adds a MultiJob phase.
      */
     void phase(String phaseName, @DslContext(PhaseContext) Closure phaseContext = null) {
-        phase(phaseName, 'SUCCESSFUL', phaseContext)
+        phase(phaseName, 'SUCCESSFUL', 'PARALLEL', phaseContext)
     }
 
     /**
@@ -35,9 +39,13 @@ class MultiJobStepContext extends StepContext {
      * {@code continuationCondition} must be one of {@code 'SUCCESSFUL'}, {@code 'UNSTABLE'}, {@code 'COMPLETED'} or
      * {@code 'FAILURE'}. When version 1.16 or later of the MultiJob plugin is installed, {@code continuationCondition}
      * can also be set to {@code 'ALWAYS'}.
+     * {@code executionType} must be one of {@code 'PARALLEL'} or {@code 'SEQUENTIALLY'}
      */
-    void phase(String name, String continuationCondition, @DslContext(PhaseContext) Closure phaseClosure) {
-        PhaseContext phaseContext = new PhaseContext(jobManagement, item, name, continuationCondition)
+    void phase(
+        String name, String continuationCondition, String executionType,
+        @DslContext(PhaseContext) Closure phaseClosure
+    ) {
+        PhaseContext phaseContext = new PhaseContext(jobManagement, item, name, continuationCondition, executionType)
         ContextHelper.executeInContext(phaseClosure, phaseContext)
 
         Preconditions.checkNotNullOrEmpty(phaseContext.phaseName, 'A phase needs a name')
@@ -45,10 +53,15 @@ class MultiJobStepContext extends StepContext {
                 VALID_CONTINUATION_CONDITIONS.contains(phaseContext.continuationCondition),
                 "Continuation Condition needs to be one of these values: ${VALID_CONTINUATION_CONDITIONS.join(', ')}"
         )
+        Preconditions.checkArgument(
+                VALID_EXECUTION_TYPES.contains(phaseContext.executionType),
+                "Execution Type needs to be one of these values: ${VALID_EXECUTION_TYPES.join(', ')}"
+        )
 
         stepNodes << new NodeBuilder().'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
             phaseName phaseContext.phaseName
             delegate.continuationCondition(phaseContext.continuationCondition)
+            delegate.executionType(phaseContext.executionType)
             phaseJobs {
                 phaseContext.jobsInPhase.each { PhaseJobContext jobInPhase ->
                     Node phaseJobNode = 'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {
