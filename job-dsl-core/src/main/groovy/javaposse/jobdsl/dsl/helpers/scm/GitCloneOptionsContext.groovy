@@ -6,6 +6,7 @@ class GitCloneOptionsContext implements Context {
     boolean shallow
     String reference
     Integer timeout
+    boolean honorRefspec
 
     /**
      * Perform shallow clone, so that Git will not download history of the project. Defaults to {@code false}.
@@ -26,5 +27,12 @@ class GitCloneOptionsContext implements Context {
      */
     void timeout(Integer timeout) {
         this.timeout = timeout
+    }
+
+    /**
+     * Honor refspec on initial clone.
+     */
+    void honorRefspec(boolean honorRefspec = true) {
+        this.honorRefspec = honorRefspec
     }
 }

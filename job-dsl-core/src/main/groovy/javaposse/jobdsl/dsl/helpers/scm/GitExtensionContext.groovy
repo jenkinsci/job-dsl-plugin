@@ -70,6 +70,7 @@ class GitExtensionContext extends AbstractExtensibleContext {
             if (context.timeout != null) {
                 timeout(context.timeout)
             }
+            honorRefspec(context.honorRefspec)
         }
     }
 
