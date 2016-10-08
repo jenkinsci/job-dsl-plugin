@@ -40,7 +40,10 @@ _.extend(App.Dsl.prototype, {
                 .map(function(plugin) {
                     var data = window.updateCenter.data.plugins[plugin.id];
                     if (!data) {
-                        console.log('plugin not found', plugin.id);
+                        data = {
+                            name: plugin.id,
+                            title: plugin.id
+                        };
                     }
                     return data;
                 })
@@ -65,10 +68,8 @@ _.extend(App.Dsl.prototype, {
             .pluck('methods')
             .flatten()
             .pluck('plugins')
-            .filter()
             .flatten()
-            .filter()
-            .unique()
+            .unique(false, function(item) { return item.name; })
             .sortBy(function (item) {
                 return item.title.toLowerCase();
             })
@@ -234,7 +235,6 @@ _.extend(App.Dsl.prototype, {
                         plugin.wiki = pluginData.wiki;
                     } else {
                         plugin.title = plugin.id;
-                        console.log('plugin not found', plugin.id);
                     }
                 });
             }
