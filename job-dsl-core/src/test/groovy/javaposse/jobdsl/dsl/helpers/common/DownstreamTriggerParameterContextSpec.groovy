@@ -114,6 +114,7 @@ class DownstreamTriggerParameterContextSpec extends Specification {
             children().size() == 1
             combineQueuedCommits[0].text() == 'false'
         }
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.5.3')
     }
 
     def 'git revision with all arguments'() {
@@ -127,6 +128,7 @@ class DownstreamTriggerParameterContextSpec extends Specification {
             children().size() == 1
             combineQueuedCommits[0].value() == value
         }
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.5.3')
 
         where:
         value << [true, false]

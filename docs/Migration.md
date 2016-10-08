@@ -1,5 +1,11 @@
 ## Migrating to 1.52
 
+### Git
+
+Support for versions older than 2.5.3 of the
+[Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin) is [[deprecated|Deprecation-Policy]]
+and will be removed.
+
 ### Exclusion
 
 Support for versions older than 0.12 of the

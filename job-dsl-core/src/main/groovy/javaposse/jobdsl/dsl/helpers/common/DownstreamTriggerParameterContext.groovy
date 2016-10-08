@@ -76,6 +76,8 @@ class DownstreamTriggerParameterContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
     void gitRevision(boolean combineQueuedCommits = false) {
+        jobManagement.logPluginDeprecationWarning('git', '2.5.3')
+
         this.gitRevision = true
         this.combineQueuedCommits = combineQueuedCommits
     }

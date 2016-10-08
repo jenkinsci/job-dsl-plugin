@@ -2515,6 +2515,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
         context.publisherNodes[0].forcePush[0].value() == false
         1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.5.3')
     }
 
     def 'call git with all options'() {
@@ -2556,6 +2557,7 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.5.3')
     }
 
     def 'call git with minimal tag options'() {
@@ -2583,6 +2585,7 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.5.3')
     }
 
     def 'call git without tag targetRepoName'() {

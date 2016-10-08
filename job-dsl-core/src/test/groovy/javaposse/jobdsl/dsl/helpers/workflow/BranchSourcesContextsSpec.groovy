@@ -45,6 +45,7 @@ class BranchSourcesContextsSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.5.3')
     }
 
     def 'git with all options'() {
@@ -79,6 +80,7 @@ class BranchSourcesContextsSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * jobManagement.logPluginDeprecationWarning('git', '2.5.3')
     }
 
     def 'github with minimal options'() {
