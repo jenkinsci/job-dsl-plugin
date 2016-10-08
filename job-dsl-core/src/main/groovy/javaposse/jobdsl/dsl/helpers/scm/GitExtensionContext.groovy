@@ -61,7 +61,7 @@ class GitExtensionContext extends AbstractExtensibleContext {
      * Specifies behaviors for cloning repositories.
      */
     void cloneOptions(@DslContext(GitCloneOptionsContext) Closure closure) {
-        GitCloneOptionsContext context = new GitCloneOptionsContext()
+        GitCloneOptionsContext context = new GitCloneOptionsContext(jobManagement)
         executeInContext(closure, context)
 
         extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.CloneOption' {
@@ -69,6 +69,9 @@ class GitExtensionContext extends AbstractExtensibleContext {
             reference(context.reference ?: '')
             if (context.timeout != null) {
                 timeout(context.timeout)
+            }
+            if (jobManagement.isMinimumPluginVersionInstalled('git', '2.5.3')) {
+                honorRefspec(context.honorRefspec)
             }
         }
     }

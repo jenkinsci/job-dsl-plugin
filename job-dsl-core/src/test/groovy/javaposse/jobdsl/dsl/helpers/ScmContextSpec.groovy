@@ -302,6 +302,68 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
     }
 
+    def 'call git scm with minimal clone options with version 2.5.3'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('git', '2.5.3') >> true
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            extensions {
+                cloneOptions {
+                }
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].children().size() == 3
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].reference[0].value() == ''
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].shallow[0].value() == false
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].honorRefspec[0].value() == false
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+    }
+
+    def 'call git scm with full clone options with version 2.5.3'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('git', '2.5.3') >> true
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            extensions {
+                cloneOptions {
+                    shallow()
+                    reference('/foo')
+                    timeout(40)
+                    honorRefspec()
+                }
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].children().size() == 4
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].reference[0].value() == '/foo'
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].shallow[0].value() == true
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].timeout[0].value() == 40
+            extensions[0].'hudson.plugins.git.extensions.impl.CloneOption'[0].honorRefspec[0].value() == true
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.5.3')
+    }
+
     def 'call git scm with PruneStaleBranch extension'() {
         when:
         context.git {
