@@ -134,6 +134,7 @@ class PublisherContext extends AbstractExtensibleContext {
             keepLongStdio(junitContext.retainLongStdout)
             testDataPublishers(junitContext.testDataPublishersContext.testDataPublishers)
             allowEmptyResults(junitContext.allowEmptyResults)
+            healthScaleFactor(junitContext.healthScaleFactor)
         }
     }
 
