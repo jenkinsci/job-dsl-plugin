@@ -981,6 +981,7 @@ class StepContextSpec extends Specification {
         selectorNode9.attribute('class') == 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector'
         selectorNode9.children().size() == 0
         1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.17')
+        1 * jobManagement.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.22')
     }
 
     def 'copyArtifacts with selector extension'() {

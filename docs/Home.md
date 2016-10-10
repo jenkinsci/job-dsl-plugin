@@ -47,6 +47,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-38456](https://issues.jenkins-ci.org/browse/JENKINS-38456))
  * Support for the older versions of the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-152)
+ * Support for the older versions of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
+   is deprecated, see [Migration](Migration#migrating-to-152)
  * Support for the older versions of the
    [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin) is deprecated, see
    [Migration](Migration#migrating-to-152)

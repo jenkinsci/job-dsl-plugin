@@ -512,6 +512,7 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.16')
+        1 * jobManagement.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.22')
     }
 
     def 'workflow'() {

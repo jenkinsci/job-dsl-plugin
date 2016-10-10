@@ -172,9 +172,6 @@ class MultiJobStepContextSpec extends Specification {
     }
 
     def 'call phases with plugin version 1.14 options'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.14') >> true
-
         when:
         context.phase {
             phaseName('Second')
