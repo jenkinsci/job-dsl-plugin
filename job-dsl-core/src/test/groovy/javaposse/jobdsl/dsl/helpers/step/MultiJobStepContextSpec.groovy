@@ -225,28 +225,35 @@ class MultiJobStepContextSpec extends Specification {
 
     def 'call phase with unsupported condition'() {
         when:
-        context.phase('test', 'FOO', 'PARALLEL') {
+        context.phase('test', 'FOO') {
         }
 
         then:
         thrown(DslScriptException)
     }
 
-    def 'call phase with unsupported execution type'() {
+    def 'call phase with unsupported execution type'(String execution) {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.22') >> true
+
         when:
-        context.phase('test', 'SUCCESSFUL', 'BAR') {
+        context.phase('test') {
+            executionType execution
         }
 
         then:
         thrown(DslScriptException)
+
+        where:
+        execution << ['FOO']
     }
 
     def 'call phase with supported condition'(String condition) {
         setup:
-        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.16') >> true
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.22') >> true
 
         when:
-        context.phase('test', condition, 'PARALLEL') {
+        context.phase('test', condition) {
         }
 
         then:
@@ -265,10 +272,11 @@ class MultiJobStepContextSpec extends Specification {
 
     def 'call phase with supported execution type'(String execution) {
         setup:
-        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.16') >> true
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.22') >> true
 
         when:
-        context.phase('test', 'SUCCESSFUL', execution) {
+        context.phase('test') {
+            executionType execution
         }
 
         then:
