@@ -831,21 +831,6 @@ class WrapperContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'call injectPasswords, deprecated variant'() {
-        when:
-        context.injectPasswords()
-
-        then:
-        with(context.wrapperNodes[0]) {
-            name() == 'EnvInjectPasswordWrapper'
-            children().size() == 2
-            children()[0].name() == 'injectGlobalPasswords'
-            children()[0].value() == true
-        }
-        1 * mockJobManagement.requirePlugin('envinject')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
     def 'call injectPasswords with minimal args'() {
         when:
         context.injectPasswords {}

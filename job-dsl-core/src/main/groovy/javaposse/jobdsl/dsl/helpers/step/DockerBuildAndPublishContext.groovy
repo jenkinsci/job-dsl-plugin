@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class DockerBuildAndPublishContext extends AbstractContext {
     String repositoryName
@@ -130,7 +129,6 @@ class DockerBuildAndPublishContext extends AbstractContext {
      *
      * @since 1.45
      */
-    @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.2')
     void buildContext(String buildContext) {
         this.buildContext = buildContext
     }
@@ -140,7 +138,6 @@ class DockerBuildAndPublishContext extends AbstractContext {
      *
      * @since 1.45
      */
-    @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.2')
     void additionalBuildArgs(String additionalBuildArgs) {
         this.additionalBuildArgs = additionalBuildArgs
     }
@@ -150,7 +147,6 @@ class DockerBuildAndPublishContext extends AbstractContext {
      *
      * @since 1.45
      */
-    @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.2')
     void forceTag(boolean forceTag = true) {
         this.forceTag = forceTag
     }

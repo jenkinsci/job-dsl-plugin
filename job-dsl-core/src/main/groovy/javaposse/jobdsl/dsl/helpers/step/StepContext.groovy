@@ -977,10 +977,8 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.39
      */
-    @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.0')
+    @RequiresPlugin(id = 'docker-build-publish', minimumVersion = '1.2')
     void dockerBuildAndPublish(@DslContext(DockerBuildAndPublishContext) Closure closure) {
-        jobManagement.logPluginDeprecationWarning('docker-build-publish', '1.2')
-
         DockerBuildAndPublishContext context = new DockerBuildAndPublishContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
@@ -1011,11 +1009,9 @@ class StepContext extends AbstractExtensibleContext {
             skipPush(context.skipPush)
             createFingerprint(context.createFingerprints)
             skipTagLatest(context.skipTagAsLatest)
-            if (jobManagement.isMinimumPluginVersionInstalled('docker-build-publish', '1.2')) {
-                buildContext(context.buildContext ?: '')
-                buildAdditionalArgs(context.additionalBuildArgs ?: '')
-                forceTag(context.forceTag)
-            }
+            buildContext(context.buildContext ?: '')
+            buildAdditionalArgs(context.additionalBuildArgs ?: '')
+            forceTag(context.forceTag)
         }
     }
 
