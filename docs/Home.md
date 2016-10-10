@@ -32,6 +32,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-36683](https://issues.jenkins-ci.org/browse/JENKINS-36683))
  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
    ([#930](https://github.com/jenkinsci/job-dsl-plugin/pull/930))
+ * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
+   ([#929](https://github.com/jenkinsci/job-dsl-plugin/pull/929))
  * Enhanced support for the [JUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin)
    ([#928](https://github.com/jenkinsci/job-dsl-plugin/pull/928))
  * Added an option to mark a seed job build as failed if a plugin must be installed or updated to support all feature

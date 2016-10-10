@@ -5,12 +5,17 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
+import javaposse.jobdsl.dsl.Preconditions
 
 class PhaseContext extends AbstractContext {
+    private static final List<String> VALID_EXECUTION_TYPES = ['PARALLEL', 'SEQUENTIALLY']
+
     protected final Item item
 
     String phaseName
     String continuationCondition
+    String executionType = 'PARALLEL'
 
     List<PhaseJobContext> jobsInPhase = []
 
@@ -19,6 +24,7 @@ class PhaseContext extends AbstractContext {
         this.item = item
         this.phaseName = phaseName
         this.continuationCondition = continuationCondition
+        this.executionType = executionType
     }
 
     /**
@@ -33,6 +39,21 @@ class PhaseContext extends AbstractContext {
      */
     void continuationCondition(String continuationCondition) {
         this.continuationCondition = continuationCondition
+    }
+
+    /**
+     * Defines how to run the whole MultiJob phase. Must be either {@code 'PARALLEL'} or {@code 'SEQUENTIALLY'}.
+     * Defaults to {@code 'PARALLEL'}.
+     *
+     * @since 1.52
+     */
+    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.22')
+    void executionType(String executionType) {
+        Preconditions.checkArgument(
+                VALID_EXECUTION_TYPES.contains(executionType),
+                "Execution Type needs to be one of these values: ${VALID_EXECUTION_TYPES.join(', ')}"
+        )
+        this.executionType = executionType
     }
 
     /**

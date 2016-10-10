@@ -227,9 +227,22 @@ class MultiJobStepContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
+    def 'call phase with unsupported execution type'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.22') >> true
+
+        when:
+        context.phase('test') {
+            executionType('FOO')
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
+
     def 'call phase with supported condition'(String condition) {
         setup:
-        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.16') >> true
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.22') >> true
 
         when:
         context.phase('test', condition) {
@@ -238,14 +251,38 @@ class MultiJobStepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
-            children().size() == 3
+            children().size() == 4
             phaseName[0].value() == 'test'
             continuationCondition[0].value() == condition
+            executionType[0].value() == 'PARALLEL'
             phaseJobs[0].value().empty
         }
 
         where:
         condition << ['FAILURE', 'ALWAYS']
+    }
+
+    def 'call phase with supported execution type'(String execution) {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.22') >> true
+
+        when:
+        context.phase('test') {
+            executionType(execution)
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
+            children().size() == 4
+            phaseName[0].value() == 'test'
+            continuationCondition[0].value() == 'SUCCESSFUL'
+            executionType[0].value() == execution
+            phaseJobs[0].value().empty
+        }
+
+        where:
+        execution << ['PARALLEL', 'SEQUENTIALLY']
     }
 
     def 'phase works inside conditionalSteps'() {
