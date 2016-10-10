@@ -49,7 +49,9 @@ class MultiJobStepContext extends StepContext {
         stepNodes << new NodeBuilder().'com.tikal.jenkins.plugins.multijob.MultiJobBuilder' {
             phaseName phaseContext.phaseName
             delegate.continuationCondition(phaseContext.continuationCondition)
-            delegate.executionType(phaseContext.executionType)
+            if (jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.22')) {
+                delegate.executionType(phaseContext.executionType)
+            }
             phaseJobs {
                 phaseContext.jobsInPhase.each { PhaseJobContext jobInPhase ->
                     Node phaseJobNode = 'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig' {
