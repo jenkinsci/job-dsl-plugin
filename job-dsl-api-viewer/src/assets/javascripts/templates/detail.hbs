@@ -58,6 +58,9 @@
                     {{/each}}
                     </div>
                 {{/if}}
+                {{#if deprecatedHtml}}
+                    <div class="method-doc"><strong>Deprecated:</strong> {{{deprecatedHtml}}}</div>
+                {{/if}}
             {{/each}}
         </div>
 

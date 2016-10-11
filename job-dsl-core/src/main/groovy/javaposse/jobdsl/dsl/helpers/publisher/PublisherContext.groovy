@@ -1107,11 +1107,13 @@ class PublisherContext extends AbstractExtensibleContext {
      * Triggers a Rundeck job.
      *
      * @since 1.24
+     * @deprecated use the
+     *    <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL">Automatically Generated
+     *    DSL</a> instead
      */
+    @Deprecated
     @RequiresPlugin(id = 'rundeck', minimumVersion = '3.4')
     void rundeck(String jobIdentifier, @DslContext(RundeckContext) Closure rundeckClosure = null) {
-        jobManagement.logPluginDeprecationWarning('rundeck', '3.5.4')
-
         checkNotNullOrEmpty(jobIdentifier, 'jobIdentifier cannot be null or empty')
 
         RundeckContext rundeckContext = new RundeckContext(jobManagement)

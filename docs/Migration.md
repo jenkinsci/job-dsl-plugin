@@ -18,6 +18,69 @@ Support for versions older than 0.12 of the
 [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin) is [[deprecated|Deprecation-Policy]]
 and will be removed.
 
+### Rundeck
+
+Support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin) is
+[deprecated|Deprecation-Policy]] and will be removed. Use the syntax provided by the [[Automatically Generated DSL]]
+instead.
+
+DSL prior to 1.52
+```groovy
+job('example') {
+    triggers {
+        rundeck {
+            jobIdentifiers(
+                    '2027ce89-7924-4ecf-a963-30090ada834f',
+                    'my-project-name:main-group/sub-group/my-job'
+            )
+            executionStatuses('FAILED', 'ABORTED')
+        }
+    }
+    publishers {
+        rundeck('13eba461-179d-40a1-8a08-bafee33fdc12') {
+            rundeckInstance('prod')
+            options(artifact: 'app', env: 'dev')
+            option('version', '1.1')
+            tag('#deploy')
+            nodeFilters(hostname: 'dev(\\d+).company.net')
+            nodeFilter('tags', 'www+dev')
+            shouldWaitForRundeckJob()
+            shouldFailTheBuild()
+            includeRundeckLogs()
+        }
+    }
+}
+```
+
+DSL since 1.52
+```groovy
+job('example') {
+    triggers {
+        rundeckTrigger {
+            jobsIdentifiers([
+                    '2027ce89-7924-4ecf-a963-30090ada834f',
+                    'my-project-name:main-group/sub-group/my-job'
+            ])
+            executionStatuses(['FAILED', 'ABORTED'])
+            filterJobs(true)
+        }
+    }
+    publishers {
+        rundeckNotifier {
+            jobId('13eba461-179d-40a1-8a08-bafee33fdc12')
+            rundeckInstance('prod')
+            options(['artifact=app', 'env=dev', 'version=1.1'].join('\n'))
+            tags('#deploy')
+            nodeFilters(['hostname=dev(\\d+).company.net', 'tags=www+dev'].join('\n'))
+            shouldWaitForRundeckJob(true)
+            shouldFailTheBuild(true)
+            includeRundeckLogs(true)
+            tailLog(false)
+        }
+    }
+}
+```
+
 ## Migrating to 1.51
 
 ### Rundeck

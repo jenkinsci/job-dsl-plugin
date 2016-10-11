@@ -169,7 +169,8 @@ class ApiDocGenerator {
             map.deprecated = true
             String deprecatedText = tags.find { it.name() == 'deprecated' }?.text()?.trim()
             if (deprecatedText) {
-                map.deprecatedText = deprecatedText
+                map.deprecatedText = stripTags(deprecatedText)
+                map.deprecatedHtml = deprecatedText
             }
         }
 
@@ -210,7 +211,7 @@ class ApiDocGenerator {
                 firstSentenceCommentText = firstSentenceCommentText[0..<annotationIndex]
             }
             if (firstSentenceCommentText) {
-                firstSentenceCommentText = firstSentenceCommentText.replaceAll('<[^>]*>', '') // strip tags
+                firstSentenceCommentText = stripTags(firstSentenceCommentText)
                 map.firstSentenceCommentText = firstSentenceCommentText
             }
         }
@@ -289,5 +290,9 @@ class ApiDocGenerator {
             plugin.minimumVersion = requiresPluginAnnotation.minimumVersion()
         }
         plugin
+    }
+
+    private static String stripTags(String text) {
+        text.replaceAll('<[^>]*>', '')
     }
 }

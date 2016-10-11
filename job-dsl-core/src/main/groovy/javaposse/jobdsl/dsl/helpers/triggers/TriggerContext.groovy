@@ -163,11 +163,13 @@ class TriggerContext extends ItemTriggerContext {
      * Allows to schedule a build on Jenkins after a job execution on RunDeck.
      *
      * @since 1.33
+     * @deprecated use the
+     *    <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL">Automatically Generated
+     *    DSL</a> instead
      */
+    @Deprecated
     @RequiresPlugin(id = 'rundeck', minimumVersion = '3.4')
     void rundeck(@DslContext(RundeckTriggerContext) Closure closure = null) {
-        jobManagement.logPluginDeprecationWarning('rundeck', '3.5.4')
-
         RundeckTriggerContext context = new RundeckTriggerContext()
         ContextHelper.executeInContext(closure, context)
 
