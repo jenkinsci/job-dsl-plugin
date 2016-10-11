@@ -52,6 +52,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Support for the older versions of the
    [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin) is deprecated, see
    [Migration](Migration#migrating-to-152)
+ * Removed anything that has been deprecated in 1.45, see [Migration](Migration#migrating-to-145)
 * 1.51 (September 13 2016)
  * Enhanced support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
    ([#885](https://github.com/jenkinsci/job-dsl-plugin/pull/885))

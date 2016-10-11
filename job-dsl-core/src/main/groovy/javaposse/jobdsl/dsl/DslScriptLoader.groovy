@@ -173,24 +173,6 @@ class DslScriptLoader {
         }
     }
 
-    /**
-     * @Deprecated use {@link #runScripts(java.util.Collection)}
-     */
-    @Deprecated
-    static GeneratedItems runDslEngine(String scriptBody, JobManagement jobManagement) throws IOException {
-        DslScriptLoader loader = new DslScriptLoader(jobManagement)
-        loader.runScript(scriptBody)
-    }
-
-    /**
-     * @Deprecated use {@link #runScripts(java.util.Collection)}
-     */
-    @Deprecated
-    static GeneratedItems runDslEngine(ScriptRequest scriptRequest, JobManagement jobManagement) throws IOException {
-        DslScriptLoader loader = new DslScriptLoader(jobManagement)
-        loader.runScripts([scriptRequest])
-    }
-
     private static String getScriptName(String scriptFile) {
         String fileName = new File(scriptFile).name
         int idx = fileName.lastIndexOf('.')

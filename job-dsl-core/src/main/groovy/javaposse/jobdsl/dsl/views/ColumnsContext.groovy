@@ -115,14 +115,9 @@ class ColumnsContext extends AbstractExtensibleContext {
      *
      * @since 1.31
      */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.16')
     void lastBuildNode() {
-        if (jobManagement.isMinimumPluginVersionInstalled('build-node-column', '0.1')) {
-            jobManagement.logDeprecationWarning('support for build-node-column plugin')
-            columnNodes << new Node(null, 'org.jenkins.plugins.column.LastBuildNodeColumn')
-        } else {
-            jobManagement.requireMinimumPluginVersion('extra-columns', '1.16')
-            columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastBuildNodeColumn')
-        }
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.LastBuildNodeColumn')
     }
 
     /**

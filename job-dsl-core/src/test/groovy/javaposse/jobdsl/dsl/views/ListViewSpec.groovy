@@ -266,23 +266,6 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requirePlugin('extra-columns')
     }
 
-    def 'last build node column with deprecated build-node-column'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('build-node-column', '0.1') >> true
-
-        when:
-        view.columns {
-            lastBuildNode()
-        }
-
-        then:
-        Node root = view.node
-        root.columns.size() == 1
-        root.columns[0].value().size() == 1
-        root.columns[0].value()[0].name() == 'org.jenkins.plugins.column.LastBuildNodeColumn'
-        1 * jobManagement.logDeprecationWarning('support for build-node-column plugin')
-    }
-
     def 'last build node column'() {
         when:
         view.columns {

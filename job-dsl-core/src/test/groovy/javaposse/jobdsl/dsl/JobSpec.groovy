@@ -767,16 +767,6 @@ class JobSpec extends Specification {
         job.node.jdk[0].value() == 'JDK1.6.0_17'
     }
 
-    def 'priority constructs xml'() {
-        when:
-        job.priority(99)
-
-        then:
-        job.node.properties.'hudson.queueSorter.PrioritySorterJobProperty'.priority[0].value() == 99
-        1 * jobManagement.requirePlugin('PrioritySorter')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
     def 'add a quiet period'() {
         when:
         job.quietPeriod()

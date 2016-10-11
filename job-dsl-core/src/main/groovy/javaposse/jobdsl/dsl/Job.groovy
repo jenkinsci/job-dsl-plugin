@@ -298,20 +298,6 @@ abstract class Job extends Item {
     }
 
     /**
-     * Set the priority of the job. Default value is 100.
-     *
-     * @since 1.15
-     */
-    @RequiresPlugin(id = 'PrioritySorter')
-    @Deprecated
-    void priority(int value) {
-        configure { Node project ->
-            Node node = new Node(project / 'properties', 'hudson.queueSorter.PrioritySorterJobProperty')
-            node.appendNode('priority', value)
-        }
-    }
-
-    /**
      * Defines a timespan (in seconds) to wait for additional events (pushes, check-ins) before triggering a build.
      *
      * @since 1.16
