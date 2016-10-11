@@ -1126,8 +1126,7 @@ class PublisherContext extends AbstractExtensibleContext {
             shouldFailTheBuild(rundeckContext.shouldFailTheBuild)
             includeRundeckLogs(rundeckContext.includeRundeckLogs)
             if (jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.5.4')) {
-                checkNotNullOrEmpty(rundeckContext.rundeckInstance, 'rundeckInstance cannot be null or empty')
-                rundeckInstance(rundeckContext.rundeckInstance)
+                rundeckInstance(rundeckContext.rundeckInstance ?: 'Default')
             }
         }
     }
