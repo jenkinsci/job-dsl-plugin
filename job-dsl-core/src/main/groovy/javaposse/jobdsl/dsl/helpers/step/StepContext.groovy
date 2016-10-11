@@ -1263,6 +1263,25 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Updates the build name.
+     *
+     * @since 1.47
+     */
+    @RequiresPlugin(id = 'build-name-setter', minimumVersion = '1.6.5')
+    void updateBuildName(@DslContext(BuildNameContext) Closure closure) {
+        BuildNameContext context = new BuildNameContext()
+        ContextHelper.executeInContext(closure, context)
+
+        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.buildnameupdater.BuildNameUpdater' {
+            buildName(context.buildNameFilePath)
+            macroTemplate(context.buildNameMacroTemplate)
+            fromFile(context.readFromFile)
+            fromMacro(context.useMacro)
+            macroFirst(context.insertMacroFirst)
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
