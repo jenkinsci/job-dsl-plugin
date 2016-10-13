@@ -3189,7 +3189,7 @@ class PublisherContextSpec extends Specification {
             includeRundeckLogs[0].value() == true
         }
         1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
-        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.5.4')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call rundeck with default values'() {
@@ -3209,7 +3209,7 @@ class PublisherContextSpec extends Specification {
             includeRundeckLogs[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
-        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.5.4')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call rundeck with rundeckInstance selected (version 3.5.4)'() {
@@ -3236,7 +3236,7 @@ class PublisherContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
         1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.5.4')
-        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.5.4')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call rundeck without rundeckInstance selected (version 3.5.4)'() {
@@ -3260,7 +3260,7 @@ class PublisherContextSpec extends Specification {
             rundeckInstance[0].value() == 'Default'
         }
         1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
-        1 * jobManagement.logPluginDeprecationWarning('rundeck', '3.5.4')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call s3 without profile'(String profile) {

@@ -198,6 +198,7 @@ _.extend(App.Dsl.prototype, {
                 availableSince: signature.availableSince,
                 deprecated: signature.deprecated,
                 deprecatedText: deprecatedText,
+                deprecatedHtml: signature.deprecatedHtml || deprecatedText,
                 generated: signature.generated,
                 extension: signature.extension,
                 required: signature.required,

@@ -299,7 +299,7 @@ class TriggerContextSpec extends Specification {
             executionStatuses[0].value().empty
         }
         1 * mockJobManagement.requireMinimumPluginVersion('rundeck', '3.4')
-        1 * mockJobManagement.logPluginDeprecationWarning('rundeck', '3.5.4')
+        1 * mockJobManagement.logDeprecationWarning()
     }
 
     def 'call rundeck trigger with all options'() {
@@ -327,7 +327,7 @@ class TriggerContextSpec extends Specification {
             }
         }
         1 * mockJobManagement.requireMinimumPluginVersion('rundeck', '3.4')
-        1 * mockJobManagement.logPluginDeprecationWarning('rundeck', '3.5.4')
+        1 * mockJobManagement.logDeprecationWarning()
     }
 
     def 'call rundeck trigger with invalid execution status'() {
