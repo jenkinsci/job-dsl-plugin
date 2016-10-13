@@ -11,7 +11,7 @@ import java.util.Collection;
 @Deprecated
 @SuppressWarnings("Deprecation")
 abstract class GeneratedObjectsBuildRunAction<T> extends GeneratedObjectsBuildAction<T> implements RunAction2 {
-    transient Run owner;
+    protected transient Run owner;
 
     GeneratedObjectsBuildRunAction(Collection<T> modifiedObjects) {
         super(modifiedObjects);
