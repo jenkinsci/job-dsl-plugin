@@ -56,23 +56,27 @@ class GeneratedViewsBuildActionSpec extends Specification {
         setup:
         View viewOne = new ListView('one')
         View viewTwo = new ListView('two')
+        View viewThree = new ListView('aaa')
         jenkinsRule.jenkins.addView(viewOne)
         jenkinsRule.jenkins.addView(viewTwo)
+        jenkinsRule.jenkins.addView(viewThree)
         GeneratedView one = new GeneratedView('one')
         GeneratedView two = new GeneratedView('two')
+        GeneratedView three = new GeneratedView('aaa')
         Run run = Mock(Run)
         run.parent >> Mock(Job)
-        GeneratedViewsBuildAction action = new GeneratedViewsBuildAction([one, two], LookupStrategy.JENKINS_ROOT)
+        GeneratedViewsBuildAction action = new GeneratedViewsBuildAction([one, two, three], LookupStrategy.JENKINS_ROOT)
         action.onLoad(run)
 
         when:
-        Set<View> views = action.views
+        List<View> views = action.views as List
 
         then:
         views != null
-        views.size() == 2
-        views.contains(viewOne)
-        views.contains(viewTwo)
+        views.size() == 3
+        views[0] == viewThree
+        views[1] == viewOne
+        views[2] == viewTwo
     }
 
     def 'project actions'() {

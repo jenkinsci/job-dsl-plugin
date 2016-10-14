@@ -45,6 +45,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#920](https://github.com/jenkinsci/job-dsl-plugin/pull/920))
  * Fixed problem with embedded API viewer when a plugin is not available in the Update Center
    ([JENKINS-38456](https://issues.jenkins-ci.org/browse/JENKINS-38456))
+ * Sort generated items by name on the seed job's summary and build pages
+   ([JENKINS-38648](https://issues.jenkins-ci.org/browse/JENKINS-38648))
  * Support for the older versions of the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-152)
  * Support for the older versions of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)

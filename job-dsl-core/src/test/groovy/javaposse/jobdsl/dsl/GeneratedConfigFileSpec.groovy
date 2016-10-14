@@ -28,6 +28,7 @@ class GeneratedConfigFileSpec extends Specification {
         configFile.name == 'foo'
     }
 
+    @SuppressWarnings('ChangeToOperator')
     def 'only id is relevant for hashCode and equals'() {
         when:
         GeneratedConfigFile configFile1 = new GeneratedConfigFile('235421345', 'foo')
@@ -37,8 +38,8 @@ class GeneratedConfigFileSpec extends Specification {
         then:
         configFile1.hashCode() == configFile2.hashCode()
         configFile2.hashCode() != configFile3.hashCode()
-        configFile1 == configFile2
-        configFile2 != configFile3
+        configFile1.equals(configFile2)
+        !configFile2.equals(configFile3)
     }
 
     def 'test toString'() {
@@ -47,5 +48,17 @@ class GeneratedConfigFileSpec extends Specification {
 
         then:
         configFile.toString() == "GeneratedConfigFile{name='foo', id='235421345'}"
+    }
+
+    @SuppressWarnings('ChangeToOperator')
+    def 'test compare'() {
+        when:
+        GeneratedConfigFile configFile1 = new GeneratedConfigFile('235421345', 'foo')
+        GeneratedConfigFile configFile2 = new GeneratedConfigFile('235421345', 'new name')
+
+        then:
+        configFile1.compareTo(configFile1) == 0
+        configFile1.compareTo(configFile2) < 0
+        configFile2.compareTo(configFile1) > 0
     }
 }

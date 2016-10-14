@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl
 
-class GeneratedUserContent {
+class GeneratedUserContent implements Comparable<GeneratedUserContent> {
     final String path
 
     GeneratedUserContent(String path) {
@@ -31,5 +31,10 @@ class GeneratedUserContent {
     @Override
     String toString() {
         "GeneratedUserContent{path='${path}'}"
+    }
+
+    @Override
+    int compareTo(GeneratedUserContent o) {
+        path <=> o.path
     }
 }

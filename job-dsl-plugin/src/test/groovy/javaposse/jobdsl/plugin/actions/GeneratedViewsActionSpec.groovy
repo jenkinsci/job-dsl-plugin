@@ -2,6 +2,7 @@ package javaposse.jobdsl.plugin.actions
 
 import hudson.model.AbstractBuild
 import hudson.model.AbstractProject
+import hudson.model.ItemGroup
 import hudson.model.View
 import javaposse.jobdsl.dsl.GeneratedView
 import spock.lang.Specification
@@ -14,7 +15,7 @@ class GeneratedViewsActionSpec extends Specification {
     AbstractBuild build2 = Mock(AbstractBuild)
     AbstractProject project = Mock(AbstractProject)
     Collection<GeneratedView> modifiedViews = [Mock(GeneratedView), Mock(GeneratedView)]
-    Collection<View> views = [Mock(View), Mock(View)]
+    List<View> views = [Mock(View), Mock(View)]
 
     def 'interface methods'() {
         when:
@@ -103,6 +104,12 @@ class GeneratedViewsActionSpec extends Specification {
 
     def 'getViews'() {
         setup:
+        ItemGroup itemGroup = Mock(ItemGroup)
+        itemGroup.fullDisplayName >> 'foo'
+        views[0].displayName >> 'one'
+        views[0].ownerItemGroup >> itemGroup
+        views[1].displayName >> 'two'
+        views[1].ownerItemGroup >> itemGroup
         buildAction.views >> views
         build1.getAction(GeneratedViewsBuildAction) >> buildAction
         build2.getAction(GeneratedViewsBuildAction) >> buildAction

@@ -23,7 +23,7 @@ class GeneratedViewsBuildAction extends GeneratedObjectsRunAction<GeneratedView>
     }
 
     Set<View> getViews() {
-        Set<View> allGeneratedViews = []
+        Set<View> allGeneratedViews = new TreeSet<>(Comparators.VIEW_COMPARATOR)
         for (GeneratedView generatedView : modifiedObjects) {
             ItemGroup itemGroup = lookupStrategy.getParent(owner.parent, generatedView.name)
             if (itemGroup instanceof ViewGroup) {

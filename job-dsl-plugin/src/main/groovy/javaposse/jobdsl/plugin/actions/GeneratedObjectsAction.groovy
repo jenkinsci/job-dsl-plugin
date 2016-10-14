@@ -29,7 +29,7 @@ abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsRunAction<T>>
 
     @SuppressWarnings('GroovyUnusedDeclaration') // used by some Jelly views
     Set<T> findAllGeneratedObjects() {
-        Set<T> result = []
+        Set<T> result = [] as SortedSet<T>
         for (Run run : job.builds) {
             B action = run.getAction(buildActionClass)
             if (action != null && action.modifiedObjects != null) {

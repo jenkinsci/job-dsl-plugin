@@ -5,6 +5,7 @@ import jenkins.tasks.SimpleBuildStep;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @deprecated use {@code javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction} instead
@@ -32,7 +33,8 @@ public abstract class GeneratedObjectsBuildAction<T> implements SimpleBuildStep.
         return null;
     }
 
+    @SuppressWarnings("ConstantConditions") // modifiedObjects can be null when this is deserialized by XStream
     public Collection<T> getModifiedObjects() {
-        return modifiedObjects;
+        return modifiedObjects == null ? null : new TreeSet<T>(modifiedObjects);
     }
 }

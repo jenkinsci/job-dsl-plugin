@@ -19,6 +19,7 @@ class GeneratedViewSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
+    @SuppressWarnings(['ChangeToOperator', 'GrEqualsBetweenInconvertibleTypes'])
     def 'test equals'() {
         when:
         GeneratedView view = new GeneratedView('test')
@@ -45,5 +46,17 @@ class GeneratedViewSpec extends Specification {
 
         then:
         view.toString() == "GeneratedView{name='test'}"
+    }
+
+    @SuppressWarnings('ChangeToOperator')
+    def 'test compare'() {
+        when:
+        GeneratedView view1 = new GeneratedView('foo')
+        GeneratedView view2 = new GeneratedView('other')
+
+        then:
+        view1.compareTo(view1) == 0
+        view1.compareTo(view2) < 0
+        view2.compareTo(view1) > 0
     }
 }
