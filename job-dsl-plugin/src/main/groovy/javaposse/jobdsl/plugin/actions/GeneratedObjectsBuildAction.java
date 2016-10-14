@@ -33,6 +33,6 @@ public abstract class GeneratedObjectsBuildAction<T> implements SimpleBuildStep.
     }
 
     public Collection<T> getModifiedObjects() {
-        return modifiedObjects == null ? new LinkedHashSet<T>() : modifiedObjects;
+        return modifiedObjects;
     }
 }
