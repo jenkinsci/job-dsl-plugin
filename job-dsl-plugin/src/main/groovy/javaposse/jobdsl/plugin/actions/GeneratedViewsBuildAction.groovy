@@ -1,54 +1,53 @@
-package javaposse.jobdsl.plugin.actions;
+package javaposse.jobdsl.plugin.actions
 
-import hudson.model.Action;
-import hudson.model.ItemGroup;
-import hudson.model.View;
-import hudson.model.ViewGroup;
-import javaposse.jobdsl.dsl.GeneratedView;
-import javaposse.jobdsl.plugin.LookupStrategy;
-import org.apache.commons.io.FilenameUtils;
+import hudson.model.Action
+import hudson.model.ItemGroup
+import hudson.model.View
+import hudson.model.ViewGroup
+import javaposse.jobdsl.dsl.GeneratedView
+import javaposse.jobdsl.plugin.LookupStrategy
+import org.apache.commons.io.FilenameUtils
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import static javaposse.jobdsl.plugin.LookupStrategy.JENKINS_ROOT
 
-public class GeneratedViewsBuildAction extends GeneratedObjectsRunAction<GeneratedView> {
-    @SuppressWarnings("unused")
-    private transient Set<GeneratedView> modifiedViews;
+class GeneratedViewsBuildAction extends GeneratedObjectsRunAction<GeneratedView> {
+    @SuppressWarnings('UnnecessaryTransientModifier')
+    @Deprecated
+    private transient Set<GeneratedView> modifiedViews
 
-    private LookupStrategy lookupStrategy = LookupStrategy.JENKINS_ROOT;
+    protected final LookupStrategy lookupStrategy
 
-    public GeneratedViewsBuildAction(Collection<GeneratedView> modifiedViews, LookupStrategy lookupStrategy) {
-        super(modifiedViews);
-        this.lookupStrategy = lookupStrategy;
+    GeneratedViewsBuildAction(Collection<GeneratedView> modifiedViews, LookupStrategy lookupStrategy) {
+        super(modifiedViews)
+        this.lookupStrategy = lookupStrategy
     }
 
-    private LookupStrategy getLookupStrategy() {
-        return lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
-    }
-
-    public Set<View> getViews() {
-        Set<View> allGeneratedViews = new LinkedHashSet<View>();
-        for (GeneratedView generatedView : getModifiedObjects()) {
-            ItemGroup itemGroup = getLookupStrategy().getParent(owner.getParent(), generatedView.getName());
+    Set<View> getViews() {
+        Set<View> allGeneratedViews = []
+        for (GeneratedView generatedView : modifiedObjects) {
+            ItemGroup itemGroup = lookupStrategy.getParent(owner.parent, generatedView.name)
             if (itemGroup instanceof ViewGroup) {
-                View view = ((ViewGroup) itemGroup).getView(FilenameUtils.getName(generatedView.getName()));
+                ViewGroup viewGroup = itemGroup as ViewGroup
+                View view = viewGroup.getView(FilenameUtils.getName(generatedView.name))
                 if (view != null) {
-                    allGeneratedViews.add(view);
+                    allGeneratedViews << view
                 }
             }
         }
-        return allGeneratedViews;
+        allGeneratedViews
     }
 
     @Override
-    public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new GeneratedViewsAction(owner.getParent()));
+    Collection<? extends Action> getProjectActions() {
+        Collections.singleton(new GeneratedViewsAction(owner.parent))
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings(['UnusedPrivateMethod', 'GroovyUnusedDeclaration'])
     private Object readResolve() {
-        return modifiedViews == null ? this : new GeneratedViewsBuildAction(modifiedViews, lookupStrategy);
+        if (lookupStrategy == null || modifiedObjects == null) {
+            new GeneratedViewsBuildAction(modifiedObjects ?: modifiedViews, lookupStrategy ?: JENKINS_ROOT)
+        } else {
+            this
+        }
     }
 }
