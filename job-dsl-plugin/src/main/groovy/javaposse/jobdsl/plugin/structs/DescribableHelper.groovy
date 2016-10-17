@@ -52,7 +52,10 @@ class DescribableHelper {
      * @see #uncapitalize(java.lang.Class)
      */
     static Collection<DescribableModel> findDescribableModels(Collection<DescribableModel> models, String name) {
-        Collection<DescribableModel> result = models.findAll { SymbolLookup.get().find(getTypeForLookup(it), name) }
+        Collection<DescribableModel> result = models.findAll {
+            Class type = getTypeForLookup(it)
+            type == null ? null : SymbolLookup.get().find(type, name)
+        }
         result ?: models.findAll { uncapitalize(it.type) == name }
     }
 
@@ -147,7 +150,7 @@ class DescribableHelper {
     }
 
     private static Class getTypeForLookup(DescribableModel model) {
-        Describable.isAssignableFrom(model.type) ? Jenkins.instance.getDescriptorOrDie(model.type).class : model.type
+        Describable.isAssignableFrom(model.type) ? Jenkins.instance.getDescriptor(model.type)?.class : model.type
     }
 
     private static List<Descriptor> getDescriptors(Class<?> contextType) {
@@ -191,7 +194,7 @@ class DescribableHelper {
         Map<String, DescribableModel> result = [:]
         Set<String> duplicateSymbols = []
         models.each { DescribableModel model ->
-            Symbol symbol = getTypeForLookup(model).getAnnotation(Symbol)
+            Symbol symbol = getTypeForLookup(model)?.getAnnotation(Symbol)
             symbol?.value()?.each {
                 if (!duplicateSymbols.contains(it)) {
                     if (result.containsKey(it)) {

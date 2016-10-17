@@ -20,6 +20,7 @@ import javaposse.jobdsl.plugin.fixtures.Foo
 import javaposse.jobdsl.plugin.fixtures.FooTrigger
 import javaposse.jobdsl.plugin.fixtures.IntegerTrigger
 import javaposse.jobdsl.plugin.fixtures.InvalidContext
+import javaposse.jobdsl.plugin.fixtures.InvalidTrigger
 import javaposse.jobdsl.plugin.fixtures.SomeTrigger
 import jenkins.triggers.ReverseBuildTrigger
 import org.jenkinsci.plugins.structs.describable.DescribableModel
@@ -27,6 +28,7 @@ import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Shared
 import spock.lang.Specification
+import javaposse.jobdsl.plugin.ExecuteDslScripts
 
 class DescribableHelperSpec extends Specification {
     @Shared
@@ -111,6 +113,45 @@ class DescribableHelperSpec extends Specification {
         e.message.contains(Describable.name)
     }
 
+    def 'find describable models for uncapitalized class name'() {
+        setup:
+        DescribableModel model = new DescribableModel(SCMTrigger)
+
+        when:
+        Collection<DescribableModel> models = DescribableHelper.findDescribableModels([model], 'scmTrigger')
+
+        then:
+        models != null
+        models.size() == 1
+        models.contains(model)
+    }
+
+    def 'find describable models for symbol'() {
+        setup:
+        DescribableModel model = new DescribableModel(ExecuteDslScripts)
+
+        when:
+        Collection<DescribableModel> models = DescribableHelper.findDescribableModels([model], 'jobDsl')
+
+        then:
+        models != null
+        models.size() == 1
+        models.contains(model)
+    }
+
+    def 'find describable models for Describable without Descriptor'() {
+        setup:
+        DescribableModel model = new DescribableModel(InvalidTrigger)
+
+        when:
+        Collection<DescribableModel> models = DescribableHelper.findDescribableModels([model], 'invalidTrigger')
+
+        then:
+        models != null
+        models.size() == 1
+        models.contains(model)
+    }
+
     def 'is optional closure argument'() {
         expect:
         DescribableHelper.isOptionalClosureArgument()
@@ -191,6 +232,18 @@ class DescribableHelperSpec extends Specification {
         then:
         models.size() == 1
         models['integerTrigger'].type == IntegerTrigger
+    }
+
+    def 'models indexed by symbolic name for Describable without Descriptor'() {
+        given:
+        DescribableModel model = new DescribableModel(InvalidTrigger)
+
+        when:
+        Map<String, DescribableModel> models = DescribableHelper.findDescribableModels([model])
+
+        then:
+        models.size() == 1
+        models['invalidTrigger'].type == InvalidTrigger
     }
 
     def 'models indexed by symbolic name from context'() {
