@@ -13,15 +13,30 @@
   text-overflow: ellipsis;
 }
 
-.search-section {
+.search-filter {
   padding: 10px;
   border-bottom: 1px solid #aaa;
-  .form-group {
+  .toggle-plugins {
+    position: relative;
+    .filter-active {
+      border-radius: 50%;
+      background-color: #337ab7;
+      width: 5px;
+      height: 5px;
+      display: block;
+      position: absolute;
+      right: 10px;
+      bottom: 8px;
+    }
+  }
+  .search-section {
     position: relative;
     margin-bottom: 0;
+    width: ~"calc(100% - 45px)";
     .search-input {
       padding-left: 29px;
       padding-right: 29px;
+      width: 100%;
     }
     .glyphicon-search {
       left: 0;
@@ -155,15 +170,7 @@
     width: auto;
     float: right;
     margin-top: 8px;
-    margin-right: 10px;
     display: none;
-  }
-  .toggle-plugins {
-    margin-top: 8px;
-    background-color: #fff;
-    span {
-      line-height: 20px;
-    }
   }
 }
 

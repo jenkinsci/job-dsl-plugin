@@ -21,6 +21,7 @@ Marionette.Renderer.render = function(template, data) {
 
             this.dslLoader = new App.DslLoader();
             this.settings = new App.Settings();
+            this.settings.on('change', this.highlightFilter, this);
 
             this.router = new App.Router();
             this.router.on('route:home',    this.showHome, this);
@@ -56,6 +57,8 @@ Marionette.Renderer.render = function(template, data) {
                 $('.search-input').val('');
                 this.onSearch();
             }.bind(this));
+
+            this.highlightFilter();
         },
 
         showPlugin: function(name) {
@@ -238,6 +241,14 @@ Marionette.Renderer.render = function(template, data) {
                 hljs.highlightBlock(block);
                 $(block).removeClass('ruby'); // TODO hljs bug?
             });
+        },
+
+        highlightFilter: function () {
+            if (this.settings.isPluginExcluded()) {
+                $('.filter-active').removeClass('invisible')
+            } else {
+                $('.filter-active').addClass('invisible')
+            }
         }
     });
 
