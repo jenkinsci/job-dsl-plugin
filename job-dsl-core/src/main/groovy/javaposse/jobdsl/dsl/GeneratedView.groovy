@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl
 
-class GeneratedView {
+class GeneratedView implements Comparable<GeneratedView> {
     final String name
 
     GeneratedView(String name) {
@@ -31,5 +31,10 @@ class GeneratedView {
     @Override
     String toString() {
         "GeneratedView{name='${name}'}"
+    }
+
+    @Override
+    int compareTo(GeneratedView o) {
+        name <=> o.name
     }
 }

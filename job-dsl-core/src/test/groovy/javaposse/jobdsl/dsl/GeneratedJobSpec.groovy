@@ -18,4 +18,16 @@ class GeneratedJobSpec extends Specification {
         then:
         generatedJob.toString() == "GeneratedJob{name='test', template='foo'}"
     }
+
+    @SuppressWarnings('ChangeToOperator')
+    def 'test compare'() {
+        when:
+        GeneratedJob job1 = new GeneratedJob('235421345', 'foo')
+        GeneratedJob job2 = new GeneratedJob('235421345', 'new name')
+
+        then:
+        job1.compareTo(job1) == 0
+        job1.compareTo(job2) < 0
+        job2.compareTo(job1) > 0
+    }
 }

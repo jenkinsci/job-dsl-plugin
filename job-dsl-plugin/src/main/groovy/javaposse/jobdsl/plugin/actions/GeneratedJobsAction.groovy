@@ -11,7 +11,7 @@ class GeneratedJobsAction extends GeneratedObjectsAction<GeneratedJob, Generated
     }
 
     Set<Item> getItems() {
-        Set<Item> result = []
+        Set<Item> result = new TreeSet<>(Comparators.ITEM_COMPARATOR)
         for (Run run : job.builds) {
             GeneratedJobsBuildAction action = run.getAction(GeneratedJobsBuildAction)
             if (action != null) {

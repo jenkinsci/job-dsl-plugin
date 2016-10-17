@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl
 
-class GeneratedConfigFile {
+class GeneratedConfigFile implements Comparable<GeneratedConfigFile> {
     final String id
     final String name
 
@@ -33,5 +33,10 @@ class GeneratedConfigFile {
     @Override
     String toString() {
         "GeneratedConfigFile{name='${name}', id='${id}'}"
+    }
+
+    @Override
+    int compareTo(GeneratedConfigFile o) {
+        name <=> o.name
     }
 }

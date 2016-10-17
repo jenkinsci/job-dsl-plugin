@@ -56,21 +56,24 @@ class GeneratedJobsBuildActionSpec extends Specification {
         setup:
         Item jobOne = jenkinsRule.jenkins.createProject(FreeStyleProject, 'one')
         Item jobTwo = jenkinsRule.jenkins.createProject(FreeStyleProject, 'two')
+        Item jobThree = jenkinsRule.jenkins.createProject(FreeStyleProject, 'aaa')
         GeneratedJob one = new GeneratedJob(null, 'one')
         GeneratedJob two = new GeneratedJob(null, 'two')
+        GeneratedJob three = new GeneratedJob(null, 'aaa')
         Run run = Mock(Run)
         run.parent >> Mock(Job)
-        GeneratedJobsBuildAction action = new GeneratedJobsBuildAction([one, two], LookupStrategy.JENKINS_ROOT)
+        GeneratedJobsBuildAction action = new GeneratedJobsBuildAction([one, two, three], LookupStrategy.JENKINS_ROOT)
         action.onLoad(run)
 
         when:
-        Set<Item> items = action.items
+        List<Item> items = action.items as List
 
         then:
         items != null
-        items.size() == 2
-        items.contains(jobOne)
-        items.contains(jobTwo)
+        items.size() == 3
+        items[0] == jobThree
+        items[1] == jobOne
+        items[2] == jobTwo
     }
 
     def 'project actions'() {

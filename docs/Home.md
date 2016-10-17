@@ -46,6 +46,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Fixed problem with embedded API viewer
    ([JENKINS-38456](https://issues.jenkins-ci.org/browse/JENKINS-38456),
    [JENKINS-38964](https://issues.jenkins-ci.org/browse/JENKINS-38964))
+ * Sort generated items by name on the seed job's summary and build pages
+   ([JENKINS-38648](https://issues.jenkins-ci.org/browse/JENKINS-38648))
  * Support for the older versions of the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-152)
  * Support for the older versions of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)

@@ -20,7 +20,7 @@ class GeneratedJobsBuildAction extends GeneratedObjectsRunAction<GeneratedJob> {
     }
 
     Set<Item> getItems() {
-        Set<Item> result = []
+        Set<Item> result = new TreeSet<>(Comparators.ITEM_COMPARATOR)
         for (GeneratedJob job : modifiedObjects) {
             Item item = lookupStrategy.getItem(owner.parent, job.jobName, Item)
             if (item != null) {

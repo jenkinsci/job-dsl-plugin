@@ -1,6 +1,6 @@
 package javaposse.jobdsl.dsl
 
-class GeneratedJob {
+class GeneratedJob implements Comparable<GeneratedJob> {
     final String templateName
     final String jobName
 
@@ -33,5 +33,10 @@ class GeneratedJob {
     @Override
     String toString() {
         "GeneratedJob{name='${jobName}'${templateName == null ? '' : ", template='${templateName}'"}}"
+    }
+
+    @Override
+    int compareTo(GeneratedJob o) {
+        jobName <=> o.jobName
     }
 }
