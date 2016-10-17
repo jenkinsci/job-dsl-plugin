@@ -2,7 +2,6 @@
 <head>
     <title>Jenkins Job DSL Plugin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.4/themes/default/style.min.css" />
     <link rel="stylesheet" href="build/dist/css/app.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/default.min.css">
@@ -51,10 +50,10 @@
                     <li><a href="http://job-dsl.herokuapp.com">Playground</a></li>
                 </ul>
 
-                <button class="btn pull-right toggle-plugins"><span class="glyphicon glyphicon-filter"></span></button>
                 <select class="version-select form-control">
                     <!-- ADD VERSIONS HERE! -->
-                    <option value="build/data/dsl.json">v1.51</option>
+                    <option value="build/data/dsl.json">v1.52</option>
+                    <option value="build/data/dsl-1.51.json">v1.51</option>
                     <option value="build/data/dsl-1.50.json">v1.50</option>
                     <option value="build/data/dsl-1.49.json">v1.49</option>
                     <option value="build/data/dsl-1.48.json">v1.48</option>
@@ -73,8 +72,11 @@
         </nav>
     </div>
     <div class="tree">
-        <div class="search-section">
+        <div class="form-inline search-filter">
             <div class="form-group">
+                <button class="btn btn-default toggle-plugins form-control"><span class="glyphicon glyphicon-filter"></span><span class="filter-active invisible"></span></button>
+            </div>
+            <div class="search-section form-group">
                 <input class="search-input form-control" type="text" placeholder="Search methods...">
                 <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
                 <span class="glyphicon glyphicon-remove-sign clear-search hide" aria-hidden="true"></span>

@@ -1,5 +1,5 @@
 {
-    "version": "1.52",
+    "version": "1.51",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -701,29 +701,6 @@
         "javaposse.jobdsl.dsl.helpers.scm.GitCloneOptionsContext": {
             "type": "javaposse.jobdsl.dsl.helpers.scm.GitCloneOptionsContext",
             "methods": [
-                {
-                    "name": "honorRefspec",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "honorRefspec",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.52",
-                            "plugins": [
-                                {
-                                    "id": "git",
-                                    "minimumVersion": "2.5.3"
-                                }
-                            ],
-                            "html": "Honor refspec on initial clone.",
-                            "firstSentenceCommentText": "Honor refspec on initial clone."
-                        }
-                    ]
-                },
                 {
                     "name": "reference",
                     "signatures": [
@@ -4685,22 +4662,6 @@
                             "availableSince": "1.43",
                             "html": "If set, does not fail the build on empty test results. Defaults to <TT>false</TT>.",
                             "firstSentenceCommentText": "If set, does not fail the build on empty test results. "
-                        }
-                    ]
-                },
-                {
-                    "name": "healthScaleFactor",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "factor",
-                                    "type": "double"
-                                }
-                            ],
-                            "availableSince": "1.52",
-                            "html": "Sets the amplification factor to apply to test failures when computing the test result contribution to the\r\n build health score. The default factor is <TT>1.0</TT>.",
-                            "firstSentenceCommentText": "Sets the amplification factor to apply to test failures when computing the test result contribution to the\r\n build health score. "
                         }
                     ]
                 },
@@ -11354,6 +11315,12 @@
                                 }
                             ],
                             "availableSince": "1.45",
+                            "plugins": [
+                                {
+                                    "id": "docker-build-publish",
+                                    "minimumVersion": "1.2"
+                                }
+                            ],
                             "html": "Specifies additional build arguments passed to docker build.",
                             "firstSentenceCommentText": "Specifies additional build arguments passed to docker build."
                         }
@@ -11370,6 +11337,12 @@
                                 }
                             ],
                             "availableSince": "1.45",
+                            "plugins": [
+                                {
+                                    "id": "docker-build-publish",
+                                    "minimumVersion": "1.2"
+                                }
+                            ],
                             "html": "Specifies the project root path for the build. Defaults to the workspace root if not specified.",
                             "firstSentenceCommentText": "Specifies the project root path for the build. "
                         }
@@ -11464,6 +11437,12 @@
                                 }
                             ],
                             "availableSince": "1.45",
+                            "plugins": [
+                                {
+                                    "id": "docker-build-publish",
+                                    "minimumVersion": "1.2"
+                                }
+                            ],
                             "html": "If set, forces tag replacement when tag already exists. Defaults to <TT>true</TT>.",
                             "firstSentenceCommentText": "If set, forces tag replacement when tag already exists. "
                         }
@@ -14792,7 +14771,7 @@
                             "plugins": [
                                 {
                                     "id": "docker-build-publish",
-                                    "minimumVersion": "1.2"
+                                    "minimumVersion": "1.0"
                                 }
                             ],
                             "html": "Builds and pushes a Docker based project to the Docker registry.",
@@ -19080,7 +19059,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.ArchiveJUnitContext"
                         }
                     ],
-                    "examples": "job('example-1') {\r\n    publishers {\r\n        archiveJunit('**/target/surefire-reports/*.xml')\r\n    }\r\n}\r\n\r\njob('example-2') {\r\n    publishers {\r\n        archiveJunit('**/minitest-reports/*.xml') {\r\n            allowEmptyResults()\r\n            retainLongStdout()\r\n            healthScaleFactor(1.5)\r\n            testDataPublishers {\r\n                publishTestStabilityData()\r\n            }\r\n        }\r\n    }\r\n}"
+                    "examples": "job('example-1') {\r\n    publishers {\r\n        archiveJunit('**/target/surefire-reports/*.xml')\r\n    }\r\n}\r\n\r\njob('example-2') {\r\n    publishers {\r\n        archiveJunit('**/minitest-reports/*.xml') {\r\n            allowEmptyResults()\r\n            retainLongStdout()\r\n            testDataPublishers {\r\n                publishTestStabilityData()\r\n            }\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "archiveTestNG",
@@ -20833,9 +20812,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use the\r\nAutomatically Generated\r\nDSL instead",
-                            "deprecatedHtml": "use the\r\n<a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">Automatically Generated\r\nDSL</a> instead",
                             "availableSince": "1.24",
                             "plugins": [
                                 {
@@ -21613,7 +21589,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.ArchiveJUnitContext"
                         }
                     ],
-                    "examples": "job('example-1') {\r\n    publishers {\r\n        archiveJunit('**/target/surefire-reports/*.xml')\r\n    }\r\n}\r\n\r\njob('example-2') {\r\n    publishers {\r\n        archiveJunit('**/minitest-reports/*.xml') {\r\n            allowEmptyResults()\r\n            retainLongStdout()\r\n            healthScaleFactor(1.5)\r\n            testDataPublishers {\r\n                publishTestStabilityData()\r\n            }\r\n        }\r\n    }\r\n}"
+                    "examples": "job('example-1') {\r\n    publishers {\r\n        archiveJunit('**/target/surefire-reports/*.xml')\r\n    }\r\n}\r\n\r\njob('example-2') {\r\n    publishers {\r\n        archiveJunit('**/minitest-reports/*.xml') {\r\n            allowEmptyResults()\r\n            retainLongStdout()\r\n            testDataPublishers {\r\n                publishTestStabilityData()\r\n            }\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "archiveTestNG",
@@ -23344,9 +23320,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use the\r\nAutomatically Generated\r\nDSL instead",
-                            "deprecatedHtml": "use the\r\n<a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">Automatically Generated\r\nDSL</a> instead",
                             "availableSince": "1.24",
                             "plugins": [
                                 {
@@ -24811,9 +24784,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use the\r\nAutomatically Generated\r\nDSL instead",
-                            "deprecatedHtml": "use the\r\n<a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">Automatically Generated\r\nDSL</a> instead",
                             "availableSince": "1.33",
                             "plugins": [
                                 {
@@ -27060,7 +27030,7 @@
                             "firstSentenceCommentText": "Configures exclusion plugin resources that are required for the\r\n javaposse.jobdsl.dsl.helpers.step.StepContext#criticalBlock(groovy.lang.Closure) step."
                         }
                     ],
-                    "examples": "job('example') {\r\n    wrappers {\r\n        exclusionResources('FIRST', 'SECOND')\r\n    }\r\n    steps {\r\n        criticalBlock {\r\n            shell('echo Hello World!')\r\n        }\r\n    }\r\n}"
+                    "examples": "job('example') {\r\n    wrappers {\r\n        exclusionResources('first', 'second')\r\n    }\r\n    steps {\r\n        criticalBlock {\r\n            shell('echo Hello World!')\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "generateJiraReleaseNotes",
@@ -27111,6 +27081,20 @@
                 {
                     "name": "injectPasswords",
                     "signatures": [
+                        {
+                            "parameters": [
+                                
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.23",
+                            "plugins": [
+                                {
+                                    "id": "envinject"
+                                }
+                            ],
+                            "html": "Injects globally defined passwords as environment variables into the job.",
+                            "firstSentenceCommentText": "Injects globally defined passwords as environment variables into the job."
+                        },
                         {
                             "parameters": [
                                 {
@@ -28211,6 +28195,29 @@
                         }
                     ],
                     "examples": "// keep the build history when re-numbering jobs\r\njob('04-project-a-deploy') {\r\n    previousNames(/\\d+-project-a-deploy/)\r\n}"
+                },
+                {
+                    "name": "priority",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "value",
+                                    "type": "int"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.15",
+                            "plugins": [
+                                {
+                                    "id": "PrioritySorter"
+                                }
+                            ],
+                            "html": "Set the priority of the job. Default value is 100.",
+                            "firstSentenceCommentText": "Set the priority of the job. "
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    priority(50)\r\n}"
                 },
                 {
                     "name": "properties",
@@ -29561,12 +29568,6 @@
                                 
                             ],
                             "availableSince": "1.31",
-                            "plugins": [
-                                {
-                                    "id": "extra-columns",
-                                    "minimumVersion": "1.16"
-                                }
-                            ],
                             "html": "Adds a column for showing the node which executed the last build.\r\n Requires version 1.16 or later of the Extra Columns plugin.",
                             "firstSentenceCommentText": "Adds a column for showing the node which executed the last build.\r\n "
                         }
@@ -31815,6 +31816,29 @@
                     "examples": "// keep the build history when re-numbering jobs\r\njob('04-project-a-deploy') {\r\n    previousNames(/\\d+-project-a-deploy/)\r\n}"
                 },
                 {
+                    "name": "priority",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "value",
+                                    "type": "int"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.15",
+                            "plugins": [
+                                {
+                                    "id": "PrioritySorter"
+                                }
+                            ],
+                            "html": "Set the priority of the job. Default value is 100.",
+                            "firstSentenceCommentText": "Set the priority of the job. "
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    priority(50)\r\n}"
+                },
+                {
                     "name": "properties",
                     "signatures": [
                         {
@@ -32744,6 +32768,29 @@
                         }
                     ],
                     "examples": "// keep the build history when re-numbering jobs\r\njob('04-project-a-deploy') {\r\n    previousNames(/\\d+-project-a-deploy/)\r\n}"
+                },
+                {
+                    "name": "priority",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "value",
+                                    "type": "int"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.15",
+                            "plugins": [
+                                {
+                                    "id": "PrioritySorter"
+                                }
+                            ],
+                            "html": "Set the priority of the job. Default value is 100.",
+                            "firstSentenceCommentText": "Set the priority of the job. "
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    priority(50)\r\n}"
                 },
                 {
                     "name": "properties",
@@ -33962,6 +34009,29 @@
                     "examples": "// keep the build history when re-numbering jobs\r\njob('04-project-a-deploy') {\r\n    previousNames(/\\d+-project-a-deploy/)\r\n}"
                 },
                 {
+                    "name": "priority",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "value",
+                                    "type": "int"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.15",
+                            "plugins": [
+                                {
+                                    "id": "PrioritySorter"
+                                }
+                            ],
+                            "html": "Set the priority of the job. Default value is 100.",
+                            "firstSentenceCommentText": "Set the priority of the job. "
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    priority(50)\r\n}"
+                },
+                {
                     "name": "properties",
                     "signatures": [
                         {
@@ -34765,7 +34835,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.ArchiveJUnitContext"
                         }
                     ],
-                    "examples": "job('example-1') {\r\n    publishers {\r\n        archiveJunit('**/target/surefire-reports/*.xml')\r\n    }\r\n}\r\n\r\njob('example-2') {\r\n    publishers {\r\n        archiveJunit('**/minitest-reports/*.xml') {\r\n            allowEmptyResults()\r\n            retainLongStdout()\r\n            healthScaleFactor(1.5)\r\n            testDataPublishers {\r\n                publishTestStabilityData()\r\n            }\r\n        }\r\n    }\r\n}"
+                    "examples": "job('example-1') {\r\n    publishers {\r\n        archiveJunit('**/target/surefire-reports/*.xml')\r\n    }\r\n}\r\n\r\njob('example-2') {\r\n    publishers {\r\n        archiveJunit('**/minitest-reports/*.xml') {\r\n            allowEmptyResults()\r\n            retainLongStdout()\r\n            testDataPublishers {\r\n                publishTestStabilityData()\r\n            }\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "archiveTestNG",
@@ -36515,9 +36585,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use the\r\nAutomatically Generated\r\nDSL instead",
-                            "deprecatedHtml": "use the\r\n<a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">Automatically Generated\r\nDSL</a> instead",
                             "availableSince": "1.24",
                             "plugins": [
                                 {
@@ -37113,9 +37180,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use the\r\nAutomatically Generated\r\nDSL instead",
-                            "deprecatedHtml": "use the\r\n<a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">Automatically Generated\r\nDSL</a> instead",
                             "availableSince": "1.33",
                             "plugins": [
                                 {
@@ -37657,7 +37721,7 @@
                             "firstSentenceCommentText": "Configures exclusion plugin resources that are required for the\r\n javaposse.jobdsl.dsl.helpers.step.StepContext#criticalBlock(groovy.lang.Closure) step."
                         }
                     ],
-                    "examples": "job('example') {\r\n    wrappers {\r\n        exclusionResources('FIRST', 'SECOND')\r\n    }\r\n    steps {\r\n        criticalBlock {\r\n            shell('echo Hello World!')\r\n        }\r\n    }\r\n}"
+                    "examples": "job('example') {\r\n    wrappers {\r\n        exclusionResources('first', 'second')\r\n    }\r\n    steps {\r\n        criticalBlock {\r\n            shell('echo Hello World!')\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "generateJiraReleaseNotes",
@@ -37708,6 +37772,20 @@
                 {
                     "name": "injectPasswords",
                     "signatures": [
+                        {
+                            "parameters": [
+                                
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.23",
+                            "plugins": [
+                                {
+                                    "id": "envinject"
+                                }
+                            ],
+                            "html": "Injects globally defined passwords as environment variables into the job.",
+                            "firstSentenceCommentText": "Injects globally defined passwords as environment variables into the job."
+                        },
                         {
                             "parameters": [
                                 {
@@ -38969,6 +39047,29 @@
                     "examples": "// keep the build history when re-numbering jobs\r\njob('04-project-a-deploy') {\r\n    previousNames(/\\d+-project-a-deploy/)\r\n}"
                 },
                 {
+                    "name": "priority",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "value",
+                                    "type": "int"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.15",
+                            "plugins": [
+                                {
+                                    "id": "PrioritySorter"
+                                }
+                            ],
+                            "html": "Set the priority of the job. Default value is 100.",
+                            "firstSentenceCommentText": "Set the priority of the job. "
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    priority(50)\r\n}"
+                },
+                {
                     "name": "properties",
                     "signatures": [
                         {
@@ -39390,28 +39491,6 @@
                     ]
                 },
                 {
-                    "name": "executionType",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "executionType",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.52",
-                            "plugins": [
-                                {
-                                    "id": "jenkins-multijob-plugin",
-                                    "minimumVersion": "1.22"
-                                }
-                            ],
-                            "html": "Defines how to run the whole MultiJob phase. Must be either <TT>'PARALLEL'</TT> or <TT>'SEQUENTIALLY'</TT>.\r\n Defaults to <TT>'PARALLEL'</TT>.",
-                            "firstSentenceCommentText": "Defines how to run the whole MultiJob phase. "
-                        }
-                    ]
-                },
-                {
                     "name": "phaseJob",
                     "signatures": [
                         {
@@ -39785,7 +39864,7 @@
                             "plugins": [
                                 {
                                     "id": "docker-build-publish",
-                                    "minimumVersion": "1.2"
+                                    "minimumVersion": "1.0"
                                 }
                             ],
                             "html": "Builds and pushes a Docker based project to the Docker registry.",
@@ -41658,6 +41737,29 @@
                         }
                     ],
                     "examples": "// keep the build history when re-numbering jobs\r\njob('04-project-a-deploy') {\r\n    previousNames(/\\d+-project-a-deploy/)\r\n}"
+                },
+                {
+                    "name": "priority",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "value",
+                                    "type": "int"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.15",
+                            "plugins": [
+                                {
+                                    "id": "PrioritySorter"
+                                }
+                            ],
+                            "html": "Set the priority of the job. Default value is 100.",
+                            "firstSentenceCommentText": "Set the priority of the job. "
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    priority(50)\r\n}"
                 },
                 {
                     "name": "properties",
@@ -43646,6 +43748,29 @@
                     "examples": "// keep the build history when re-numbering jobs\r\njob('04-project-a-deploy') {\r\n    previousNames(/\\d+-project-a-deploy/)\r\n}"
                 },
                 {
+                    "name": "priority",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "value",
+                                    "type": "int"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.15",
+                            "plugins": [
+                                {
+                                    "id": "PrioritySorter"
+                                }
+                            ],
+                            "html": "Set the priority of the job. Default value is 100.",
+                            "firstSentenceCommentText": "Set the priority of the job. "
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    priority(50)\r\n}"
+                },
+                {
                     "name": "properties",
                     "signatures": [
                         {
@@ -44578,7 +44703,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.jobs.MultiJob"
                         }
                     ],
-                    "examples": "multiJob('example') {\r\n    steps {\r\n        phase('Second') {\r\n            phaseJob('JobZ') {\r\n                parameters {\r\n                    propertiesFile('my1.properties')\r\n                }\r\n            }\r\n        }\r\n        phase('Third') {\r\n            phaseJob('JobA')\r\n            phaseJob('JobB')\r\n            phaseJob('JobC')\r\n        }\r\n        phase('Fourth') {\r\n            phaseJob('JobD') {\r\n                currentJobParameters(false)\r\n                parameters {\r\n                    booleanParam('cParam', true)\r\n                    propertiesFile('my.properties')\r\n                    sameNode()\r\n                    matrixSubset('it.name==\"hello\"')\r\n                    subversionRevision()\r\n                    gitRevision()\r\n                    predefinedProp('prop1', 'value1')\r\n                }\r\n                configure { phaseJobConfig ->\r\n                    phaseJobConfig / enableCondition << 'true'\r\n                    phaseJobConfig / condition << '${RUN_JOB} == \"true\"'\r\n                }\r\n            }\r\n        }\r\n    }\r\n}"
+                    "examples": "multiJob('example') {\r\n    steps {\r\n        phase('Second') {\r\n            phaseJob('JobZ') {\r\n                parameters {\r\n                    propertiesFile('my1.properties')\r\n                }\r\n            }\r\n        }\r\n        phase('Third') {\r\n            phaseJob('JobA')\r\n            phaseJob('JobB')\r\n            phaseJob('JobC')\r\n        }\r\n        phase('Fourth') {\r\n            phaseJob('JobD') {\r\n                currentJobParameters(false)\r\n                parameters {\r\n                    booleanParam('cParam', true)\r\n                    propertiesFile('my.properties')\r\n                    sameNode()\r\n                    matrixSubset('it.name==\"hello\"')\r\n                    subversionRevision()\r\n                    gitRevision()\r\n                    predefinedProp('prop1', 'value1')\r\n                    nodeLabel('lParam', 'my_nodes')\r\n                }\r\n                configure { phaseJobConfig ->\r\n                    phaseJobConfig / enableCondition << 'true'\r\n                    phaseJobConfig / condition << '${RUN_JOB} == \"true\"'\r\n                }\r\n            }\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "multibranchPipelineJob",
@@ -44637,7 +44762,6 @@
                             ],
                             "deprecated": true,
                             "deprecatedText": "as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.",
-                            "deprecatedHtml": "as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.",
                             "availableSince": "1.42",
                             "plugins": [
                                 {
@@ -44661,7 +44785,6 @@
                             ],
                             "deprecated": true,
                             "deprecatedText": "as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.",
-                            "deprecatedHtml": "as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.",
                             "availableSince": "1.42",
                             "plugins": [
                                 {
@@ -44906,7 +45029,6 @@
                             ],
                             "deprecated": true,
                             "deprecatedText": "as of 1.47. Use #pipelineJob(java.lang.String, groovy.lang.Closure) instead.",
-                            "deprecatedHtml": "as of 1.47. Use #pipelineJob(java.lang.String, groovy.lang.Closure) instead.",
                             "availableSince": "1.30",
                             "plugins": [
                                 {
@@ -44929,7 +45051,6 @@
                             ],
                             "deprecated": true,
                             "deprecatedText": "as of 1.47. Use #pipelineJob(java.lang.String, groovy.lang.Closure) instead.",
-                            "deprecatedHtml": "as of 1.47. Use #pipelineJob(java.lang.String, groovy.lang.Closure) instead.",
                             "availableSince": "1.31",
                             "plugins": [
                                 {
