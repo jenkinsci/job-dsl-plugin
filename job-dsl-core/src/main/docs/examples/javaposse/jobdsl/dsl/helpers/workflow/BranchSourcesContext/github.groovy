@@ -1,4 +1,4 @@
-multibranchWorkflowJob('example') {
+multibranchPipelineJob('example') {
     branchSources {
         github {
             scanCredentialsId('github-ci')

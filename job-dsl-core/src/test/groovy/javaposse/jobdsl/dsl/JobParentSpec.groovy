@@ -519,18 +519,6 @@ class JobParentSpec extends Specification {
         1 * jobManagement.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.22')
     }
 
-    def 'workflow'() {
-        when:
-        WorkflowJob job = parent.workflowJob('test') {
-        }
-
-        then:
-        job.name == 'test'
-        parent.referencedJobs.contains(job)
-        (1.._) * jobManagement.requirePlugin('workflow-aggregator')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
     def 'pipeline'() {
         when:
         WorkflowJob job = parent.pipelineJob('test') {
@@ -540,18 +528,6 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         1 * jobManagement.requirePlugin('workflow-aggregator')
-    }
-
-    def 'multibranchWorkflowJob'() {
-        when:
-        MultibranchWorkflowJob job = parent.multibranchWorkflowJob('test') {
-        }
-
-        then:
-        job.name == 'test'
-        parent.referencedJobs.contains(job)
-        (1.._) * jobManagement.requireMinimumPluginVersion('workflow-multibranch', '1.12')
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'multibranchPipelineJob'() {

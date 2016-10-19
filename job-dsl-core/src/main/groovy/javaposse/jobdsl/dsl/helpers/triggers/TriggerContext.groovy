@@ -206,10 +206,8 @@ class TriggerContext extends ItemTriggerContext {
      *
      * @since 1.42
      */
-    @RequiresPlugin(id = 'gitlab-plugin', minimumVersion = '1.1.28')
+    @RequiresPlugin(id = 'gitlab-plugin', minimumVersion = '1.2.0')
     void gitlabPush(@DslContext(GitLabTriggerContext) Closure closure) {
-        jobManagement.logPluginDeprecationWarning('gitlab-plugin', '1.2.0')
-
         GitLabTriggerContext context = new GitLabTriggerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
@@ -226,12 +224,8 @@ class TriggerContext extends ItemTriggerContext {
             includeBranchesSpec(context.includeBranches ?: '')
             excludeBranchesSpec(context.excludeBranches ?: '')
             acceptMergeRequestOnSuccess(context.acceptMergeRequestOnSuccess)
-            if (jobManagement.isMinimumPluginVersionInstalled('gitlab-plugin', '1.2.0')) {
-                branchFilterType(context.branchFilterType)
-                targetBranchRegex(context.targetBranchRegex ?: '')
-            } else {
-                allowAllBranches(context.allowAllBranches)
-            }
+            branchFilterType(context.branchFilterType)
+            targetBranchRegex(context.targetBranchRegex ?: '')
         }
     }
 

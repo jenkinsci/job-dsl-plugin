@@ -8,8 +8,6 @@ import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
-
 class StepContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
     Item item = Mock(Item)
@@ -2279,7 +2277,7 @@ class StepContextSpec extends Specification {
         when:
         context.conditionalSteps {
             condition {
-                fileExists('someFile', WORKSPACE)
+                fileExists('someFile', RunConditionContext.BaseDir.WORKSPACE)
             }
             steps {
                 shell('echo Test')
@@ -2351,7 +2349,7 @@ class StepContextSpec extends Specification {
         context.conditionalSteps {
             condition {
                 "${dslOperation}" {
-                    fileExists('someFile', WORKSPACE)
+                    fileExists('someFile', RunConditionContext.BaseDir.WORKSPACE)
                 } {
                     alwaysRun()
                 }

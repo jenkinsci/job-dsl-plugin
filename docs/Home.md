@@ -27,8 +27,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.54 (unreleased)
- * changed embedded API Viewer to work without Internet connectivity
+ * Changed embedded API Viewer to work without Internet connectivity
    ([JENKINS-40205](https://issues.jenkins-ci.org/browse/JENKINS-40205))
+ * Removed most things that have been deprecated in 1.47, see [Migration](Migration#migrating-to-147)
 * 1.53 (November 08 2016)
  * Enhanced support the
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)

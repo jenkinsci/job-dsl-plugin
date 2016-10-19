@@ -8,7 +8,6 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
@@ -183,31 +182,11 @@ class RunConditionContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Runs the build steps if the file exists.
-     *
-     * @since 1.23
-     */
-    @Deprecated
-    void fileExists(String file, FileExistsCondition.BaseDir baseDir) {
-        createFileExists(file, baseDir.baseDirClass)
-    }
-
-    /**
      * Runs the build steps if one or more files match the selectors.
      *
      * @since 1.47
      */
     void filesMatch(String includes, String excludes = '', BaseDir baseDir = BaseDir.WORKSPACE) {
-        createFilesMatch(includes, excludes, baseDir.baseDirClass)
-    }
-
-    /**
-     * Runs the build steps if one or more files match the selectors.
-     *
-     * @since 1.36
-     */
-    @Deprecated
-    void filesMatch(String includes, String excludes, FileExistsCondition.BaseDir baseDir) {
         createFilesMatch(includes, excludes, baseDir.baseDirClass)
     }
 

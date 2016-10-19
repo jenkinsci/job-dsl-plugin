@@ -1,4 +1,4 @@
-multibranchWorkflowJob('example') {
+multibranchPipelineJob('example') {
     orphanedItemStrategy {
         discardOldItems {
             numToKeep(20)
