@@ -245,7 +245,7 @@ interface DslFactory extends ViewFactory {
      * @see #mavenSettingsConfigFile(java.lang.String, groovy.lang.Closure)
      */
     @RequiresPlugin(id = 'config-file-provider')
-    ConfigFile mavenSettingsConfigFile(String name)
+    MavenSettingsConfigFile mavenSettingsConfigFile(String name)
 
     /**
      * Creates a managed Maven settings file.
@@ -253,7 +253,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.31
      */
     @RequiresPlugin(id = 'config-file-provider')
-    ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
+    MavenSettingsConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**
      * Creates a managed global Maven settings file.
@@ -261,7 +261,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.39
      */
     @RequiresPlugin(id = 'config-file-provider')
-    ConfigFile globalMavenSettingsConfigFile(String name)
+    MavenSettingsConfigFile globalMavenSettingsConfigFile(String name)
 
     /**
      * Creates a managed global Maven settings file.
@@ -269,7 +269,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.39
      */
     @RequiresPlugin(id = 'config-file-provider')
-    ConfigFile globalMavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
+    MavenSettingsConfigFile globalMavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure)
 
     /**
      * Creates a managed script file.
