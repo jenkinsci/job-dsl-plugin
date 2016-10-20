@@ -794,6 +794,7 @@ class ListViewSpec<T extends ListView> extends Specification {
         root.columns.size() == 1
         root.columns[0].value().size() == 1
         root.columns[0].value()[0].name() == 'hudson.plugins.nextexecutions.columns.NextExecutionColumn'
+        root.columns[0].value().triggerClass[0].value() == 'hudson.triggers.TimerTrigger'
         1 * jobManagement.requireMinimumPluginVersion('next-executions', '1.0.12')
     }
 

@@ -261,6 +261,8 @@ class ColumnsContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'next-executions', minimumVersion = '1.0.12')
     void nextLaunch() {
-        columnNodes << new Node(null, 'hudson.plugins.nextexecutions.columns.NextExecutionColumn')
+        columnNodes << new NodeBuilder().'hudson.plugins.nextexecutions.columns.NextExecutionColumn' {
+          triggerClass('hudson.triggers.TimerTrigger')
+        }
     }
 }
