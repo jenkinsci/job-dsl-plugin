@@ -783,6 +783,36 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.6')
     }
 
+    def 'next launch column'() {
+        when:
+        view.columns {
+            nextLaunch()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'hudson.plugins.nextexecutions.columns.NextExecutionColumn'
+        root.columns[0].value().triggerClass[0].value() == 'hudson.triggers.TimerTrigger'
+        1 * jobManagement.requireMinimumPluginVersion('next-executions', '1.0.12')
+    }
+
+    def 'next possible launch column'() {
+        when:
+        view.columns {
+            nextPossibleLaunch()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'hudson.plugins.nextexecutions.columns.PossibleNextExecutionColumn'
+        root.columns[0].value().triggerClass[0].value() == 'hudson.triggers.SCMTrigger'
+        1 * jobManagement.requireMinimumPluginVersion('next-executions', '1.0.12')
+    }
+
     protected String getDefaultXml() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
