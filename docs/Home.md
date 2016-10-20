@@ -30,6 +30,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support the
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
    ([JENKINS-38637](https://issues.jenkins-ci.org/browse/JENKINS-38637))
+ * Added "Next Launch" column for [Next Executions Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Next+Executions)
 * 1.52 (October 17 2016)
  * Increased the minimum supported Jenkins version to 1.642
  * Enhanced support for the [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin)
