@@ -10,7 +10,9 @@ import hudson.model.FreeStyleProject
 import hudson.model.Items
 import hudson.model.Label
 import hudson.model.ListView
+import hudson.model.Project
 import hudson.model.Result
+import hudson.model.Run
 import hudson.model.View
 import hudson.slaves.DumbSlave
 import javaposse.jobdsl.dsl.GeneratedJob
@@ -483,7 +485,7 @@ class ExecuteDslScriptsSpec extends Specification {
         assertTrue(jenkinsRule.jenkins.getItemByFullName('/folder/test-job') instanceof FreeStyleProject)
 
         when:
-        String script2 = 'job("/folder/different-job")'
+        String script2 = 'job("different-job")'
         ExecuteDslScripts builder2 = new ExecuteDslScripts(script2)
         builder2.removedJobAction = RemovedJobAction.DELETE
         builder2.lookupStrategy = LookupStrategy.SEED_JOB
@@ -1329,6 +1331,24 @@ class ExecuteDslScriptsSpec extends Specification {
         freeStyleBuild.result == SUCCESS
         jenkinsRule.jenkins.getItem('projectA') != null
         jenkinsRule.jenkins.getItem('projectB') != null
+    }
+
+    def 'JENKINS-39137'() {
+        setup:
+        Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
+        folder.createProject(Folder, 'nested')
+        Project job = folder.createProject(FreeStyleProject, 'seed')
+        job.buildersList.add(new ExecuteDslScripts(
+                scriptText: 'job("folder/nested/foo")',
+                lookupStrategy: LookupStrategy.SEED_JOB
+        ))
+        job.onCreatedFromScratch()
+
+        when:
+        Run build = job.scheduleBuild2(0).get()
+
+        then:
+        build.result == FAILURE
     }
 
     private static final String SCRIPT = """job('test-job') {
