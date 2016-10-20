@@ -234,15 +234,15 @@ abstract class JobParent extends Script implements DslFactory {
     /**
      * @since 1.30
      */
-    ConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
-        processConfigFile(name, ConfigFileType.MavenSettings, closure)
+    MavenSettingsConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
+        processConfigFile(name, ConfigFileType.MavenSettings, MavenSettingsConfigFile, closure)
     }
 
     /**
      * @since 1.39
      */
-    ConfigFile globalMavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
-        processConfigFile(name, ConfigFileType.GlobalMavenSettings, closure)
+    MavenSettingsConfigFile globalMavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
+        processConfigFile(name, ConfigFileType.GlobalMavenSettings, MavenSettingsConfigFile, closure)
     }
 
     /**

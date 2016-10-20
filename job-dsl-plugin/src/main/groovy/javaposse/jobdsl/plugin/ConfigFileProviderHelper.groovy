@@ -3,12 +3,14 @@ package javaposse.jobdsl.plugin
 import hudson.ExtensionList
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.ConfigFileType
+import javaposse.jobdsl.dsl.MavenSettingsConfigFile
 import javaposse.jobdsl.dsl.ParametrizedConfigFile
 import jenkins.model.Jenkins
 import org.jenkinsci.lib.configprovider.ConfigProvider
 import org.jenkinsci.lib.configprovider.model.Config
 import org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig
 import org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig
+import org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping
 import org.jenkinsci.plugins.managedscripts.ScriptConfig
 
 class ConfigFileProviderHelper {
@@ -43,8 +45,8 @@ class ConfigFileProviderHelper {
                         configFile.name,
                         configFile.comment,
                         configFile.content,
-                        null,
-                        null
+                        ((MavenSettingsConfigFile) configFile).replaceAll,
+                        toServerCredentialMapping(((MavenSettingsConfigFile) configFile).credentialsMapping)
                 )
             case ConfigFileType.GlobalMavenSettings:
                 return new GlobalMavenSettingsConfig(
@@ -52,8 +54,8 @@ class ConfigFileProviderHelper {
                         configFile.name,
                         configFile.comment,
                         configFile.content,
-                        null,
-                        null
+                        ((MavenSettingsConfigFile) configFile).replaceAll,
+                        toServerCredentialMapping(((MavenSettingsConfigFile) configFile).credentialsMapping)
                 )
             case ConfigFileType.ManagedScript:
                 return new ScriptConfig(
@@ -66,5 +68,9 @@ class ConfigFileProviderHelper {
             default:
                 return null
         }
+    }
+
+    private static List<ServerCredentialMapping> toServerCredentialMapping(Map<String, String> mapping) {
+        mapping.collect { new ServerCredentialMapping(it.key, it.value) }
     }
 }

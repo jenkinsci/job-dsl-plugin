@@ -282,6 +282,7 @@ class JobParentSpec extends Specification {
         configFile.name == 'test'
         configFile.type == ConfigFileType.MavenSettings
         configFile.comment == 'foo'
+        configFile instanceof MavenSettingsConfigFile
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requirePlugin('config-file-provider')
     }
@@ -293,6 +294,7 @@ class JobParentSpec extends Specification {
         then:
         configFile.name == 'test'
         configFile.type == ConfigFileType.MavenSettings
+        configFile instanceof MavenSettingsConfigFile
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requirePlugin('config-file-provider')
     }
@@ -307,6 +309,7 @@ class JobParentSpec extends Specification {
         configFile.name == 'test'
         configFile.type == ConfigFileType.GlobalMavenSettings
         configFile.comment == 'foo'
+        configFile instanceof MavenSettingsConfigFile
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requirePlugin('config-file-provider')
     }
@@ -318,6 +321,7 @@ class JobParentSpec extends Specification {
         then:
         configFile.name == 'test'
         configFile.type == ConfigFileType.GlobalMavenSettings
+        configFile instanceof MavenSettingsConfigFile
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requirePlugin('config-file-provider')
     }
