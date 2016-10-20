@@ -783,7 +783,7 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.6')
     }
 
-    def 'next execution column'() {
+    def 'next launch column'() {
         when:
         view.columns {
             nextLaunch()

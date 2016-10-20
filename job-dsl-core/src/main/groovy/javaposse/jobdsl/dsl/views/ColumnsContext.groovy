@@ -255,7 +255,7 @@ class ColumnsContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Adds a column showing job's next execution.
+     * Adds a column showing job's next launch.
      *
      * @since 1.53
      */
