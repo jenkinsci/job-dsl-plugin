@@ -783,6 +783,20 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('extra-columns', '1.6')
     }
 
+    def 'next execution column'() {
+        when:
+        view.columns {
+            nextLaunch()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'hudson.plugins.nextexecutions.columns.NextExecutionColumn'
+        1 * jobManagement.requireMinimumPluginVersion('next-executions', '1.0.12')
+    }
+
     protected String getDefaultXml() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>

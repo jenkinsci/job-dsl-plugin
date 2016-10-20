@@ -253,4 +253,14 @@ class ColumnsContext extends AbstractExtensibleContext {
             useIcon(icon)
         }
     }
+
+    /**
+     * Adds a column showing job's next execution.
+     *
+     * @since 1.53
+     */
+    @RequiresPlugin(id = 'next-executions', minimumVersion = '1.0.12')
+    void nextLaunch() {
+        columnNodes << new Node(null, 'hudson.plugins.nextexecutions.columns.NextExecutionColumn')
+    }
 }
