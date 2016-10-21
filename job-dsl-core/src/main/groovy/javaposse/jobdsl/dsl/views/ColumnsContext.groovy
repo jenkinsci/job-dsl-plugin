@@ -253,4 +253,28 @@ class ColumnsContext extends AbstractExtensibleContext {
             useIcon(icon)
         }
     }
+
+    /**
+     * Adds a column showing job's next launch.
+     *
+     * @since 1.53
+     */
+    @RequiresPlugin(id = 'next-executions', minimumVersion = '1.0.12')
+    void nextLaunch() {
+        columnNodes << new NodeBuilder().'hudson.plugins.nextexecutions.columns.NextExecutionColumn' {
+          triggerClass('hudson.triggers.TimerTrigger')
+        }
+    }
+
+    /**
+     * Adds a column showing job's next possible launch.
+     *
+     * @since 1.53
+     */
+    @RequiresPlugin(id = 'next-executions', minimumVersion = '1.0.12')
+    void nextPossibleLaunch() {
+        columnNodes << new NodeBuilder().'hudson.plugins.nextexecutions.columns.PossibleNextExecutionColumn' {
+          triggerClass('hudson.triggers.SCMTrigger')
+        }
+    }
 }

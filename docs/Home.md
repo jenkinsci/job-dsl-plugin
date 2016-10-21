@@ -32,6 +32,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-38637](https://issues.jenkins-ci.org/browse/JENKINS-38637))
  * Fixed a problem with relative job names
    ([JENKINS-39137](https://issues.jenkins-ci.org/browse/JENKINS-39137))
+ * Added "Next Launch" and "Next Possible Launch" columns for
+   [Next Executions Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Next+Executions)
+   ([#940](https://github.com/jenkinsci/job-dsl-plugin/pull/940))
 * 1.52 (October 17 2016)
  * Increased the minimum supported Jenkins version to 1.642
  * Enhanced support for the [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin)
