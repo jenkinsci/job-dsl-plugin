@@ -30,6 +30,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support the
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
    ([JENKINS-38637](https://issues.jenkins-ci.org/browse/JENKINS-38637))
+ * Allow `GString` as argument type for Automatically Generated DSL
+   ([JENKINS-39153](https://issues.jenkins-ci.org/browse/JENKINS-39153))
  * Fixed a problem with relative job names
    ([JENKINS-39137](https://issues.jenkins-ci.org/browse/JENKINS-39137))
  * Added "Next Launch" and "Next Possible Launch" columns for

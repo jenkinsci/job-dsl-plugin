@@ -12,6 +12,7 @@ import jenkins.mvn.FilePathSettingsProvider
 import org.jenkinsci.plugins.structs.describable.DescribableModel
 import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -88,6 +89,21 @@ class DescribableContextSpec extends Specification {
 
         when:
         context.aString('foo')
+        def instance = context.createInstance()
+
+        then:
+        instance != null
+        instance instanceof DummyTrigger
+        instance.aString == 'foo'
+    }
+
+    def 'string property with GString'() {
+        setup:
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
+        String foo = 'foo'
+
+        when:
+        context.aString("${foo}")
         def instance = context.createInstance()
 
         then:
@@ -226,6 +242,22 @@ class DescribableContextSpec extends Specification {
         instance.anEnum == Thread.State.NEW
     }
 
+    @Ignore('https://github.com/jenkinsci/structs-plugin/pull/14')
+    def 'enum property with GString value'() {
+        setup:
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
+        String foo = 'NEW'
+
+        when:
+        context.anEnum("${foo}")
+        def instance = context.createInstance()
+
+        then:
+        instance != null
+        instance instanceof DummyTrigger
+        instance.anEnum == Thread.State.NEW
+    }
+
     def 'enum property with enum value'() {
         setup:
         DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
@@ -348,7 +380,7 @@ class DescribableContextSpec extends Specification {
         !e.static
     }
 
-    def 'heterogeneous list property with inull value'() {
+    def 'heterogeneous list property with null value'() {
         setup:
         DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
 
@@ -743,6 +775,24 @@ class DescribableContextSpec extends Specification {
         instance.stringList[1] == 'bar'
     }
 
+    def 'string list property with GString'() {
+        setup:
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
+        String foo = 'foo'
+        String bar = 'bar'
+
+        when:
+        context.stringList(["${foo}", "${bar}"])
+        def instance = context.createInstance()
+
+        then:
+        instance != null
+        instance instanceof DummyTrigger
+        instance.stringList.size() == 2
+        instance.stringList[0] == 'foo'
+        instance.stringList[1] == 'bar'
+    }
+
     def 'empty string property list'() {
         setup:
         DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
@@ -806,6 +856,25 @@ class DescribableContextSpec extends Specification {
 
         when:
         context.enumList(['NEW', 'BLOCKED'])
+        def instance = context.createInstance()
+
+        then:
+        instance != null
+        instance instanceof DummyTrigger
+        instance.enumList.size() == 2
+        instance.enumList[0] == Thread.State.NEW
+        instance.enumList[1] == Thread.State.BLOCKED
+    }
+
+    @Ignore('https://github.com/jenkinsci/structs-plugin/pull/14')
+    def 'enum list property with GString'() {
+        setup:
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
+        String one = 'NEW'
+        String two = 'BLOCKED'
+
+        when:
+        context.enumList(["${one}", "${two}"])
         def instance = context.createInstance()
 
         then:

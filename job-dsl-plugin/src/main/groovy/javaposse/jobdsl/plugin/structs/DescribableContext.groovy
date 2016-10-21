@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
+import org.apache.commons.lang.ClassUtils
 import org.jenkinsci.plugins.structs.describable.ArrayType
 import org.jenkinsci.plugins.structs.describable.AtomicType
 import org.jenkinsci.plugins.structs.describable.DescribableModel
@@ -14,7 +15,6 @@ import org.jenkinsci.plugins.structs.describable.HomogeneousObjectType
 import org.jenkinsci.plugins.structs.describable.ParameterType
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
-import static org.apache.commons.lang.ClassUtils.isAssignable
 
 /**
  * A dynamic {@link Context} that can be used to extend the DSL for any {@link hudson.model.Describable}.
@@ -77,17 +77,16 @@ class DescribableContext implements Context {
                         arrayType.elementType instanceof HomogeneousObjectType
             } else if (value instanceof Iterable || (value != null && value.class.array)) {
                 if (arrayType.elementType instanceof AtomicType) {
-                    return value.every { isAssignable(it.class, ((AtomicType) arrayType.elementType).type, true) }
+                    return value.every { isAssignable(it, (AtomicType) arrayType.elementType) }
                 } else if (arrayType.elementType instanceof EnumType) {
                     EnumType enumType = (EnumType) arrayType.elementType
-                    return value.every { enumType.type.isInstance(it) || enumType.values.contains(it) }
+                    return value.every { isValidEnumValue(enumType, it) }
                 }
             }
         } else if (parameterType instanceof EnumType) {
-            EnumType enumType = (EnumType) parameterType
-            return enumType.type.isInstance(value) || enumType.values.contains(value)
+            return isValidEnumValue((EnumType) parameterType, value)
         } else if (parameterType instanceof AtomicType) {
-            return (value != null && isAssignable(value.class, ((AtomicType) parameterType).type, true)) ||
+            return (value != null && isAssignable(value, parameterType)) ||
                     (value == null && !((AtomicType) parameterType).type.primitive)
         } else if (parameterType instanceof HomogeneousObjectType) {
             return value instanceof Closure || value == null
@@ -132,5 +131,14 @@ class DescribableContext implements Context {
             return [((HomogeneousObjectType) arrayType.elementType).schemaType]
         }
         throw new DslException("unsupported array element type: $arrayType.elementType")
+    }
+
+    private static boolean isAssignable(Object value, AtomicType parameterType) {
+        Class normalizedType = value instanceof GString ? String : value.class
+        ClassUtils.isAssignable(normalizedType, parameterType.type, true)
+    }
+
+    private static boolean isValidEnumValue(EnumType enumType, Object value) {
+        enumType.type.isInstance(value) || enumType.values.contains(value)
     }
 }
