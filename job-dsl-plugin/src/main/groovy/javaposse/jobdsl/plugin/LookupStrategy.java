@@ -81,7 +81,8 @@ public enum LookupStrategy {
             case 0:
                 return jenkins;
             default:
-                Item item = jenkins.getItem(path.substring(0, i), getContext(seedJob));
+                String fullName = getContext(seedJob).getFullName() + "/" + path.substring(0, i);
+                Item item = jenkins.getItemByFullName(fullName);
                 return item instanceof ItemGroup ? (ItemGroup) item : null;
         }
     }
