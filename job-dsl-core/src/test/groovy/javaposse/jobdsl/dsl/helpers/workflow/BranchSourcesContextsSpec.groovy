@@ -93,7 +93,7 @@ class BranchSourcesContextsSpec extends Specification {
             name() == 'jenkins.branch.BranchSource'
             children().size() == 2
             with(source[0]) {
-                children().size() == 9
+                children().size() == 8
                 id[0].value() instanceof UUID
                 apiUri[0].value() == 'https://api.github.com'
                 scanCredentialsId[0].value().empty
@@ -102,7 +102,6 @@ class BranchSourcesContextsSpec extends Specification {
                 repository[0].value().empty
                 includes[0].value() == '*'
                 excludes[0].value().empty
-                ignoreOnPushNotifications[0].value() == false
             }
             with(strategy[0]) {
                 children().size() == 1
@@ -133,7 +132,7 @@ class BranchSourcesContextsSpec extends Specification {
             name() == 'jenkins.branch.BranchSource'
             children().size() == 2
             with(source[0]) {
-                children().size() == 9
+                children().size() == 8
                 id[0].value() instanceof UUID
                 apiUri[0].value() == 'https://custom.url'
                 scanCredentialsId[0].value() == 'scanCreds'
@@ -142,7 +141,6 @@ class BranchSourcesContextsSpec extends Specification {
                 repository[0].value() == 'repoName'
                 includes[0].value() == 'lorem'
                 excludes[0].value() == 'ipsum'
-                ignoreOnPushNotifications[0].value() == true
             }
             with(strategy[0]) {
                 children().size() == 1
@@ -152,5 +150,6 @@ class BranchSourcesContextsSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.6')
+        1 * jobManagement.logDeprecationWarning()
     }
 }

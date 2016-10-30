@@ -38,6 +38,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [Next Executions Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Next+Executions)
    ([#940](https://github.com/jenkinsci/job-dsl-plugin/pull/940))
  * Overriding job, folder or view names is deprecated, see [Migration](Migration#migrating-to-153)
+ * Deprecated unnecessary option in GitHub branch source context
+   ([JENKINS-39146](https://issues.jenkins-ci.org/browse/JENKINS-39146))
 * 1.52 (October 17 2016)
  * Increased the minimum supported Jenkins version to 1.642
  * Enhanced support for the [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin)

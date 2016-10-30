@@ -1,8 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.workflow
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
 
-class GitHubBranchSourceContext implements Context {
+class GitHubBranchSourceContext extends AbstractContext {
     String apiUri = 'https://api.github.com'
     String scanCredentialsId
     String checkoutCredentialsId = 'SAME'
@@ -10,7 +11,10 @@ class GitHubBranchSourceContext implements Context {
     String repository
     String includes = '*'
     String excludes
-    boolean ignoreOnPushNotifications
+
+    GitHubBranchSourceContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Sets the GitHub API URI. Defaults to {@code 'https://api.github.com'}.
@@ -64,7 +68,8 @@ class GitHubBranchSourceContext implements Context {
     /**
      * If set, ignores push notifications. Defaults to {@code false}.
      */
+    @SuppressWarnings(['GroovyUnusedDeclaration', 'EmptyMethod'])
+    @Deprecated
     void ignoreOnPushNotifications(boolean ignoreOnPushNotifications = true) {
-        this.ignoreOnPushNotifications = ignoreOnPushNotifications
     }
 }
