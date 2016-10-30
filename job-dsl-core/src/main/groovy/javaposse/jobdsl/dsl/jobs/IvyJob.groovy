@@ -11,6 +11,11 @@ import javaposse.jobdsl.dsl.helpers.step.StepContext
 import static javaposse.jobdsl.dsl.Preconditions.checkState
 
 class IvyJob extends Job {
+    IvyJob(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     IvyJob(JobManagement jobManagement) {
         super(jobManagement)
     }

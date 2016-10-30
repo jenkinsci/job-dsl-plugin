@@ -9,6 +9,11 @@ import javaposse.jobdsl.dsl.helpers.workflow.OrphanedItemStrategyContext
 import javaposse.jobdsl.dsl.helpers.workflow.BranchSourcesContext
 
 class MultibranchWorkflowJob extends Folder {
+    MultibranchWorkflowJob(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     MultibranchWorkflowJob(JobManagement jobManagement) {
         super(jobManagement)
     }

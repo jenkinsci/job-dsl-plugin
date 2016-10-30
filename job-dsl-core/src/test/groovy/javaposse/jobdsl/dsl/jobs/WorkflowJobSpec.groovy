@@ -6,7 +6,7 @@ import spock.lang.Specification
 
 class WorkflowJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
-    private final WorkflowJob job = new WorkflowJob(jobManagement)
+    private final WorkflowJob job = new WorkflowJob(jobManagement, 'test')
 
     def 'construct simple workflow job and generate xml from it'() {
         when:

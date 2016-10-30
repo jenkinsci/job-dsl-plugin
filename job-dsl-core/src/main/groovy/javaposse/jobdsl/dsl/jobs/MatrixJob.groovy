@@ -9,6 +9,11 @@ import javaposse.jobdsl.dsl.helpers.AxisContext
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 
 class MatrixJob extends Job {
+    MatrixJob(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     MatrixJob(JobManagement jobManagement) {
         super(jobManagement)
     }

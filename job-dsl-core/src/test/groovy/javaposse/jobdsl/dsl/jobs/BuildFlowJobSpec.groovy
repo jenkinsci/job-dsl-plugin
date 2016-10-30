@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class BuildFlowJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
-    private final BuildFlowJob job = new BuildFlowJob(jobManagement)
+    private final BuildFlowJob job = new BuildFlowJob(jobManagement, 'test')
 
     def 'construct simple Build Flow job and generate xml from it'() {
         when:

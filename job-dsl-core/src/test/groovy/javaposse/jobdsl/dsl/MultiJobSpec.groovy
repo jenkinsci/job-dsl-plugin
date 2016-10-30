@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class MultiJobSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    MultiJob job = new MultiJob(jobManagement)
+    MultiJob job = new MultiJob(jobManagement, 'test')
 
     def 'call steps'() {
         when:

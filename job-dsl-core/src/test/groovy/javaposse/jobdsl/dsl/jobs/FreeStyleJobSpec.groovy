@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class FreeStyleJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
-    private final FreeStyleJob job = new FreeStyleJob(jobManagement)
+    private final FreeStyleJob job = new FreeStyleJob(jobManagement, 'test')
 
     def 'construct simple free style job and generate xml from it'() {
         when:

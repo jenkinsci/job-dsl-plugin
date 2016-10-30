@@ -9,6 +9,11 @@ import javaposse.jobdsl.dsl.View
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class DeliveryPipelineView extends View {
+    DeliveryPipelineView(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     DeliveryPipelineView(JobManagement jobManagement) {
         super(jobManagement)
     }

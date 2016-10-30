@@ -7,6 +7,11 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.step.MultiJobStepContext
 
 class MultiJob extends Job {
+    MultiJob(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     MultiJob(JobManagement jobManagement) {
         super(jobManagement)
     }

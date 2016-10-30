@@ -7,6 +7,11 @@ import javaposse.jobdsl.dsl.View
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class NestedView extends View {
+    NestedView(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     NestedView(JobManagement jobManagement) {
         super(jobManagement)
     }

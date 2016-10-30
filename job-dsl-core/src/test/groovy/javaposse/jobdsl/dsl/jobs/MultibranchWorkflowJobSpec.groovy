@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class MultibranchWorkflowJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
-    private final MultibranchWorkflowJob job = new MultibranchWorkflowJob(jobManagement)
+    private final MultibranchWorkflowJob job = new MultibranchWorkflowJob(jobManagement, 'test')
 
     def 'construct simple workflow multi branch job and generate xml from it'() {
         when:

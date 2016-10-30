@@ -5,6 +5,11 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NoDoc
 
 class BuildMonitorView extends ListView {
+    BuildMonitorView(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     BuildMonitorView(JobManagement jobManagement) {
         super(jobManagement)
     }

@@ -9,7 +9,7 @@ import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class NestedViewSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    NestedView view = new NestedView(jobManagement)
+    NestedView view = new NestedView(jobManagement, 'test')
 
     def setup() {
         setIgnoreWhitespace(true)

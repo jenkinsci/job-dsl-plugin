@@ -8,6 +8,11 @@ import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.publisher.BuildFlowPublisherContext
 
 class BuildFlowJob extends Job {
+    BuildFlowJob(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     BuildFlowJob(JobManagement jobManagement) {
         super(jobManagement)
     }

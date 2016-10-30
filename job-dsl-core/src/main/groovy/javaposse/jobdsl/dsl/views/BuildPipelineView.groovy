@@ -8,6 +8,11 @@ import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 
 class BuildPipelineView extends View {
+    BuildPipelineView(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     BuildPipelineView(JobManagement jobManagement) {
         super(jobManagement)
     }

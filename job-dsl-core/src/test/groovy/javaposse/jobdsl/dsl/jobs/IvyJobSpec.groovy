@@ -6,7 +6,7 @@ import spock.lang.Specification
 
 class IvyJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
-    private final IvyJob job = new IvyJob(jobManagement)
+    private final IvyJob job = new IvyJob(jobManagement, 'test')
 
     def 'construct simple Ivy job and generate xml from it'() {
         when:

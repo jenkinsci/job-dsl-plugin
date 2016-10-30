@@ -7,6 +7,11 @@ import javaposse.jobdsl.dsl.View
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class SectionedView extends View {
+    SectionedView(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     SectionedView(JobManagement jobManagement) {
         super(jobManagement)
     }

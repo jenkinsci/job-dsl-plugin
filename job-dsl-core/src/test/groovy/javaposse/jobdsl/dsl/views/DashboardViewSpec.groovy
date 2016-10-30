@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.views.portlets.TestTrendChartContext
 
 class DashboardViewSpec extends ListViewSpec<DashboardView> {
     def setup() {
-        view = new DashboardView(jobManagement)
+        view = new DashboardView(jobManagement, 'test')
     }
 
     def 'portlets added'() {

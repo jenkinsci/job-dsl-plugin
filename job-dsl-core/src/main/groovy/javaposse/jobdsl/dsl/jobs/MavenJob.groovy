@@ -24,6 +24,11 @@ class MavenJob extends Job {
     private final List<String> mavenGoals = []
     private final List<String> mavenOpts = []
 
+    MavenJob(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     MavenJob(JobManagement jobManagement) {
         super(jobManagement)
     }

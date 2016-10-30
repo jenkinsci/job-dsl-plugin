@@ -7,6 +7,11 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.workflow.WorkflowDefinitionContext
 
 class WorkflowJob extends Job {
+    WorkflowJob(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     WorkflowJob(JobManagement jobManagement) {
         super(jobManagement)
     }

@@ -130,8 +130,7 @@ abstract class JobParent extends Script implements DslFactory {
     protected <T extends Item> T processItem(String name, Class<T> jobClass, Closure closure) {
         checkNotNullOrEmpty(name, 'name must be specified')
 
-        T job = jobClass.newInstance(jm)
-        job.name = name
+        T job = jobClass.newInstance(jm, name)
         if (closure) {
             job.with(closure)
         }
@@ -207,8 +206,7 @@ abstract class JobParent extends Script implements DslFactory {
     protected <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
         checkNotNullOrEmpty(name, 'name must be specified')
 
-        T view = viewClass.newInstance(jm)
-        view.name = name
+        T view = viewClass.newInstance(jm, name)
         if (closure) {
             view.with(closure)
         }
