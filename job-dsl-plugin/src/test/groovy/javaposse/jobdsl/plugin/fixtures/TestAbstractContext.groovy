@@ -7,4 +7,8 @@ class TestAbstractContext extends AbstractContext {
     TestAbstractContext(JobManagement jobManagement) {
         super(jobManagement)
     }
+
+    JobManagement getJobManagement() {
+        this.@jobManagement
+    }
 }
