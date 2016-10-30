@@ -1287,6 +1287,19 @@ class ExecuteDslScriptsSpec extends Specification {
         freeStyleBuild.getLog(25).join('\n') =~ /jenkins.dsl/
     }
 
+    def 'JENKINS-39153 GString arguments in auto-generated DSL'() {
+        setup:
+        Project job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(scriptText: this.class.getResourceAsStream('gstring.groovy').text))
+        job.onCreatedFromScratch()
+
+        when:
+        Run build = job.scheduleBuild2(0).get()
+
+        then:
+        build.result == SUCCESS
+    }
+
     def 'ignore missing file'() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
