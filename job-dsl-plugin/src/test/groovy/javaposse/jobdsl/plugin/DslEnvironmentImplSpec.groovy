@@ -10,6 +10,7 @@ import javaposse.jobdsl.plugin.fixtures.InvalidConstructorCountContext
 import javaposse.jobdsl.plugin.fixtures.NoPublicConstructorContext
 import javaposse.jobdsl.plugin.fixtures.TestAbstractContext
 import javaposse.jobdsl.plugin.fixtures.TestContext
+import javaposse.jobdsl.plugin.fixtures.TestContextWithDslEnvironment
 import javaposse.jobdsl.plugin.fixtures.UnsupportedConstructorArgContext
 import spock.lang.Specification
 
@@ -32,6 +33,7 @@ class DslEnvironmentImplSpec extends Specification {
 
         then:
         context instanceof TestAbstractContext
+        context.jobManagement == jobManagement
     }
 
     def 'createContext with AbstractExtensibleContext'() {
@@ -40,6 +42,14 @@ class DslEnvironmentImplSpec extends Specification {
 
         then:
         context instanceof StepContext
+    }
+
+    def 'createContext with DslEnvironment'() {
+        when:
+        TestContextWithDslEnvironment context = dslEnvironment.createContext(TestContextWithDslEnvironment)
+
+        then:
+        context.dslEnvironment == dslEnvironment
     }
 
     def 'createContext with more than one public constructor'() {

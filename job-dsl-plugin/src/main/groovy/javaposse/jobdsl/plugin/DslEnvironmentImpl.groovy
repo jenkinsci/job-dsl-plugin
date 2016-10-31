@@ -30,6 +30,8 @@ class DslEnvironmentImpl implements DslEnvironment {
                 args[i] = jobManagement
             } else if (parameterTypes[i].isInstance(item)) {
                 args[i] = item
+            } else if (parameterTypes[i].isInstance(this)) {
+                args[i] = this
             } else {
                 throw new IllegalArgumentException("unsupported constructor parameter type: ${parameterTypes[i].name}")
             }
