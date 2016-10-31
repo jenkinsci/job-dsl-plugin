@@ -32,6 +32,32 @@ listView('other-3') {
 }
 ```
 
+### GitHub Branch Source
+
+The `ignoreOnPushNotifications` option in the GitHub branch source context is not needed. It has been
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+DSL prior to 1.53
+```groovy
+multibranchPipelineJob('example') {
+    branchSources {
+        github {
+            ignoreOnPushNotification()
+        }
+    }
+}
+```
+
+DSL since 1.53
+```groovy
+multibranchPipelineJob('example') {
+    branchSources {
+        github {
+        }
+    }
+}
+```
+
 ## Migrating to 1.52
 
 ### Git
@@ -956,7 +982,7 @@ job('example-1') {
                 block {
                     buildStepFailure('FAILURE')
                     failure('FAILURE')
-                    unstable('UNSTABLE']
+                    unstable('UNSTABLE')
                 }
             }
         }
@@ -1531,7 +1557,7 @@ listView('four') {
 }
 nestedView('five') {
 }
-customConfigFile('six')
+customConfigFile('six') {
 }
 mavenSettingsConfigFile('seven') {
 }
@@ -1556,7 +1582,7 @@ DSL since 1.30
 ```groovy
 job {
     publishers {
-        publishJabber('one@example.org' {
+        publishJabber('one@example.org') {
             strategyName('ANY_FAILURE')
         }
         publishJabber('two@example.org') {
@@ -1893,7 +1919,6 @@ See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/#path/job-trigge
 DSL prior to 1.26
 ```groovy
 AbstractStepContext.metaClass.myStep = { ... }
-}
 ```
 
 DSL since 1.26

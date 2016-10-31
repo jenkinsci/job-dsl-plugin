@@ -53,7 +53,7 @@ class BranchSourcesContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'github-branch-source', minimumVersion = '1.6')
     void github(@DslContext(GitHubBranchSourceContext) Closure branchSourceClosure) {
-        GitHubBranchSourceContext context = new GitHubBranchSourceContext()
+        GitHubBranchSourceContext context = new GitHubBranchSourceContext(jobManagement)
         ContextHelper.executeInContext(branchSourceClosure, context)
 
         branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
@@ -66,7 +66,6 @@ class BranchSourcesContext extends AbstractExtensibleContext {
                 repository(context.repository ?: '')
                 includes(context.includes ?: '')
                 excludes(context.excludes ?: '')
-                ignoreOnPushNotifications(context.ignoreOnPushNotifications)
             }
             strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
                 properties(class: 'empty-list')
