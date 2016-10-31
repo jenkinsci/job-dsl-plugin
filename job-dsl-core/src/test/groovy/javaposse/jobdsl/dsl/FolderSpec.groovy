@@ -7,7 +7,7 @@ import static org.custommonkey.xmlunit.XMLUnit.compareXML
 
 class FolderSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    Folder folder = new Folder(jobManagement)
+    Folder folder = new Folder(jobManagement, 'test')
 
     def setupSpec() {
         XMLUnit.ignoreWhitespace = true

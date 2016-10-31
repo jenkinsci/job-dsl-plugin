@@ -6,7 +6,7 @@ import static org.custommonkey.xmlunit.XMLUnit.compareXML
 
 class ViewSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    View view = new TestView(jobManagement)
+    View view = new TestView(jobManagement, 'test')
 
     def 'description'() {
         when:

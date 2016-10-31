@@ -7,6 +7,11 @@ import javaposse.jobdsl.dsl.views.portlets.DashboardPortletContext
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
 
 class DashboardView extends ListView {
+    DashboardView(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     DashboardView(JobManagement jobManagement) {
         super(jobManagement)
     }

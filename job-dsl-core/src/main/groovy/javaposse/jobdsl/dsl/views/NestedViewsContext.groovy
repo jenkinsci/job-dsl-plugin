@@ -81,8 +81,7 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
     private <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
         Preconditions.checkNotNullOrEmpty(name, 'name must be specified')
 
-        T view = viewClass.newInstance(jobManagement)
-        view.name = name
+        T view = viewClass.newInstance(jobManagement, name)
         if (closure) {
             view.with(closure)
         }

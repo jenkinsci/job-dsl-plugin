@@ -12,7 +12,7 @@ import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class BuildPipelineViewSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    BuildPipelineView view = new BuildPipelineView(jobManagement)
+    BuildPipelineView view = new BuildPipelineView(jobManagement, 'test')
 
     def 'defaults'() {
         when:

@@ -19,7 +19,7 @@ class DslScriptLoaderSpec extends Specification {
 
     def 'load template from file'() {
         setup:
-        Job job = new FreeStyleJob(jm)
+        Job job = new FreeStyleJob(jm, 'test')
 
         when:
         job.using('config') // src/test/resources/config.xml
@@ -30,7 +30,7 @@ class DslScriptLoaderSpec extends Specification {
 
     def 'configure block without template'() {
         setup:
-        Job job = new FreeStyleJob(jm)
+        Job job = new FreeStyleJob(jm, 'test')
 
         when:
         job.configure {

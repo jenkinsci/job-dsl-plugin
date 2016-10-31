@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.views
 
 class CategorizedJobsViewSpec extends ListViewSpec<CategorizedJobsView> {
     def setup() {
-        view = new CategorizedJobsView(jobManagement)
+        view = new CategorizedJobsView(jobManagement, 'test')
     }
 
     protected String getDefaultXml() {

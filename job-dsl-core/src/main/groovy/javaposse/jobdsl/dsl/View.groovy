@@ -8,8 +8,19 @@ abstract class View extends AbstractContext {
 
     String name
 
+    protected View(JobManagement jobManagement, String name) {
+        super(jobManagement)
+        this.name = name
+    }
+
+    @Deprecated
     protected View(JobManagement jobManagement) {
         super(jobManagement)
+    }
+
+    @Deprecated
+    void setName(String name) {
+        this.name = name
     }
 
     /**

@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.views
 
 class BuildMonitorViewSpec extends ListViewSpec<BuildMonitorView> {
     def setup() {
-        view = new BuildMonitorView(jobManagement)
+        view = new BuildMonitorView(jobManagement, 'test')
     }
 
     protected String getDefaultXml() {

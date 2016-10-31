@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 class MavenTriggerContextSpec extends Specification {
     JobManagement mockJobManagement = Mock(JobManagement)
-    Item item = new FreeStyleJob(mockJobManagement)
+    Item item = new FreeStyleJob(mockJobManagement, 'test')
     MavenTriggerContext context = new MavenTriggerContext(mockJobManagement, item)
 
     def 'call snapshotDependencies for Maven job succeeds'() {

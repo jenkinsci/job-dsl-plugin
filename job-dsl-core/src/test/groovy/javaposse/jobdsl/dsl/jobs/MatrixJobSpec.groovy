@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class MatrixJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
-    private final MatrixJob job = new MatrixJob(jobManagement)
+    private final MatrixJob job = new MatrixJob(jobManagement, 'test')
 
     def 'construct simple Matrix job and generate xml from it'() {
         when:

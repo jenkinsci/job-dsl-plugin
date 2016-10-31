@@ -8,7 +8,7 @@ import spock.lang.Specification
 
 class MavenJobSpec extends Specification {
     private final JobManagement jobManagement = Mock(JobManagement)
-    private final MavenJob job = new MavenJob(jobManagement)
+    private final MavenJob job = new MavenJob(jobManagement, 'test')
 
     def 'construct simple Maven job and generate xml from it'() {
         when:

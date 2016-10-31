@@ -9,7 +9,7 @@ import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class SectionedViewSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    SectionedView view = new SectionedView(jobManagement)
+    SectionedView view = new SectionedView(jobManagement, 'test')
 
     def setup() {
         setIgnoreWhitespace(true)

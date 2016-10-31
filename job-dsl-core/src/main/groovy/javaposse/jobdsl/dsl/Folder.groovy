@@ -10,6 +10,11 @@ class Folder extends Item {
     private static final AUTHORIZATION_MATRIX_PROPERTY_NAME =
             'com.cloudbees.hudson.plugins.folder.properties.AuthorizationMatrixProperty'
 
+    Folder(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     Folder(JobManagement jobManagement) {
         super(jobManagement)
     }

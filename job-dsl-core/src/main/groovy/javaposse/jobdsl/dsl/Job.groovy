@@ -25,6 +25,11 @@ abstract class Job extends Item {
     String templateName = null // Optional
     String previousNamesRegex = null // Optional
 
+    protected Job(JobManagement jobManagement, String name) {
+        super(jobManagement, name)
+    }
+
+    @Deprecated
     protected Job(JobManagement jobManagement) {
         super(jobManagement)
     }

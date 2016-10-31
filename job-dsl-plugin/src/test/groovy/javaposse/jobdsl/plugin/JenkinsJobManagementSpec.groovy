@@ -890,12 +890,7 @@ class JenkinsJobManagementSpec extends Specification {
     }
 
     private Item createItem(String name, String config) {
-        new Item(jobManagement) {
-            @Override
-            String getName() {
-                name
-            }
-
+        new Item(jobManagement, name) {
             @Override
             Node getNode() {
                 new XmlParser().parse(JenkinsJobManagementSpec.getResourceAsStream(config))

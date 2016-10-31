@@ -15,7 +15,7 @@ class ScmContextSpec extends Specification {
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
 
     JobManagement mockJobManagement = Mock(JobManagement)
-    Item item = new FreeStyleJob(mockJobManagement)
+    Item item = new FreeStyleJob(mockJobManagement, 'test')
     ScmContext context = new ScmContext(mockJobManagement, item)
 
     def 'extension node is transformed to SCM node'() {

@@ -21,7 +21,7 @@ import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class ListViewSpec<T extends ListView> extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    T view = new ListView(jobManagement)
+    T view = new ListView(jobManagement, 'test')
 
     def 'defaults'() {
         when:

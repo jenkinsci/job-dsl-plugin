@@ -13,7 +13,7 @@ import static javaposse.jobdsl.dsl.helpers.publisher.WeblogicDeployerContext.Web
 
 class PublisherContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    Item item = new FreeStyleJob(jobManagement)
+    Item item = new FreeStyleJob(jobManagement, 'test')
     PublisherContext context = new PublisherContext(jobManagement, item)
 
     def 'call extendedEmail with no options'() {

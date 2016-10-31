@@ -1,3 +1,37 @@
+## Migrating to 1.53
+
+### Overriding Job, Folder or View Names
+
+The ability to override the name of a job, folder or view is deprecated [[deprecated|Deprecation-Policy]] and will be
+removed. The name has to be set in the factory method that is creating the job, folder or view.
+
+DSL prior to 1.53
+```groovy
+job('example-1') {
+    name = 'other-1'
+}
+
+folder('example-2') {
+    name = 'other-2'
+}
+
+listView('example-3') {
+    name = 'other-3'
+}
+```
+
+DSL since 1.53
+```groovy
+job('other-1') {
+}
+
+folder('other-2') {
+}
+
+listView('other-3') {
+}
+```
+
 ## Migrating to 1.52
 
 ### Git
