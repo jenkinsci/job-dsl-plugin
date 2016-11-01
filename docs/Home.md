@@ -27,6 +27,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.54 (unreleased)
+ * Enhance support for the [S3 plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
 * 1.53 (November 08 2016)
  * Enhanced support the
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
