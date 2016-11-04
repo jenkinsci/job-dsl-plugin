@@ -143,12 +143,11 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     public boolean createOrUpdateConfig(javaposse.jobdsl.dsl.Item dslItem, boolean ignoreExisting)
             throws NameNotProvidedException {
         String path = dslItem.getName();
-        String config = dslItem.getXml();
 
         LOGGER.log(Level.INFO, format("createOrUpdateConfig for %s", path));
         boolean created = false;
 
-        validateUpdateArgs(path, config);
+        validateNameArg(path);
 
         AbstractItem item = lookupStrategy.getItem(project, path, AbstractItem.class);
         String jobName = FilenameUtils.getName(path);
