@@ -48,7 +48,6 @@ class DummyTrigger extends Trigger<Job> {
     @DataBoundSetter
     List<Thread.State> enumList
 
-    @SuppressWarnings('UnnecessaryConstructor')
     @DataBoundConstructor
     DummyTrigger() throws ANTLRException {
     }

@@ -31,7 +31,7 @@ configure(subprojects - project(':job-dsl-api-viewer')) {
     }
 
     codenarc {
-        toolVersion = '0.25.2'
+        toolVersion = '0.26.0'
         configFile = file('../config/codenarc/rules.groovy')
     }
 

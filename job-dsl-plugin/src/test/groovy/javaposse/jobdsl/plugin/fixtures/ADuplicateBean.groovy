@@ -7,7 +7,6 @@ class ADuplicateBean {
     @DataBoundSetter
     String prop
 
-    @SuppressWarnings('UnnecessaryConstructor')
     @DataBoundConstructor
     ADuplicateBean() {
     }
