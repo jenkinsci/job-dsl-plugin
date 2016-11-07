@@ -183,8 +183,6 @@ class DslScriptLoader {
                                                    boolean ignoreExisting) throws IOException {
         Set<GeneratedJob> generatedJobs = new LinkedHashSet<GeneratedJob>()
         referencedItems.sort(false, ITEM_COMPARATOR).each { Item item ->
-            String xml = item.xml
-            LOGGER.log(Level.FINE, "Saving item ${item.name} as ${xml}")
             if (item instanceof Job) {
                 Job job = (Job) item
                 if (job.previousNamesRegex != null) {

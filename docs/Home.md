@@ -32,6 +32,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-38637](https://issues.jenkins-ci.org/browse/JENKINS-38637))
  * Allow `GString` as argument type for Automatically Generated DSL
    ([JENKINS-39153](https://issues.jenkins-ci.org/browse/JENKINS-39153))
+ * The XML configuration for jobs and folders will only be generated once
+   ([JENKINS-39417](https://issues.jenkins-ci.org/browse/JENKINS-39417))
  * Fixed a problem with relative job names
    ([JENKINS-39137](https://issues.jenkins-ci.org/browse/JENKINS-39137))
  * Added "Next Launch" and "Next Possible Launch" columns for
