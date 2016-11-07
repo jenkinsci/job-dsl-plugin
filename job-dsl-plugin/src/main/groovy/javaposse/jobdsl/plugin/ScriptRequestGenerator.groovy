@@ -13,7 +13,6 @@ class ScriptRequestGenerator implements Closeable {
     final Map<FilePath, File> cachedFiles = [:]
 
     @Deprecated
-    @SuppressWarnings('GroovyUnusedDeclaration')
     ScriptRequestGenerator(AbstractBuild build, EnvVars env) {
         this(build.workspace, env)
     }

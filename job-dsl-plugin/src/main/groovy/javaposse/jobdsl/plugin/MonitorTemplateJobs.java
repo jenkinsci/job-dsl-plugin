@@ -26,7 +26,6 @@ import static com.google.common.collect.Collections2.transform;
 public class MonitorTemplateJobs extends SaveableListener {
     private static final Logger LOGGER = Logger.getLogger(MonitorTemplateJobs.class.getName());
 
-    @SuppressWarnings("rawtypes")
     @Override
     public void onChange(Saveable saveable, XmlFile file) {
         LOGGER.finest("onChange");
