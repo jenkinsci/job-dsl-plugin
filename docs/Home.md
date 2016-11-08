@@ -30,6 +30,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support the
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
    ([JENKINS-38637](https://issues.jenkins-ci.org/browse/JENKINS-38637))
+ * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+   ([JENKINS-39558](https://issues.jenkins-ci.org/browse/JENKINS-39558))
  * Allow `GString` as argument type for Automatically Generated DSL
    ([JENKINS-39153](https://issues.jenkins-ci.org/browse/JENKINS-39153))
  * The XML configuration for jobs and folders will only be generated once
