@@ -5,7 +5,6 @@ import hudson.triggers.Trigger
 import org.kohsuke.stapler.DataBoundConstructor
 
 class InvalidTrigger extends Trigger<Job> {
-    @SuppressWarnings('UnnecessaryConstructor')
     @DataBoundConstructor
     InvalidTrigger() {
     }

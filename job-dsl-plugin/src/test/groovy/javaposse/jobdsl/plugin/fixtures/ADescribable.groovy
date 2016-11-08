@@ -13,7 +13,6 @@ class ADescribable extends AbstractDescribableImpl<ADescribable> {
     @DataBoundSetter
     int bar
 
-    @SuppressWarnings('UnnecessaryConstructor')
     @DataBoundConstructor
     ADescribable() {
     }

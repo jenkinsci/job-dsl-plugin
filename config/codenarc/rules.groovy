@@ -98,6 +98,11 @@ ruleset {
     // ruleset('rulesets/size.xml')
 
     ruleset('rulesets/unnecessary.xml') {
+        UnnecessaryConstructor {
+            // constructors with annotations are probably necessary
+            ignoreAnnotations = true
+        }
+
         // we don't care, does not necessarily lead to better code
         exclude 'UnnecessaryElseStatement'
         // we don't care for now, does not necessarily lead to better code
