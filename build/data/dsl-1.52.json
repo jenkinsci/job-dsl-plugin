@@ -1,5 +1,5 @@
 {
-    "version": "1.53",
+    "version": "1.52",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -1032,14 +1032,6 @@
                 {
                     "name": "localBranch",
                     "signatures": [
-                        {
-                            "parameters": [
-                                
-                            ],
-                            "availableSince": "1.53",
-                            "html": "If given, checkout the revision to build as HEAD on this branch.",
-                            "firstSentenceCommentText": "If given, checkout the revision to build as HEAD on this branch."
-                        },
                         {
                             "parameters": [
                                 {
@@ -29648,44 +29640,6 @@
                     ]
                 },
                 {
-                    "name": "nextLaunch",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                
-                            ],
-                            "availableSince": "1.53",
-                            "plugins": [
-                                {
-                                    "id": "next-executions",
-                                    "minimumVersion": "1.0.12"
-                                }
-                            ],
-                            "html": "Adds a column showing job's next launch.",
-                            "firstSentenceCommentText": "Adds a column showing job's next launch."
-                        }
-                    ]
-                },
-                {
-                    "name": "nextPossibleLaunch",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                
-                            ],
-                            "availableSince": "1.53",
-                            "plugins": [
-                                {
-                                    "id": "next-executions",
-                                    "minimumVersion": "1.0.12"
-                                }
-                            ],
-                            "html": "Adds a column showing job's next possible launch.",
-                            "firstSentenceCommentText": "Adds a column showing job's next possible launch."
-                        }
-                    ]
-                },
-                {
                     "name": "progressBar",
                     "signatures": [
                         {
@@ -42030,7 +41984,6 @@
                                     "defaultValue": "true"
                                 }
                             ],
-                            "deprecated": true,
                             "html": "If set, ignores push notifications. Defaults to <TT>false</TT>.",
                             "firstSentenceCommentText": "If set, ignores push notifications. "
                         }
@@ -44295,8 +44248,7 @@
                             "firstSentenceCommentText": "Creates a managed global Maven settings file.",
                             "contextClass": "javaposse.jobdsl.dsl.ConfigFile"
                         }
-                    ],
-                    "examples": "// creates a global Maven settings file from a file named maven/settings.xml in the seed job's workspace\r\nglobalMavenSettingsConfigFile('company-settings') {\r\n    comment('Company Maven Settings')\r\n    content(readFileFromWorkspace('maven/settings.xml'))\r\n    replaceAll()\r\n    serverCredentials('company', 'company-maven-repository-credentials')\r\n}"
+                    ]
                 },
                 {
                     "name": "ivyJob",
@@ -44581,7 +44533,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.ConfigFile"
                         }
                     ],
-                    "examples": "// creates a Maven settings file from a file named maven/settings.xml in the seed job's workspace\r\nmavenSettingsConfigFile('company-settings') {\r\n    comment('Company Maven Settings')\r\n    content(readFileFromWorkspace('maven/settings.xml'))\r\n    replaceAll()\r\n    serverCredentials('company', 'company-maven-repository-credentials')\r\n}"
+                    "examples": "// creates a Maven settings file from a file named maven/settings.xml in the seed job's workspace\r\ncustomConfigFile('company-settings') {\r\n    comment('Company Maven Settings')\r\n    content(readFileFromWorkspace('maven/settings.xml'))\r\n}"
                 },
                 {
                     "name": "multiJob",
