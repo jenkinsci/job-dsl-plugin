@@ -26,7 +26,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.53 (unreleased)
+* 1.53 (November 08 2016)
  * Enhanced support the
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
    ([JENKINS-38637](https://issues.jenkins-ci.org/browse/JENKINS-38637))
