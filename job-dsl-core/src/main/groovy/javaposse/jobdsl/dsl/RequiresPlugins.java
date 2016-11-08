@@ -20,6 +20,8 @@ public @interface RequiresPlugins {
     /**
      * A list of {@link RequiresPlugin} annotations to indicate that more than one plugin must be installed to use the
      * features provided by the annotated DSL method.
+     *
+     * @return a list of {@link RequiresPlugin} annotations
      */
     RequiresPlugin[] value();
 }

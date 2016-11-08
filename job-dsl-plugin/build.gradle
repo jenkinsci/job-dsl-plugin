@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        maven {
+            url('https://repo.jenkins-ci.org/releases/')
+        }
+    }
+    dependencies {
+        // see https://github.com/kohsuke/localizer/issues/12
+        classpath 'org.jvnet.localizer:maven-localizer-plugin:1.23'
+    }
+}
+
 plugins {
     id 'org.jenkins-ci.jpi' version '0.18.1'
 }
