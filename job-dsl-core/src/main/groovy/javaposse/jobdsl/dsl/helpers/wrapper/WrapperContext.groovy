@@ -109,7 +109,7 @@ class WrapperContext extends AbstractExtensibleContext {
     private String getRubyWrapperClass() {
         jobManagement.logPluginDeprecationWarning('ruby-runtime', '0.13')
 
-        jobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.13') ? 'Jenkins::Tasks::BuildWrapperProxy' :
+        jobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') ? 'Jenkins::Tasks::BuildWrapperProxy' :
                 'Jenkins::Plugin::Proxies::BuildWrapper'
     }
 
