@@ -43,6 +43,9 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
 import org.jenkinsci.lib.configprovider.model.Config;
+import org.jenkinsci.plugins.configfiles.ConfigFileStore;
+import org.jenkinsci.plugins.configfiles.ConfigFiles;
+import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
 import org.jenkinsci.plugins.vSphereCloud;
 
 import javax.xml.transform.Source;
@@ -227,8 +230,13 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             );
         }
 
-        configProvider.save(config);
+        // save all config files on global scope - config-file-provider would support folders too
+        getGlobalConfigFileStore().save(config);
         return config.id;
+    }
+
+    private ConfigFileStore getGlobalConfigFileStore() {
+        return Jenkins.getInstance().getExtensionList(GlobalConfigFiles.class).get(GlobalConfigFiles.class);
     }
 
     @Override
