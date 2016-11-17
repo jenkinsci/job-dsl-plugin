@@ -54,7 +54,7 @@ task concat {
 }
 
 task build {
-    dependsOn 'concat', 'downloadUpdateCenter', 'copyData'
+    dependsOn 'concat', 'processUpdateCenter', 'copyData'
 }
 
 githubPages {
@@ -75,8 +75,22 @@ task copyData(type: Copy) {
 
 task downloadUpdateCenter(type: Download) {
     src 'https://updates.jenkins-ci.org/update-center.json'
-    dest 'build/data/update-center.jsonp'
+    dest 'build/download/update-center.jsonp'
     onlyIfNewer true
+}
+
+task processUpdateCenter {
+    ext.jsonpFile = file('build/download/update-center.jsonp')
+    ext.jsonFile = file('build/data/update-center.json')
+
+    dependsOn tasks.downloadUpdateCenter
+    inputs.file jsonpFile
+    outputs.file jsonFile
+
+    doLast {
+        def lines = jsonpFile.readLines('UTF-8')
+        jsonFile.setText(lines[1..-2].join('\n'), 'UTF-8')
+    }
 }
 
 def tokenizedVersion = version.split(/\.|-/) // version can be either x.y or x.y-SNAPSHOT
