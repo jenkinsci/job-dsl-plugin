@@ -37,8 +37,8 @@ class JobDslPlugin extends Plugin {
         String path = request.restOfPath
         if (path == '/api-viewer') {
             response.sendRedirect("${request.requestURI}${request.requestURI.endsWith('/') ? '' : '/'}index.html")
-        } else if (path == '/api-viewer/build/data/update-center.jsonp') {
-            serveCachedFile(response, request, generateUpdateCenter(), 'update-center.js')
+        } else if (path == '/api-viewer/build/data/update-center.json') {
+            serveCachedFile(response, request, generateUpdateCenter(), 'update-center.json')
         } else if (path == '/api-viewer/build/data/dsl.json') {
             serveCachedFile(response, request, generateApi(), 'dsl.json')
         } else {
@@ -88,7 +88,7 @@ class JobDslPlugin extends Plugin {
             JSONObject data = new JSONObject()
             data['plugins'] = plugins
 
-            updateCenter = new CachedFile("updateCenter.post(${data.toString()})", lastModified)
+            updateCenter = new CachedFile(data.toString(), lastModified)
             cachedUpdateCenter = updateCenter
         }
         updateCenter

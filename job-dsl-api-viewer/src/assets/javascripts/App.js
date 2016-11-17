@@ -31,7 +31,7 @@ Marionette.Renderer.render = function(template, data) {
 
             this.initLayout();
             $('.loading-outer').addClass('loading');
-            this.loadSelectedDsl().then(function() {
+            this.loadUpdateCenter().then(this.loadSelectedDsl.bind(this)).then(function() {
                 Backbone.history.start({pushState: false});
                 if (!this.dsl.isEmbedded()) {
                     $('.version-select').show()
@@ -70,6 +70,14 @@ Marionette.Renderer.render = function(template, data) {
                 usages: usages
             });
             this.detailRegion.show(pluginDetailView);
+        },
+
+        loadUpdateCenter: function() {
+            var url = 'build/data/update-center.json';
+            return $.get(url).then(function (data) {
+                window.updateCenter = {data: data};
+                return data;
+            }.bind(this));
         },
 
         loadSelectedDsl: function() {

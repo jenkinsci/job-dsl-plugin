@@ -22,6 +22,12 @@ plugins {
 apply plugin: 'org.ajoberstar.github-pages'
 apply plugin: 'com.bertramlabs.asset-pipeline'
 
+repositories {
+    maven {
+        url('https://repo.jenkins-ci.org/public/')
+    }
+}
+
 assets {
     enableDigests = false
     enableGzip = false
@@ -54,7 +60,7 @@ task concat {
 }
 
 task build {
-    dependsOn 'concat', 'downloadUpdateCenter', 'copyData'
+    dependsOn 'concat', 'processUpdateCenter', 'copyData'
 }
 
 githubPages {
@@ -75,20 +81,31 @@ task copyData(type: Copy) {
 
 task downloadUpdateCenter(type: Download) {
     src 'https://updates.jenkins-ci.org/update-center.json'
-    dest 'build/data/update-center.jsonp'
+    dest 'build/download/update-center.jsonp'
     onlyIfNewer true
+}
+
+task processUpdateCenter {
+    ext.jsonpFile = file('build/download/update-center.jsonp')
+    ext.jsonFile = file('build/data/update-center.json')
+
+    dependsOn tasks.downloadUpdateCenter
+    inputs.file jsonpFile
+    outputs.file jsonFile
+
+    doLast {
+        def lines = jsonpFile.readLines('UTF-8')
+        jsonFile.setText(lines[1..-2].join('\n'), 'UTF-8')
+    }
 }
 
 def tokenizedVersion = version.split(/\.|-/) // version can be either x.y or x.y-SNAPSHOT
 int latestVersion = (tokenizedVersion[1] as int) - 1 // extract minor version and decrease by 1 to get the latest released version
 (38..latestVersion).each { minorVersion ->
     def version = "1.${minorVersion}"
-    task "downloadData-${version}"(type: Download) {
-        src "https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/job-dsl-core/${version}/job-dsl-core-${version}-apidoc.json"
-        dest "${project.buildDir}/data/dsl-${version}.json"
-        onlyIfNewer true
-    }
-    tasks.build.dependsOn("downloadData-${version}")
+    Configuration config = configurations.create("api-${version}")
+    dependencies.add(config.name, "org.jenkins-ci.plugins:job-dsl-core:$version:apidoc@json")
+    tasks.copyData.from(config)
 }
 
 tasks.publishGhPages.dependsOn('build')
