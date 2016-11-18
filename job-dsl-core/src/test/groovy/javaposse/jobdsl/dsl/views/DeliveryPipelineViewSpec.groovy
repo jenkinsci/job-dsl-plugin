@@ -38,6 +38,7 @@ class DeliveryPipelineViewSpec extends Specification {
         Sorting.NONE          | 'none'
         Sorting.TITLE         | 'se.diabol.jenkins.pipeline.sort.NameComparator'
         Sorting.LAST_ACTIVITY | 'se.diabol.jenkins.pipeline.sort.LatestActivityComparator'
+        Sorting.FAILED_FIRST  | 'se.diabol.jenkins.pipeline.sort.FailedJobComparator'
     }
 
     def 'all options'() {
