@@ -14,9 +14,8 @@ buildscript {
 }
 
 plugins {
-    id 'de.undercouch.download' version '2.0.0'
-    id 'com.eriwen.gradle.css' version '2.12.0'
-    id 'com.eriwen.gradle.js' version '2.12.0'
+    id 'com.eriwen.gradle.css' version '2.14.0'
+    id 'com.eriwen.gradle.js' version '2.14.1'
 }
 
 apply plugin: 'org.ajoberstar.github-pages'

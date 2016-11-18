@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven {
-            url('https://repo.jenkins-ci.org/releases/')
+            url('https://repo.jenkins-ci.org/public/')
         }
     }
     dependencies {
@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-    id 'org.jenkins-ci.jpi' version '0.19.0'
+    id 'org.jenkins-ci.jpi' version '0.20.0'
 }
 
 description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
