@@ -39,6 +39,25 @@ assets {
     ]
 }
 
+configurations {
+    webjars {
+        transitive = false
+    }
+}
+
+dependencies {
+    webjars 'org.webjars:bootstrap:3.3.4'
+    webjars 'org.webjars:jquery:1.11.1'
+    webjars 'org.webjars:jquery-ui:1.11.3'
+    webjars 'org.webjars:jqueryui-layout:1.4.0'
+    webjars 'org.webjars:jstree:3.0.4'
+    webjars 'org.webjars:handlebars:4.0.2'
+    webjars 'org.webjars.npm:underscore:1.7.0'
+    webjars 'org.webjars.npm:backbone:1.2.3'
+    webjars 'org.webjars.npm:backbone.marionette:2.4.2'
+    webjars 'org.webjars:highlightjs:8.4-4'
+}
+
 combineJs {
     source 'build/assets/App.js'
     source 'build/assets'
@@ -59,7 +78,7 @@ task concat {
 }
 
 task build {
-    dependsOn 'concat', 'processUpdateCenter', 'copyData'
+    dependsOn 'concat', 'processUpdateCenter', 'copyData', 'copyDependencies'
 }
 
 githubPages {
@@ -76,6 +95,39 @@ githubPages {
 task copyData(type: Copy) {
     from tasks.getByPath(':job-dsl-core:generateApiDoc')
     into "${project.buildDir}/data"
+}
+
+task copyDependencies(type: Copy) {
+    into file("${buildDir}/dist/vendor")
+
+    configurations.webjars.files.each { File jar ->
+        from zipTree(jar)
+    }
+
+    include '**/fonts/*'
+
+    include '**/bootstrap.min.css'
+    include '**/style.min.css'
+    include '**/default.min.css'
+
+    include '**/jquery.min.js'
+    include '**/jquery-ui.min.js'
+    include '**/jquery.layout.js'
+    include '**/jstree.min.js'
+    include '**/handlebars.runtime.min.js'
+    include '**/underscore-min.js'
+    include '**/backbone-min.js'
+    include '**/backbone.marionette.min.js'
+    include '**/bootstrap.min.js'
+    include '**/highlight.min.js'
+
+    exclude '**/core/backbone.marionette.min.js'
+
+    includeEmptyDirs false
+
+    eachFile { details ->
+        details.path -= 'META-INF/resources/webjars'
+    }
 }
 
 task downloadUpdateCenter(type: Download) {
