@@ -59,18 +59,31 @@ dependencies {
 }
 
 combineJs {
+    source 'build/webjars/jquery/1.11.1/jquery.min.js'
+    source 'build/webjars/jquery-ui/1.11.3/jquery-ui.min.js'
+    source 'build/webjars/jqueryui-layout/1.4.0/jquery.layout.js'
+    source 'build/webjars/jstree/3.0.4/jstree.min.js'
+    source 'build/webjars/handlebars/4.0.2/handlebars.runtime.min.js'
+    source 'build/webjars/underscore/1.7.0/underscore-min.js'
+    source 'build/webjars/backbone/1.2.3/backbone-min.js'
+    source 'build/webjars/backbone.marionette/2.4.2/lib/backbone.marionette.min.js'
     source 'build/assets/App.js'
     source 'build/assets'
+    source 'build/webjars/bootstrap/3.3.4/js/bootstrap.min.js'
+    source 'build/webjars/highlightjs/8.4-4/highlight.min.js'
     include '**/*.js'
     dest = file("${buildDir}/dist/js/app.js")
-    dependsOn 'assetCompile'
+    dependsOn 'assetCompile', 'extractWebJars'
 }
 
 combineCss {
+    source 'build/webjars/bootstrap/3.3.4/css/bootstrap.min.css'
+    source 'build/webjars/jstree/3.0.4/themes/default/style.min.css'
     source 'build/assets'
+    source 'build/webjars/highlightjs/8.4-4/styles/default.min.css'
     include '**/*.css'
     dest = "${buildDir}/dist/css/app.css"
-    dependsOn 'assetCompile'
+    dependsOn 'assetCompile', 'extractWebJars'
 }
 
 task concat {
@@ -78,7 +91,7 @@ task concat {
 }
 
 task build {
-    dependsOn 'concat', 'processUpdateCenter', 'copyData', 'copyDependencies'
+    dependsOn 'concat', 'processUpdateCenter', 'copyData', 'copyFonts'
 }
 
 githubPages {
@@ -97,8 +110,8 @@ task copyData(type: Copy) {
     into "${project.buildDir}/data"
 }
 
-task copyDependencies(type: Copy) {
-    into file("${buildDir}/dist/vendor")
+task copyFonts(type: Sync) {
+    into file("${buildDir}/dist/fonts")
 
     configurations.webjars.files.each { File jar ->
         from zipTree(jar)
@@ -106,22 +119,22 @@ task copyDependencies(type: Copy) {
 
     include '**/fonts/*'
 
-    include '**/bootstrap.min.css'
-    include '**/style.min.css'
-    include '**/default.min.css'
+    includeEmptyDirs false
 
-    include '**/jquery.min.js'
-    include '**/jquery-ui.min.js'
-    include '**/jquery.layout.js'
-    include '**/jstree.min.js'
-    include '**/handlebars.runtime.min.js'
-    include '**/underscore-min.js'
-    include '**/backbone-min.js'
-    include '**/backbone.marionette.min.js'
-    include '**/bootstrap.min.js'
-    include '**/highlight.min.js'
+    eachFile { details ->
+        details.path = details.name
+    }
+}
 
-    exclude '**/core/backbone.marionette.min.js'
+task extractWebJars(type: Sync) {
+    into file("${buildDir}/webjars")
+
+    configurations.webjars.files.each { File jar ->
+        from zipTree(jar)
+    }
+
+    include '**/*.css'
+    include '**/*.js'
 
     includeEmptyDirs false
 
