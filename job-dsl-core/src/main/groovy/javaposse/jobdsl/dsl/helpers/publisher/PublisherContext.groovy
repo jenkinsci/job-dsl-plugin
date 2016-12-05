@@ -1137,8 +1137,11 @@ class PublisherContext extends AbstractExtensibleContext {
      * Uploads build artifacts to Amazon S3.
      *
      * @since 1.26
+     * @deprecated use the <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL">
+     *             Automatically Generated DSL</a> instead.
      */
     @RequiresPlugin(id = 's3', minimumVersion = '0.7')
+    @Deprecated
     void s3(String profile, @DslContext(S3BucketPublisherContext) Closure s3PublisherClosure) {
         checkNotNullOrEmpty(profile, 'profile must be specified')
 
