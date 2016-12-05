@@ -54,6 +54,12 @@ job('example') {
 }
 ```
 
+### Delivery Pipeline
+
+Support for versions older than 0.10.0 of the
+[Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.53
 
 ### Overriding Job, Folder or View Names

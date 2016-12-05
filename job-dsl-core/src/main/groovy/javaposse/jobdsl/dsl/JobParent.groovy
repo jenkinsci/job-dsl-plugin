@@ -146,6 +146,7 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
+        jm.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
         processView(name, DeliveryPipelineView, closure)
     }
 

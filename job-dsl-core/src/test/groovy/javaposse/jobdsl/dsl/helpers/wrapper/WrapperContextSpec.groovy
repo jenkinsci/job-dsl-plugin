@@ -1113,6 +1113,7 @@ class WrapperContextSpec extends Specification {
             updateDisplayName[0].value() == false
         }
         1 * mockJobManagement.requirePlugin('delivery-pipeline-plugin')
+        1 * mockJobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
     }
 
     def 'set delivery pipeline version and display name'() {
@@ -1128,6 +1129,7 @@ class WrapperContextSpec extends Specification {
             updateDisplayName[0].value() == true
         }
         1 * mockJobManagement.requirePlugin('delivery-pipeline-plugin')
+        1 * mockJobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
     }
 
     def 'call mask passwords'() {
