@@ -27,6 +27,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.54 (unreleased)
+ * Enhanced support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
+   ([#953](https://github.com/jenkinsci/job-dsl-plugin/pull/953))
  * Changed embedded API Viewer to work without Internet connectivity
    ([JENKINS-40205](https://issues.jenkins-ci.org/browse/JENKINS-40205))
  * Removed most things that have been deprecated in 1.47, see [Migration](Migration#migrating-to-147)
