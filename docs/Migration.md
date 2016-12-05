@@ -1,3 +1,59 @@
+## Migrating to 1.54
+
+### S3
+
+Support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin) is [deprecated|Deprecation-Policy]]
+and will be removed. Use the syntax provided by the [[Automatically Generated DSL]] instead.
+
+DSL prior to 1.54
+```groovy
+job('example') {
+    publishers {
+        s3('myProfile') {
+            entry('foo', 'bar', 'eu-west-1') {
+                storageClass('REDUCED_REDUNDANCY')
+                noUploadOnFailure()
+                uploadFromSlave()
+                managedArtifacts()
+                useServerSideEncryption()
+                flatten()
+            }
+            metadata('key', 'value')
+        }
+    }
+}
+```
+
+DSL since 1.54
+```groovy
+job('example') {
+    publishers {
+        s3BucketPublisher {
+            profileName('myProfile')
+            entries {
+                entry {
+                    bucket('bar')
+                    sourceFile('foo')
+                    selectedRegion('eu-west-1')
+                    storageClass('REDUCED_REDUNDANCY')
+                    noUploadOnFailure(true)
+                    uploadFromSlave(true)
+                    managedArtifacts(true)
+                    useServerSideEncryption(true)
+                    flatten(true)
+                }
+            }
+            userMetadata {
+                metadataPair {
+                    key('key')
+                    value('value')
+                }
+            }
+        }
+    }
+}
+```
+
 ## Migrating to 1.53
 
 ### Overriding Job, Folder or View Names

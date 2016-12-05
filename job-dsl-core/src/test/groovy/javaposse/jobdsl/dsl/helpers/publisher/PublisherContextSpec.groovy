@@ -3347,6 +3347,7 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call s3 with more options'() {
@@ -3405,6 +3406,7 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call flexible publish'() {
