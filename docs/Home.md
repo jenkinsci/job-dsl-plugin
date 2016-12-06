@@ -34,11 +34,14 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([#956](https://github.com/jenkinsci/job-dsl-plugin/pull/956))
  * Changed embedded API Viewer to work without Internet connectivity
    ([JENKINS-40205](https://issues.jenkins-ci.org/browse/JENKINS-40205))
+ * The short URL for the embedded API Viewer ()http://localhost:8080/plugin/job-dsl/api-viewer) is deprecated, see
+    [Migration](Migration#migrating-to-154)
  * Support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-154)
  * Support for the older versions of the
    [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-154)
+ * The class `javaposse.jobdsl.plugin.JobDslPlugin` is deprecated, see [Migration](Migration#migrating-to-154)
  * Removed most things that have been deprecated in 1.47, see [Migration](Migration#migrating-to-147)
 * 1.53 (November 08 2016)
  * Enhanced support the

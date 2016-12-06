@@ -100,6 +100,7 @@ githubPages {
     pages {
         from '.'
         include 'index.html'
+        include 'config.json'
         include 'build/data/**'
         include 'build/dist/**'
     }

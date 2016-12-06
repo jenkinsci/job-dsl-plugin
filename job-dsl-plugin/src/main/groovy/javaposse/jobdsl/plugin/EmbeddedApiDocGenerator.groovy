@@ -39,7 +39,6 @@ class EmbeddedApiDocGenerator {
 
     String generateApi() throws Exception {
         JSONObject api = JSONObject.fromObject(Context.getResource('dsl.json').getText('UTF-8'))
-        api.element('embedded', true)
 
         JSONObject contexts = api.getJSONObject('contexts')
         contexts.values().each { JSONObject context -> generateExtensionMethods(context) }
