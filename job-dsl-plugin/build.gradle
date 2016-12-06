@@ -61,6 +61,10 @@ clean {
     delete generatedSourcesDir
 }
 
+test {
+    jvmArgs += ['-XX:MaxPermSize=256m']
+}
+
 configurations {
     // workaround for JENKINS-32978
     compile.exclude group: 'org.kohsuke', module: 'windows-package-checker'
