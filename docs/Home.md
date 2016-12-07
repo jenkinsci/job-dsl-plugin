@@ -32,6 +32,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the
    [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
    ([#956](https://github.com/jenkinsci/job-dsl-plugin/pull/956))
+ * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+   ([#958](https://github.com/jenkinsci/job-dsl-plugin/pull/958))
  * Changed embedded API Viewer to work without Internet connectivity
    ([JENKINS-40205](https://issues.jenkins-ci.org/browse/JENKINS-40205))
  * The short URL for the embedded API Viewer ()http://localhost:8080/plugin/job-dsl/api-viewer) is deprecated, see
