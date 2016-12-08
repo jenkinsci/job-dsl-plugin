@@ -48,7 +48,7 @@ class WrapperContextSpec extends Specification {
 
     def 'add rbenv-controlled ruby version with'() {
         setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.13') >> true
+        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> true
 
         when:
         context.rbenv('2.1.2')
@@ -95,6 +95,9 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'add rbenv-controlled ruby version with older runtime'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> false
+
         when:
         context.rbenv('2.1.2')
 
@@ -170,7 +173,7 @@ class WrapperContextSpec extends Specification {
 
     def 'add rvm-controlled ruby version'() {
         setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.13') >> true
+        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> true
 
         when:
         context.rvm('ruby-1.9.3')
@@ -186,6 +189,9 @@ class WrapperContextSpec extends Specification {
     }
 
     def 'add rvm-controlled ruby version with older runtime'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> false
+
         when:
         context.rvm('ruby-1.9.3')
 
