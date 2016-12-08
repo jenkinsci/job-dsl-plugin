@@ -138,7 +138,7 @@ class DslSampleSpec extends Specification {
     <disabled>false</disabled>
     <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
     <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-    <triggers class="vector"/>
+    <triggers/>
     <concurrentBuild>false</concurrentBuild>
     <aggregatorStyleBuild>true</aggregatorStyleBuild>
     <incrementalBuild>false</incrementalBuild>
@@ -272,7 +272,7 @@ mavenJob('PROJ-maven-with-template') {
     <disabled>false</disabled>
     <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
     <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-    <triggers class="vector"/>
+    <triggers/>
     <concurrentBuild>false</concurrentBuild>
     <aggregatorStyleBuild>true</aggregatorStyleBuild>
     <incrementalBuild>false</incrementalBuild>
@@ -318,7 +318,7 @@ mavenJob('PROJ-maven-with-template') {
     <disabled>false</disabled>
     <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
     <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-    <triggers class="vector"/>
+    <triggers/>
     <concurrentBuild>false</concurrentBuild>
     <aggregatorStyleBuild>true</aggregatorStyleBuild>
     <incrementalBuild>false</incrementalBuild>
