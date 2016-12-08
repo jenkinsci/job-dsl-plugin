@@ -137,6 +137,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private boolean unstableOnDeprecation;
 
+    private String jobDslWhitelist;
+
     private RemovedJobAction removedJobAction = RemovedJobAction.IGNORE;
 
     private RemovedViewAction removedViewAction = RemovedViewAction.IGNORE;
@@ -267,6 +269,15 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.unstableOnDeprecation = unstableOnDeprecation;
     }
 
+    public String getJobDslWhitelist() {
+        return jobDslWhitelist;
+    }
+
+    @DataBoundSetter
+    public void setJobDslWhitelist(String jobDslWhitelist) {
+        this.jobDslWhitelist = fixEmptyAndTrim(jobDslWhitelist);
+    }
+
     public RemovedJobAction getRemovedJobAction() {
         return removedJobAction;
     }
@@ -291,6 +302,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     @DataBoundSetter
     public void setLookupStrategy(LookupStrategy lookupStrategy) {
+
         this.lookupStrategy = lookupStrategy;
     }
 
@@ -340,6 +352,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             );
             jenkinsJobManagement.setFailOnMissingPlugin(failOnMissingPlugin);
             jenkinsJobManagement.setUnstableOnDeprecation(unstableOnDeprecation);
+            jenkinsJobManagement.setJobDslWhitelist(jobDslWhitelist);
             JobManagement jobManagement = new InterruptibleJobManagement(jenkinsJobManagement);
 
             ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env);

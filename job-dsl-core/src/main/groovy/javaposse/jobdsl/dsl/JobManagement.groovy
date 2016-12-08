@@ -196,6 +196,16 @@ interface JobManagement {
     boolean isMinimumPluginVersionInstalled(String pluginShortName, String version)
 
     /**
+     * Returns true if the current Process JobDsl step will execute only whitelisted JobDsl blocks
+     */
+    boolean executeOnlyWhitelistedDsl()
+
+    /**
+     * Returns the whitelist for what's allowed in this Process JobDsl step
+     */
+    String[] getJobDslWhitelist()
+
+    /**
      * Returns the version of Jenkins.
      *
      * @since 1.33

@@ -39,6 +39,7 @@ import jenkins.model.DirectlyModifiableTopLevelItemGroup;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
@@ -85,6 +86,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
     private boolean failOnMissingPlugin;
     private boolean unstableOnDeprecation;
+    private String[] jobDslWhitelist;
 
     @Deprecated
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, AbstractBuild<?, ?> build,
@@ -115,9 +117,28 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         this.failOnMissingPlugin = failOnMissingPlugin;
     }
 
+    void setJobDslWhitelist(String jobDslWhitelist) {
+        this.jobDslWhitelist = (StringUtils.isEmpty(jobDslWhitelist)) ? new String[0] : jobDslWhitelist.split("\n");
+    }
+
+    @Override
+    public String[] getJobDslWhitelist() {
+        return jobDslWhitelist;
+    }
+
+    /**
+     * Returns true if the current Process JobDsl step will execute only whitelisted JobDsl blocks
+     */
+    @Override
+    public boolean executeOnlyWhitelistedDsl() {
+        return (jobDslWhitelist.length > 0);
+    }
+
     void setUnstableOnDeprecation(boolean unstableOnDeprecation) {
         this.unstableOnDeprecation = unstableOnDeprecation;
     }
+
+
 
     @Override
     public String getConfig(String path) throws JobConfigurationNotFoundException {

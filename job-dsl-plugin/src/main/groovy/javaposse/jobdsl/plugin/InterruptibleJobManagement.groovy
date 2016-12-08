@@ -139,6 +139,16 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
+    boolean executeOnlyWhitelistedDsl() {
+        delegate.executeOnlyWhitelistedDsl()
+    }
+
+    @Override
+    String[] getJobDslWhitelist() {
+        delegate.getJobDslWhitelist()
+    }
+
+    @Override
     Integer getVSphereCloudHash(String name) {
         delegate.getVSphereCloudHash(name)
     }
