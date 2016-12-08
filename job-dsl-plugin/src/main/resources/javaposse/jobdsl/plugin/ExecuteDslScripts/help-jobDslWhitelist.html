@@ -1,0 +1,44 @@
+<div>
+    Define a whitelist if you would like to restrict the type of job dsl that is allowed to be processed to create new
+    jobs.
+    <h3>There are three types of job dsl blocks that you can define using the whitelist</h3>
+    <ul>
+        <li>
+            <b>Publish, Step, Wrapper, and scm job dsl blocks</b>
+            If you want to whitelist Publish, Step, Wrapper, and scm job dsl blocks, simply whitelist the class that
+            defines the Perform method for that particular build, publish, wrapper, or scm plugin step. If you don't
+            know this, or can't find the class path, simply run the Process JobDsl Step with Whitelisting turned on
+            (just put a dummy class name in the text box), and the console output will indicate the class name that
+            needs to be whitelisted for the job dsl to be processed successfully.
+
+            <u>Example job dsl code:</u>(in this case, hudson.plugins.emailext.ExtendedEmailPublisher would need to be in the whitelist)
+            job() {
+                publish real thing... do email?
+            }
+        </li>
+        <li>
+            <b>Publish, Step, Wrapper, and scm job dsl blocks defined in an External Helper Class</b>
+            If you want to whitelist Publish, Step, Wrapper, and scm job dsl blocks, simply whitelist the class
+            <u>Example job dsl code:</u>(in this case, helper.MyStepHelperClass would need to be in the whitelist)
+            import helper.MyStepHelperClass
+
+            job() {
+                step myCustomStepDefinition()
+            }
+        </li>
+        <li>
+            <b>Configure Blocks defined in an External Helper Class</b>
+            If you want to whitelist configure job dsl blocks, you must pull these into an external class, and whitelist
+            that class name. For more information on how to pull a re-usable configure block into an external, helper
+            class, look at
+            <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block"> The Configure Block Wiki</a>
+            page
+            <u>Example job dsl code:</u>(in this case, helper.MyConfigHelperClass would need to be in the whitelist)
+            import helper.MyConfigHelperClass
+
+            job() {
+            configure myCustomConfigDefinition()
+            }
+        </li>
+    </ul>
+</div>

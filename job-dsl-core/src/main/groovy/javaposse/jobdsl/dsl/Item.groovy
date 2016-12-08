@@ -15,13 +15,13 @@ abstract class Item extends AbstractContext {
     protected Item(JobManagement jobManagement, String name) {
         super(jobManagement)
         this.name = name
-        this.jobDslWhitelist = jobManagement.getJobDslWhitelist()
+        this.jobDslWhitelist = (jobManagement) ? jobManagement.getJobDslWhitelist() : new String[0]
     }
 
     @Deprecated
     protected Item(JobManagement jobManagement) {
         super(jobManagement)
-        this.jobDslWhitelist = jobManagement.getJobDslWhitelist()
+        this.jobDslWhitelist = (jobManagement) ? jobManagement.getJobDslWhitelist() : new String[0]
     }
 
     @Deprecated
@@ -42,9 +42,13 @@ abstract class Item extends AbstractContext {
                 String closureParentClass = configureBlock.thisObject['name'];
                 checkExternalClassIsWhitelisted(closureParentClass, jobDslWhitelist)
             } else {
-                // we do not allow raw configure blocks that do are not loaded from a whitelisted external class when whitelisting is turned on
-                throw new DslScriptException("The configure block at the current line is not added to the whitelist. To avoid this error, " +
-                        "either pull this block into an external class and whitelist that class, or turn whitelisting off.");
+                // we do not allow raw configure blocks that do are not loaded from a whitelisted external class when
+                // whitelisting is turned on
+                throw new DslScriptException("The job dsl block at the current line is not added to the whitelist.\n" +
+                        "If this is a raw configure block, you can avoid this error, by either pull this block into an " +
+                        "external class and whitelist that class, or turn whitelisting off.\n" +
+                        "If this is not a raw Configure block, this job dsl is not eligable to be whitelisted, so your" +
+                        "only option is to not use this job dsl block type, or turn whitelisting off.");
             }
         }
         configureBlocks << configureBlock
