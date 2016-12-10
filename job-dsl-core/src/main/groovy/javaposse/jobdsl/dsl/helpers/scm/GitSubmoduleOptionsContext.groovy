@@ -60,7 +60,7 @@ class GitSubmoduleOptionsContext extends AbstractContext {
     /**
      * Allows to use credentials from the default remote of the parent project.
      *
-     * @since 1.54
+     * @since 1.56
      */
     @RequiresPlugin(id = 'git', minimumVersion = '3.0.0')
     void parentCredentials(boolean parentCredentials = true) {

@@ -1,12 +1,14 @@
 package javaposse.jobdsl.dsl
 
 import groovy.transform.ThreadInterrupt
+
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.IvyJob
 import javaposse.jobdsl.dsl.jobs.MatrixJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
+import javaposse.jobdsl.dsl.jobs.OrganizationFolderJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
 import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
 import javaposse.jobdsl.dsl.views.BuildMonitorView
@@ -148,6 +150,15 @@ abstract class JobParent extends Script implements DslFactory {
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
         jm.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
         processView(name, DeliveryPipelineView, closure)
+    }
+
+    /**
+     * @since 1.56
+     */
+    @Override
+    OrganizationFolderJob organizationFolderJob(String name,
+                                                @DslContext(OrganizationFolderJob) Closure closure = null) {
+        processItem(name, OrganizationFolderJob, closure)
     }
 
     /**
