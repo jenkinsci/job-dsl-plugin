@@ -11,18 +11,9 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
-import hudson.model.Item;
-import hudson.model.ItemGroup;
-import hudson.model.Items;
-import hudson.model.Job;
-import hudson.model.Run;
-import hudson.model.TaskListener;
-import hudson.model.View;
-import hudson.model.ViewGroup;
+import hudson.model.*;
 import hudson.tasks.Builder;
+import hudson.util.RunList;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
@@ -446,6 +437,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
         Set<GeneratedJob> unreferenced = Sets.difference(generatedJobs, freshJobs);
         Set<GeneratedJob> removed = new HashSet<GeneratedJob>();
+        Set<Run> removedBuilds = new HashSet<Run>();
         Set<GeneratedJob> disabled = new HashSet<GeneratedJob>();
 
         logItems(listener, "Added items", added);
@@ -455,8 +447,21 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         // Update unreferenced jobs
         for (GeneratedJob unreferencedJob : unreferenced) {
             Item removedItem = getLookupStrategy().getItem(seedJob, unreferencedJob.getJobName(), Item.class);
-            if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
+            Collection<? extends Job> jobs = removedItem.getAllJobs();
+
+            if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE && jobs != null) {
                 if (removedJobAction == RemovedJobAction.DELETE) {
+                    for(Job job : jobs) {
+                        RunList<Run> builds = job.getBuilds();
+
+                        for(Run build : builds) {
+                            build.deleteArtifacts();
+                            build.delete();
+
+                            removedBuilds.add(build);
+                        }
+                    }
+
                     removedItem.delete();
                     removed.add(unreferencedJob);
                 } else {
@@ -471,6 +476,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         // print what happened with unreferenced jobs
         logItems(listener, "Disabled items", disabled);
         logItems(listener, "Removed items", removed);
+        logItems(listener, "Removed builds", removedBuilds);
 
         updateGeneratedJobMap(seedJob, Sets.union(added, existing), unreferenced);
     }
@@ -604,3 +610,4 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         }
     }
 }
+
