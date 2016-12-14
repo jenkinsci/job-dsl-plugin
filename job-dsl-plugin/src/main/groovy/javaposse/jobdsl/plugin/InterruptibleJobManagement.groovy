@@ -145,7 +145,7 @@ class InterruptibleJobManagement implements JobManagement {
 
     @Override
     String[] getJobDslWhitelist() {
-        delegate.getJobDslWhitelist()
+        delegate.jobDslWhitelist
     }
 
     @Override
