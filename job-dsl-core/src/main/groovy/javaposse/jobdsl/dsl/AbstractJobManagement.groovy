@@ -16,8 +16,8 @@ abstract class AbstractJobManagement implements JobManagement {
      * we will simply return false.
      */
     @Override
-    public boolean executeOnlyWhitelistedDsl() {
-        return false;
+    boolean executeOnlyWhitelistedDsl() {
+        false
     }
 
     /**
@@ -25,8 +25,8 @@ abstract class AbstractJobManagement implements JobManagement {
      * we will simply return an empty array.
      */
     @Override
-    public String[] getJobDslWhitelist() {
-        return [];
+    String[] getJobDslWhitelist() {
+        []
     }
 
     @Override
