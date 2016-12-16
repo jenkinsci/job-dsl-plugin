@@ -66,6 +66,12 @@ class BranchSourcesContext extends AbstractExtensibleContext {
                 repository(context.repository ?: '')
                 includes(context.includes ?: '')
                 excludes(context.excludes ?: '')
+                buildOriginBranch(context.buildOriginBranch)
+                buildOriginBranchWithPR(context.buildOriginBranchWithPR)
+                buildOriginPRMerge(context.buildOriginPRMerge)
+                buildOriginPRHead(context.buildOriginPRHead)
+                buildForkPRMerge(context.buildForkPRMerge)
+                buildForkPRHead(context.buildForkPRHead)
             }
             strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
                 properties(class: 'empty-list')

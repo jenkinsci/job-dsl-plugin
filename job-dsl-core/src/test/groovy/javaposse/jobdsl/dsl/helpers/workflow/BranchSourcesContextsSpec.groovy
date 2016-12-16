@@ -93,7 +93,7 @@ class BranchSourcesContextsSpec extends Specification {
             name() == 'jenkins.branch.BranchSource'
             children().size() == 2
             with(source[0]) {
-                children().size() == 8
+                children().size() == 14
                 id[0].value() instanceof UUID
                 apiUri[0].value() == 'https://api.github.com'
                 scanCredentialsId[0].value().empty
@@ -102,6 +102,12 @@ class BranchSourcesContextsSpec extends Specification {
                 repository[0].value().empty
                 includes[0].value() == '*'
                 excludes[0].value().empty
+                buildOriginBranch[0].value() == true
+                buildOriginBranchWithPR[0].value() == true
+                buildOriginPRMerge[0].value() == false
+                buildOriginPRHead[0].value() == false
+                buildForkPRMerge[0].value() == true
+                buildForkPRHead[0].value() == false
             }
             with(strategy[0]) {
                 children().size() == 1
@@ -124,6 +130,12 @@ class BranchSourcesContextsSpec extends Specification {
             includes('lorem')
             excludes('ipsum')
             ignoreOnPushNotifications()
+            buildOriginBranch(true)
+            buildOriginBranchWithPR(true)
+            buildOriginPRMerge(true)
+            buildOriginPRHead(true)
+            buildForkPRMerge(true)
+            buildForkPRHead(true)
         }
 
         then:
@@ -132,7 +144,7 @@ class BranchSourcesContextsSpec extends Specification {
             name() == 'jenkins.branch.BranchSource'
             children().size() == 2
             with(source[0]) {
-                children().size() == 8
+                children().size() == 14
                 id[0].value() instanceof UUID
                 apiUri[0].value() == 'https://custom.url'
                 scanCredentialsId[0].value() == 'scanCreds'
@@ -141,6 +153,12 @@ class BranchSourcesContextsSpec extends Specification {
                 repository[0].value() == 'repoName'
                 includes[0].value() == 'lorem'
                 excludes[0].value() == 'ipsum'
+                buildOriginBranch[0].value() == true
+                buildOriginBranchWithPR[0].value() == true
+                buildOriginPRMerge[0].value() == true
+                buildOriginPRHead[0].value() == true
+                buildForkPRMerge[0].value() == true
+                buildForkPRHead[0].value() == true
             }
             with(strategy[0]) {
                 children().size() == 1

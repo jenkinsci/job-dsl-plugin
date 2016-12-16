@@ -11,6 +11,12 @@ class GitHubBranchSourceContext extends AbstractContext {
     String repository
     String includes = '*'
     String excludes
+    boolean buildOriginBranch = true
+    boolean buildOriginBranchWithPR = true
+    boolean buildOriginPRMerge = false
+    boolean buildOriginPRHead = false
+    boolean buildForkPRMerge = true
+    boolean buildForkPRHead = false
 
     GitHubBranchSourceContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -63,6 +69,48 @@ class GitHubBranchSourceContext extends AbstractContext {
      */
     void excludes(String excludes) {
         this.excludes = excludes
+    }
+
+    /**
+     * Build origin branches.
+     */
+    void buildOriginBranch(boolean buildOriginBranch) {
+        this.buildOriginBranch = buildOriginBranch
+    }
+
+    /**
+     * Build origin branches also filed as PRs.
+     */
+    void buildOriginBranchWithPR(boolean buildOriginBranchWithPR) {
+        this.buildOriginBranchWithPR = buildOriginBranchWithPR
+    }
+
+    /**
+     * Build origin PRs (merged with base branch).
+     */
+    void buildOriginPRMerge(boolean buildOriginPRMerge) {
+        this.buildOriginPRMerge = buildOriginPRMerge
+    }
+
+    /**
+     * Build origin PRs (unmerged head).
+     */
+    void buildOriginPRHead(boolean buildOriginPRHead) {
+        this.buildOriginPRHead = buildOriginPRHead
+    }
+
+    /**
+     * Build fork PRs (merged with base branch).
+     */
+    void buildForkPRMerge(boolean buildForkPRMerge) {
+        this.buildForkPRMerge = buildForkPRMerge
+    }
+
+    /**
+     * Build fork PRs (unmerged head).
+     */
+    void buildForkPRHead(boolean buildForkPRHead) {
+        this.buildForkPRHead = buildForkPRHead
     }
 
     /**
