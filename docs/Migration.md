@@ -66,6 +66,12 @@ Support for versions older than 0.10.0 of the
 [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
+### GitHub Branch Source
+
+Support for versions older than 1.8 of the
+[GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ### JobDslPlugin
 
 The class `javaposse.jobdsl.plugin.JobDslPlugin` is [[deprecated|Deprecation-Policy]] and will be removed. It has been
