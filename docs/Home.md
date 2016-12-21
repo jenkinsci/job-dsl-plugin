@@ -38,6 +38,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-40205](https://issues.jenkins-ci.org/browse/JENKINS-40205))
  * The short URL for the embedded API Viewer ()http://localhost:8080/plugin/job-dsl/api-viewer) is deprecated, see
     [Migration](Migration#migrating-to-154)
+ * Added a workaround for a problem with XStream conversion
+   ([JENKINS-40130](https://issues.jenkins-ci.org/browse/JENKINS-40130))
  * Support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin) is deprecated, see
    [Migration](Migration#migrating-to-154)
  * Support for the older versions of the
