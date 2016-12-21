@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 
 class GitHubBranchSourceContext extends AbstractContext {
-    String apiUri = 'https://api.github.com'
+    String apiUri
     String scanCredentialsId
     String checkoutCredentialsId = 'SAME'
     String repoOwner
@@ -17,7 +17,7 @@ class GitHubBranchSourceContext extends AbstractContext {
     }
 
     /**
-     * Sets the GitHub API URI. Defaults to {@code 'https://api.github.com'}.
+     * Sets the GitHub API URI. Defaults to GitHub.
      */
     void apiUri(String apiUri) {
         this.apiUri = apiUri
