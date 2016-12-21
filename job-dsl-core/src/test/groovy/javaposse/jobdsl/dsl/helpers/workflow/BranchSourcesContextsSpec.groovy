@@ -93,9 +93,8 @@ class BranchSourcesContextsSpec extends Specification {
             name() == 'jenkins.branch.BranchSource'
             children().size() == 2
             with(source[0]) {
-                children().size() == 8
+                children().size() == 7
                 id[0].value() instanceof UUID
-                apiUri[0].value() == 'https://api.github.com'
                 scanCredentialsId[0].value().empty
                 checkoutCredentialsId[0].value() == 'SAME'
                 repoOwner[0].value().empty

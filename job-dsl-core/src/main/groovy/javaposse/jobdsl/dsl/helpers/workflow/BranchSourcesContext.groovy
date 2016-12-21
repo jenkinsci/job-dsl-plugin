@@ -59,7 +59,9 @@ class BranchSourcesContext extends AbstractExtensibleContext {
         branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
             source(class: 'org.jenkinsci.plugins.github_branch_source.GitHubSCMSource') {
                 id(UUID.randomUUID())
-                apiUri(context.apiUri ?: '')
+                if (context.apiUri) {
+                    apiUri(context.apiUri)
+                }
                 scanCredentialsId(context.scanCredentialsId ?: '')
                 checkoutCredentialsId(context.checkoutCredentialsId ?: '')
                 repoOwner(context.repoOwner ?: '')
