@@ -8,6 +8,11 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 
 class PostBuildScriptsContext extends AbstractContext {
+    private static final Set<String> VALID_EXECUTEON_MODES = [
+            'MATRIX', 'AXES', 'BOTH'
+    ]
+
+    String executeOn = 'BOTH'
     final StepContext stepContext
     boolean onlyIfBuildSucceeds = true
     boolean onlyIfBuildFails
@@ -49,4 +54,17 @@ class PostBuildScriptsContext extends AbstractContext {
     void markBuildUnstable(boolean markBuildUnstable = true) {
         this.markBuildUnstable = markBuildUnstable
     }
+
+    /**
+     * Specifies where to execute the script. Must be one of {@code 'BOTH'} (default), {@code 'MATRIX'}
+     * or {@code 'AXES'}.
+     */
+    void executeOn(String executeOn) {
+        checkArgument(
+                VALID_EXECUTEON_MODES.contains(executeOn),
+                "Execute script on needs to be one of these values: ${VALID_EXECUTEON_MODES.join(',')}"
+        )
+        this.executeOn = executeOn
+    }
+
 }
