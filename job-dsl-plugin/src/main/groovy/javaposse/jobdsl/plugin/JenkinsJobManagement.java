@@ -9,7 +9,6 @@ import groovy.util.XmlParser;
 import hudson.FilePath;
 import hudson.Plugin;
 import hudson.XmlFile;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.BuildableItem;
@@ -86,12 +85,6 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private boolean failOnMissingPlugin;
     private boolean unstableOnDeprecation;
 
-    @Deprecated
-    public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, AbstractBuild<?, ?> build,
-                                LookupStrategy lookupStrategy) {
-        this(outputLogger, envVars, build, build.getWorkspace(), lookupStrategy);
-    }
-
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, Run<?, ?> run,
                                 FilePath workspace, LookupStrategy lookupStrategy) {
         super(outputLogger);
@@ -100,11 +93,6 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         this.workspace = workspace;
         this.project = run == null ? null : run.getParent();
         this.lookupStrategy = lookupStrategy;
-    }
-
-    @Deprecated
-    public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, AbstractBuild<?, ?> build) {
-        this(outputLogger, envVars, build, build.getWorkspace(), LookupStrategy.JENKINS_ROOT);
     }
 
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, File workspace) {
