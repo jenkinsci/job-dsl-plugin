@@ -37,7 +37,7 @@ class PluginASTTransformationSpec extends Specification {
         jobParent.folder('test')
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.0')
+        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.0', true)
     }
 
     def 'require plugin on interface of interface'() {
@@ -48,7 +48,7 @@ class PluginASTTransformationSpec extends Specification {
         jobParent.buildPipelineView('test')
 
         then:
-        1 * jobManagement.requirePlugin('build-pipeline-plugin')
+        1 * jobManagement.requirePlugin('build-pipeline-plugin', true)
     }
 
     def 'require plugin with minimum version and with failIfMissing on interface'() {
