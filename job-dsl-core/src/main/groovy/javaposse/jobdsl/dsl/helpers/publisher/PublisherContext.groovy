@@ -10,6 +10,7 @@ import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
+import javaposse.jobdsl.dsl.jobs.MatrixJob
 
 import static javaposse.jobdsl.dsl.ContextHelper.toNamedNode
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -1356,6 +1357,9 @@ class PublisherContext extends AbstractExtensibleContext {
             scriptOnlyIfSuccess(context.onlyIfBuildSucceeds)
             scriptOnlyIfFailure(context.onlyIfBuildFails)
             markBuildUnstable(context.markBuildUnstable)
+            if (item instanceof MatrixJob) {
+                executeOn(context.executeOn)
+            }
         }
     }
 

@@ -3754,6 +3754,61 @@ class PublisherContextSpec extends Specification {
         value << [true, false]
     }
 
+    def 'call post build scripts with minimal options and matrix job'() {
+        setup:
+        Item item = new MatrixJob(jobManagement, 'test')
+        PublisherContext context = new PublisherContext(jobManagement, item)
+
+        when:
+        context.postBuildScripts {
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
+            children().size() == 5
+            buildSteps[0].children().size == 0
+            scriptOnlyIfSuccess[0].value() == true
+            scriptOnlyIfFailure[0].value() == false
+            markBuildUnstable[0].value() == false
+            executeOn[0].value() == 'BOTH'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+    }
+
+    def 'call post build scripts with all options and matrix job'() {
+        setup:
+        Item item = new MatrixJob(jobManagement, 'test')
+        PublisherContext context = new PublisherContext(jobManagement, item)
+
+        when:
+        context.postBuildScripts {
+            steps {
+                shell('echo TEST')
+            }
+            onlyIfBuildSucceeds(false)
+            onlyIfBuildFails()
+            markBuildUnstable()
+            executeOn(mode)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
+            children().size() == 5
+            buildSteps[0].children().size == 1
+            buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
+            scriptOnlyIfSuccess[0].value() == false
+            scriptOnlyIfFailure[0].value() == true
+            markBuildUnstable[0].value() == true
+            executeOn[0].value() == mode
+        }
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+
+        where:
+        mode << ['MATRIX', 'AXES', 'BOTH']
+    }
+
     def 'call sonar with no options'() {
         when:
         context.sonar()
