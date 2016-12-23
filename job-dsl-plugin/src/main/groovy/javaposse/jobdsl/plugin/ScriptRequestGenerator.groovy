@@ -3,7 +3,6 @@ package javaposse.jobdsl.plugin
 import groovy.transform.PackageScope
 import hudson.EnvVars
 import hudson.FilePath
-import hudson.model.AbstractBuild
 import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.ScriptRequest
 
@@ -11,11 +10,6 @@ class ScriptRequestGenerator implements Closeable {
     final FilePath workspace
     final EnvVars env
     final Map<FilePath, File> cachedFiles = [:]
-
-    @Deprecated
-    ScriptRequestGenerator(AbstractBuild build, EnvVars env) {
-        this(build.workspace, env)
-    }
 
     ScriptRequestGenerator(FilePath workspace, EnvVars env) {
         this.workspace = workspace

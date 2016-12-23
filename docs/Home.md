@@ -56,6 +56,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [Migration](Migration#migrating-to-154)
  * The class `javaposse.jobdsl.plugin.JobDslPlugin` is deprecated, see [Migration](Migration#migrating-to-154)
  * Removed most things that have been deprecated in 1.47, see [Migration](Migration#migrating-to-147)
+ * Removed anything that has been deprecated in 1.48, see [Migration](Migration#migrating-to-148)
 * 1.53 (November 08 2016)
  * Enhanced support the
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
