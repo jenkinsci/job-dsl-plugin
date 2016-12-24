@@ -447,7 +447,6 @@ class StepContextSpec extends Specification {
         mavenStep.name() == 'hudson.tasks.Maven'
         mavenStep.targets[0].value() == 'install'
         mavenStep.pom[0] == null
-        (1.._) * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
 
         when:
         context.maven('install', 'pom.xml') { mavenNode ->
@@ -460,7 +459,6 @@ class StepContextSpec extends Specification {
         def mavenStep2 = context.stepNodes[1]
         mavenStep2.pom[0].value() == 'pom.xml'
         mavenStep2.mavenName[0].value() == 'Maven 2.0.1'
-        (1.._) * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call maven method with full context'() {
@@ -493,7 +491,6 @@ class StepContextSpec extends Specification {
         mavenStep.mavenName[0].value() == 'Maven 3.0.5'
         mavenStep.settingsConfigId[0].value() == 'foo-bar'
         mavenStep.properties[0].value() == 'skipTests=true\nother=some\nevenAnother=One'
-        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call maven method with full context and core version >= 2.12'() {
@@ -549,7 +546,6 @@ class StepContextSpec extends Specification {
         mavenStep.jvmOptions[0].value() == ''
         mavenStep.usePrivateRepository[0].value() == false
         mavenStep.mavenName[0].value() == '(Default)'
-        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call maven method with minimal context and core version >= 2.12'() {
@@ -637,7 +633,6 @@ class StepContextSpec extends Specification {
                 settingsConfigId[0].value() == globalSettingsId
             }
         }
-        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call ant methods'() {
