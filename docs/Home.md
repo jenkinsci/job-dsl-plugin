@@ -40,6 +40,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Enhanced support for the
    [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin)
    ([#973](https://github.com/jenkinsci/job-dsl-plugin/pull/973))
+ * Enhanced support for the Maven build step
+   ([JENKINS-40636](https://issues.jenkins-ci.org/browse/JENKINS-40636))
  * Changed embedded API Viewer to work without Internet connectivity
    ([JENKINS-40205](https://issues.jenkins-ci.org/browse/JENKINS-40205))
  * Improved error message when a plugin is missing
