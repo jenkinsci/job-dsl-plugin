@@ -1,5 +1,5 @@
 {
-    "version": "1.54",
+    "version": "1.53",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -865,29 +865,6 @@
                             ],
                             "html": "Disables submodules processing. Defaults to <TT>false</TT>.",
                             "firstSentenceCommentText": "Disables submodules processing. "
-                        }
-                    ]
-                },
-                {
-                    "name": "parentCredentials",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "parentCredentials",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.54",
-                            "plugins": [
-                                {
-                                    "id": "git",
-                                    "minimumVersion": "3.0.0"
-                                }
-                            ],
-                            "html": "Allows to use credentials from the default remote of the parent project.",
-                            "firstSentenceCommentText": "Allows to use credentials from the default remote of the parent project."
                         }
                     ]
                 },
@@ -8343,6 +8320,27 @@
                             "availableSince": "1.47",
                             "html": "Runs the build steps if the file exists.",
                             "firstSentenceCommentText": "Runs the build steps if the file exists."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "file",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "baseDir",
+                                    "type": "javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir",
+                                    "enumConstants": [
+                                        "JENKINS_HOME",
+                                        "ARTIFACTS_DIR",
+                                        "WORKSPACE"
+                                    ]
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.23",
+                            "html": "Runs the build steps if the file exists.",
+                            "firstSentenceCommentText": "Runs the build steps if the file exists."
                         }
                     ]
                 },
@@ -8372,6 +8370,31 @@
                                 }
                             ],
                             "availableSince": "1.47",
+                            "html": "Runs the build steps if one or more files match the selectors.",
+                            "firstSentenceCommentText": "Runs the build steps if one or more files match the selectors."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "includes",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "excludes",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "baseDir",
+                                    "type": "javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir",
+                                    "enumConstants": [
+                                        "JENKINS_HOME",
+                                        "ARTIFACTS_DIR",
+                                        "WORKSPACE"
+                                    ]
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.36",
                             "html": "Runs the build steps if one or more files match the selectors.",
                             "firstSentenceCommentText": "Runs the build steps if one or more files match the selectors."
                         }
@@ -8920,6 +8943,183 @@
                             ],
                             "html": "Sets the Groovy script to execute.\r\n Use javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) to read scripts from files.",
                             "firstSentenceCommentText": "Sets the Groovy script to execute.\r\n "
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.helpers.publisher.HipChatPublisherContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.publisher.HipChatPublisherContext",
+            "methods": [
+                {
+                    "name": "completeJobMessage",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "completeJobMessage",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Configures the message that will be displayed in the room when the build is completed.",
+                            "firstSentenceCommentText": "Configures the message that will be displayed in the room when the build is completed."
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyAborted",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyAborted",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is aborted. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is aborted. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyBackToNormal",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyBackToNormal",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is back to normal. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is back to normal. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyBuildStart",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyBuildStart",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build starts. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build starts. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyFailure",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyFailure",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is failed. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is failed. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyNotBuilt",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyNotBuilt",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is not run. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is not run. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifySuccess",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifySuccess",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is successful. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is successful. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyUnstable",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyUnstable",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is unstable. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is unstable. "
+                        }
+                    ]
+                },
+                {
+                    "name": "rooms",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "rooms",
+                                    "type": "String..."
+                                }
+                            ],
+                            "html": "Specifies the room names to which notifications should be sent.",
+                            "firstSentenceCommentText": "Specifies the room names to which notifications should be sent."
+                        }
+                    ]
+                },
+                {
+                    "name": "startJobMessage",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "startJobMessage",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Configures the message that will be displayed in the room when the build starts.",
+                            "firstSentenceCommentText": "Configures the message that will be displayed in the room when the build starts."
+                        }
+                    ]
+                },
+                {
+                    "name": "token",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "token",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets either a v1 admin/notification API token, or a v2 access token with send_notification scope.\r\n\r\n For security reasons, do not use a hard-coded token. See\r\n <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials\">Handling Credentials</a> for\r\n details about handling credentials in DSL scripts.",
+                            "firstSentenceCommentText": "Sets either a v1 admin/notification API token, or a v2 access token with send_notification scope."
                         }
                     ]
                 }
@@ -12548,23 +12748,6 @@
                     ]
                 },
                 {
-                    "name": "injectBuildVariables",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "injectBuildVariables",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.54",
-                            "html": "Skip injecting build variables as properties into the Maven process. Defaults to <TT>true</TT>.",
-                            "firstSentenceCommentText": "Skip injecting build variables as properties into the Maven process. "
-                        }
-                    ]
-                },
-                {
                     "name": "localRepository",
                     "signatures": [
                         {
@@ -14016,7 +14199,7 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Adds a variable binding for the script. Can be called multiple times to add more bindings.",
+                            "html": "Adds a variable binding for the script. Cann be called multiple times to add more bindings.",
                             "firstSentenceCommentText": "Adds a variable binding for the script. "
                         }
                     ]
@@ -15118,6 +15301,12 @@
                                 }
                             ],
                             "availableSince": "1.20",
+                            "plugins": [
+                                {
+                                    "id": "maven-plugin",
+                                    "minimumVersion": "2.3"
+                                }
+                            ],
                             "html": "Invokes a Maven build.",
                             "firstSentenceCommentText": "Invokes a Maven build.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.step.MavenContext"
@@ -15138,6 +15327,12 @@
                                     "name": "configure",
                                     "type": "Closure",
                                     "defaultValue": "null"
+                                }
+                            ],
+                            "plugins": [
+                                {
+                                    "id": "maven-plugin",
+                                    "minimumVersion": "2.3"
                                 }
                             ],
                             "html": "Invokes a Maven build.\r\n\r\n The closure parameter expects a configure block for direct manipulation of the generated XML. The\r\n <TT>hudson.tasks.Maven</TT> node is passed into the configure block.",
@@ -15841,22 +16036,6 @@
         "javaposse.jobdsl.dsl.helpers.publisher.PostBuildScriptsContext": {
             "type": "javaposse.jobdsl.dsl.helpers.publisher.PostBuildScriptsContext",
             "methods": [
-                {
-                    "name": "executeOn",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "executeOn",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.54",
-                            "html": "Specifies where to execute the script. Must be one of <TT>'BOTH'</TT> (default), <TT>'MATRIX'</TT>\r\n or <TT>'AXES'</TT>. This setting is only relevant for matrix jobs.",
-                            "firstSentenceCommentText": "Specifies where to execute the script. "
-                        }
-                    ]
-                },
                 {
                     "name": "markBuildUnstable",
                     "signatures": [
@@ -19857,6 +20036,32 @@
                     "examples": "// run a groovy script and if that fails will mark the build as failed\r\njob('example') {\r\n    publishers {\r\n        groovyPostBuild('println \"hello, world\"', Behavior.MarkFailed)\r\n    }\r\n}"
                 },
                 {
+                    "name": "hipChat",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "hipChatClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.33",
+                            "plugins": [
+                                {
+                                    "id": "hipchat",
+                                    "minimumVersion": "0.1.9"
+                                }
+                            ],
+                            "html": "Sends notifications to HipChat.",
+                            "firstSentenceCommentText": "Sends notifications to HipChat.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.HipChatPublisherContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        hipChat {\r\n            rooms('Dev Team A', 'QA')\r\n            notifyAborted()\r\n            notifyNotBuilt()\r\n            notifyUnstable()\r\n            notifyFailure()\r\n            notifyBackToNormal()\r\n        }\r\n    }\r\n}"
+                },
+                {
                     "name": "irc",
                     "signatures": [
                         {
@@ -20667,9 +20872,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use the \r\nAutomatically Generated DSL instead.",
-                            "deprecatedHtml": "use the <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">\r\nAutomatically Generated DSL</a> instead.",
                             "availableSince": "1.26",
                             "plugins": [
                                 {
@@ -22345,6 +22547,32 @@
                     "examples": "// run a groovy script and if that fails will mark the build as failed\r\njob('example') {\r\n    publishers {\r\n        groovyPostBuild('println \"hello, world\"', Behavior.MarkFailed)\r\n    }\r\n}"
                 },
                 {
+                    "name": "hipChat",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "hipChatClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.33",
+                            "plugins": [
+                                {
+                                    "id": "hipchat",
+                                    "minimumVersion": "0.1.9"
+                                }
+                            ],
+                            "html": "Sends notifications to HipChat.",
+                            "firstSentenceCommentText": "Sends notifications to HipChat.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.HipChatPublisherContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        hipChat {\r\n            rooms('Dev Team A', 'QA')\r\n            notifyAborted()\r\n            notifyNotBuilt()\r\n            notifyUnstable()\r\n            notifyFailure()\r\n            notifyBackToNormal()\r\n        }\r\n    }\r\n}"
+                },
+                {
                     "name": "irc",
                     "signatures": [
                         {
@@ -23155,9 +23383,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use the \r\nAutomatically Generated DSL instead.",
-                            "deprecatedHtml": "use the <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">\r\nAutomatically Generated DSL</a> instead.",
                             "availableSince": "1.26",
                             "plugins": [
                                 {
@@ -24144,6 +24369,12 @@
                                 }
                             ],
                             "availableSince": "1.47",
+                            "plugins": [
+                                {
+                                    "id": "gitlab-plugin",
+                                    "minimumVersion": "1.2.0"
+                                }
+                            ],
                             "html": "The target branch regex allows to limit the execution of this job to\r\n certain branches. Any branch matching the specified pattern triggers the\r\n job.",
                             "firstSentenceCommentText": "The target branch regex allows to limit the execution of this job to\r\n certain branches. "
                         }
@@ -24567,7 +24798,7 @@
                             "plugins": [
                                 {
                                     "id": "gitlab-plugin",
-                                    "minimumVersion": "1.2.0"
+                                    "minimumVersion": "1.1.28"
                                 }
                             ],
                             "html": "Trigger that runs jobs on push notifications from GitLab.",
@@ -30831,8 +31062,7 @@
                                     "enumConstants": [
                                         "NONE",
                                         "TITLE",
-                                        "LAST_ACTIVITY",
-                                        "FAILED_FIRST"
+                                        "LAST_ACTIVITY"
                                     ]
                                 }
                             ],
@@ -35526,6 +35756,32 @@
                     "examples": "// run a groovy script and if that fails will mark the build as failed\r\njob('example') {\r\n    publishers {\r\n        groovyPostBuild('println \"hello, world\"', Behavior.MarkFailed)\r\n    }\r\n}"
                 },
                 {
+                    "name": "hipChat",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "hipChatClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.33",
+                            "plugins": [
+                                {
+                                    "id": "hipchat",
+                                    "minimumVersion": "0.1.9"
+                                }
+                            ],
+                            "html": "Sends notifications to HipChat.",
+                            "firstSentenceCommentText": "Sends notifications to HipChat.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.HipChatPublisherContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        hipChat {\r\n            rooms('Dev Team A', 'QA')\r\n            notifyAborted()\r\n            notifyNotBuilt()\r\n            notifyUnstable()\r\n            notifyFailure()\r\n            notifyBackToNormal()\r\n        }\r\n    }\r\n}"
+                },
+                {
                     "name": "irc",
                     "signatures": [
                         {
@@ -36336,9 +36592,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use the \r\nAutomatically Generated DSL instead.",
-                            "deprecatedHtml": "use the <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">\r\nAutomatically Generated DSL</a> instead.",
                             "availableSince": "1.26",
                             "plugins": [
                                 {
@@ -36885,7 +37138,7 @@
                             "plugins": [
                                 {
                                     "id": "gitlab-plugin",
-                                    "minimumVersion": "1.2.0"
+                                    "minimumVersion": "1.1.28"
                                 }
                             ],
                             "html": "Trigger that runs jobs on push notifications from GitLab.",
@@ -40079,6 +40332,12 @@
                                 }
                             ],
                             "availableSince": "1.20",
+                            "plugins": [
+                                {
+                                    "id": "maven-plugin",
+                                    "minimumVersion": "2.3"
+                                }
+                            ],
                             "html": "Invokes a Maven build.",
                             "firstSentenceCommentText": "Invokes a Maven build.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.step.MavenContext"
@@ -40099,6 +40358,12 @@
                                     "name": "configure",
                                     "type": "Closure",
                                     "defaultValue": "null"
+                                }
+                            ],
+                            "plugins": [
+                                {
+                                    "id": "maven-plugin",
+                                    "minimumVersion": "2.3"
                                 }
                             ],
                             "html": "Invokes a Maven build.\r\n\r\n The closure parameter expects a configure block for direct manipulation of the generated XML. The\r\n <TT>hudson.tasks.Maven</TT> node is passed into the configure block.",
@@ -41719,146 +41984,8 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets the GitHub API URI. Defaults to GitHub.",
+                            "html": "Sets the GitHub API URI. Defaults to <TT>'https://api.github.com'</TT>.",
                             "firstSentenceCommentText": "Sets the GitHub API URI. "
-                        }
-                    ]
-                },
-                {
-                    "name": "buildForkPRHead",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "buildForkPRHead",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.54",
-                            "plugins": [
-                                {
-                                    "id": "github-branch-source",
-                                    "minimumVersion": "1.8"
-                                }
-                            ],
-                            "html": "Build fork PRs (unmerged head). Defaults to <TT>false</TT>.",
-                            "firstSentenceCommentText": "Build fork PRs (unmerged head). "
-                        }
-                    ]
-                },
-                {
-                    "name": "buildForkPRMerge",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "buildForkPRMerge",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.54",
-                            "plugins": [
-                                {
-                                    "id": "github-branch-source",
-                                    "minimumVersion": "1.8"
-                                }
-                            ],
-                            "html": "Build fork PRs (merged with base branch). Defaults to <TT>true</TT>.",
-                            "firstSentenceCommentText": "Build fork PRs (merged with base branch). "
-                        }
-                    ]
-                },
-                {
-                    "name": "buildOriginBranch",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "buildOriginBranch",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.54",
-                            "plugins": [
-                                {
-                                    "id": "github-branch-source",
-                                    "minimumVersion": "1.8"
-                                }
-                            ],
-                            "html": "Build origin branches. Defaults to <TT>true</TT>.",
-                            "firstSentenceCommentText": "Build origin branches. "
-                        }
-                    ]
-                },
-                {
-                    "name": "buildOriginBranchWithPR",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "buildOriginBranchWithPR",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.54",
-                            "plugins": [
-                                {
-                                    "id": "github-branch-source",
-                                    "minimumVersion": "1.8"
-                                }
-                            ],
-                            "html": "Build origin branches also filed as PRs. Defaults to <TT>true</TT>.",
-                            "firstSentenceCommentText": "Build origin branches also filed as PRs. "
-                        }
-                    ]
-                },
-                {
-                    "name": "buildOriginPRHead",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "buildOriginPRHead",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.54",
-                            "plugins": [
-                                {
-                                    "id": "github-branch-source",
-                                    "minimumVersion": "1.8"
-                                }
-                            ],
-                            "html": "Build origin PRs (unmerged head). Defaults to <TT>false</TT>.",
-                            "firstSentenceCommentText": "Build origin PRs (unmerged head). "
-                        }
-                    ]
-                },
-                {
-                    "name": "buildOriginPRMerge",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "buildOriginPRMerge",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.54",
-                            "plugins": [
-                                {
-                                    "id": "github-branch-source",
-                                    "minimumVersion": "1.8"
-                                }
-                            ],
-                            "html": "Build origin PRs (merged with base branch). Defaults to <TT>false</TT>.",
-                            "firstSentenceCommentText": "Build origin PRs (merged with base branch). "
                         }
                     ]
                 },
@@ -41995,7 +42122,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.GitBranchSourceContext"
                         }
                     ],
-                    "examples": "multibranchPipelineJob('example') {\r\n    branchSources {\r\n        git {\r\n            remote('https://github.com/jenkinsci/job-dsl-plugin.git')\r\n            credentialsId('github-ci')\r\n            includes('JENKINS-*')\r\n        }\r\n    }\r\n}"
+                    "examples": "multibranchWorkflowJob('example') {\r\n    branchSources {\r\n        git {\r\n            remote('https://github.com/jenkinsci/job-dsl-plugin.git')\r\n            credentialsId('github-ci')\r\n            includes('JENKINS-*')\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "github",
@@ -42019,7 +42146,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.GitHubBranchSourceContext"
                         }
                     ],
-                    "examples": "multibranchPipelineJob('example') {\r\n    branchSources {\r\n        github {\r\n            scanCredentialsId('github-ci')\r\n            repoOwner('OwnerName')\r\n            repository('job-dsl-plugin')\r\n        }\r\n    }\r\n}"
+                    "examples": "multibranchWorkflowJob('example') {\r\n    branchSources {\r\n        github {\r\n            scanCredentialsId('github-ci')\r\n            repoOwner('OwnerName')\r\n            repository('job-dsl-plugin')\r\n        }\r\n    }\r\n}"
                 }
             ]
         },
@@ -42076,7 +42203,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.DefaultOrphanedItemStrategyContext"
                         }
                     ],
-                    "examples": "multibranchPipelineJob('example') {\r\n    orphanedItemStrategy {\r\n        discardOldItems {\r\n            numToKeep(20)\r\n        }\r\n    }\r\n}"
+                    "examples": "multibranchWorkflowJob('example') {\r\n    orphanedItemStrategy {\r\n        discardOldItems {\r\n            numToKeep(20)\r\n        }\r\n    }\r\n}"
                 }
             ]
         },
@@ -42148,7 +42275,7 @@
                             "firstSentenceCommentText": "Triggers a build periodically if not otherwise run."
                         }
                     ],
-                    "examples": "multibranchPipelineJob('example') {\r\n    triggers {\r\n        periodic(5)\r\n    }\r\n}"
+                    "examples": "multibranchWorkflowJob('example') {\r\n    triggers {\r\n        periodic(5)\r\n    }\r\n}"
                 },
                 {
                     "name": "urlTrigger",
@@ -42873,7 +43000,7 @@
                             "firstSentenceCommentText": "Sets the workflow DSL script. "
                         }
                     ],
-                    "examples": "pipelineJob('example') {\r\n    definition {\r\n        cps {\r\n            script(readFileFromWorkspace('project-a-workflow.groovy'))\r\n        }\r\n    }\r\n}"
+                    "examples": "workflowJob('example') {\r\n    definition {\r\n        cps {\r\n            script(readFileFromWorkspace('project-a-workflow.groovy'))\r\n        }\r\n    }\r\n}"
                 }
             ]
         },
@@ -42931,7 +43058,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.CpsContext"
                         }
                     ],
-                    "examples": "pipelineJob('example') {\r\n    definition {\r\n        cps {\r\n            script(readFileFromWorkspace('project-a-workflow.groovy'))\r\n            sandbox()\r\n        }\r\n    }\r\n}"
+                    "examples": "workflowJob('example') {\r\n    definition {\r\n        cps {\r\n            script(readFileFromWorkspace('project-a-workflow.groovy'))\r\n            sandbox()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "cpsScm",
@@ -42955,7 +43082,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.CpsScmContext"
                         }
                     ],
-                    "examples": "pipelineJob('example') {\r\n    definition {\r\n        cpsScm {\r\n            scm {\r\n                git('https://github.com/jenkinsci/job-dsl-plugin.git')\r\n            }\r\n        }\r\n    }\r\n}"
+                    "examples": "workflowJob('example') {\r\n    definition {\r\n        cpsScm {\r\n            scm {\r\n                git('https://github.com/jenkinsci/job-dsl-plugin.git')\r\n            }\r\n        }\r\n    }\r\n}"
                 }
             ]
         },
@@ -43224,7 +43351,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.WorkflowDefinitionContext"
                         }
                     ],
-                    "examples": "pipelineJob('example') {\r\n    definition {\r\n        cps {\r\n            script(readFileFromWorkspace('project-a-workflow.groovy'))\r\n            sandbox()\r\n        }\r\n    }\r\n}"
+                    "examples": "workflowJob('example') {\r\n    definition {\r\n        cps {\r\n            script(readFileFromWorkspace('project-a-workflow.groovy'))\r\n            sandbox()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "deliveryPipelineConfiguration",
@@ -44547,6 +44674,57 @@
                     "examples": "multibranchPipelineJob('example') {\r\n    branchSources {\r\n        git {\r\n            remote('https://github.com/jenkinsci/job-dsl-plugin.git')\r\n            credentialsId('github-ci')\r\n            includes('JENKINS-*')\r\n        }\r\n    }\r\n    orphanedItemStrategy {\r\n        discardOldItems {\r\n            numToKeep(20)\r\n        }\r\n    }\r\n}"
                 },
                 {
+                    "name": "multibranchWorkflowJob",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.",
+                            "deprecatedHtml": "as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.",
+                            "availableSince": "1.42",
+                            "plugins": [
+                                {
+                                    "id": "workflow-multibranch",
+                                    "minimumVersion": "1.12"
+                                }
+                            ],
+                            "html": "Create or updates a multibranch workflow job.",
+                            "firstSentenceCommentText": "Create or updates a multibranch workflow job."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.",
+                            "deprecatedHtml": "as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.",
+                            "availableSince": "1.42",
+                            "plugins": [
+                                {
+                                    "id": "workflow-multibranch",
+                                    "minimumVersion": "1.12"
+                                }
+                            ],
+                            "html": "Creates or updates a multibranch workflow job.",
+                            "firstSentenceCommentText": "Creates or updates a multibranch workflow job.",
+                            "contextClass": "javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob"
+                        }
+                    ],
+                    "examples": "multibranchWorkflowJob('example') {\r\n    branchSources {\r\n        git {\r\n            remote('https://github.com/jenkinsci/job-dsl-plugin.git')\r\n            credentialsId('github-ci')\r\n            includes('JENKINS-*')\r\n        }\r\n    }\r\n    orphanedItemStrategy {\r\n        discardOldItems {\r\n            numToKeep(20)\r\n        }\r\n    }\r\n}"
+                },
+                {
                     "name": "nestedView",
                     "signatures": [
                         {
@@ -44763,6 +44941,55 @@
                         }
                     ],
                     "examples": "// save the file images/logo.png from the seed job's workspace as user content\r\nuserContent('company-logo.png', streamFileFromWorkspace('images/logo.png'))"
+                },
+                {
+                    "name": "workflowJob",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "as of 1.47. Use #pipelineJob(java.lang.String, groovy.lang.Closure) instead.",
+                            "deprecatedHtml": "as of 1.47. Use #pipelineJob(java.lang.String, groovy.lang.Closure) instead.",
+                            "availableSince": "1.30",
+                            "plugins": [
+                                {
+                                    "id": "workflow-aggregator"
+                                }
+                            ],
+                            "html": "Create or updates a workflow job.",
+                            "firstSentenceCommentText": "Create or updates a workflow job."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "as of 1.47. Use #pipelineJob(java.lang.String, groovy.lang.Closure) instead.",
+                            "deprecatedHtml": "as of 1.47. Use #pipelineJob(java.lang.String, groovy.lang.Closure) instead.",
+                            "availableSince": "1.31",
+                            "plugins": [
+                                {
+                                    "id": "workflow-aggregator"
+                                }
+                            ],
+                            "html": "Create or updates a workflow job.",
+                            "firstSentenceCommentText": "Create or updates a workflow job.",
+                            "contextClass": "javaposse.jobdsl.dsl.jobs.WorkflowJob"
+                        }
+                    ],
+                    "examples": "workflowJob('example') {\r\n    definition {\r\n        cps {\r\n            script(readFileFromWorkspace('project-a-workflow.groovy'))\r\n            sandbox()\r\n        }\r\n    }\r\n}"
                 }
             ]
         }
