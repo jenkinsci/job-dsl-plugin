@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
+import javaposse.jobdsl.dsl.RequiresCore
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 
@@ -17,6 +18,7 @@ class MavenContext extends AbstractContext {
     Closure configureBlock
     String providedSettingsId
     String providedGlobalSettingsId
+    boolean injectBuildVariables = true
 
     MavenContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -125,5 +127,15 @@ class MavenContext extends AbstractContext {
      */
     void property(String key, String value) {
         properties[key] = value
+    }
+
+    /**
+     * Skip injecting build variables as properties into the Maven process. Defaults to {@code true}.
+     *
+     * @since 1.54
+     */
+    @RequiresCore(minimumVersion = '2.12')
+    void injectBuildVariables(boolean injectBuildVariables = true) {
+        this.injectBuildVariables = injectBuildVariables
     }
 }

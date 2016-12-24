@@ -139,6 +139,11 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
+    boolean isMinimumCoreVersion(String version) {
+        delegate.isMinimumCoreVersion(version)
+    }
+
+    @Override
     Integer getVSphereCloudHash(String name) {
         delegate.getVSphereCloudHash(name)
     }

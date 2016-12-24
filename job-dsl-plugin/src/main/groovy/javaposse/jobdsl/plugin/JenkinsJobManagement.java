@@ -344,7 +344,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public void requireMinimumCoreVersion(String version) {
-        if (Jenkins.getVersion().isOlderThan(new VersionNumber(version))) {
+        if (!isMinimumCoreVersion(version)) {
             failOrMarkBuildAsUnstable("Jenkins needs to be updated to version " + version + " or later", false);
         }
     }
@@ -353,6 +353,11 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     public boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
         Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
         return plugin != null && !plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(version));
+    }
+
+    @Override
+    public boolean isMinimumCoreVersion(String version) {
+        return !Jenkins.getVersion().isOlderThan(new VersionNumber(version));
     }
 
     @Override

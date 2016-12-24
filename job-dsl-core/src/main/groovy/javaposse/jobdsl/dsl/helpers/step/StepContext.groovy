@@ -432,6 +432,9 @@ class StepContext extends AbstractExtensibleContext {
                     settingsConfigId(mavenContext.providedGlobalSettingsId)
                 }
             }
+            if (jobManagement.isMinimumCoreVersion('2.12')) {
+                injectBuildVariables(mavenContext.injectBuildVariables)
+            }
         }
 
         ContextHelper.executeConfigureBlock(mavenNode, mavenContext.configureBlock)
