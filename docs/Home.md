@@ -47,7 +47,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-40205](https://issues.jenkins-ci.org/browse/JENKINS-40205))
  * Improved error message when a plugin is missing
    ([JENKINS-40601](https://issues.jenkins-ci.org/browse/JENKINS-40601)) 
- * The short URL for the embedded API Viewer ()http://localhost:8080/plugin/job-dsl/api-viewer) is deprecated, see
+ * The short URL for the embedded API Viewer (http://localhost:8080/plugin/job-dsl/api-viewer) is deprecated, see
    [Migration](Migration#migrating-to-154)
  * Fixed problem with
    [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
