@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven {
-            url('https://repo.jenkins-ci.org/releases/')
+            url('https://repo.jenkins-ci.org/public/')
         }
     }
     dependencies {
@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-    id 'org.jenkins-ci.jpi' version '0.18.1'
+    id 'org.jenkins-ci.jpi' version '0.21.0'
 }
 
 description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
@@ -24,7 +24,7 @@ jenkinsPlugin {
     displayName = 'Job DSL'
     url = 'https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin'
     gitHubUrl = 'https://github.com/jenkinsci/job-dsl-plugin'
-    compatibleSinceVersion = '1.52'
+    compatibleSinceVersion = '1.54'
     localizerOutputDir = "$generatedSourcesDir/localizer"
     disabledTestInjection = false
     developers {
@@ -49,10 +49,20 @@ jenkinsPlugin {
             email 'mr.sheehan@gmail.com'
         }
     }
+    licenses {
+        license {
+            name 'Apache License, Version 2.0'
+            url 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+        }
+    }
 }
 
 clean {
     delete generatedSourcesDir
+}
+
+test {
+    jvmArgs += ['-XX:MaxPermSize=256m']
 }
 
 configurations {

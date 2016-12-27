@@ -468,6 +468,8 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin')
     void deliveryPipelineVersion(String template, boolean setDisplayName = false) {
+        jobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
+
         wrapperNodes << new NodeBuilder().'se.diabol.jenkins.pipeline.PipelineVersionContributor' {
             versionTemplate(template)
             updateDisplayName(setDisplayName)

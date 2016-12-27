@@ -196,6 +196,14 @@ interface JobManagement {
     boolean isMinimumPluginVersionInstalled(String pluginShortName, String version)
 
     /**
+     * Returns {@code true} if the currently running version of Jenkins is equal to or greater than the specified
+     * version.
+     *
+     * @since 1.54
+     */
+    boolean isMinimumCoreVersion(String version)
+
+    /**
      * Returns the version of Jenkins.
      *
      * @since 1.33

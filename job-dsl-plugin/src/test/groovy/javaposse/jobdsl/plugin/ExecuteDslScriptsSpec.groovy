@@ -255,26 +255,6 @@ class ExecuteDslScriptsSpec extends Specification {
         executeDslScripts.scriptLocation == null
 
         when:
-        executeDslScripts.scriptLocation = new ExecuteDslScripts.ScriptLocation('foo', 'bar', 'baz')
-
-        then:
-        executeDslScripts.scriptLocation == null
-        executeDslScripts.scriptText == null
-        executeDslScripts.targets == 'bar'
-        !executeDslScripts.usingScriptText
-        executeDslScripts.useScriptText == null
-
-        when:
-        executeDslScripts.scriptLocation = new ExecuteDslScripts.ScriptLocation('true', '', 'foo')
-
-        then:
-        executeDslScripts.scriptLocation == null
-        executeDslScripts.scriptText == 'foo'
-        executeDslScripts.targets == null
-        executeDslScripts.usingScriptText
-        executeDslScripts.useScriptText == null
-
-        when:
         executeDslScripts.scriptLocation = new ExecuteDslScripts.ScriptLocation()
 
         then:

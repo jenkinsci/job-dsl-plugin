@@ -10,6 +10,7 @@ import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
+import javaposse.jobdsl.dsl.jobs.MatrixJob
 
 import static javaposse.jobdsl.dsl.ContextHelper.toNamedNode
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -1137,8 +1138,11 @@ class PublisherContext extends AbstractExtensibleContext {
      * Uploads build artifacts to Amazon S3.
      *
      * @since 1.26
+     * @deprecated use the <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL">
+     *             Automatically Generated DSL</a> instead.
      */
     @RequiresPlugin(id = 's3', minimumVersion = '0.7')
+    @Deprecated
     void s3(String profile, @DslContext(S3BucketPublisherContext) Closure s3PublisherClosure) {
         checkNotNullOrEmpty(profile, 'profile must be specified')
 
@@ -1353,6 +1357,9 @@ class PublisherContext extends AbstractExtensibleContext {
             scriptOnlyIfSuccess(context.onlyIfBuildSucceeds)
             scriptOnlyIfFailure(context.onlyIfBuildFails)
             markBuildUnstable(context.markBuildUnstable)
+            if (item instanceof MatrixJob) {
+                executeOn(context.executeOn)
+            }
         }
     }
 
@@ -1454,32 +1461,6 @@ class PublisherContext extends AbstractExtensibleContext {
                     artifactNumToKeep(publishBuildContext.artifactNumToKeep)
                 }
             }
-        }
-    }
-
-    /**
-     * Sends notifications to HipChat.
-     *
-     * @since 1.33
-     */
-    @RequiresPlugin(id = 'hipchat', minimumVersion = '0.1.9')
-    @Deprecated
-    void hipChat(@DslContext(HipChatPublisherContext) Closure hipChatClosure = null) {
-        HipChatPublisherContext hipChatContext = new HipChatPublisherContext()
-        ContextHelper.executeInContext(hipChatClosure, hipChatContext)
-
-        publisherNodes << new NodeBuilder().'jenkins.plugins.hipchat.HipChatNotifier' {
-            token(hipChatContext.token ?: '')
-            room(hipChatContext.rooms.join(','))
-            startNotification(hipChatContext.notifyBuildStart)
-            notifySuccess(hipChatContext.notifySuccess)
-            notifyAborted(hipChatContext.notifyAborted)
-            notifyNotBuilt(hipChatContext.notifyNotBuilt)
-            notifyUnstable(hipChatContext.notifyUnstable)
-            notifyFailure(hipChatContext.notifyFailure)
-            notifyBackToNormal(hipChatContext.notifyBackToNormal)
-            startJobMessage(hipChatContext.startJobMessage ?: '')
-            completeJobMessage(hipChatContext.completeJobMessage ?: '')
         }
     }
 

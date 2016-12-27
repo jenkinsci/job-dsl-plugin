@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
@@ -51,7 +50,6 @@ class GitLabTriggerContext extends AbstractContext {
      *
      * @since 1.47
      */
-    @RequiresPlugin(id = 'gitlab-plugin', minimumVersion = '1.2.0')
     void targetBranchRegex(String targetBranchRegex) {
         this.targetBranchRegex = targetBranchRegex
         this.branchFilterType = 'regexBasedFilter'

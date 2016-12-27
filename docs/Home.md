@@ -26,7 +26,45 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.54 (unreleased)
+* 1.55 (unreleased)
+* 1.54 (December 24 2016)
+ * Enhanced support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
+   ([#953](https://github.com/jenkinsci/job-dsl-plugin/pull/953))
+ * Enhanced support for the
+   [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
+   ([#956](https://github.com/jenkinsci/job-dsl-plugin/pull/956))
+ * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+   ([#958](https://github.com/jenkinsci/job-dsl-plugin/pull/958))
+ * Enhanced support for the
+   [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
+   ([#969](https://github.com/jenkinsci/job-dsl-plugin/pull/969))
+ * Enhanced support for the
+   [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin)
+   ([#973](https://github.com/jenkinsci/job-dsl-plugin/pull/973))
+ * Enhanced support for the Maven build step
+   ([JENKINS-40636](https://issues.jenkins-ci.org/browse/JENKINS-40636))
+ * Changed embedded API Viewer to work without Internet connectivity
+   ([JENKINS-40205](https://issues.jenkins-ci.org/browse/JENKINS-40205))
+ * Improved error message when a plugin is missing
+   ([JENKINS-40601](https://issues.jenkins-ci.org/browse/JENKINS-40601)) 
+ * The short URL for the embedded API Viewer (http://localhost:8080/plugin/job-dsl/api-viewer) is deprecated, see
+   [Migration](Migration#migrating-to-154)
+ * Fixed problem with
+   [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
+   ([JENKINS-40191](https://issues.jenkins-ci.org/browse/JENKINS-40191))
+ * Added a workaround for a problem with XStream conversion
+   ([JENKINS-40130](https://issues.jenkins-ci.org/browse/JENKINS-40130))
+ * Support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-154)
+ * Support for the older versions of the
+   [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin) is deprecated, see
+   [Migration](Migration#migrating-to-154)
+ * Support for the older versions of the
+   [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
+   [Migration](Migration#migrating-to-154)
+ * The class `javaposse.jobdsl.plugin.JobDslPlugin` is deprecated, see [Migration](Migration#migrating-to-154)
+ * Removed most things that have been deprecated in 1.47, see [Migration](Migration#migrating-to-147)
+ * Removed anything that has been deprecated in 1.48, see [Migration](Migration#migrating-to-148)
 * 1.53 (November 08 2016)
  * Enhanced support the
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)

@@ -31,9 +31,9 @@ Marionette.Renderer.render = function(template, data) {
 
             this.initLayout();
             $('.loading-outer').addClass('loading');
-            this.loadSelectedDsl().then(function() {
+            this.loadConfig().then(this.loadUpdateCenter.bind(this)).then(this.loadSelectedDsl.bind(this)).then(function() {
                 Backbone.history.start({pushState: false});
-                if (!this.dsl.isEmbedded()) {
+                if (!this.config.embedded) {
                     $('.version-select').show()
                 }
             }.bind(this));
@@ -72,8 +72,24 @@ Marionette.Renderer.render = function(template, data) {
             this.detailRegion.show(pluginDetailView);
         },
 
+        loadConfig: function() {
+            var url = 'config.json';
+            return $.get(url).then(function (data) {
+              this.config = data;
+              return data;
+            }.bind(this));
+        },
+
+        loadUpdateCenter: function() {
+            var url = this.config.embedded ? '../../../job-dsl-api-viewer/plugins' : 'build/data/update-center.json';
+            return $.get(url).then(function (data) {
+                window.updateCenter = {data: data};
+                return data;
+            }.bind(this));
+        },
+
         loadSelectedDsl: function() {
-            var url = $('.version-select').val();
+            var url = this.config.embedded ? '../../../job-dsl-api-viewer/data' : $('.version-select').val();
             return this.dslLoader.fetch(url).then(this.onDslFetchComplete.bind(this), this.onDslFetchFailure.bind(this));
         },
 

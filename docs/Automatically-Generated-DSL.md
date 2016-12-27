@@ -3,9 +3,9 @@ Not all of the 1000+ Jenkins plugins are supported by the built-in DSL. If the
 automatically generated DSL can be used to fill the gap.
 
 Use the embedded API Viewer to explore the available DSL methods. If your Jenkins instance is running at
-http://localhost:8080, then the API viewer can be opened at http://localhost:8080/plugin/job-dsl/api-viewer. You can
-find a link to embedded API Viewer in the "Process Job DSLs" build step and in the task bar of the seed job. Generated
-methods are marked with a purple "Generated" tag. The generated DSL is *not* available in the online
+http://localhost:8080, then the API viewer can be opened at http://localhost:8080/plugin/job-dsl/api-viewer/index.html.
+You can find a link to embedded API Viewer in the "Process Job DSLs" build step and in the task bar of the seed job.
+Generated methods are marked with a purple "Generated" tag. The generated DSL is *not* available in the online
 [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/).
 
 If a methods is marked as required in the API viewer, it must be specified within it's context.

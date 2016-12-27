@@ -93,6 +93,9 @@ class GitExtensionContext extends AbstractExtensibleContext {
             if (jobManagement.isMinimumPluginVersionInstalled('git', '2.2.8') && context.timeout != null) {
                 timeout(context.timeout)
             }
+            if (jobManagement.isMinimumPluginVersionInstalled('git', '3.0.0')) {
+                parentCredentials(context.parentCredentials)
+            }
         }
     }
 
