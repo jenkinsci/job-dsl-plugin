@@ -406,7 +406,6 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.20
      */
-    @RequiresPlugin(id = 'maven-plugin', minimumVersion = '2.3')
     void maven(@DslContext(MavenContext) Closure closure) {
         MavenContext mavenContext = new MavenContext(jobManagement)
         ContextHelper.executeInContext(closure, mavenContext)
@@ -432,6 +431,9 @@ class StepContext extends AbstractExtensibleContext {
                     settingsConfigId(mavenContext.providedGlobalSettingsId)
                 }
             }
+            if (jobManagement.isMinimumCoreVersion('2.12')) {
+                injectBuildVariables(mavenContext.injectBuildVariables)
+            }
         }
 
         ContextHelper.executeConfigureBlock(mavenNode, mavenContext.configureBlock)
@@ -445,7 +447,6 @@ class StepContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The
      * {@code hudson.tasks.Maven} node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'maven-plugin', minimumVersion = '2.3')
     void maven(String targets = null, String pom = null, Closure configure = null) {
         maven {
             delegate.goals(targets)

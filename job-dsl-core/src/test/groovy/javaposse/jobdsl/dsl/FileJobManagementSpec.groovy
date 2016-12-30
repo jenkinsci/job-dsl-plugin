@@ -64,22 +64,6 @@ class FileJobManagementSpec extends Specification {
         name << [null, '']
     }
 
-    def 'createOrUpdateConfig complains about missing config'(String config) {
-        setup:
-        Item item = Mock(Item)
-        item.name >> 'foo'
-        item.xml >> config
-
-        when:
-        jobManagement.createOrUpdateConfig(item, false)
-
-        then:
-        thrown(ConfigurationMissingException)
-
-        where:
-        config << [null, '']
-    }
-
     def 'createOrUpdateConfig creates config'() {
         setup:
         Item item = Mock(Item)

@@ -1,3 +1,83 @@
+## Migrating to 1.54
+
+### Embedded API Viewer
+
+The short URL for the embedded API Viewer http://localhost:8080/plugin/job-dsl/api-viewer is
+[[deprecated|Deprecation-Policy]] and will be removed. Use http://localhost:8080/plugin/job-dsl/api-viewer/index.html
+instead.
+
+### S3
+
+Support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin) is [deprecated|Deprecation-Policy]]
+and will be removed. Use the syntax provided by the [[Automatically Generated DSL]] instead.
+
+DSL prior to 1.54
+```groovy
+job('example') {
+    publishers {
+        s3('myProfile') {
+            entry('foo', 'bar', 'eu-west-1') {
+                storageClass('REDUCED_REDUNDANCY')
+                noUploadOnFailure()
+                uploadFromSlave()
+                managedArtifacts()
+                useServerSideEncryption()
+                flatten()
+            }
+            metadata('key', 'value')
+        }
+    }
+}
+```
+
+DSL since 1.54
+```groovy
+job('example') {
+    publishers {
+        s3BucketPublisher {
+            profileName('myProfile')
+            entries {
+                entry {
+                    bucket('bar')
+                    sourceFile('foo')
+                    selectedRegion('eu-west-1')
+                    storageClass('REDUCED_REDUNDANCY')
+                    noUploadOnFailure(true)
+                    uploadFromSlave(true)
+                    managedArtifacts(true)
+                    useServerSideEncryption(true)
+                    flatten(true)
+                }
+            }
+            userMetadata {
+                metadataPair {
+                    key('key')
+                    value('value')
+                }
+            }
+        }
+    }
+}
+```
+
+### Delivery Pipeline
+
+Support for versions older than 0.10.0 of the
+[Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### GitHub Branch Source
+
+Support for versions older than 1.8 of the
+[GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+### JobDslPlugin
+
+The class `javaposse.jobdsl.plugin.JobDslPlugin` is [[deprecated|Deprecation-Policy]] and will be removed. It has been
+deprecated because the constructor of the super class `hudson.Plugin` has been deprecated. See the documentation of
+`hudson.Plugin` for details.
+
 ## Migrating to 1.53
 
 ### Overriding Job, Folder or View Names

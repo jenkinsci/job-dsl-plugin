@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition
 import spock.lang.Specification
 
 import static javaposse.jobdsl.dsl.helpers.step.RunConditionContext.BaseDir.WORKSPACE
@@ -174,21 +173,6 @@ class RunConditionContextSpec extends Specification {
         'ABORTED'   | 4
     }
 
-    def 'deprecated file exists'() {
-        when:
-        context.fileExists('some_file.txt', FileExistsCondition.BaseDir.WORKSPACE)
-
-        then:
-        with(context.condition) {
-            name() == 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition'
-            children().size() == 2
-            file[0].value() == 'some_file.txt'
-            baseDir[0].value().empty
-            baseDir[0].@class == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
-        }
-        1 * jobManagement.logDeprecationWarning()
-    }
-
     def 'file exists'() {
         when:
         context.fileExists('some_file.txt', WORKSPACE)
@@ -201,22 +185,6 @@ class RunConditionContextSpec extends Specification {
             baseDir[0].value().empty
             baseDir[0].@class == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
         }
-    }
-
-    def 'deprecated files match'() {
-        when:
-        context.filesMatch(/incl.*udes/, /excl.*udes/, FileExistsCondition.BaseDir.WORKSPACE)
-
-        then:
-        with(context.condition) {
-            name() == 'org.jenkins_ci.plugins.run_condition.core.FilesMatchCondition'
-            children().size() == 3
-            includes[0].value() == /incl.*udes/
-            excludes[0].value() == /excl.*udes/
-            baseDir[0].value().empty
-            baseDir[0].@class == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
-        }
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'files match'() {

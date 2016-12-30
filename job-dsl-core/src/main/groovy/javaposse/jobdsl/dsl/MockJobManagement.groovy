@@ -71,6 +71,11 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    boolean isMinimumCoreVersion(String version) {
+        false
+    }
+
+    @Override
     Integer getVSphereCloudHash(String name) {
         null
     }

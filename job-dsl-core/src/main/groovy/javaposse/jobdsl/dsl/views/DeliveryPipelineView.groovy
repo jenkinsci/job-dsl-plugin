@@ -233,7 +233,8 @@ class DeliveryPipelineView extends View {
     static enum Sorting {
         NONE('none'),
         TITLE('se.diabol.jenkins.pipeline.sort.NameComparator'),
-        LAST_ACTIVITY('se.diabol.jenkins.pipeline.sort.LatestActivityComparator')
+        LAST_ACTIVITY('se.diabol.jenkins.pipeline.sort.LatestActivityComparator'),
+        FAILED_FIRST('se.diabol.jenkins.pipeline.sort.FailedJobComparator')
 
         final String value
 

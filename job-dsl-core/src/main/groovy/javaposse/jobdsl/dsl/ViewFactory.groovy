@@ -32,13 +32,13 @@ interface ViewFactory extends Context {
      *
      * @see #sectionedView(java.lang.String)
      */
-    @RequiresPlugin(id = 'sectioned-view')
+    @RequiresPlugin(id = 'sectioned-view', failIfMissing = true)
     SectionedView sectionedView(String name)
 
     /**
      * Creates or updates a view that can be divided into sections.
      */
-    @RequiresPlugin(id = 'sectioned-view')
+    @RequiresPlugin(id = 'sectioned-view', failIfMissing = true)
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure)
 
     /**
@@ -46,13 +46,13 @@ interface ViewFactory extends Context {
      *
      * @see #nestedView(java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'nested-view')
+    @RequiresPlugin(id = 'nested-view', failIfMissing = true)
     NestedView nestedView(String name)
 
     /**
      * Creates or updates a view that allows grouping views into multiple levels.
      */
-    @RequiresPlugin(id = 'nested-view')
+    @RequiresPlugin(id = 'nested-view', failIfMissing = true)
     NestedView nestedView(String name, @DslContext(NestedView) Closure closure)
 
     /**
@@ -60,13 +60,13 @@ interface ViewFactory extends Context {
      *
      * @see #deliveryPipelineView(java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin')
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', failIfMissing = true)
     DeliveryPipelineView deliveryPipelineView(String name)
 
     /**
      * Creates or updates a view that renders pipelines based on upstream/downstream jobs.
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin')
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', failIfMissing = true)
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure)
 
     /**
@@ -74,13 +74,13 @@ interface ViewFactory extends Context {
      *
      * @see #buildPipelineView(java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'build-pipeline-plugin')
+    @RequiresPlugin(id = 'build-pipeline-plugin', failIfMissing = true)
     BuildPipelineView buildPipelineView(String name)
 
     /**
      * Create or updates a view of upstream and downstream connected jobs.
      */
-    @RequiresPlugin(id = 'build-pipeline-plugin')
+    @RequiresPlugin(id = 'build-pipeline-plugin', failIfMissing = true)
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure)
 
     /**
@@ -88,13 +88,13 @@ interface ViewFactory extends Context {
      *
      * @see #buildMonitorView(java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'build-monitor-plugin')
+    @RequiresPlugin(id = 'build-monitor-plugin', failIfMissing = true)
     BuildMonitorView buildMonitorView(String name)
 
     /**
      * Creates or updates a view that provides a highly visible view of the status of selected Jenkins jobs.
      */
-    @RequiresPlugin(id = 'build-monitor-plugin')
+    @RequiresPlugin(id = 'build-monitor-plugin', failIfMissing = true)
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure)
 
     /**
@@ -103,14 +103,14 @@ interface ViewFactory extends Context {
      *
      * @see #categorizedJobsView(java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
+    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8', failIfMissing = true)
     CategorizedJobsView categorizedJobsView(String name)
 
     /**
      * Creates or updates a new view that is very similar to the standard Jenkins List Views, but where you can group
      * jobs and categorize them according to regular expressions.
      */
-    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8')
+    @RequiresPlugin(id = 'categorized-view', minimumVersion = '1.8', failIfMissing = true)
     CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure)
 
     /**
@@ -119,7 +119,7 @@ interface ViewFactory extends Context {
      * @see #dashboardView(java.lang.String, groovy.lang.Closure)
      * @since 1.42
      */
-    @RequiresPlugin(id = 'dashboard-view', minimumVersion = '2.9.7')
+    @RequiresPlugin(id = 'dashboard-view', minimumVersion = '2.9.7', failIfMissing = true)
     DashboardView dashboardView(String name)
 
     /**
@@ -127,6 +127,6 @@ interface ViewFactory extends Context {
 
      * @since 1.42
      */
-    @RequiresPlugin(id = 'dashboard-view', minimumVersion = '2.9.7')
+    @RequiresPlugin(id = 'dashboard-view', minimumVersion = '2.9.7', failIfMissing = true)
     DashboardView dashboardView(String name, @DslContext(DashboardView) Closure closure)
 }

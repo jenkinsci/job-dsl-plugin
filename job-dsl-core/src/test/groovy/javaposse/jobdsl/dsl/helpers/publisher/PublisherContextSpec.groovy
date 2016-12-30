@@ -3347,6 +3347,7 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call s3 with more options'() {
@@ -3405,6 +3406,7 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('s3', '0.7')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call flexible publish'() {
@@ -3750,6 +3752,61 @@ class PublisherContextSpec extends Specification {
 
         where:
         value << [true, false]
+    }
+
+    def 'call post build scripts with minimal options and matrix job'() {
+        setup:
+        Item item = new MatrixJob(jobManagement, 'test')
+        PublisherContext context = new PublisherContext(jobManagement, item)
+
+        when:
+        context.postBuildScripts {
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
+            children().size() == 5
+            buildSteps[0].children().size == 0
+            scriptOnlyIfSuccess[0].value() == true
+            scriptOnlyIfFailure[0].value() == false
+            markBuildUnstable[0].value() == false
+            executeOn[0].value() == 'BOTH'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+    }
+
+    def 'call post build scripts with all options and matrix job'() {
+        setup:
+        Item item = new MatrixJob(jobManagement, 'test')
+        PublisherContext context = new PublisherContext(jobManagement, item)
+
+        when:
+        context.postBuildScripts {
+            steps {
+                shell('echo TEST')
+            }
+            onlyIfBuildSucceeds(false)
+            onlyIfBuildFails()
+            markBuildUnstable()
+            executeOn(mode)
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
+            children().size() == 5
+            buildSteps[0].children().size == 1
+            buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
+            scriptOnlyIfSuccess[0].value() == false
+            scriptOnlyIfFailure[0].value() == true
+            markBuildUnstable[0].value() == true
+            executeOn[0].value() == mode
+        }
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+
+        where:
+        mode << ['MATRIX', 'AXES', 'BOTH']
     }
 
     def 'call sonar with no options'() {
@@ -4734,66 +4791,6 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('build-publisher', '1.20')
     }
 
-    def 'hipChat notification with no options'() {
-        when:
-        context.hipChat()
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'jenkins.plugins.hipchat.HipChatNotifier'
-            children().size() == 11
-            token[0].value() == ''
-            room[0].value() == ''
-            startNotification[0].value() == false
-            notifySuccess[0].value() == false
-            notifyAborted[0].value() == false
-            notifyNotBuilt[0].value() == false
-            notifyUnstable[0].value() == false
-            notifyFailure[0].value() == false
-            notifyBackToNormal[0].value() == false
-            startJobMessage[0].value() == ''
-            completeJobMessage[0].value() == ''
-        }
-        1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'hipChat notification with all options'() {
-        when:
-        context.hipChat {
-            rooms('foo', 'bar')
-            token('abcd')
-            notifyBuildStart()
-            notifySuccess()
-            notifyAborted()
-            notifyNotBuilt()
-            notifyUnstable()
-            notifyFailure()
-            notifyBackToNormal()
-            startJobMessage('JOB AT $URL')
-            completeJobMessage('JOB DONE! $URL')
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'jenkins.plugins.hipchat.HipChatNotifier'
-            children().size() == 11
-            token[0].value() == 'abcd'
-            room[0].value() == 'foo,bar'
-            startNotification[0].value() == true
-            notifySuccess[0].value() == true
-            notifyAborted[0].value() == true
-            notifyNotBuilt[0].value() == true
-            notifyUnstable[0].value() == true
-            notifyFailure[0].value() == true
-            notifyBackToNormal[0].value() == true
-            startJobMessage[0].value() == 'JOB AT $URL'
-            completeJobMessage[0].value() == 'JOB DONE! $URL'
-        }
-        1 * jobManagement.requireMinimumPluginVersion('hipchat', '0.1.9')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
     def 'mattermost notification with no options'() {
         when:
         context.mattermost()
@@ -5173,7 +5170,7 @@ class PublisherContextSpec extends Specification {
         when:
         context.joinTrigger {
             publishers {
-                hipChat()
+                artifactDeployer {}
             }
         }
 

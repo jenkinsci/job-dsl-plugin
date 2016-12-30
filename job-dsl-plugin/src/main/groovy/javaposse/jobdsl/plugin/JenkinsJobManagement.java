@@ -9,7 +9,6 @@ import groovy.util.XmlParser;
 import hudson.FilePath;
 import hudson.Plugin;
 import hudson.XmlFile;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.BuildableItem;
@@ -88,12 +87,6 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private boolean unstableOnDeprecation;
     private String[] jobDslWhitelist;
 
-    @Deprecated
-    public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, AbstractBuild<?, ?> build,
-                                LookupStrategy lookupStrategy) {
-        this(outputLogger, envVars, build, build.getWorkspace(), lookupStrategy);
-    }
-
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, Run<?, ?> run,
                                 FilePath workspace, LookupStrategy lookupStrategy) {
         super(outputLogger);
@@ -102,11 +95,6 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         this.workspace = workspace;
         this.project = run == null ? null : run.getParent();
         this.lookupStrategy = lookupStrategy;
-    }
-
-    @Deprecated
-    public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, AbstractBuild<?, ?> build) {
-        this(outputLogger, envVars, build, build.getWorkspace(), LookupStrategy.JENKINS_ROOT);
     }
 
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, File workspace) {
@@ -164,12 +152,11 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     public boolean createOrUpdateConfig(javaposse.jobdsl.dsl.Item dslItem, boolean ignoreExisting)
             throws NameNotProvidedException {
         String path = dslItem.getName();
-        String config = dslItem.getXml();
 
         LOGGER.log(Level.INFO, format("createOrUpdateConfig for %s", path));
         boolean created = false;
 
-        validateUpdateArgs(path, config);
+        validateNameArg(path);
 
         AbstractItem item = lookupStrategy.getItem(project, path, AbstractItem.class);
         String jobName = FilenameUtils.getName(path);
@@ -378,7 +365,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public void requireMinimumCoreVersion(String version) {
-        if (Jenkins.getVersion().isOlderThan(new VersionNumber(version))) {
+        if (!isMinimumCoreVersion(version)) {
             failOrMarkBuildAsUnstable("Jenkins needs to be updated to version " + version + " or later", false);
         }
     }
@@ -387,6 +374,11 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     public boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
         Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
         return plugin != null && !plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(version));
+    }
+
+    @Override
+    public boolean isMinimumCoreVersion(String version) {
+        return !Jenkins.getVersion().isOlderThan(new VersionNumber(version));
     }
 
     @Override
