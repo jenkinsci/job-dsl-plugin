@@ -29,6 +29,7 @@ abstract class JobParent extends Script implements DslFactory {
     Set<ConfigFile> referencedConfigFiles = new LinkedHashSet<>()
     Set<UserContent> referencedUserContents = new LinkedHashSet<>()
     List<String> queueToBuild = []
+    boolean canBeCached = true
 
     /**
      * @since 1.30
@@ -105,7 +106,6 @@ abstract class JobParent extends Script implements DslFactory {
         processItem(name, MultibranchWorkflowJob, closure)
     }
 
-    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     protected <T extends Item> T processItem(String name, Class<T> jobClass, Closure closure) {
         checkNotNullOrEmpty(name, 'name must be specified')
 
@@ -117,6 +117,7 @@ abstract class JobParent extends Script implements DslFactory {
         job
     }
 
+    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     /**
      * @since 1.30
      */
@@ -182,7 +183,6 @@ abstract class JobParent extends Script implements DslFactory {
         processView(name, DashboardView, closure)
     }
 
-    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     protected <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
         checkNotNullOrEmpty(name, 'name must be specified')
 
@@ -194,6 +194,7 @@ abstract class JobParent extends Script implements DslFactory {
         view
     }
 
+    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     /**
      * @since 1.30
      */
@@ -231,10 +232,10 @@ abstract class JobParent extends Script implements DslFactory {
         processConfigFile(name, ConfigFileType.ManagedScript, ParametrizedConfigFile, closure)
     }
 
-    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     protected <T extends ConfigFile> T processConfigFile(String name, ConfigFileType configFileType,
                                                          Class<T> type = ConfigFile, Closure closure) {
         checkNotNullOrEmpty(name, 'name must be specified')
+        canBeCached = false
 
         T configFile = type.newInstance(configFileType, jm)
         configFile.name = name
@@ -245,6 +246,7 @@ abstract class JobParent extends Script implements DslFactory {
         configFile
     }
 
+    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
     @Override
     void userContent(String path, InputStream content) {
         referencedUserContents << new UserContent(path, content)
@@ -274,6 +276,7 @@ abstract class JobParent extends Script implements DslFactory {
     @Override
     InputStream streamFileFromWorkspace(String filePath) {
         checkNotNullOrEmpty(filePath, 'filePath must not be null or empty')
+        canBeCached = false
         jm.streamFileInWorkspace(filePath)
     }
 
@@ -283,6 +286,7 @@ abstract class JobParent extends Script implements DslFactory {
     @Override
     String readFileFromWorkspace(String filePath) {
         checkNotNullOrEmpty(filePath, 'filePath must not be null or empty')
+        canBeCached = false
         jm.readFileInWorkspace(filePath)
     }
 
@@ -293,6 +297,11 @@ abstract class JobParent extends Script implements DslFactory {
     String readFileFromWorkspace(String jobName, String filePath) {
         checkNotNullOrEmpty(jobName, 'jobName must not be null or empty')
         checkNotNullOrEmpty(filePath, 'filePath must not be null or empty')
+        canBeCached = false
         jm.readFileInWorkspace(jobName, filePath)
+    }
+
+    boolean canBeCached() {
+        return canBeCached
     }
 }
