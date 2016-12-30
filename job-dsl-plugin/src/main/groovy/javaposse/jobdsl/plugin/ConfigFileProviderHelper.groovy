@@ -8,6 +8,8 @@ import javaposse.jobdsl.dsl.ParametrizedConfigFile
 import jenkins.model.Jenkins
 import org.jenkinsci.lib.configprovider.ConfigProvider
 import org.jenkinsci.lib.configprovider.model.Config
+import org.jenkinsci.plugins.configfiles.ConfigFiles
+import org.jenkinsci.plugins.configfiles.custom.CustomConfig
 import org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig
 import org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig
 import org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping
@@ -26,7 +28,7 @@ class ConfigFileProviderHelper {
     ]
 
     static Config findConfig(ConfigProvider configProvider, String name) {
-        configProvider.allConfigs.find { it.name == name }
+        ConfigFiles.getConfigsInContext(null, configProvider.getClass()).find { it.name == name }
     }
 
     static ConfigProvider findConfigProvider(ConfigFileType configFileType) {
@@ -38,7 +40,7 @@ class ConfigFileProviderHelper {
     static Config createNewConfig(Config oldConfig, ConfigFile configFile) {
         switch (configFile.type) {
             case ConfigFileType.Custom:
-                return new Config(oldConfig.id, configFile.name, configFile.comment, configFile.content)
+                return new CustomConfig(oldConfig.id, configFile.name, configFile.comment, configFile.content)
             case ConfigFileType.MavenSettings:
                 return new MavenSettingsConfig(
                         oldConfig.id,
