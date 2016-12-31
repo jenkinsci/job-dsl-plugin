@@ -90,5 +90,6 @@ dependencies {
     jenkinsTest 'org.jenkins-ci.plugins:cloudbees-folder:5.0@jar'
     jenkinsTest 'org.jenkins-ci.plugins:nested-view:1.14@jar'
     jenkinsTest 'org.jenkins-ci.plugins:Exclusion:0.11@jar'
+    jenkinsTest 'org.jenkins-ci.plugins:credentials:2.1.10@jar'
     jenkinsTest 'org.jenkins-ci.main:jenkins-test-harness:2.7@jar'
 }
