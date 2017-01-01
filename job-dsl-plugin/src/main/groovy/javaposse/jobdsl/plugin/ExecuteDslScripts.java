@@ -41,6 +41,9 @@ import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import org.apache.commons.io.FilenameUtils;
+import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext;
+import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
+import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -80,6 +83,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
      * Whether we're using some text for the script directly
      */
     private Boolean usingScriptText;
+
+    private boolean sandbox;
 
     private boolean ignoreExisting;
 
@@ -147,6 +152,15 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     @DataBoundSetter
     public void setUseScriptText(Boolean value) {
         this.usingScriptText = value;
+    }
+
+    public boolean isSandbox() {
+        return sandbox;
+    }
+
+    @DataBoundSetter
+    public void setSandbox(boolean sandbox) {
+        this.sandbox = sandbox;
     }
 
     public boolean isIgnoreMissingFiles() {
@@ -221,6 +235,17 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.additionalClasspath = fixEmptyAndTrim(additionalClasspath);
     }
 
+    void configure(Item ancestor) {
+        if (isUsingScriptText() && DescriptorImpl.isSecurityEnabled()) {
+            ScriptApproval.get().configuring(scriptText, GroovyLanguage.get(), ApprovalContext.create().withCurrentUser().withItem(ancestor));
+        }
+    }
+
+    private Object readResolve() {
+        configure(null);
+        return this;
+    }
+
     /**
      * Runs every job DSL script provided in the plugin configuration, which results in new /
      * updated Jenkins jobs. The created / updated jobs are reported in the build result.
@@ -247,7 +272,17 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                         getTargets(), isUsingScriptText(), getScriptText(), ignoreExisting, isIgnoreMissingFiles(), additionalClasspath
                 );
 
-                JenkinsDslScriptLoader dslScriptLoader = new JenkinsDslScriptLoader(jobManagement);
+                JenkinsDslScriptLoader dslScriptLoader;
+                if (DescriptorImpl.isSecurityEnabled()) {
+                    if (sandbox) {
+                        dslScriptLoader = new SandboxDslScriptLoader(jobManagement, run.getParent());
+                    } else {
+                        dslScriptLoader = new ScriptApprovalDslScriptLoader(jobManagement, run.getParent());
+                    }
+                } else {
+                    dslScriptLoader = new JenkinsDslScriptLoader(jobManagement);
+                }
+
                 GeneratedItems generatedItems = dslScriptLoader.runScripts(scriptRequests);
                 Set<GeneratedJob> freshJobs = generatedItems.getJobs();
                 Set<GeneratedView> freshViews = generatedItems.getViews();

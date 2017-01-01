@@ -274,7 +274,7 @@ See [[The Configure Block]] page for details.
 
 # DSL Factory
 
-Because the engine is just Groovy, you can call other Groovy classes available in the workspace. When in those methods
+Because the engine is just Groovy, you can call other Groovy classes on the classpath. When in those methods
 the `job` method is no longer available, so it is recommended to pass in the current context to make this method
 available to another context. For example, when making utility methods, you would call them like this:
 

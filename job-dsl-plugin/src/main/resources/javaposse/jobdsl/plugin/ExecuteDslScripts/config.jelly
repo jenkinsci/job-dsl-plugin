@@ -4,20 +4,23 @@
         <p>See <a href="${rootURL}/plugin/job-dsl/api-viewer/index.html" target="_blank">Job DSL API</a> for syntax reference.</p>
     </f:block>
     <f:radioBlock name="useScriptText" value="true" title="Use the provided DSL script" checked="${instance.isUsingScriptText()}" inline="true">
-        <f:entry title='DSL Script' field='scriptText'>
+        <f:entry title='DSL Script' field='scriptText' description="${descriptor.scriptApprovalWarning}">
             <f:textarea codemirror-mode="groovy"
                         codemirror-config="mode: 'text/x-groovy', lineNumbers: true, matchBrackets: true, onBlur: function(editor){editor.save()}"/>
         </f:entry>
     </f:radioBlock>
 
     <f:radioBlock name="useScriptText" value="false" title="Look on Filesystem" checked="${!instance.isUsingScriptText()}" inline="true">
-        <f:entry title="DSL Scripts" field="targets">
+        <f:entry title="DSL Scripts" field="targets" description="${descriptor.scriptApprovalWarning}">
             <f:expandableTextbox/>
         </f:entry>
         <f:entry title="Ignore missing files:" field="ignoreMissingFiles">
             <f:checkbox name="ignoreMissingFiles" checked="${instance.ignoreMissingFiles}"/>
         </f:entry>
     </f:radioBlock>
+    <f:entry title="Use Groovy Sandbox:" field="sandbox">
+        <f:checkbox default="${!h.hasPermission(app.RUN_SCRIPTS)}"/>
+    </f:entry>
     <f:entry title="Action for existing jobs and views:" field="ignoreExisting">
         <f:checkbox name="ignoreExisting" title="Ignore changes" checked="${instance.ignoreExisting}"
                     description="What to do with previously generated jobs and views when generated config is not the same?"/>
@@ -34,7 +37,7 @@
             <f:select default="JENKINS_ROOT"/>
         </f:entry>
 
-        <f:entry title="Additional classpath" field="additionalClasspath">
+        <f:entry title="Additional classpath" field="additionalClasspath" description="${descriptor.classpathApprovalWarning}">
             <f:expandableTextbox/>
         </f:entry>
 

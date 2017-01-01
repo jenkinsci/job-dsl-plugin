@@ -1,0 +1,40 @@
+package javaposse.jobdsl.plugin
+
+import hudson.model.Item
+import javaposse.jobdsl.dsl.DslException
+import javaposse.jobdsl.dsl.JobManagement
+import org.codehaus.groovy.control.CompilerConfiguration
+import org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException
+import org.jenkinsci.plugins.scriptsecurity.sandbox.Whitelist
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.GroovySandbox
+import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext
+import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
+
+class SandboxDslScriptLoader extends SecureDslScriptLoader {
+    private final Item seedJob
+
+    SandboxDslScriptLoader(JobManagement jobManagement, Item seedJob) {
+        super(jobManagement)
+        this.seedJob = seedJob
+    }
+
+    @Override
+    protected CompilerConfiguration createCompilerConfiguration() {
+        GroovySandbox.createSecureCompilerConfiguration()
+    }
+
+    @Override
+    protected ClassLoader prepareClassLoader(ClassLoader classLoader) {
+        GroovySandbox.createSecureClassLoader(classLoader)
+    }
+
+    @Override
+    protected void runScript(Script script) {
+        try {
+            GroovySandbox.run(script, Whitelist.all())
+        } catch (RejectedAccessException e) {
+            ScriptApproval.get().accessRejected(e, ApprovalContext.create().withItem(seedJob))
+            throw new DslException(e.message, e)
+        }
+    }
+}

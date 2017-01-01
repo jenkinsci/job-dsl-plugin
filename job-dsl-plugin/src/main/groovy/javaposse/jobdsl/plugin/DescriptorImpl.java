@@ -18,8 +18,12 @@ import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
 import jenkins.YesNoMaybe;
 import jenkins.model.Jenkins;
+import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.StaplerRequest;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
@@ -82,8 +86,23 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
     }
 
     @Override
+    public Builder newInstance(@CheckForNull StaplerRequest req, @Nonnull JSONObject formData) throws FormException {
+        ExecuteDslScripts builder = (ExecuteDslScripts) super.newInstance(req, formData);
+        builder.configure(req.findAncestorObject(Item.class));
+        return builder;
+    }
+
+    @Override
     public boolean isApplicable(Class<? extends AbstractProject> jobType) {
         return true;
+    }
+
+    public String getScriptApprovalWarning() {
+        return isSecurityEnabled() && !Jenkins.getInstance().hasPermission(Jenkins.RUN_SCRIPTS) ? Messages.ScriptSecurity_ScriptApprovalWarning() : "";
+    }
+
+    public String getClasspathApprovalWarning() {
+        return isSecurityEnabled() && !Jenkins.getInstance().hasPermission(Jenkins.RUN_SCRIPTS) ? Messages.ScriptSecurity_ClasspathApprovalWarning() : "";
     }
 
     @Initializer(before = InitMilestone.PLUGINS_STARTED)
@@ -97,6 +116,11 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         Run.XSTREAM2.addCompatibilityAlias(
                 "javaposse.jobdsl.plugin.GeneratedViewsBuildAction", GeneratedViewsBuildAction.class
         );
+    }
+
+    static boolean isSecurityEnabled() {
+        Jenkins jenkins = Jenkins.getInstance();
+        return jenkins.isUseSecurity() && jenkins.getDescriptorByType(GlobalJobDslSecurityConfiguration.class).isUseScriptSecurity();
     }
 
     private static void removeSeedReference(String key) {

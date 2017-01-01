@@ -66,6 +66,12 @@ REST API calls
 Import other files (i.e. with class definitions) into your script
 -----------------------------------------------------------------
 
+> Importing Groovy classes from the workspace is not possible when script security is enabled since that would undermine
+> the script approval process. As an alternative it is possible to package the classes into a JAR file and add that JAR
+> to the classpath through the _Additional classpath_ option. Classpath entries are subject to the approval process. See
+> the [Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example) as starting point for building and
+> packaging classes.
+
 Make a directory at the same level as the DSL called `utilities` and create a file called `MyUtilities.groovy` in the
 `utilities` directory with the following contents:
 

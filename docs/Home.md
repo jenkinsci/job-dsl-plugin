@@ -27,6 +27,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.59 (unreleased)
+ * Enabled script approval with the
+   [Script Security Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin), see
+   [Migration](Migration#migrating-to-155)
+   ([SECURITY-369](https://issues.jenkins-ci.org/browse/SECURITY-369))
  * Enable [[Automatically Generated DSL]] for
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
    ([JENKINS-41741](https://issues.jenkins-ci.org/browse/JENKINS-41741))
