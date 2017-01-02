@@ -1,3 +1,11 @@
+## Migrating to 1.55
+
+### ScriptRequest
+
+Some constructors and the `location` property in `javaposse.jobdsl.dsl.ScriptRequest` are
+[[deprecated|Deprecation-Policy]] and will be removed. The `body` and `scriptPath` properties should be used instead.
+The class is part of the internal implementation and should not affect DSL scripts.
+
 ## Migrating to 1.54
 
 ### Embedded API Viewer
