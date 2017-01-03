@@ -32,8 +32,9 @@ class Run {
         }
 
         args.each { String scriptName ->
-            String scriptPath = new File(scriptName).absolutePath
-            ScriptRequest request = new ScriptRequest(scriptName, null, cwdURL, false, scriptPath)
+            File scriptFile = new File(scriptName)
+            String scriptBody = scriptFile.getText('UTF-8')
+            ScriptRequest request = new ScriptRequest(scriptBody, cwdURL, false, scriptFile.absolutePath)
             GeneratedItems generatedItems = new DslScriptLoader(jm).runScripts([request])
 
             for (GeneratedJob job : generatedItems.jobs) {

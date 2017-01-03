@@ -35,7 +35,7 @@ class ScriptRequestGenerator implements Closeable {
         }
         if (usingScriptText) {
             URL[] urlRoots = ([createWorkspaceUrl()] + classpath) as URL[]
-            ScriptRequest request = new ScriptRequest(null, scriptText, urlRoots, ignoreExisting)
+            ScriptRequest request = new ScriptRequest(scriptText, urlRoots, ignoreExisting)
             scriptRequests.add(request)
         } else {
             targets.split('\n').each { String target ->
@@ -46,7 +46,7 @@ class ScriptRequestGenerator implements Closeable {
                 for (FilePath filePath : filePaths) {
                     URL[] urlRoots = ([createWorkspaceUrl(filePath.parent)] + classpath) as URL[]
                     ScriptRequest request = new ScriptRequest(
-                            filePath.name, null, urlRoots, ignoreExisting, getAbsolutePath(filePath)
+                            readFile(filePath), urlRoots, ignoreExisting, getAbsolutePath(filePath)
                     )
                     scriptRequests.add(request)
                 }
@@ -94,6 +94,15 @@ class ScriptRequestGenerator implements Closeable {
         File file = File.createTempFile('jobdsl', '.jar')
         filePath.copyTo(new FilePath(file))
         file
+    }
+
+    private static String readFile(FilePath filePath) {
+        InputStream inputStream = filePath.read()
+        try {
+            return inputStream.getText('UTF-8')
+        } finally {
+            inputStream.close()
+        }
     }
 
     @SuppressWarnings('UnnecessaryGetter')

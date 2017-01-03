@@ -33,6 +33,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-39769](https://issues.jenkins-ci.org/browse/JENKINS-39769))
  * Updated optional [Managed Scripts Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Managed+Script+Plugin)
    dependency to version 1.3
+ * Use Groovy Shell instead of Groovy Script Engine to run DSL scripts, see [Migration](Migration#migrating-to-155)
+   ([#976](https://github.com/jenkinsci/job-dsl-plugin/pull/976))
 * 1.54 (December 24 2016)
  * Enhanced support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
    ([#953](https://github.com/jenkinsci/job-dsl-plugin/pull/953))

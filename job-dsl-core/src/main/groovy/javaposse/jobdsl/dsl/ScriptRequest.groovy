@@ -5,6 +5,7 @@ import groovy.transform.EqualsAndHashCode
 @EqualsAndHashCode
 class ScriptRequest {
     // Starting Object
+    @Deprecated
     final String location
 
     // Starting Script
@@ -23,11 +24,21 @@ class ScriptRequest {
         this(null, body, new File('.').toURI().toURL())
     }
 
+    ScriptRequest(String body, URL urlRoot, boolean ignoreExisting = false, String scriptPath = null) {
+        this(null, body, [urlRoot] as URL[], ignoreExisting, scriptPath)
+    }
+
+    ScriptRequest(String body, URL[] urlRoots, boolean ignoreExisting = false, String scriptPath = null) {
+        this(null, body, urlRoots, ignoreExisting, scriptPath)
+    }
+
+    @Deprecated
     ScriptRequest(String location, String body, URL urlRoot, boolean ignoreExisting = false,
                   String scriptPath = null) {
         this(location, body, [urlRoot] as URL[], ignoreExisting, scriptPath)
     }
 
+    @Deprecated
     ScriptRequest(String location, String body, URL[] urlRoots, boolean ignoreExisting = false,
                   String scriptPath = null) {
         this.location = location
