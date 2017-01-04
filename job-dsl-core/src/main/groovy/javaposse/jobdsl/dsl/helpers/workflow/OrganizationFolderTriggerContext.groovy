@@ -25,7 +25,7 @@ class OrganizationFolderTriggerContext extends ItemTriggerContext {
   }
 
   /**
-   * The drop down options for a periodic trigger if not triggered by something.
+   * The drop down options for a periodic trigger if not triggered by anything else.
    * @since 1.56
    */
   enum PeriodicFolderTrigger {

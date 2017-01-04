@@ -11,14 +11,14 @@ import javaposse.jobdsl.dsl.JobManagement
 @ContextType('jenkins.scm.api.SCMNavigator')
 class ScmNavigatorsContext extends AbstractExtensibleContext {
 
-  final List<Node> scmNavigatorNodes = []
+    final List<Node> scmNavigatorNodes = []
 
-  ScmNavigatorsContext(JobManagement jobManagement, Item item) {
-    super(jobManagement, item)
-  }
+    ScmNavigatorsContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
+    }
 
-  @Override
-  protected void addExtensionNode(final Node node) {
-    scmNavigatorNodes << node
-  }
+    @Override
+    protected void addExtensionNode(final Node node) {
+        scmNavigatorNodes << node
+    }
 }
