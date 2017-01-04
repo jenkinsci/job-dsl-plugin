@@ -146,6 +146,10 @@ class InterruptibleJobManagement implements JobManagement {
     @Override
     String[] getJobDslWhitelist() {
         delegate.jobDslWhitelist
+
+    boolean isMinimumCoreVersion(String version) {
+        delegate.isMinimumCoreVersion(version)
+
     }
 
     @Override

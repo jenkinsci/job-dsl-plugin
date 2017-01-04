@@ -38,7 +38,7 @@ class FileJobManagement extends MockJobManagement {
         String jobName = item.name
         String config = item.xml
 
-        validateUpdateArgs(jobName, config)
+        validateNameArg(jobName)
 
         File file = new File(root, jobName + ext)
         file.parentFile.mkdirs()

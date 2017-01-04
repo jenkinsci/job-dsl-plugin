@@ -83,13 +83,6 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         public ScriptLocation() {
         }
 
-        @Deprecated
-        public ScriptLocation(String value, String targets, String scriptText) {
-            setValue(value);
-            setTargets(targets);
-            setScriptText(scriptText);
-        }
-
         @DataBoundSetter
         public void setValue(String value) {
             this.usingScriptText = value == null || Boolean.parseBoolean(value);
@@ -154,35 +147,6 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     @Deprecated
     public ExecuteDslScripts(ScriptLocation scriptLocation) {
         setScriptLocation(scriptLocation);
-    }
-
-    @Deprecated
-    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
-                             RemovedViewAction removedViewAction, LookupStrategy lookupStrategy,
-                             String additionalClasspath) {
-        this(scriptLocation);
-        this.ignoreExisting = ignoreExisting;
-        this.removedJobAction = removedJobAction;
-        this.removedViewAction = removedViewAction;
-        this.lookupStrategy = lookupStrategy == null ? LookupStrategy.JENKINS_ROOT : lookupStrategy;
-        this.additionalClasspath = additionalClasspath;
-    }
-
-    @Deprecated
-    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
-                             LookupStrategy lookupStrategy) {
-        this(scriptLocation, ignoreExisting, removedJobAction, RemovedViewAction.IGNORE, lookupStrategy, null);
-    }
-
-    @Deprecated
-    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction) {
-        this(scriptLocation, ignoreExisting, removedJobAction, LookupStrategy.JENKINS_ROOT);
-    }
-
-    @Deprecated
-    public ExecuteDslScripts(ScriptLocation scriptLocation, boolean ignoreExisting, RemovedJobAction removedJobAction,
-                             RemovedViewAction removedViewAction, LookupStrategy lookupStrategy) {
-        this(scriptLocation, ignoreExisting, removedJobAction, removedViewAction, lookupStrategy, null);
     }
 
     ExecuteDslScripts(String scriptText) {

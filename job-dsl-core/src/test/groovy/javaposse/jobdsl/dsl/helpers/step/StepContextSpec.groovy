@@ -8,8 +8,6 @@ import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir.WORKSPACE
-
 class StepContextSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
     Item item = Mock(Item)
@@ -449,7 +447,6 @@ class StepContextSpec extends Specification {
         mavenStep.name() == 'hudson.tasks.Maven'
         mavenStep.targets[0].value() == 'install'
         mavenStep.pom[0] == null
-        (1.._) * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
 
         when:
         context.maven('install', 'pom.xml') { mavenNode ->
@@ -462,7 +459,6 @@ class StepContextSpec extends Specification {
         def mavenStep2 = context.stepNodes[1]
         mavenStep2.pom[0].value() == 'pom.xml'
         mavenStep2.mavenName[0].value() == 'Maven 2.0.1'
-        (1.._) * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call maven method with full context'() {
@@ -495,7 +491,44 @@ class StepContextSpec extends Specification {
         mavenStep.mavenName[0].value() == 'Maven 3.0.5'
         mavenStep.settingsConfigId[0].value() == 'foo-bar'
         mavenStep.properties[0].value() == 'skipTests=true\nother=some\nevenAnother=One'
-        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
+    }
+
+    def 'call maven method with full context and core version >= 2.12'() {
+        setup:
+        jobManagement.isMinimumCoreVersion('2.12') >> true
+
+        when:
+        context.maven {
+            rootPOM('module-a/pom.xml')
+            goals('clean')
+            goals('install')
+            mavenOpts('-Xms256m')
+            mavenOpts('-Xmx512m')
+            localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
+            mavenInstallation('Maven 3.0.5')
+            properties(skipTests: true, other: 'some')
+            property('evenAnother', 'One')
+            injectBuildVariables(false)
+            configure {
+                it / settingsConfigId('foo-bar')
+            }
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def mavenStep = context.stepNodes[0]
+        mavenStep.name() == 'hudson.tasks.Maven'
+        mavenStep.children().size() == 8
+        mavenStep.targets[0].value() == 'clean install'
+        mavenStep.pom[0].value() == 'module-a/pom.xml'
+        mavenStep.jvmOptions[0].value() == '-Xms256m -Xmx512m'
+        mavenStep.usePrivateRepository[0].value() == true
+        mavenStep.mavenName[0].value() == 'Maven 3.0.5'
+        mavenStep.settingsConfigId[0].value() == 'foo-bar'
+        mavenStep.properties[0].value() == 'skipTests=true\nother=some\nevenAnother=One'
+        mavenStep.injectBuildVariables[0].value() == false
+        1 * jobManagement.requireMinimumCoreVersion('2.12')
     }
 
     def 'call maven method with minimal context'() {
@@ -513,7 +546,27 @@ class StepContextSpec extends Specification {
         mavenStep.jvmOptions[0].value() == ''
         mavenStep.usePrivateRepository[0].value() == false
         mavenStep.mavenName[0].value() == '(Default)'
-        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
+    }
+
+    def 'call maven method with minimal context and core version >= 2.12'() {
+        setup:
+        jobManagement.isMinimumCoreVersion('2.12') >> true
+
+        when:
+        context.maven {
+        }
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def mavenStep = context.stepNodes[0]
+        mavenStep.name() == 'hudson.tasks.Maven'
+        mavenStep.children().size() == 5
+        mavenStep.targets[0].value() == ''
+        mavenStep.jvmOptions[0].value() == ''
+        mavenStep.usePrivateRepository[0].value() == false
+        mavenStep.mavenName[0].value() == '(Default)'
+        mavenStep.injectBuildVariables[0].value() == true
     }
 
     def 'call maven method with unknown provided settings'() {
@@ -580,7 +633,6 @@ class StepContextSpec extends Specification {
                 settingsConfigId[0].value() == globalSettingsId
             }
         }
-        1 * jobManagement.requireMinimumPluginVersion('maven-plugin', '2.3')
     }
 
     def 'call ant methods'() {
@@ -2279,7 +2331,7 @@ class StepContextSpec extends Specification {
         when:
         context.conditionalSteps {
             condition {
-                fileExists('someFile', WORKSPACE)
+                fileExists('someFile', RunConditionContext.BaseDir.WORKSPACE)
             }
             steps {
                 shell('echo Test')
@@ -2351,7 +2403,7 @@ class StepContextSpec extends Specification {
         context.conditionalSteps {
             condition {
                 "${dslOperation}" {
-                    fileExists('someFile', WORKSPACE)
+                    fileExists('someFile', RunConditionContext.BaseDir.WORKSPACE)
                 } {
                     alwaysRun()
                 }
@@ -2387,7 +2439,6 @@ class StepContextSpec extends Specification {
     }
 
     @Unroll
-    @SuppressWarnings('LineLength')
     def 'Simple Condition #conditionDsl is added correctly'(conditionDsl, args, conditionClass, argNodes) {
         when:
         context.conditionalSteps {
@@ -2404,31 +2455,31 @@ class StepContextSpec extends Specification {
         Node conditionNode = step.runCondition[0]
         conditionNode.children().size() == argNodes.size()
 
-        conditionNode.attribute('class') == conditionClass
+        conditionNode.attribute('class') == "org.jenkins_ci.plugins.run_condition.${conditionClass}"
         def ignored = argNodes.each { name, value ->
             assert conditionNode[name][0].value() == value
         }
         1 * jobManagement.requirePlugin('conditional-buildstep')
 
         where:
-        conditionDsl       | args                     | conditionClass                                                        | argNodes
-        'shell'            | ['echo test']            | 'org.jenkins_ci.plugins.run_condition.contributed.ShellCondition'     | [command: 'echo test']
-        'batch'            | ['xcopy * ..\\']         | 'org.jenkins_ci.plugins.run_condition.contributed.BatchFileCondition' | [command: 'xcopy * ..\\']
-        'alwaysRun'        | []                       | 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'                 | [:]
-        'neverRun'         | []                       | 'org.jenkins_ci.plugins.run_condition.core.NeverRun'                  | [:]
-        'booleanCondition' | ['someToken']            | 'org.jenkins_ci.plugins.run_condition.core.BooleanCondition'          | [token: 'someToken']
-        'cause'            | ['userCause', true]      | 'org.jenkins_ci.plugins.run_condition.core.CauseCondition'            | [buildCause    : 'userCause',
-                                                                                                                                 exclusiveCause: true]
-        'stringsMatch'     | ['some1', 'some2', true] | 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'     | [arg1      : 'some1',
-                                                                                                                                 arg2      : 'some2',
-                                                                                                                                 ignoreCase: true]
-        'expression'       | ['exp', 'lab']           | 'org.jenkins_ci.plugins.run_condition.core.ExpressionCondition'       | [expression: 'exp',
-                                                                                                                                 label     : 'lab']
-        'time'             | [5, 30, 15, 25, true]    | 'org.jenkins_ci.plugins.run_condition.core.TimeCondition'             | [earliestHours  : 5,
-                                                                                                                                 earliestMinutes: 30,
-                                                                                                                                 latestHours    : 15,
-                                                                                                                                 latestMinutes  : 25,
-                                                                                                                                 useBuildTime   : true]
+        conditionDsl       | args                     | conditionClass                   | argNodes
+        'shell'            | ['echo test']            | 'contributed.ShellCondition'     | [command: 'echo test']
+        'batch'            | ['xcopy * ..\\']         | 'contributed.BatchFileCondition' | [command: 'xcopy * ..\\']
+        'alwaysRun'        | []                       | 'core.AlwaysRun'                 | [:]
+        'neverRun'         | []                       | 'core.NeverRun'                  | [:]
+        'booleanCondition' | ['someToken']            | 'core.BooleanCondition'          | [token: 'someToken']
+        'cause'            | ['userCause', true]      | 'core.CauseCondition'            | [buildCause    : 'userCause',
+                                                                                            exclusiveCause: true]
+        'stringsMatch'     | ['some1', 'some2', true] | 'core.StringsMatchCondition'     | [arg1      : 'some1',
+                                                                                            arg2      : 'some2',
+                                                                                            ignoreCase: true]
+        'expression'       | ['exp', 'lab']           | 'core.ExpressionCondition'       | [expression: 'exp',
+                                                                                            label     : 'lab']
+        'time'             | [5, 30, 15, 25, true]    | 'core.TimeCondition'             | [earliestHours  : 5,
+                                                                                            earliestMinutes: 30,
+                                                                                            latestHours    : 15,
+                                                                                            latestMinutes  : 25,
+                                                                                            useBuildTime   : true]
     }
 
     @Unroll

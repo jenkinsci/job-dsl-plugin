@@ -7,7 +7,6 @@ class ABean {
     @DataBoundSetter
     String prop
 
-    @SuppressWarnings('UnnecessaryConstructor')
     @DataBoundConstructor
     ABean() {
     }

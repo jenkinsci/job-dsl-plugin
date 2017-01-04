@@ -417,6 +417,55 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.5.3')
     }
 
+    def 'call git scm with LocalBranch extension with empty branch'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            extensions {
+                localBranch(branch)
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            extensions[0].children()[0].name() == 'hudson.plugins.git.extensions.impl.LocalBranch'
+            extensions[0].children()[0].children().size() == 0
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * mockJobManagement.logPluginDeprecationWarning('git', '2.5.3')
+
+        where:
+        branch << [null, '']
+    }
+
+    def 'call git scm with LocalBranch extension without branch'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            extensions {
+                localBranch()
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            extensions[0].children()[0].name() == 'hudson.plugins.git.extensions.impl.LocalBranch'
+            extensions[0].children()[0].children().size() == 0
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * mockJobManagement.logPluginDeprecationWarning('git', '2.5.3')
+    }
+
     def 'call git scm with PerBuildTag extension'() {
         when:
         context.git {
@@ -1040,7 +1089,44 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.logPluginDeprecationWarning('git', '2.5.3')
     }
 
-    def 'call git scm with full submodule options'() {
+    def 'call git scm with full submodule options and plugin version 3.0.0'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('git', '3.0.0') >> true
+
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            extensions {
+                submoduleOptions {
+                    disable()
+                    recursive()
+                    tracking()
+                    parentCredentials()
+                }
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            with(extensions[0].'hudson.plugins.git.extensions.impl.SubmoduleOption'[0]) {
+                children().size() == 4
+                disableSubmodules[0].value() == true
+                recursiveSubmodules[0].value() == true
+                trackingSubmodules[0].value() == true
+                parentCredentials[0].value() == true
+            }
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '3.0.0')
+        1 * mockJobManagement.logPluginDeprecationWarning('git', '2.5.3')
+    }
+
+    def 'call git scm with full submodule options and plugin version 2.2.8'() {
         setup:
         mockJobManagement.isMinimumPluginVersionInstalled('git', '2.2.8') >> true
 

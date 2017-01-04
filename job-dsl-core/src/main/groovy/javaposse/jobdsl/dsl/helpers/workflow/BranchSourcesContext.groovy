@@ -53,19 +53,31 @@ class BranchSourcesContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'github-branch-source', minimumVersion = '1.6')
     void github(@DslContext(GitHubBranchSourceContext) Closure branchSourceClosure) {
+        jobManagement.logPluginDeprecationWarning('github-branch-source', '1.8')
+
         GitHubBranchSourceContext context = new GitHubBranchSourceContext(jobManagement)
         ContextHelper.executeInContext(branchSourceClosure, context)
 
         branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
             source(class: 'org.jenkinsci.plugins.github_branch_source.GitHubSCMSource') {
                 id(UUID.randomUUID())
-                apiUri(context.apiUri ?: '')
+                if (context.apiUri) {
+                    apiUri(context.apiUri)
+                }
                 scanCredentialsId(context.scanCredentialsId ?: '')
                 checkoutCredentialsId(context.checkoutCredentialsId ?: '')
                 repoOwner(context.repoOwner ?: '')
                 repository(context.repository ?: '')
                 includes(context.includes ?: '')
                 excludes(context.excludes ?: '')
+                if (jobManagement.isMinimumPluginVersionInstalled('github-branch-source', '1.8')) {
+                    buildOriginBranch(context.buildOriginBranch)
+                    buildOriginBranchWithPR(context.buildOriginBranchWithPR)
+                    buildOriginPRMerge(context.buildOriginPRMerge)
+                    buildOriginPRHead(context.buildOriginPRHead)
+                    buildForkPRMerge(context.buildForkPRMerge)
+                    buildForkPRHead(context.buildForkPRHead)
+                }
             }
             strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
                 properties(class: 'empty-list')

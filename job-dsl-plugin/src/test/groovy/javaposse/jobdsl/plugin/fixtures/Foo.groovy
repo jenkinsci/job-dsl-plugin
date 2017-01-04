@@ -8,7 +8,6 @@ import hudson.triggers.TriggerDescriptor
 import org.kohsuke.stapler.DataBoundConstructor
 
 class Foo extends Trigger<Job> {
-    @SuppressWarnings('UnnecessaryConstructor')
     @DataBoundConstructor
     Foo() {
     }

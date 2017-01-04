@@ -89,32 +89,11 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     /**
-     * @since 1.30
-     * @deprecated as of 1.47. Use #pipelineJob(java.lang.String, groovy.lang.Closure) instead.
-     */
-    @Deprecated
-    @Override
-    WorkflowJob workflowJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
-        pipelineJob(name, closure)
-    }
-
-    /**
      * @since 1.47
      */
     @Override
     WorkflowJob pipelineJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
         processItem(name, WorkflowJob, closure)
-    }
-
-    /**
-     * @since 1.42
-     * @deprecated as of 1.47. Use #multibranchPipelineJob(java.lang.String, groovy.lang.Closure) instead.
-     */
-    @Deprecated
-    @Override
-    MultibranchWorkflowJob multibranchWorkflowJob(String name,
-                                                  @DslContext(MultibranchWorkflowJob) Closure closure = null) {
-        multibranchPipelineJob(name, closure)
     }
 
     /**
@@ -167,6 +146,7 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
+        jm.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
         processView(name, DeliveryPipelineView, closure)
     }
 

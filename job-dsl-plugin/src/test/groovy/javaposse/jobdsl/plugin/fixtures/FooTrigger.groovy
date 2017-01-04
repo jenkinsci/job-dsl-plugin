@@ -9,7 +9,6 @@ import org.jenkinsci.Symbol
 import org.kohsuke.stapler.DataBoundConstructor
 
 class FooTrigger extends Trigger<Job> {
-    @SuppressWarnings('UnnecessaryConstructor')
     @DataBoundConstructor
     FooTrigger() {
     }
