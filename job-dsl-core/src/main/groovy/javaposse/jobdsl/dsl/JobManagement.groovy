@@ -196,7 +196,6 @@ interface JobManagement {
     boolean isMinimumPluginVersionInstalled(String pluginShortName, String version)
 
     /**
-
      * Returns {@code true} if the current Process JobDsl step will execute only whitelisted JobDsl blocks
      */
     boolean executeOnlyWhitelistedDsl()
@@ -205,6 +204,8 @@ interface JobManagement {
      * Returns the whitelist for what's allowed in this Process JobDsl step
      */
     String[] getJobDslWhitelist()
+
+    /**
      * Returns {@code true} if the currently running version of Jenkins is equal to or greater than the specified
      * version.
      *
@@ -212,12 +213,12 @@ interface JobManagement {
      */
     boolean isMinimumCoreVersion(String version)
 
-
     /**
      * Returns the version of Jenkins.
      *
      * @since 1.33
      */
+    //todo - where did this go?
 
     /**
      * Return the hash of the vSphere cloud with the given name.

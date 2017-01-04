@@ -536,7 +536,7 @@ abstract class Job extends Item {
 
                 // Assuming append the only child
                 project << context.scmNodes[0]
-            }, closure, context)
+            }, context)
         }
     }
 
@@ -577,7 +577,7 @@ abstract class Job extends Item {
             context.triggerNodes.each {
                 project / 'triggers' << it
             }
-        }, closure, context)
+        }, context)
     }
 
     /**
@@ -593,7 +593,7 @@ abstract class Job extends Item {
             context.wrapperNodes.each {
                 project / 'buildWrappers' << it
             }
-        }, closure, context)
+        }, context)
     }
 
     /**
@@ -621,7 +621,7 @@ abstract class Job extends Item {
             context.stepNodes.each {
                 project / 'builders' << it
             }
-        }, closure, context)
+        }, context)
     }
 
     /**
@@ -635,7 +635,7 @@ abstract class Job extends Item {
             context.publisherNodes.each {
                 project / 'publishers' << it
             }
-        }, closure, context)
+        }, context)
     }
 
     @Override
