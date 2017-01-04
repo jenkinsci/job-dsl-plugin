@@ -19,7 +19,8 @@ class OrganizationFolderJobSpec extends Specification {
             orphanedItemStrategy[0].attribute('class') ==
                 'com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy'
             projectFactories.size() == 1
-            projectFactories[0].'org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectFactory'.size() == 1
+            projectFactories[0].'org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectFactory'
+                               .size() == 1
             navigators.size() == 1
             navigators[0].children().size() == 0
             triggers.size() == 1
