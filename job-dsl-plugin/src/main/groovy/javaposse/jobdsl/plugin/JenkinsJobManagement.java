@@ -66,6 +66,7 @@ import java.util.logging.Logger;
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static java.lang.String.format;
+import static java.util.UUID.randomUUID;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.createNewConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider;
@@ -203,13 +204,11 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
 
         Config config = findConfig(configProvider, configFile.getName());
-        if (config == null) {
-            config = configProvider.newConfig();
-        } else if (ignoreExisting) {
+        if (config != null && ignoreExisting) {
             return config.id;
         }
 
-        config = createNewConfig(config, configFile);
+        config = createNewConfig(config == null ? randomUUID().toString() : config.id, configFile);
         if (config == null) {
             throw new DslException(
                     format(Messages.CreateOrUpdateConfigFile_UnknownConfigFileType(), configFile.getClass())

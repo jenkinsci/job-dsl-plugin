@@ -28,7 +28,7 @@ class ConfigFileProviderHelper {
     ]
 
     static Config findConfig(ConfigProvider configProvider, String name) {
-        ConfigFiles.getConfigsInContext(null, configProvider.getClass()).find { it.name == name }
+        ConfigFiles.getConfigsInContext(Jenkins.instance, configProvider.class).find { it.name == name }
     }
 
     static ConfigProvider findConfigProvider(ConfigFileType configFileType) {
@@ -37,13 +37,18 @@ class ConfigFileProviderHelper {
         extensionList.empty ? null : extensionList[0]
     }
 
+    @Deprecated
     static Config createNewConfig(Config oldConfig, ConfigFile configFile) {
+        createNewConfig(oldConfig.id, configFile)
+    }
+
+    static Config createNewConfig(String id, ConfigFile configFile) {
         switch (configFile.type) {
             case ConfigFileType.Custom:
-                return new CustomConfig(oldConfig.id, configFile.name, configFile.comment, configFile.content)
+                return new CustomConfig(id, configFile.name, configFile.comment, configFile.content)
             case ConfigFileType.MavenSettings:
                 return new MavenSettingsConfig(
-                        oldConfig.id,
+                        id,
                         configFile.name,
                         configFile.comment,
                         configFile.content,
@@ -52,7 +57,7 @@ class ConfigFileProviderHelper {
                 )
             case ConfigFileType.GlobalMavenSettings:
                 return new GlobalMavenSettingsConfig(
-                        oldConfig.id,
+                        id,
                         configFile.name,
                         configFile.comment,
                         configFile.content,
@@ -61,7 +66,7 @@ class ConfigFileProviderHelper {
                 )
             case ConfigFileType.ManagedScript:
                 return new ScriptConfig(
-                        oldConfig.id,
+                        id,
                         configFile.name,
                         configFile.comment,
                         configFile.content,
