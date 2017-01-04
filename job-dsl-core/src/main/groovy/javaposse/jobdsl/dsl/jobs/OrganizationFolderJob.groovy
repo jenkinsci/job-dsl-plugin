@@ -2,7 +2,7 @@ package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
-import javaposse.jobdsl.dsl.Item
+import javaposse.jobdsl.dsl.Folder
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.workflow.OrganizationFolderTriggerContext
 import javaposse.jobdsl.dsl.helpers.workflow.OrphanedItemStrategyContext
@@ -11,35 +11,15 @@ import javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext
 /**
  * @since 1.56
  */
-class OrganizationFolderJob extends Item {
+class OrganizationFolderJob extends Folder {
 
   protected OrganizationFolderJob(JobManagement jobManagement, String name) {
     super(jobManagement, name)
   }
 
   @Deprecated
-  protected OrganizationFolderJob(final JobManagement jobManagement) {
+  protected OrganizationFolderJob(JobManagement jobManagement) {
     super(jobManagement)
-  }
-
-  /**
-   * Sets the name to display instead of the folder name.
-   * @since 1.56
-   */
-  void displayName(String displayName) {
-    configure {
-      it / methodMissing('displayName', displayName)
-    }
-  }
-
-  /**
-   * Sets the description of this folder.
-   * @since 1.56
-   */
-  void description(String description) {
-    configure { Node project ->
-      project / methodMissing('description', description)
-    }
   }
 
   /**
@@ -47,7 +27,7 @@ class OrganizationFolderJob extends Item {
    * @since 1.56
    */
   void organizations(@DslContext(ScmNavigatorsContext) Closure closure) {
-    ScmNavigatorsContext context = new ScmNavigatorsContext(jobManagement)
+    ScmNavigatorsContext context = new ScmNavigatorsContext(jobManagement, this)
     ContextHelper.executeInContext(closure, context)
 
     configure { Node project ->
@@ -56,21 +36,6 @@ class OrganizationFolderJob extends Item {
       context.scmNavigatorNodes.each {
         navigators << it
       }
-    }
-  }
-
-  /**
-   * Allows you to control the SCM commit trigger coming from branch indexing.
-   * Supply a regular expression of branch names, for example {@code (?!release.*).*} or {@code PR-\d+}.
-   * Matching branches will be triggered automatically. (You may still build other branches manually or via CLI/REST.)
-   * @param branchTriggerPattern the branch pattern
-   * @since 1.56
-   */
-  void branchAutoTriggerPattern(String branchTriggerPattern) {
-    configure { Node project ->
-      project / 'properties' \
-        / 'jenkins.branch.NoTriggerOrganizationFolderProperty' \
-        / methodMissing('branches', branchTriggerPattern)
     }
   }
 

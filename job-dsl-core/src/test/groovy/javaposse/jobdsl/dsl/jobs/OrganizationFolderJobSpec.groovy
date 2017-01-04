@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.workflow.OrganizationFolderTriggerContext
+import javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext
 import spock.lang.Specification
 
 class OrganizationFolderJobSpec extends Specification {
@@ -93,26 +94,6 @@ It can also contain multiple lines.
     }
   }
 
-  def "can configure automatic branch trigger pattern"() {
-    given:
-    def pattern = 'master|feature/*'
-
-    when:
-    job.branchAutoTriggerPattern(pattern)
-
-    then:
-    with(job.node) {
-      it.'properties'.size() == 1
-      with(it.'properties'[0]) {
-        it.'jenkins.branch.NoTriggerOrganizationFolderProperty'.size() == 1
-        with(it.'jenkins.branch.NoTriggerOrganizationFolderProperty') {
-          branches.size() == 1
-          branches[0].value() == pattern
-        }
-      }
-    }
-  }
-
   def "can configure triggers"() {
     given:
     String expectedCron = 'H * * * *'
@@ -136,52 +117,20 @@ It can also contain multiple lines.
     }
   }
 
-  def "can configure Bitbucket Branch Source SCM Navigator"() {
-    when:
-    job.organizations {
-      bitbucket {}
-    }
-
-    then:
-    with(job.node) {
-      navigators.size() == 1
-      with(navigators[0]) {
-        children().size() == 1
-        with(it.'com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMNavigator') {
-          size() == 1
-          !children().empty
-        }
-      }
-    }
-  }
-
-  def "can configure GitHub Branch Source SCM Navigator"() {
-    when:
-    job.organizations {
-      github {}
-    }
-
-    then:
-    with(job.node) {
-      navigators.size() == 1
-      with(navigators[0]) {
-        children().size() == 1
-        with(it.'org.jenkinsci.plugins.github__branch__source.GitHubSCMNavigator') {
-          size() == 1
-          !children().empty
-        }
-      }
-    }
-  }
-
   def "can configure multiple SCM Navigators"() {
+    given:
+    jobManagement.callExtension('navigator1', job, ScmNavigatorsContext, _) >>
+      new Node(null, 'org.example.ScmNavigator1')
+    jobManagement.callExtension('navigator2', job, ScmNavigatorsContext, _) >>
+      new Node(null, 'org.example.ScmNavigator2')
+
     when:
     job.organizations {
-      github {}
-      bitbucket {}
-      bitbucket {}
-      github {}
-      github {}
+      navigator1 {}
+      navigator2 {}
+      navigator1 {}
+      navigator2 {}
+      navigator2 {}
     }
 
     then:
@@ -189,16 +138,13 @@ It can also contain multiple lines.
       navigators.size() == 1
       with(navigators[0]) {
         children().size() == 5
-        with(it.'org.jenkinsci.plugins.github__branch__source.GitHubSCMNavigator') {
-          size() == 3
-          !children().empty
-        }
-        with(it.'com.cloudbees.jenkins.plugins.bitbucket.BitbucketSCMNavigator') {
+        with(it.'org.example.ScmNavigator1') {
           size() == 2
-          !children().empty
+        }
+        with(it.'org.example.ScmNavigator2') {
+          size() == 3
         }
       }
     }
-
   }
 }
