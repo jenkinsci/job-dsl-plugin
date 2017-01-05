@@ -27,6 +27,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.56 (unreleased)
+ * Fixed support for
+   [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
+   ([JENKINS-40797](https://issues.jenkins-ci.org/browse/JENKINS-40797))
 * 1.55 (January 03 2016)
  * Updated optional
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) dependency to
