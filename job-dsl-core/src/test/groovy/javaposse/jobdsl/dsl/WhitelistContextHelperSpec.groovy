@@ -8,7 +8,6 @@ import java.util.logging.LogManager
 import java.util.logging.Logger
 
 import static org.junit.Assert.assertTrue
-import static org.junit.Assert.assertFalse
 
 /**
  * Testing the whitlelisting feature provided
