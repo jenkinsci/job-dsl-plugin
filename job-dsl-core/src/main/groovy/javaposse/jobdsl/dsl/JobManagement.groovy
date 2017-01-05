@@ -218,7 +218,6 @@ interface JobManagement {
      *
      * @since 1.33
      */
-    //todo - where did this go?
 
     /**
      * Return the hash of the vSphere cloud with the given name.

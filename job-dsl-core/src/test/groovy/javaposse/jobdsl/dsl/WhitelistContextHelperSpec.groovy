@@ -7,6 +7,9 @@ import java.util.logging.Level
 import java.util.logging.LogManager
 import java.util.logging.Logger
 
+import static org.junit.Assert.assertTrue
+import static org.junit.Assert.assertFalse
+
 /**
  * Testing the whitlelisting feature provided
  */
@@ -38,7 +41,7 @@ class WhitelistContextHelperSpec extends Specification {
 '''
 
     final Node node = new XmlParser().parse(new StringReader(XML))
-    final Node emptyNode = new XmlParser().parse(new StringReader(EMPTY_XML))
+    final Node emptyNode = new XmlParser().parse(new StringReader(EMPTY_PROJECT_XML))
 
     def setup() {
         Logger.getLogger('javaposse.jobdsl').setLevel(Level.ALL)
@@ -52,9 +55,10 @@ class WhitelistContextHelperSpec extends Specification {
 
     def 'verify empty parent node returns true'() {
         when:
-        WhitelistContextHelper.verifyNode(node, emptyNode)
+        def answer = WhitelistContextHelper.verifyNode(node, emptyNode)
 
         then:
         noExceptionThrown()
+        assertTrue(answer)
     }
 }
