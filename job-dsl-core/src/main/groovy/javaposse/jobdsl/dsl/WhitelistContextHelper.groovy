@@ -83,7 +83,7 @@ class WhitelistContextHelper {
         // if whitelistNodeParent has node children - put names into a list
         // return true if we've gotten to a leaf of our whitelist node
         List<String> whitelistNodeChildrenNames = getNodeChildrenNames(whitelistNodeParent)
-        if (whitelistNodeChildrenNames.size() > 0) {
+        if (whitelistNodeChildrenNames.size() <= 0) {
             isThisNodeDefinedByWhitelistParts = true
         }
         else if (whitelistNodeChildrenNames.contains(node.name().toString())) {
