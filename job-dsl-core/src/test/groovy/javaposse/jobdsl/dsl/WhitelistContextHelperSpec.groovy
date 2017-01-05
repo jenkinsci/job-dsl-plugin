@@ -8,6 +8,7 @@ import java.util.logging.LogManager
 import java.util.logging.Logger
 
 import static org.junit.Assert.assertTrue
+import static org.junit.Assert.assertFalse
 
 /**
  * Testing the whitlelisting feature provided
@@ -39,8 +40,15 @@ class WhitelistContextHelperSpec extends Specification {
 </project>
 '''
 
+    static final String ONLY_TRIGGERS_ALLOWED = '''<?xml version="1.0" encoding="UTF-8"?>
+<project>
+     <triggers />
+</project>
+'''
+
     final Node node = new XmlParser().parse(new StringReader(XML))
     final Node emptyNode = new XmlParser().parse(new StringReader(EMPTY_PROJECT_XML))
+    final Node triggersWhitelistNode = new XmlParser().parse(new StringReader(ONLY_TRIGGERS_ALLOWED))
 
     def setup() {
         Logger.getLogger('javaposse.jobdsl').setLevel(Level.ALL)
@@ -52,12 +60,29 @@ class WhitelistContextHelperSpec extends Specification {
         }
     }
 
-    def 'verify empty parent node returns true'() {
+    def 'verify if whitelist only includes project all nodes returns true'() {
         when:
         def answer = WhitelistContextHelper.verifyNode(node, emptyNode)
 
         then:
         noExceptionThrown()
         assertTrue(answer)
+    }
+
+    def 'verify if whitelist only includes triggers node is not verified'() {
+        when:
+        def answer = true
+        node.children().each {
+            if (it instanceof Node) {
+                Node childNode = ((Node) it)
+                if(!WhitelistContextHelper.verifyNode(childNode, triggersWhitelistNode)) {
+                    answer = false
+                }
+            }
+        }
+
+        then:
+        noExceptionThrown()
+        assertFalse(answer)
     }
 }

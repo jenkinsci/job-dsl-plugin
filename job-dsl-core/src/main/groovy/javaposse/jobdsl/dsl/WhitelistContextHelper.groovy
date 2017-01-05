@@ -44,7 +44,7 @@ class WhitelistContextHelper {
 
             // check that configure block node exists in whitelist
             node.children().each {
-                if (node instanceof Node) {
+                if (it instanceof Node) {
                     Node childNode = ((Node) it)
                     verifyNode(childNode, whitelistNode)
                 }
@@ -77,24 +77,27 @@ class WhitelistContextHelper {
         isThisNodeDefinedByWhitelistParts
     }
 */
-    static boolean verifyNode(Node node, Node whitelistNodeParent) {
+    static boolean verifyNode(Node nodeToVerify, Node whitelistNodeParent) {
         boolean isThisNodeDefinedByWhitelistParts = true
 
-        // if whitelistNodeParent has node children - put names into a list
-        // return true if we've gotten to a leaf of our whitelist node
+        // get Whitelist Node Parent Children names
         List<String> whitelistNodeChildrenNames = getNodeChildrenNames(whitelistNodeParent)
         if (whitelistNodeChildrenNames.size() <= 0) {
+            // if no whitelist children, nodeToVerify is valid
             isThisNodeDefinedByWhitelistParts = true
         }
-        else if (whitelistNodeChildrenNames.contains(node.name().toString())) {
-            //this node is good. let's check it's children
-            Node matchingWhitelistNode = ((Node)whitelistNodeParent.get(node.name().toString()))
-            node.children().each {
-                if (node instanceof Node) {
+        else if (whitelistNodeChildrenNames.contains(nodeToVerify.name().toString())) {
+            //this nodeToVerify is good. let's check it's children
+            NodeList matchingWhitelistNodeList = ((NodeList)whitelistNodeParent[nodeToVerify.name().toString()])
+            // since we assume that we will only get one matching nodeToVerify form the whitelist nodes (convention of
+            // writing your whitelist xml), we will always only check the first nodeToVerify that matches
+            Node matchingWhitelistNode = ((Node)matchingWhitelistNodeList.get(0))
+            nodeToVerify.children().each {
+                if (it instanceof Node) {
                     Node childNode = ((Node) it)
                     if (!verifyNode(childNode, matchingWhitelistNode)) {
                         // todo - add log - whitelist childrenNames did not contain - exception?
-                        // whiltist node only has x children - the dsl you tried to add (childNode.name() - is not
+                        // whiltist nodeToVerify only has x children - the dsl you tried to add (childNode.name() - is not
                         // whitelisted)
                         isThisNodeDefinedByWhitelistParts = false
                     }
@@ -102,6 +105,7 @@ class WhitelistContextHelper {
             }
         }
         else {
+            // no whitelisted children matched our node to verify. Therefore the node is not valid
             // todo - add log - whitelist childrenNames did not contain - exception?
             // If we throw the exception here - I don't think we need a return value
             // whiltist node only has x children - the dsl you tried to add (childNode.name() - is not
