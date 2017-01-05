@@ -277,4 +277,14 @@ class ColumnsContext extends AbstractExtensibleContext {
           triggerClass('hudson.triggers.SCMTrigger')
         }
     }
+
+    /**
+     * Adds a column showing the type of source code management that is used in the project.
+     *
+     * @since 1.56
+     */
+    @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.4')
+    void scmType() {
+        columnNodes << new Node(null, 'jenkins.plugins.extracolumns.SCMTypeColumn')
+    }
 }

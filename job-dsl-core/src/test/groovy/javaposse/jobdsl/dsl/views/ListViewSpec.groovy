@@ -638,6 +638,7 @@ class ListViewSpec<T extends ListView> extends Specification {
             'userName'                      | 'UserNameColumn'                         | '1.16'
             'lastConfigurationModification' | 'LastJobConfigurationModificationColumn' | '1.14'
             'workspace'                     | 'WorkspaceColumn'                        | '1.15'
+            'scmType'                       | 'SCMTypeColumn'                          | '1.4'
     }
 
     def 'build parameters column'() {

@@ -27,6 +27,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.56 (unreleased)
+ * Enhanced support for the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin)
+   ([#978](https://github.com/jenkinsci/job-dsl-plugin/pull/978))
 * 1.55 (January 03 2016)
  * Updated optional
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) dependency to
