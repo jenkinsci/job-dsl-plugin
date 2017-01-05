@@ -8,7 +8,7 @@ import java.util.logging.LogManager
 import java.util.logging.Logger
 
 /**
- * Created by G537597 on 1/4/2017.
+ * Testing the whitlelisting feature provided
  */
 class WhitelistContextHelperSpec extends Specification {
     static final String XML = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -32,7 +32,7 @@ class WhitelistContextHelperSpec extends Specification {
 </project>
 '''
 
-    static final String EMPTY_XML = '''<?xml version="1.0" encoding="UTF-8"?>
+    static final String EMPTY_PROJECT_XML = '''<?xml version="1.0" encoding="UTF-8"?>
 <project>
 </project>
 '''
