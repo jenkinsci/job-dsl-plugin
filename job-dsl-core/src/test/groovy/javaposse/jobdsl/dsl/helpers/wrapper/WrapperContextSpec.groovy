@@ -399,6 +399,7 @@ class WrapperContextSpec extends Specification {
         context.wrapperNodes[0].name() == 'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper'
         context.wrapperNodes[0].user[0].value() == 'acme'
         1 * mockJobManagement.requirePlugin('ssh-agent')
+        1 * mockJobManagement.logPluginDeprecationWarning('ssh-agent', '1.5')
     }
 
     def 'sshAgent with multiple credentials'() {
