@@ -30,6 +30,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Fixed support for
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
    ([JENKINS-40797](https://issues.jenkins-ci.org/browse/JENKINS-40797))
+ * Enhanced support for the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin)
+   ([#978](https://github.com/jenkinsci/job-dsl-plugin/pull/978))
 * 1.55 (January 03 2016)
  * Updated optional
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) dependency to
