@@ -1,5 +1,5 @@
 job('example') {
     wrappers {
-        sshAgent('deployment-key')
+        sshAgent('deployment-key', 'another-deployment-key')
     }
 }
