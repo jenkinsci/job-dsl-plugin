@@ -1,3 +1,11 @@
+## Migrating to 1.56
+
+### SSH Agent
+
+Support for versions older than 1.5 of the
+[SSH Agent Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SSH+Agent+Plugin) is [[deprecated|Deprecation-Policy]]
+and will be removed.
+
 ## Migrating to 1.55
 
 ### ScriptRequest

@@ -32,6 +32,11 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-40797](https://issues.jenkins-ci.org/browse/JENKINS-40797))
  * Enhanced support for the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin)
    ([#978](https://github.com/jenkinsci/job-dsl-plugin/pull/978))
+ * Enhanced support for the [SSH Agent Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SSH+Agent+Plugin)
+   ([#980](https://github.com/jenkinsci/job-dsl-plugin/pull/980))
+ * Support for the older versions of the
+   [SSH Agent Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SSH+Agent+Plugin),
+   see [Migration](Migration#migrating-to-156)
 * 1.55 (January 03 2016)
  * Updated optional
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) dependency to

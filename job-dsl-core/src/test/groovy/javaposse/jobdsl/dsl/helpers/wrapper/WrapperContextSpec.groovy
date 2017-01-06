@@ -399,6 +399,20 @@ class WrapperContextSpec extends Specification {
         context.wrapperNodes[0].name() == 'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper'
         context.wrapperNodes[0].user[0].value() == 'acme'
         1 * mockJobManagement.requirePlugin('ssh-agent')
+        1 * mockJobManagement.logPluginDeprecationWarning('ssh-agent', '1.5')
+    }
+
+    def 'sshAgent with multiple credentials'() {
+        when:
+        context.sshAgent('acme', 'foo')
+
+        then:
+        context.wrapperNodes[0].name() == 'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper'
+        context.wrapperNodes[0].children().size() == 1
+        context.wrapperNodes[0].credentialIds[0].children().size() == 2
+        context.wrapperNodes[0].credentialIds[0].string[0].value() == 'acme'
+        context.wrapperNodes[0].credentialIds[0].string[1].value() == 'foo'
+        1 * mockJobManagement.requireMinimumPluginVersion('ssh-agent', '1.5')
     }
 
     def 'ansiColor with map'() {

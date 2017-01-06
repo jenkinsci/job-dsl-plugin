@@ -186,10 +186,30 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'ssh-agent')
     void sshAgent(String credentials) {
+        jobManagement.logPluginDeprecationWarning('ssh-agent', '1.5')
         Preconditions.checkNotNull(credentials, 'credentials must not be null')
 
         wrapperNodes << new NodeBuilder().'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper' {
             user(credentials)
+        }
+    }
+
+    /**
+     * Provide SSH credentials to builds via a ssh-agent in Jenkins.
+     *
+     * @param credentials name of the credentials to use
+     * @since 1.56
+     */
+    @RequiresPlugin(id = 'ssh-agent', minimumVersion = '1.5')
+    void sshAgent(String... credentials) {
+        Preconditions.checkNotNull(credentials, 'credentials must not be null')
+
+        wrapperNodes << new NodeBuilder().'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper' {
+            credentialIds {
+                credentials.each {
+                    string(it)
+                }
+            }
         }
     }
 
