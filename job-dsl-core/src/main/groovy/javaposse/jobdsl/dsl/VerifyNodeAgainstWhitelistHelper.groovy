@@ -55,13 +55,13 @@ class VerifyNodeAgainstWhitelistHelper {
      */
     static void verifyNode(Node nodeToVerify, Node whitelistNodeParent) {
         // get whitelist node children names
-        String nodeToVerifyName = nodeToVerify.name().toString()
+        String nodeToVerifyName = nodeToVerify.name()
         List<String> whitelistNodeChildrenNames = getNodeChildrenNames(whitelistNodeParent)
         if (whitelistNodeChildrenNames.size() <= 0) {
             // if no whitelist children, nodeToVerify is valid
             LOGGER.log(Level.FINE, String.format("No children for whitelist node - " +
-                    "${whitelistNodeParent.name().toString()} - so current jobdsl node - ${nodeToVerifyName} - " +
-                    "and all children are valid, since all parents of current jobdsl node were in whitelist"))
+                    "${whitelistNodeParent.name()} - so current jobdsl node - ${nodeToVerifyName} - " +
+                    'and all children are valid, since all parents of current jobdsl node were in whitelist'))
         }
         // if whitelist node has children, we check if nodeToVerify is valid
         else if (whitelistNodeChildrenNames.contains(nodeToVerifyName)) {
@@ -75,7 +75,7 @@ class VerifyNodeAgainstWhitelistHelper {
         }
         else {
             throw new DslScriptException(String.format("Your DSL element ${nodeToVerify.name().toString()} is not " +
-                    "listed as a whitelisted element. Whitelisted elements at this " +
+                    'listed as a whitelisted element. Whitelisted elements at this ' +
                     "level include - ${whitelistNodeChildrenNames.toString()}"))
         }
     }
