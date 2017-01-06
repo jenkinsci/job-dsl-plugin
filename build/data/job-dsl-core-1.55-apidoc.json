@@ -1,5 +1,5 @@
 {
-    "version": "1.56",
+    "version": "1.55",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -27214,23 +27214,6 @@
                             ],
                             "html": "Provide SSH credentials to builds via a ssh-agent in Jenkins.",
                             "firstSentenceCommentText": "Provide SSH credentials to builds via a ssh-agent in Jenkins."
-                        },
-                        {
-                            "parameters": [
-                                {
-                                    "name": "credentials",
-                                    "type": "String..."
-                                }
-                            ],
-                            "availableSince": "1.56",
-                            "plugins": [
-                                {
-                                    "id": "ssh-agent",
-                                    "minimumVersion": "1.5"
-                                }
-                            ],
-                            "html": "Provide SSH credentials to builds via a ssh-agent in Jenkins.",
-                            "firstSentenceCommentText": "Provide SSH credentials to builds via a ssh-agent in Jenkins."
                         }
                     ],
                     "examples": "job('example') {\r\n    wrappers {\r\n        sshAgent('deployment-key')\r\n    }\r\n}"
@@ -29526,25 +29509,6 @@
                             ],
                             "html": "Adds a column for showing Robot Framework test results.",
                             "firstSentenceCommentText": "Adds a column for showing Robot Framework test results."
-                        }
-                    ]
-                },
-                {
-                    "name": "scmType",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                
-                            ],
-                            "availableSince": "1.56",
-                            "plugins": [
-                                {
-                                    "id": "extra-columns",
-                                    "minimumVersion": "1.4"
-                                }
-                            ],
-                            "html": "Adds a column showing the type of source code management that is used in the project.",
-                            "firstSentenceCommentText": "Adds a column showing the type of source code management that is used in the project."
                         }
                     ]
                 },
