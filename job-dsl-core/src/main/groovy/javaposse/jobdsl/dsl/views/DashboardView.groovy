@@ -45,7 +45,7 @@ class DashboardView extends ListView {
     }
 
     protected void addPortlets(String elementName, Closure closure) {
-        DashboardPortletContext context = new DashboardPortletContext()
+        DashboardPortletContext context = new DashboardPortletContext(jobManagement)
         executeInContext(closure, context)
 
         configure {
