@@ -196,14 +196,29 @@ interface JobManagement {
     boolean isMinimumPluginVersionInstalled(String pluginShortName, String version)
 
     /**
-     * Returns {@code true} if the current Process JobDsl step will execute only whitelisted JobDsl blocks
+     * Returns string of xml for valid elements that job dsl processor is allowed to use
      */
-    boolean executeOnlyWhitelistedDsl()
+    boolean restrictRawJobDsl()
 
     /**
-     * Returns the whitelist for what's allowed in this Process JobDsl step
+     * Returns string of xml for valid elements that job dsl processor is allowed to use
      */
-    String[] getJobDslWhitelist()
+    String getAllowedRawJobdslElementsAsXmlString()
+
+    /**
+     * Returns string of xml for valid elements that job dsl processor is allowed to use
+     */
+    Node getAllowedRawJobdslElementsAsNode()
+
+    /**
+     * Returns the whitelist for external classes this job dsl processor can inherit job dsl blocks for
+     */
+    boolean restrictExternalClassesThatDefineJobDslBlocks()
+
+    /**
+     * Returns the whitelist for external classes this job dsl processor can inherit job dsl blocks for
+     */
+    String[] getAllowedExternalClassesThatDefineJobDslBlocks()
 
     /**
      * Returns {@code true} if the currently running version of Jenkins is equal to or greater than the specified

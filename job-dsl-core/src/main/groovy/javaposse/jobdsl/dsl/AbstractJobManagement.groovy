@@ -16,7 +16,34 @@ abstract class AbstractJobManagement implements JobManagement {
      * we will simply return false.
      */
     @Override
-    boolean executeOnlyWhitelistedDsl() {
+    boolean restrictRawJobDsl() {
+        false
+    }
+
+    /**
+     * We set this for Jenkins Job Management, since we need it for processing Job-Dsl. For other Job Management types
+     * we will simply return an empty node.
+     */
+    @Override
+    Node getAllowedRawJobdslElementsAsNode() {
+        new Node(null, null)
+    }
+
+    /**
+     * We set this for Jenkins Job Management, since we need it for processing Job-Dsl. For other Job Management types
+     * we will simply return an empty string.
+     */
+    @Override
+    String getAllowedRawJobdslElementsAsXmlString() {
+        ""
+    }
+
+    /**
+     * We set this for Jenkins Job Management, since we need it for processing Job-Dsl. For other Job Management types
+     * we will simply return false.
+     */
+    @Override
+    boolean restrictExternalClassesThatDefineJobDslBlocks() {
         false
     }
 
@@ -25,7 +52,7 @@ abstract class AbstractJobManagement implements JobManagement {
      * we will simply return an empty array.
      */
     @Override
-    String[] getJobDslWhitelist() {
+    String[] getAllowedExternalClassesThatDefineJobDslBlocks() {
         []
     }
 

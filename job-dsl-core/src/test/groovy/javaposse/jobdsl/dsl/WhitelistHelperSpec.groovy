@@ -10,7 +10,7 @@ import java.util.logging.Logger
 /**
  * Testing the whitlelisting feature provided
  */
-class VerifyNodeAgainstWhitelistHelperSpec extends Specification {
+class WhitelistHelperSpec extends Specification {
     static final String LOTS_OF_CHILDREN = '''<?xml version="1.0" encoding="UTF-8"?>
 <project>
   <actions/>
@@ -79,7 +79,7 @@ class VerifyNodeAgainstWhitelistHelperSpec extends Specification {
 
     def 'node valid for whitelist with no children'() {
         when:
-        VerifyNodeAgainstWhitelistHelper.verifyNode(lotsOfChildren, noProjectChildren)
+        WhitelistHelper.verifyNode(lotsOfChildren, noProjectChildren)
 
         then:
         noExceptionThrown()
@@ -87,7 +87,7 @@ class VerifyNodeAgainstWhitelistHelperSpec extends Specification {
 
     def 'node not valid if whitelist does not include'() {
         when:
-        VerifyNodeAgainstWhitelistHelper.verifyNodeChildren(lotsOfChildren, onlyTriggersChild)
+        WhitelistHelper.verifyNodeChildren(lotsOfChildren, onlyTriggersChild)
 
         then:
         thrown(DslScriptException)
@@ -95,7 +95,7 @@ class VerifyNodeAgainstWhitelistHelperSpec extends Specification {
 
     def 'node valid if whitelist includes'() {
         when:
-        VerifyNodeAgainstWhitelistHelper.verifyNodeChildren(onlyTriggersChild, lotsOfChildren)
+        WhitelistHelper.verifyNodeChildren(onlyTriggersChild, lotsOfChildren)
 
         then:
         noExceptionThrown()
@@ -103,7 +103,7 @@ class VerifyNodeAgainstWhitelistHelperSpec extends Specification {
 
     def 'node not valid if whitelist includes but at wrong level'() {
         when:
-        VerifyNodeAgainstWhitelistHelper.verifyNodeChildren(triggerAtWrongLevel, lotsOfChildren)
+        WhitelistHelper.verifyNodeChildren(triggerAtWrongLevel, lotsOfChildren)
 
         then:
         thrown(DslScriptException)
@@ -111,7 +111,7 @@ class VerifyNodeAgainstWhitelistHelperSpec extends Specification {
 
     def 'configure block not valid if whitelist does not include'() {
         when:
-        VerifyNodeAgainstWhitelistHelper.verifyConfigureBlock(CUSTOM_WORKSPACE_CLOSURE, lotsOfChildren)
+        WhitelistHelper.verifyRawJobDsl(CUSTOM_WORKSPACE_CLOSURE, lotsOfChildren)
 
         then:
         thrown(DslScriptException)

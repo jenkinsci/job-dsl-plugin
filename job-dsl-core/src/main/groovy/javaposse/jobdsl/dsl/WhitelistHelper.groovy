@@ -6,32 +6,61 @@ import java.util.logging.Level
 /**
  * Helper class for checking if nodes proceesed are valid according the user specified Whitelist
  */
-class VerifyNodeAgainstWhitelistHelper {
-    private static final Logger LOGGER = Logger.getLogger(VerifyNodeAgainstWhitelistHelper.name)
+class WhitelistHelper {
+    private static final Logger LOGGER = Logger.getLogger(WhitelistHelper.name)
 
-    private VerifyNodeAgainstWhitelistHelper() {
+    private WhitelistHelper() {
+    }
+
+    static void verifyExternalClassThatDefinesConfigureBlock(Closure configureBlock,
+                                                                     String[] allowedExternalClasses) {
+        if (isClosureFromExternalClass(configureBlock)) {
+            // if this closure is defined in an external class, let's check it
+            String closureParentClass = configureBlock.delegate['name']
+            verifyExternalClass(closureParentClass, allowedExternalClasses)
+        }
+        // if it's not we're good!
+    }
+
+    private static boolean isClosureFromExternalClass(Closure closure) {
+        closure.delegate instanceof Class
+    }
+
+    /**
+     * Verify that the external class that defines a job dsl block is on the list of allowed
+     * external classes defining job dsl
+     */
+    private static void verifyExternalClass(String externalClassName, String[] externalClassWhitelist) {
+        if (!externalClassWhitelist.contains(externalClassName)) {
+            throw new DslScriptException(String.format('The parent class for the job dsl on this line - %s - is ' +
+                    'not added to the whitelist. To avoid this error, ' +
+                    'either add this class to the whitelist, or turn whitelisting off', externalClassName))
+        }
     }
 
     /**
      * Verify that configure block is valid according to the whitelist node
      */
-    static void verifyConfigureBlock(Closure configureBlock, Node whitelistNode) {
-        // todo - should we simply get the whitelistNode from the configureBlock.delegate.jobManagerment, etc
-        Node node = new Node(null, 'project')
+    static void verifyRawJobDsl(Closure configureBlock, Node whitelistNode) {
+        if (!isClosureFromExternalClass(configureBlock)) {
+            // if this closure is not from an external class - we have to check the raw job dsl
+            Node node = new Node(null, 'project')
 
-        if (configureBlock) {
-            // convert configure block to node form - with parent as root node
-            Closure dup = ((Closure)configureBlock.clone())
-            dup.delegate = new MissingPropertyToStringDelegate(node)
+            if (configureBlock) {
+                // convert configure block to node form - with parent as root node
+                Closure dup = ((Closure) configureBlock.clone())
+                dup.delegate = new MissingPropertyToStringDelegate(node)
 
-            use(NodeEnhancement) {
-                dup.call(node)
+                use(NodeEnhancement) {
+                    dup.call(node)
+                }
+
+                // check that all children for the node representing this configure block are valid
+                // we don't need to check root since that's simply 'project'
+                verifyNodeChildren(node, whitelistNode)
             }
-
-            // check that all children for the node representing this configure block are valid
-            // we don't need to check root since that's simply 'project'
-            verifyNodeChildren(node, whitelistNode)
         }
+        // if it's from an external class... we're good!
     }
 
     /**
@@ -59,7 +88,7 @@ class VerifyNodeAgainstWhitelistHelper {
         List<String> whitelistNodeChildrenNames = getNodeChildrenNames(whitelistNodeParent)
         if (whitelistNodeChildrenNames.size() <= 0) {
             // if no whitelist children, nodeToVerify is valid
-            LOGGER.log(Level.FINE, String.format("No children for whitelist node - " +
+            LOGGER.log(Level.FINE, String.format('No children for whitelist node - ' +
                     "${whitelistNodeParent.name()} - so current jobdsl node - ${nodeToVerifyName} - " +
                     'and all children are valid, since all parents of current jobdsl node were in whitelist'))
         }

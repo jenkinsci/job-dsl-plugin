@@ -527,7 +527,7 @@ abstract class Job extends Item {
         if (!context.scmNodes.empty) {
             checkState(context.scmNodes.size() == 1, 'Outside "multiscm", only one SCM can be specified')
 
-            configure ({ Node project ->
+            configure { Node project ->
                 Node scm = project / scm
                 if (scm) {
                     // There can only be only one SCM, so remove if there
@@ -536,7 +536,7 @@ abstract class Job extends Item {
 
                 // Assuming append the only child
                 project << context.scmNodes[0]
-            }, context)
+            }
         }
     }
 
@@ -573,11 +573,11 @@ abstract class Job extends Item {
         TriggerContext context = new TriggerContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        configure ({ Node project ->
+        configure { Node project ->
             context.triggerNodes.each {
                 project / 'triggers' << it
             }
-        }, context)
+        }
     }
 
     /**
@@ -589,11 +589,11 @@ abstract class Job extends Item {
         WrapperContext context = new WrapperContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        configure ({ Node project ->
+        configure { Node project ->
             context.wrapperNodes.each {
                 project / 'buildWrappers' << it
             }
-        }, context)
+        }
     }
 
     /**
@@ -617,11 +617,11 @@ abstract class Job extends Item {
         StepContext context = new StepContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        configure ({ Node project ->
+        configure { Node project ->
             context.stepNodes.each {
                 project / 'builders' << it
             }
-        }, context)
+        }
     }
 
     /**
@@ -631,11 +631,11 @@ abstract class Job extends Item {
         PublisherContext context = new PublisherContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
-        configure ({ Node project ->
+        configure { Node project ->
             context.publisherNodes.each {
                 project / 'publishers' << it
             }
-        }, context)
+        }
     }
 
     @Override
