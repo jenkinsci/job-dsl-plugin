@@ -1,15 +1,27 @@
 package javaposse.jobdsl.dsl.views.portlets
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 
 import java.security.SecureRandom
 
-class DashboardPortletContext implements Context {
+@ContextType('hudson.plugins.view.dashboard.DashboardPortlet')
+class DashboardPortletContext extends AbstractExtensibleContext {
     private static final Random RANDOM = new SecureRandom()
 
     protected final List<Node> portletNodes = []
+
+    DashboardPortletContext(JobManagement jobManagement) {
+        super(jobManagement, null)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        portletNodes << node
+    }
 
     /**
      * Adds a build statistics portlet.
