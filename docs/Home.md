@@ -29,6 +29,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.57 (unreleased)
  * Allow `DashboardPortletContext` to be extended
    ([#981](https://github.com/jenkinsci/job-dsl-plugin/pull/981))
+ * Show more available method signatures in embedded API viewer
+   ([#982](https://github.com/jenkinsci/job-dsl-plugin/pull/982))
 * 1.56 (January 06 2016)
  * Fixed support for
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
