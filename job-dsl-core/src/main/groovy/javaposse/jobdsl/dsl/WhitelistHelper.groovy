@@ -102,8 +102,8 @@ class WhitelistHelper {
             verifyNodeChildren(nodeToVerify, matchingWhitelistNode)
         }
         else {
-            throw new DslScriptException(String.format("Your DSL element ${nodeToVerify.name().toString()} is not " +
-                    'listed as a whitelisted element. Whitelisted elements at this ' +
+            throw new DslScriptException(String.format("Your DSL element - ${nodeToVerify.name().toString()} - is " +
+                    'not listed as a whitelisted element. Whitelisted elements at this ' +
                     "level include - ${whitelistNodeChildrenNames.toString()}"))
         }
     }

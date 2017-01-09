@@ -145,7 +145,7 @@ class InterruptibleJobManagement implements JobManagement {
 
     @Override
     Node getAllowedRawJobdslElementsAsNode() {
-        delegate.getAllowedRawJobdslElementsAsNode()
+        delegate.allowedRawJobdslElementsAsNode()
     }
 
     @Override
@@ -155,7 +155,7 @@ class InterruptibleJobManagement implements JobManagement {
 
     @Override
     String[] getAllowedExternalClassesThatDefineJobDslBlocks() {
-        delegate.getAllowedExternalClassesThatDefineJobDslBlocks()
+        delegate.allowedExternalClassesThatDefineJobDslBlocks()
     }
 
     boolean isMinimumCoreVersion(String version) {
