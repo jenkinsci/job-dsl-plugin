@@ -198,12 +198,7 @@ interface JobManagement {
     /**
      * Returns string of xml for valid elements that job dsl processor is allowed to use
      */
-    boolean restrictRawJobDsl()
-
-    /**
-     * Returns string of xml for valid elements that job dsl processor is allowed to use
-     */
-    String getAllowedRawJobdslElementsAsXmlString()
+    boolean isRestrictedRawJobDsl()
 
     /**
      * Returns string of xml for valid elements that job dsl processor is allowed to use
@@ -213,7 +208,7 @@ interface JobManagement {
     /**
      * Returns the whitelist for external classes this job dsl processor can inherit job dsl blocks for
      */
-    boolean restrictExternalClassesThatDefineJobDslBlocks()
+    boolean isRestrictedExternalJobDsl()
 
     /**
      * Returns the whitelist for external classes this job dsl processor can inherit job dsl blocks for

@@ -16,7 +16,7 @@ abstract class AbstractJobManagement implements JobManagement {
      * we will simply return false.
      */
     @Override
-    boolean restrictRawJobDsl() {
+    boolean isRestrictedRawJobDsl() {
         false
     }
 
@@ -31,19 +31,10 @@ abstract class AbstractJobManagement implements JobManagement {
 
     /**
      * We set this for Jenkins Job Management, since we need it for processing Job-Dsl. For other Job Management types
-     * we will simply return an empty string.
-     */
-    @Override
-    String getAllowedRawJobdslElementsAsXmlString() {
-        ""
-    }
-
-    /**
-     * We set this for Jenkins Job Management, since we need it for processing Job-Dsl. For other Job Management types
      * we will simply return false.
      */
     @Override
-    boolean restrictExternalClassesThatDefineJobDslBlocks() {
+    boolean isRestrictedExternalJobDsl() {
         false
     }
 

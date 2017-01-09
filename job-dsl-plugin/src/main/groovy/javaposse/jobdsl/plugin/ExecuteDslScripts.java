@@ -130,7 +130,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private boolean unstableOnDeprecation;
 
-    private String allowedElementsAsXml;
+    private String allowedElementsForRawJobDslAsXml;
 
     private String allowedExternalClassesThatDefineJobDslBlocks;
 
@@ -235,13 +235,13 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.unstableOnDeprecation = unstableOnDeprecation;
     }
 
-    public String getAllowedElementsAsXml() {
-        return allowedElementsAsXml;
+    public String getAllowedElementsForRawJobDslAsXml() {
+        return allowedElementsForRawJobDslAsXml;
     }
 
     @DataBoundSetter
-    public void setAllowedElementsAsXml(String allowedElementsAsXml) {
-        this.allowedElementsAsXml = fixEmptyAndTrim(allowedElementsAsXml);
+    public void setAllowedElementsForRawJobDslAsXml(String allowedElementsAsXml) {
+        this.allowedElementsForRawJobDslAsXml = fixEmptyAndTrim(allowedElementsAsXml);
     }
 
     public String getAllowedExternalClassesThatDefineJobDslBlocks() {
@@ -277,7 +277,6 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     @DataBoundSetter
     public void setLookupStrategy(LookupStrategy lookupStrategy) {
-
         this.lookupStrategy = lookupStrategy;
     }
 
@@ -327,8 +326,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             );
             jenkinsJobManagement.setFailOnMissingPlugin(failOnMissingPlugin);
             jenkinsJobManagement.setUnstableOnDeprecation(unstableOnDeprecation);
-            // todo - add setters for new fields
-            //jenkinsJobManagement.setJobDslWhitelist(jobDslWhitelist);
+            jenkinsJobManagement.setAllowedElementsAsXml(allowedElementsForRawJobDslAsXml);
+            jenkinsJobManagement.setAllowedExternalClassesThatDefineJobDslBlocks(allowedExternalClassesThatDefineJobDslBlocks);
             JobManagement jobManagement = new InterruptibleJobManagement(jenkinsJobManagement);
 
             ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env);

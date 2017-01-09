@@ -1,11 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import javaposse.jobdsl.dsl.helpers.ScmContext
-import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
-import javaposse.jobdsl.dsl.helpers.step.StepContext
-import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
-import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
-
 abstract class Item extends AbstractContext {
     String name
 
@@ -32,11 +26,11 @@ abstract class Item extends AbstractContext {
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
     void configure(Closure configureBlock) {
-        // verify that no restrictions are violated before we add
-        if (jobManagement.restrictRawJobDsl()) {
+        // verify that no restrictions are violated before we add the configure blocks to be processed
+        if (jobManagement.isRestrictedRawJobDsl()) {
             WhitelistHelper.verifyRawJobDsl(configureBlock, jobManagement.getAllowedRawJobdslElementsAsNode())
         }
-        if (jobManagement.restrictExternalClassesThatDefineJobDslBlocks()) {
+        if (jobManagement.isRestrictedExternalJobDsl()) {
             WhitelistHelper.verifyExternalClassThatDefinesConfigureBlock(configureBlock,
                     jobManagement.getAllowedExternalClassesThatDefineJobDslBlocks())
         }

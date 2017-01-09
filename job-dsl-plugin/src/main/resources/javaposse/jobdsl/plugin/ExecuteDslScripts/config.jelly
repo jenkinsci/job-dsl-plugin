@@ -29,6 +29,15 @@
         <f:select/>
     </f:entry>
 
+            <f:entry title="Allowed Class Names" field="allowedExternalClassesThatDefineJobDslBlocks">
+                        <f:expandableTextbox/>
+                    </f:entry>
+
+                    <f:entry title="Allowed Class Names" field="allowedElementsForRawJobDslAsXml">
+                                <f:expandableTextbox/>
+                            </f:entry>
+
+
     <f:advanced>
         <f:entry title="Context to use for relative job names:" field="lookupStrategy">
             <f:select default="JENKINS_ROOT"/>
@@ -46,8 +55,5 @@
             <f:checkbox name="unstableOnDeprecation" checked="${instance.unstableOnDeprecation}"/>
         </f:entry>
 
-         <f:entry title="Job DSL Whitelist" field="jobDslWhitelist">
-                     <f:expandableTextbox/>
-        </f:entry>
     </f:advanced>
 </j:jelly>

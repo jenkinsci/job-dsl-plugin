@@ -139,13 +139,23 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
-    boolean executeOnlyWhitelistedDsl() {
-        delegate.executeOnlyWhitelistedDsl()
+    boolean isRestrictedRawJobDsl() {
+        delegate.isRestrictedRawJobDsl()
     }
 
     @Override
-    String[] getJobDslWhitelist() {
-        delegate.jobDslWhitelist
+    Node getAllowedRawJobdslElementsAsNode() {
+        delegate.getAllowedRawJobdslElementsAsNode()
+    }
+
+    @Override
+    boolean isRestrictedExternalJobDsl() {
+        delegate.isRestrictedExternalJobDsl()
+    }
+
+    @Override
+    String[] getAllowedExternalClassesThatDefineJobDslBlocks() {
+        delegate.getAllowedExternalClassesThatDefineJobDslBlocks()
     }
 
     boolean isMinimumCoreVersion(String version) {

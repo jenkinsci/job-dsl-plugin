@@ -87,7 +87,6 @@ class WhitelistHelper {
         String nodeToVerifyName = nodeToVerify.name()
         List<String> whitelistNodeChildrenNames = getNodeChildrenNames(whitelistNodeParent)
         if (whitelistNodeChildrenNames.size() <= 0) {
-            // if no whitelist children, nodeToVerify is valid
             LOGGER.log(Level.FINE, String.format('No children for whitelist node - ' +
                     "${whitelistNodeParent.name()} - so current jobdsl node - ${nodeToVerifyName} - " +
                     'and all children are valid, since all parents of current jobdsl node were in whitelist'))
