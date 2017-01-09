@@ -111,7 +111,10 @@ class WhitelistHelperSpec extends Specification {
 
     def 'configure block not valid if whitelist does not include'() {
         when:
-        WhitelistHelper.verifyRawJobDsl(CUSTOM_WORKSPACE_CLOSURE, lotsOfChildren)
+        WhitelistHelper.verifyRawJobDsl({ Node project ->
+            Node node = methodMissing('customWorkspace', workspacePath)
+            project / node
+        }, lotsOfChildren)
 
         then:
         thrown(DslScriptException)
