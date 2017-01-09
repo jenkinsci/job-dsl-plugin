@@ -78,7 +78,7 @@ class JobSpec extends Specification {
 
     def 'update Node using withXml'() {
         setup:
-        TestJob job = new TestJob(jobManagement)
+        TestJob job = new TestJob(null)
         AtomicBoolean boolOutside = new AtomicBoolean(true)
 
         when: 'Simple update'
