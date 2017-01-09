@@ -28,11 +28,11 @@ abstract class Item extends AbstractContext {
     void configure(Closure configureBlock) {
         // verify that no restrictions are violated before we add the configure blocks to be processed
         if (jobManagement.isRestrictedRawJobDsl()) {
-            WhitelistHelper.verifyRawJobDsl(configureBlock, jobManagement.getAllowedRawJobdslElementsAsNode())
+            WhitelistHelper.verifyRawJobDsl(configureBlock, jobManagement.allowedRawJobdslElementsAsNode)
         }
         if (jobManagement.isRestrictedExternalJobDsl()) {
             WhitelistHelper.verifyExternalClassThatDefinesConfigureBlock(configureBlock,
-                    jobManagement.getAllowedExternalClassesThatDefineJobDslBlocks())
+                    jobManagement.allowedExternalClassesThatDefineJobDslBlocks)
         }
         configureBlocks << configureBlock
     }
