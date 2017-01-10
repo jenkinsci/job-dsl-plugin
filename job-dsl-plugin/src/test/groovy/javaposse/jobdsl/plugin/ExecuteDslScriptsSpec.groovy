@@ -1522,5 +1522,3 @@ folder('folder-a/folder-b') {
 </project>
 '''
 }
-
-
