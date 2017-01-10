@@ -22,7 +22,7 @@ abstract class Item extends AbstractContext {
     @Deprecated
     void setName(String name) {
         this.name = name
-}
+    }
 
     /**
      * Allows direct manipulation of the generated XML.

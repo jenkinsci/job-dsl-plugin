@@ -247,6 +247,60 @@ class ExecuteDslScriptsSpec extends Specification {
     }
 
     @WithoutJenkins
+    def 'allowed external classes to get job dsl blocks from'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.allowedExternalClassesThatDefineJobDslBlocks == null
+
+        when:
+        executeDslScripts.allowedExternalClassesThatDefineJobDslBlocks = 'foo \n bar \n zz'
+
+        then:
+        executeDslScripts.allowedExternalClassesThatDefineJobDslBlocks == 'foo \n bar \n zz'
+
+        when:
+        executeDslScripts.allowedExternalClassesThatDefineJobDslBlocks = '  foo \n  bar \n zz           '
+
+        then:
+        executeDslScripts.allowedExternalClassesThatDefineJobDslBlocks == 'foo \n bar \n zz'
+
+        when:
+        executeDslScripts.allowedExternalClassesThatDefineJobDslBlocks = '       '
+
+        then:
+        executeDslScripts.allowedExternalClassesThatDefineJobDslBlocks == null
+    }
+
+    @WithoutJenkins
+    def 'allowed raw job dsl blocks as xml'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.allowedElementsForRawJobDslAsXml == null
+
+        when:
+        executeDslScripts.allowedElementsForRawJobDslAsXml =  '<project></project>'
+
+        then:
+        executeDslScripts.allowedElementsForRawJobDslAsXml == '<project></project>'
+
+        when:
+        executeDslScripts.allowedElementsForRawJobDslAsXml = '  <project></project>           '
+
+        then:
+        executeDslScripts.allowedElementsForRawJobDslAsXml == '<project></project>'
+
+        when:
+        executeDslScripts.allowedElementsForRawJobDslAsXml = '       '
+
+        then:
+        executeDslScripts.allowedElementsForRawJobDslAsXml == null
+    }
+
+    @WithoutJenkins
     def 'script location'() {
         setup:
         ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
@@ -1170,6 +1224,42 @@ class ExecuteDslScriptsSpec extends Specification {
         testFile.text == 'bar'
     }
 
+    def 'whitelist is used and script text is not valid'() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        seedJob.buildersList.add(new ExecuteDslScripts(
+                scriptText: JOB_WITH_DESCRIPTION,
+                allowedElementsForRawJobDslAsXml: NO_DESCRIPTION_XML
+        ))
+
+        when:
+        FreeStyleBuild freeStyleBuild = seedJob.scheduleBuild2(0).get()
+
+        then:
+        // verify seed job failed, and did not create the job from job dsl
+        freeStyleBuild.result == FAILURE
+        FreeStyleProject job = jenkinsRule.instance.getItem('job-with-description') as FreeStyleProject
+        job == null
+    }
+
+    def 'whitelist is used and script text is valid'() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        seedJob.buildersList.add(new ExecuteDslScripts(
+                scriptText: JOB_WITH_PROPERTIES,
+                allowedElementsForRawJobDslAsXml: NO_DESCRIPTION_XML
+        ))
+
+        when:
+        FreeStyleBuild freeStyleBuild = seedJob.scheduleBuild2(0).get()
+
+        then:
+        // verify seed job passed, and created the job from job dsl
+        freeStyleBuild.result == SUCCESS
+        FreeStyleProject job = jenkinsRule.instance.getItem('job-with-properties') as FreeStyleProject
+        job != null
+    }
+
     def 'user content is created'() {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
@@ -1394,4 +1484,43 @@ listView('folder-a/test-view') {
 folder('folder-a/folder-b') {
   description('lorem ipsum')
 }"""
+
+    private static final String JOB_WITH_PROPERTIES = """job('job-with-properties') {
+    properties {
+        example('foo', 'bar')
+    }
+}"""
+
+    private static final String JOB_WITH_DESCRIPTION = """job('job-with-description') {
+    properties {
+        example('foo', 'bar')
+    }
+}"""
+
+    private static final String NO_DESCRIPTION_XML = '''<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <actions/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+   <triggers class="vector">
+        <hudson.triggers.SCMTrigger>
+            <spec>H/15 * * * *</spec>
+            <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
+    </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+      <builder/>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
+'''
 }
+
+
