@@ -950,7 +950,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'set allowed exteral classes for job dsl blocks - empty String'() {
         when:
-        jobManagement.setAllowedExternalClassesThatDefineJobDslBlocks("")
+        jobManagement.setAllowedExternalClassesThatDefineJobDslBlocks('')
 
         then:
         assertNotNull(jobManagement.allowedExternalClassesThatDefineJobDslBlocks)
@@ -960,7 +960,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'set allowed exteral classes for job dsl blocks - valid list'() {
         setup:
-        String allowedExternalClasses = "helperClass \n myPackage.is.cool  \n company.UtilityMethods"
+        String allowedExternalClasses = 'helperClass \n myPackage.is.cool  \n company.UtilityMethods'
 
         when:
         jobManagement.setAllowedExternalClassesThatDefineJobDslBlocks(allowedExternalClasses)
@@ -973,7 +973,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'make sure white space is trimmed when we set allowed external classes'() {
         setup:
-        String allowedExternalClasses = "    helperClass    \n   myPackage.is.cool    \n    company.UtilityMethods    "
+        String allowedExternalClasses = '    helperClass    \n   myPackage.is.cool    \n    company.UtilityMethods    '
 
         when:
         jobManagement.setAllowedExternalClassesThatDefineJobDslBlocks(allowedExternalClasses)
