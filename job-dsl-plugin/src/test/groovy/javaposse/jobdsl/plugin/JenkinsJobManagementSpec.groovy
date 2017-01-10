@@ -980,8 +980,8 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         assert(jobManagement.allowedExternalClassesThatDefineJobDslBlocks[0] == 'helperClass')
-        assert(jobManagement.allowedExternalClassesThatDefineJobDslBlocks[0] == 'myPackage.is.cool')
-        assert(jobManagement.allowedExternalClassesThatDefineJobDslBlocks[0] == 'company.UtilityMethods')
+        assert(jobManagement.allowedExternalClassesThatDefineJobDslBlocks[1] == 'myPackage.is.cool')
+        assert(jobManagement.allowedExternalClassesThatDefineJobDslBlocks[2] == 'company.UtilityMethods')
     }
 
     private static boolean isXmlIdentical(String expected, Node actual) throws Exception {
