@@ -264,7 +264,7 @@ class ExecuteDslScriptsSpec extends Specification {
         executeDslScripts.allowedExternalClassesThatDefineJobDslBlocks = '  foo \n  bar \n zz           '
 
         then:
-        executeDslScripts.allowedExternalClassesThatDefineJobDslBlocks == 'foo \n bar \n zz'
+        executeDslScripts.allowedExternalClassesThatDefineJobDslBlocks == 'foo \n  bar \n zz'
 
         when:
         executeDslScripts.allowedExternalClassesThatDefineJobDslBlocks = '       '
@@ -1492,9 +1492,7 @@ folder('folder-a/folder-b') {
 }"""
 
     private static final String JOB_WITH_DESCRIPTION = """job('job-with-description') {
-    properties {
-        example('foo', 'bar')
-    }
+    description('lorem ipsum')
 }"""
 
     private static final String NO_DESCRIPTION_XML = '''
