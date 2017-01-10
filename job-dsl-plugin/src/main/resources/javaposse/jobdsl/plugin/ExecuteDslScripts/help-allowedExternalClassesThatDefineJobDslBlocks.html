@@ -1,0 +1,22 @@
+<div>
+    If one or more classes are added to the whitelist, External Class Whitelisting is "turned on" for this Process
+    Job DSLs step and if any dsl blocks are used that are defined in an exernal class that is not whitelisted,
+    this step will fail, and not create or update the job accordingly.<br/>
+    For more information on how to pull a re-usable configure block into an external, helper
+    class, look at
+    <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block"> The Configure Block Wiki</a> page
+    <br/><br/>
+
+    <b>Example job dsl code: </b>(in this case, if closure myCustomConfigDefinition and myCustomStepDefinition are
+    defined two helper classes - helper.MyConfigHelperClass and helper.MyStepHelperClass, then both
+    <i>helper.MyConfigHelperClass</i> and <i>helper.MyStepHelperClass</i> would need to be in the whitelist for
+    this job dsl to be processed successfully)<br/><br/>
+
+    import helper.MyConfigHelperClass<br/>
+    import helper.MyStepHelperClass<br/><br/>
+
+    job() {<br/>
+    &ensp;configure myCustomConfigDefinition()<br/>
+    &ensp;step myCustomStepDefinition()<br/>
+    }
+</div>

@@ -1,0 +1,44 @@
+<div>
+    If any XML is added to this whitelist, Script DSL Whitelisting is "turned on" for this Process
+    Job DSLs step and if any dsl blocks produce elements that are not called out in this whitelist,
+    this step will fail, and not create or update the job accordingly.<br/><br/>
+    <b>How the XML whitelist works: </b> This is based off of the xml that gets created from processing the job dsl.
+    To specify your xml whitelist, you simply need to define what elements are allowed in the resulting config.xml
+    and add the parent nodes to your whitelist xml. (this does not apply to any job dsl blocks defined in external
+    classes. This whitelist is ONLY applied to job dsl directly in the script files)
+    <ul>
+        <li>Elements listed in the XML whitelist are allowed for that level in the tree</li>
+        <li>A leaf node in the whitelist specifies that the job dsl script being processed can produce any number of
+            children of any type underneath that leaf node.</li>
+    </ul>
+
+    <b>Example xml whitelist: </b><br/><br/>
+
+    &#60;project&#62;<br/>
+    &ensp;&#60;description/&#62;<br/>
+    &ensp;&#60;triggers/&#62;<br/>
+    &ensp;&ensp;&#60;hudson.triggers.SCMTrigger/&#62;<br/>
+    &ensp;&#60;/triggers&#62;<br/>
+    &ensp;&#60;builders/&#62;<br/>
+    &ensp;&#60;publishers/&#62;<br/>
+    &#60;/project&#62;<br/>
+    <br/>
+    <b>What is allowed in the script DSL if we use the example XML above as our whitelist?</b> <br/>
+        Using this Whitelist XML, a job can be created with any number and type of publishers, any number and type builders,
+        a description, and ONLY triggers of type hudson.triggers.SCMTrigger, since that is the only child under the
+        triggers element.<br/><br/>
+
+<b>Additional Notes</b>
+        <ul>
+            <li>If you ONLY specify the root node, anything is allowed in the job dsl being processed (just as if you
+                put nothing in this text box). This is because if the root node is empty, it is considered a leaf node,
+                and any children are there for approved.
+            </li>
+            <li>Only element names are able to be whitelisted. You can leave element attributes in the whitelist xml,
+                but it will not affect what is allowed in the job dsl script</li>
+            <li>Some elements/default values come with the FreeStyleJob template (i.e. show up in the resulting
+                config.xml without being specified in the job dsl being processed). These elements do not need
+                to be added to the whitelist, and it will still process just fine.
+                Only the elements that are produced by the job dsl script are affected by the whitelist</li>
+        </ul>
+</div>

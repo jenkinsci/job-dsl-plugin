@@ -1497,7 +1497,7 @@ folder('folder-a/folder-b') {
     }
 }"""
 
-    private static final String NO_DESCRIPTION_XML = '''<?xml version="1.0" encoding="UTF-8"?>
+    private static final String NO_DESCRIPTION_XML = '''
 <project>
   <actions/>
   <keepDependencies>false</keepDependencies>
@@ -1521,4 +1521,5 @@ folder('folder-a/folder-b') {
   <buildWrappers/>
 </project>
 '''
+
 }

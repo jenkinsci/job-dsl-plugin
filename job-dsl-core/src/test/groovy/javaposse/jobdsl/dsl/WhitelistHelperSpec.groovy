@@ -11,7 +11,7 @@ import java.util.logging.Logger
  * Testing the whitlelisting feature provided
  */
 class WhitelistHelperSpec extends Specification {
-    static final String LOTS_OF_CHILDREN = '''<?xml version="1.0" encoding="UTF-8"?>
+    static final String LOTS_OF_CHILDREN = '''
 <project>
   <actions/>
   <description></description>
@@ -37,12 +37,12 @@ class WhitelistHelperSpec extends Specification {
 </project>
 '''
 
-    static final String EMPTY_PROJECT_XML = '''<?xml version="1.0" encoding="UTF-8"?>
+    static final String EMPTY_PROJECT_XML = '''
 <project>
 </project>
 '''
 
-    static final String TRIGGER_AT_WRONG_LEVEL = '''<?xml version="1.0" encoding="UTF-8"?>
+    static final String TRIGGER_AT_WRONG_LEVEL = '''
 <project>
      <hudson.triggers.SCMTrigger>
             <spec>H/15 * * * *</spec>
@@ -51,7 +51,7 @@ class WhitelistHelperSpec extends Specification {
 </project>
 '''
 
-    static final String ONLY_TRIGGERS = '''<?xml version="1.0" encoding="UTF-8"?>
+    static final String ONLY_TRIGGERS = '''
 <project>
      <triggers />
 </project>
