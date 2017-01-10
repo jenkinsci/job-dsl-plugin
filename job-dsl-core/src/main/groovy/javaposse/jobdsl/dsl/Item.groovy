@@ -2,12 +2,16 @@ package javaposse.jobdsl.dsl
 
 abstract class Item extends AbstractContext {
     String name
+    boolean isRestrictedRawJobDsl
+    boolean isRestrictedExternalJobDsl
 
     private final List<Closure> configureBlocks = []
 
     protected Item(JobManagement jobManagement, String name) {
         super(jobManagement)
         this.name = name
+        this.isRestrictedExternalJobDsl = (jobManagement != null) ? jobManagement.isRestrictedExternalJobDsl() : false
+        this.isRestrictedRawJobDsl = (jobManagement != null) ? jobManagement.isRestrictedRawJobDsl() : false
     }
 
     @Deprecated
@@ -27,10 +31,10 @@ abstract class Item extends AbstractContext {
      */
     void configure(Closure configureBlock) {
         // verify that no restrictions are violated before we add the configure blocks to be processed
-        if (jobManagement.isRestrictedRawJobDsl()) {
+        if (this.isRestrictedRawJobDsl) {
             WhitelistHelper.verifyRawJobDsl(configureBlock, jobManagement.allowedRawJobdslElementsAsNode)
         }
-        if (jobManagement.isRestrictedExternalJobDsl()) {
+        if (this.isRestrictedExternalJobDsl) {
             WhitelistHelper.verifyExternalClassThatDefinesConfigureBlock(configureBlock,
                     jobManagement.allowedExternalClassesThatDefineJobDslBlocks)
         }

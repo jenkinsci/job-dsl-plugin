@@ -65,6 +65,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static hudson.Util.fixEmptyAndTrim;
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static java.lang.String.format;
@@ -131,11 +132,6 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         catch (IOException ie) {
             throw new DslException("could not read xml entered for 'Raw Job DSL elements allowed'", ie);
         }
-
-        if(this.restrictedRawJobDsl && this.allowedRawJobdslElementsAsNode == null) {
-            throw new DslException("You cannot restrict the Raw Job Dsl but not provide xml for allowed elements." +
-                    " Either uncheck the 'Restrict job dsl allowed in raw script text' or provide valid xml");
-        }
     }
 
     /**
@@ -156,6 +152,13 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     void setAllowedExternalClassesThatDefineJobDslBlocks(String allowedExternalClassesThatDefineJobDslBlocks) {
         this.allowedExternalClassesThatDefineJobDslBlocks = (StringUtils.isEmpty(allowedExternalClassesThatDefineJobDslBlocks)) ? new String[0] : allowedExternalClassesThatDefineJobDslBlocks.split("\n");
+
+        // make sure we trim up white space on the individual class names
+        for(int i = 0; i < this.allowedExternalClassesThatDefineJobDslBlocks.length; i++ ) {
+            this.allowedExternalClassesThatDefineJobDslBlocks[i] =
+                    fixEmptyAndTrim(this.allowedExternalClassesThatDefineJobDslBlocks[i]) ;
+        }
+
         this.restrictedExternalJobDsl = this.allowedExternalClassesThatDefineJobDslBlocks.length > 0;
     }
 
