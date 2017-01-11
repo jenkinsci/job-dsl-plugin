@@ -15,4 +15,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NoDoc {
+    /**
+     * If {@code true}, the method will only be shown in the embedded API viewer.
+     *
+     * @since 1.58
+     */
+    boolean embeddedOnly() default false;
 }
