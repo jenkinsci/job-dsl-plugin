@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.helpers.ConfigFilesContext
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.IvyJob
@@ -244,6 +245,15 @@ interface DslFactory extends ViewFactory {
      */
     @RequiresPlugin(id = 'managed-scripts', minimumVersion = '1.2.1', failIfMissing = true)
     ParametrizedConfigFile managedScriptConfigFile(String name, @DslContext(ParametrizedConfigFile) Closure closure)
+
+    /**
+     * Creates managed config files.
+     *
+     * @since 1.58
+     */
+    @NoDoc(embeddedOnly = true)
+    @RequiresPlugin(id = 'config-file-provider')
+    void configFiles(@DslContext(ConfigFilesContext) Closure closure)
 
     /**
      * Upload the stream as <a href="https://wiki.jenkins-ci.org/display/JENKINS/User+Content">user content</a>.

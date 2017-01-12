@@ -124,14 +124,18 @@ When the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKI
 installed, the DSL can be used to create configuration files.
 
 ```groovy
+configFiles(Closure configFilesClosure = null)                         // since 1.58
+
 customConfigFile(String name, Closure configFileClosure = null)        // since 1.30
 
 mavenSettingsConfigFile(String name, Closure configFileClosure = null) // since 1.30
 ```
 
-These methods behaves like the [job](#job) methods and will return a config file object.
+The `configFiles` method can be used to create any kind of config file that is supported by the
+[[Automatically Generated DSL]]. Use the embedded API viewer to browse available methods.
 
-See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) page for details about config file options.
+The other methods behaves like the [job](#job) methods and will return a config file object.
+See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) page for details about these methods.
 
 Config files will be created before jobs to ensure that the file exists before it is referenced.
 

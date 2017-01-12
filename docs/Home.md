@@ -27,6 +27,11 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.58 (unreleased)
+ * Enhanced support for
+   [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
+   ([JENKINS-33630](https://issues.jenkins-ci.org/browse/JENKINS-33630),
+   [JENKINS-39754](https://issues.jenkins-ci.org/browse/JENKINS-39754),
+   [JENKINS-40719](https://issues.jenkins-ci.org/browse/JENKINS-40719))
  * Fixed a problem with the plugin's dependencies 
   ([JENKINS-41001](https://issues.jenkins-ci.org/browse/JENKINS-41001))
  * Improved error message for invalid enum values

@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import groovy.transform.ThreadInterrupt
+import javaposse.jobdsl.dsl.helpers.ConfigFilesContext
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.IvyJob
@@ -243,6 +244,10 @@ abstract class JobParent extends Script implements DslFactory {
         }
         referencedConfigFiles << configFile
         configFile
+    }
+
+    @Override
+    void configFiles(@DslContext(ConfigFilesContext) Closure closure) {
     }
 
     @Override

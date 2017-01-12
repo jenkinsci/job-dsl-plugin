@@ -12,21 +12,24 @@ import static groovy.lang.GroovyShell.DEFAULT_CODE_BASE
 /**
  * Runs provided DSL scripts via an external {@link JobManagement}.
  */
-class AbstractDslScriptLoader {
+abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedItems> {
     private static final Logger LOGGER = Logger.getLogger(AbstractDslScriptLoader.name)
     private static final Comparator<? super Item> ITEM_COMPARATOR = new ItemProcessingOrderComparator()
 
-    private final JobManagement jobManagement
+    protected final JobManagement jobManagement
+    protected final Class<S> scriptBaseClass
+    protected final Class<G> generatedItemsClass
     private final PrintStream logger
 
     /**
-     * Creates a new {@link AbstractDslScriptLoader} which will use the given {@link JobManagement} instance.
-     *
-     * @since 1.45
+     * @since 1.58
      */
-    AbstractDslScriptLoader(JobManagement jobManagement) {
+    protected AbstractDslScriptLoader(JobManagement jobManagement, Class<S> scriptBaseClass,
+                                      Class<G> generatedItemsClass) {
         this.jobManagement = jobManagement
         this.logger = jobManagement.outputStream
+        this.scriptBaseClass = scriptBaseClass
+        this.generatedItemsClass = generatedItemsClass
     }
 
     /**
@@ -34,8 +37,8 @@ class AbstractDslScriptLoader {
      *
      * @since 1.45
      */
-    GeneratedItems runScripts(Collection<ScriptRequest> scriptRequests) throws IOException {
-        GeneratedItems generatedItems = new GeneratedItems()
+    G runScripts(Collection<ScriptRequest> scriptRequests) throws IOException {
+        G generatedItems = generatedItemsClass.newInstance()
         CompilerConfiguration config = createCompilerConfiguration()
         Map<String, GroovyShell> groovyShellCache = [:]
         try {
@@ -52,20 +55,9 @@ class AbstractDslScriptLoader {
                     groovyShellCache[key] = groovyShell
                 }
 
-                JobParent jobParent = runScriptEngine(scriptRequest, groovyShell)
+                S jobParent = runScriptEngine(scriptRequest, groovyShell)
 
-                generatedItems.configFiles.addAll(
-                        extractGeneratedConfigFiles(jobParent.referencedConfigFiles, scriptRequest.ignoreExisting)
-                )
-                generatedItems.jobs.addAll(
-                        extractGeneratedJobs(jobParent.referencedJobs, scriptRequest.ignoreExisting)
-                )
-                generatedItems.views.addAll(
-                        extractGeneratedViews(jobParent.referencedViews, scriptRequest.ignoreExisting)
-                )
-                generatedItems.userContents.addAll(
-                        extractGeneratedUserContents(jobParent.referencedUserContents, scriptRequest.ignoreExisting)
-                )
+                extractGeneratedItems(generatedItems, jobParent, scriptRequest)
 
                 scheduleJobsToRun(jobParent.queueToBuild)
             }
@@ -87,11 +79,11 @@ class AbstractDslScriptLoader {
      *
      * @since 1.47
      */
-    GeneratedItems runScript(String script) throws IOException {
+    G runScript(String script) throws IOException {
         runScripts([new ScriptRequest(script)])
     }
 
-    private JobParent runScriptEngine(ScriptRequest scriptRequest, GroovyShell groovyShell) {
+    protected S runScriptEngine(ScriptRequest scriptRequest, GroovyShell groovyShell) {
         try {
             if (scriptRequest.scriptPath || scriptRequest.location) {
                 String scriptName = scriptRequest.location ?: new File(scriptRequest.scriptPath).name
@@ -114,7 +106,7 @@ class AbstractDslScriptLoader {
             script.binding = createBinding(scriptRequest)
             script.binding.setVariable('jobFactory', script)
 
-            JobParent jobParent = (JobParent) script
+            S jobParent = (S) script
             jobParent.setJm(jobManagement)
 
             jobParent.run()
@@ -170,8 +162,26 @@ class AbstractDslScriptLoader {
         idx > -1 ? fileName[0..idx - 1] : fileName
     }
 
-    private Set<GeneratedJob> extractGeneratedJobs(Set<Item> referencedItems,
-                                                   boolean ignoreExisting) throws IOException {
+    /**
+     * @since 1.58
+     */
+    protected void extractGeneratedItems(G generatedItems, S jobParent, ScriptRequest scriptRequest) {
+        generatedItems.configFiles.addAll(
+                extractGeneratedConfigFiles(jobParent.referencedConfigFiles, scriptRequest.ignoreExisting)
+        )
+        generatedItems.jobs.addAll(
+                extractGeneratedJobs(jobParent.referencedJobs, scriptRequest.ignoreExisting)
+        )
+        generatedItems.views.addAll(
+                extractGeneratedViews(jobParent.referencedViews, scriptRequest.ignoreExisting)
+        )
+        generatedItems.userContents.addAll(
+                extractGeneratedUserContents(jobParent.referencedUserContents, scriptRequest.ignoreExisting)
+        )
+    }
+
+    protected Set<GeneratedJob> extractGeneratedJobs(Set<Item> referencedItems,
+                                                     boolean ignoreExisting) throws IOException {
         Set<GeneratedJob> generatedJobs = new LinkedHashSet<GeneratedJob>()
         referencedItems.sort(false, ITEM_COMPARATOR).each { Item item ->
             if (item instanceof Job) {
@@ -187,7 +197,7 @@ class AbstractDslScriptLoader {
         generatedJobs
     }
 
-    private Set<GeneratedView> extractGeneratedViews(Set<View> referencedViews, boolean ignoreExisting) {
+    protected Set<GeneratedView> extractGeneratedViews(Set<View> referencedViews, boolean ignoreExisting) {
         Set<GeneratedView> generatedViews = new LinkedHashSet<GeneratedView>()
         referencedViews.each { View view ->
             String xml = view.xml
@@ -198,8 +208,8 @@ class AbstractDslScriptLoader {
         generatedViews
     }
 
-    private Set<GeneratedConfigFile> extractGeneratedConfigFiles(Set<ConfigFile> referencedConfigFiles,
-                                                                 boolean ignoreExisting) {
+    protected Set<GeneratedConfigFile> extractGeneratedConfigFiles(Set<ConfigFile> referencedConfigFiles,
+                                                                   boolean ignoreExisting) {
         Set<GeneratedConfigFile> generatedConfigFiles = new LinkedHashSet<GeneratedConfigFile>()
         referencedConfigFiles.each { ConfigFile configFile ->
             LOGGER.log(Level.FINE, "Saving config file ${configFile.name}")
@@ -209,8 +219,8 @@ class AbstractDslScriptLoader {
         generatedConfigFiles
     }
 
-    private Set<GeneratedUserContent> extractGeneratedUserContents(Set<UserContent> referencedUserContents,
-                                                                   boolean ignoreExisting) {
+    protected Set<GeneratedUserContent> extractGeneratedUserContents(Set<UserContent> referencedUserContents,
+                                                                     boolean ignoreExisting) {
         Set<GeneratedUserContent> generatedUserContents = new LinkedHashSet<GeneratedUserContent>()
         referencedUserContents.each { UserContent userContent ->
             LOGGER.log(Level.FINE, "Saving user content ${userContent.path}")
@@ -221,7 +231,7 @@ class AbstractDslScriptLoader {
     }
 
     @SuppressWarnings('CatchException')
-    private void scheduleJobsToRun(List<String> jobNames) {
+    protected void scheduleJobsToRun(List<String> jobNames) {
         Map<String, Throwable> exceptions = [:]
         jobNames.each { String jobName ->
             try {
@@ -254,7 +264,7 @@ class AbstractDslScriptLoader {
 
     private CompilerConfiguration createCompilerConfiguration() {
         CompilerConfiguration config = new CompilerConfiguration(CompilerConfiguration.DEFAULT)
-        config.scriptBaseClass = 'javaposse.jobdsl.dsl.JobParent'
+        config.scriptBaseClass = scriptBaseClass.name
 
         // Import some of our helper classes so that user doesn't have to.
         ImportCustomizer icz = new ImportCustomizer()

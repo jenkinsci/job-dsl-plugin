@@ -24,7 +24,6 @@ import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslException;
-import javaposse.jobdsl.dsl.DslScriptLoader;
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
 import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.GeneratedJob;
@@ -312,7 +311,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                         getTargets(), isUsingScriptText(), getScriptText(), ignoreExisting, isIgnoreMissingFiles(), additionalClasspath
                 );
 
-                DslScriptLoader dslScriptLoader = new DslScriptLoader(jobManagement);
+                JenkinsDslScriptLoader dslScriptLoader = new JenkinsDslScriptLoader(jobManagement);
                 GeneratedItems generatedItems = dslScriptLoader.runScripts(scriptRequests);
                 Set<GeneratedJob> freshJobs = generatedItems.getJobs();
                 Set<GeneratedView> freshViews = generatedItems.getViews();
