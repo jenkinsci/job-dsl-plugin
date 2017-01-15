@@ -26,7 +26,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.57 (unreleased)
+* 1.57 (January 15 2017)
  * Updated optional
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) dependency to
    version 2.15.4
@@ -45,7 +45,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [JENKINS-38145](https://issues.jenkins-ci.org/browse/JENKINS-38145))
  * Support for the older versions of the [Rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin) is
    deprecated, see [Migration](Migration#migrating-to-157)
-* 1.56 (January 06 2016)
+* 1.56 (January 06 2017)
  * Fixed support for
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
    ([JENKINS-40797](https://issues.jenkins-ci.org/browse/JENKINS-40797))
@@ -56,7 +56,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Support for the older versions of the
    [SSH Agent Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SSH+Agent+Plugin) is deprecated,
    see [Migration](Migration#migrating-to-156)
-* 1.55 (January 03 2016)
+* 1.55 (January 03 2017)
  * Updated optional
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) dependency to
    version 2.15
