@@ -48,7 +48,7 @@ class WrapperContextSpec extends Specification {
 
     def 'add rbenv-controlled ruby version with'() {
         setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.13') >> true
+        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> true
 
         when:
         context.rbenv('2.1.2')
@@ -91,10 +91,14 @@ class WrapperContextSpec extends Specification {
         }
         1 * mockJobManagement.requirePlugin('rbenv')
         1 * mockJobManagement.requirePlugin('ruby-runtime')
-        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.13')
+        1 * mockJobManagement.logPluginDeprecationWarning('rbenv', '0.0.17')
+        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
     }
 
     def 'add rbenv-controlled ruby version with older runtime'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> false
+
         when:
         context.rbenv('2.1.2')
 
@@ -136,7 +140,8 @@ class WrapperContextSpec extends Specification {
         }
         1 * mockJobManagement.requirePlugin('rbenv')
         1 * mockJobManagement.requirePlugin('ruby-runtime')
-        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.13')
+        1 * mockJobManagement.logPluginDeprecationWarning('rbenv', '0.0.17')
+        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
     }
 
     def 'add rbenv-controlled override defaults'() {
@@ -165,12 +170,12 @@ class WrapperContextSpec extends Specification {
         }
         1 * mockJobManagement.requirePlugin('rbenv')
         1 * mockJobManagement.requirePlugin('ruby-runtime')
-        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.13')
+        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
     }
 
     def 'add rvm-controlled ruby version'() {
         setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.13') >> true
+        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> true
 
         when:
         context.rvm('ruby-1.9.3')
@@ -182,10 +187,13 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('rvm')
         1 * mockJobManagement.requirePlugin('ruby-runtime')
         1 * mockJobManagement.logPluginDeprecationWarning('rvm', '0.6')
-        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.13')
+        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
     }
 
     def 'add rvm-controlled ruby version with older runtime'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> false
+
         when:
         context.rvm('ruby-1.9.3')
 
@@ -196,7 +204,7 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('rvm')
         1 * mockJobManagement.requirePlugin('ruby-runtime')
         1 * mockJobManagement.logPluginDeprecationWarning('rvm', '0.6')
-        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.13')
+        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
     }
 
     def 'default timeout works'() {

@@ -57,6 +57,8 @@ class WrapperContext extends AbstractExtensibleContext {
             @RequiresPlugin(id = 'ruby-runtime')
     ])
     void rbenv(String rubyVersion, @DslContext(RbenvContext) Closure rbenvClosure = null) {
+        jobManagement.logPluginDeprecationWarning('rbenv', '0.0.17')
+
         RbenvContext rbenvContext = new RbenvContext()
         ContextHelper.executeInContext(rbenvClosure, rbenvContext)
 
@@ -107,9 +109,9 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     private String getRubyWrapperClass() {
-        jobManagement.logPluginDeprecationWarning('ruby-runtime', '0.13')
+        jobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
 
-        jobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.13') ? 'Jenkins::Tasks::BuildWrapperProxy' :
+        jobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') ? 'Jenkins::Tasks::BuildWrapperProxy' :
                 'Jenkins::Plugin::Proxies::BuildWrapper'
     }
 
