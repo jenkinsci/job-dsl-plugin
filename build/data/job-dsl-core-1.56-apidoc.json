@@ -1,5 +1,5 @@
 {
-    "version": "1.57",
+    "version": "1.56",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -23951,7 +23951,7 @@
                                     "type": "List<String>"
                                 }
                             ],
-                            "html": "Specifies on which Gerrit projects to trigger a build on. Use a <TT>'&lt;type&gt;:&lt;pattern&gt;'</TT> notation\r\n to specify a project or branch name pattern. Supported types are <TT>plain</TT> (default), <TT>ant</TT> (called\r\n \"Path\" in the UI) and <TT>reg_exp</TT>.",
+                            "html": "Specifies on which Gerrit projects to trigger a build on. Use a <TT>'<type>:<pattern>'</TT> notation to specify\r\n a project or branch name pattern. Supported types are <TT>plain</TT> (default), <TT>ant</TT> (called \"Path\" in the\r\n UI) and <TT>reg_exp</TT>.",
                             "firstSentenceCommentText": "Specifies on which Gerrit projects to trigger a build on. "
                         },
                         {
@@ -23965,7 +23965,7 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Specifies on which Gerrit projects to trigger a build on. Use a <TT>'&lt;type&gt;:&lt;pattern&gt;'</TT> notation\r\n to specify a project or branch name pattern. Supported types are <TT>plain</TT> (default), <TT>ant</TT> (called\r\n \"Path\" in the UI) and <TT>reg_exp</TT>.",
+                            "html": "Specifies on which Gerrit projects to trigger a build on. Use a <TT>'<type>:<pattern>'</TT> notation to specify\r\n a project or branch name pattern. Supported types are <TT>plain</TT> (default), <TT>ant</TT> (called \"Path\" in the\r\n UI) and <TT>reg_exp</TT>.",
                             "firstSentenceCommentText": "Specifies on which Gerrit projects to trigger a build on. "
                         }
                     ]
