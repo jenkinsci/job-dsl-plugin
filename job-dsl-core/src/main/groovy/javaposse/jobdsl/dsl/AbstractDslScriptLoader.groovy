@@ -12,19 +12,19 @@ import static groovy.lang.GroovyShell.DEFAULT_CODE_BASE
 /**
  * Runs provided DSL scripts via an external {@link JobManagement}.
  */
-class DslScriptLoader {
-    private static final Logger LOGGER = Logger.getLogger(DslScriptLoader.name)
+class AbstractDslScriptLoader {
+    private static final Logger LOGGER = Logger.getLogger(AbstractDslScriptLoader.name)
     private static final Comparator<? super Item> ITEM_COMPARATOR = new ItemProcessingOrderComparator()
 
     private final JobManagement jobManagement
     private final PrintStream logger
 
     /**
-     * Creates a new {@link DslScriptLoader} which will use the given {@link JobManagement} instance.
+     * Creates a new {@link AbstractDslScriptLoader} which will use the given {@link JobManagement} instance.
      *
      * @since 1.45
      */
-    DslScriptLoader(JobManagement jobManagement) {
+    AbstractDslScriptLoader(JobManagement jobManagement) {
         this.jobManagement = jobManagement
         this.logger = jobManagement.outputStream
     }
@@ -45,7 +45,7 @@ class DslScriptLoader {
                 GroovyShell groovyShell = groovyShellCache[key]
                 if (!groovyShell) {
                     groovyShell = new GroovyShell(
-                            new URLClassLoader(scriptRequest.urlRoots, DslScriptLoader.classLoader),
+                            new URLClassLoader(scriptRequest.urlRoots, AbstractDslScriptLoader.classLoader),
                             new Binding(),
                             config
                     )
