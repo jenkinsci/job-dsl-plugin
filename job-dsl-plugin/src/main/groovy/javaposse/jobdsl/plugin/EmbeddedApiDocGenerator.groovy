@@ -91,11 +91,41 @@ class EmbeddedApiDocGenerator {
             }
             knownMethods.addAll(extensions*.name)
 
+            methods.each { JSONObject method ->
+                if (!hasOptionalClosureSignature(method)) {
+                    knownMethods.remove(method.getString('name'))
+                }
+            }
+
             Map<String, DescribableModel> symbols = findDescribableModels(extensibleContextClass, knownMethods)
             symbols.sort().each { String symbol, DescribableModel model ->
-                methods << generateMethod(symbol, model)
+                JSONObject method = methods.find { it.getString('name') == symbol } as JSONObject
+                if (method) {
+                    method.getJSONArray('signatures').add(generateSignature(model))
+                } else {
+                    methods << generateMethod(symbol, model)
+                }
             }
         }
+    }
+
+    private static boolean hasOptionalClosureSignature(JSONObject method) {
+        method.getJSONArray('signatures').any { JSONObject signature ->
+            isOptionalClosureSignature(signature)
+        }
+    }
+
+    private static boolean isOptionalClosureSignature(JSONObject signature) {
+        if (!signature.has('parameters')) {
+            return true
+        }
+        JSONArray parameters = signature.getJSONArray('parameters')
+        if (parameters.size() > 1) {
+            return false
+        } else if (parameters.empty) {
+            return true
+        }
+        parameters[0].getString('type') == 'Closure'
     }
 
     /**

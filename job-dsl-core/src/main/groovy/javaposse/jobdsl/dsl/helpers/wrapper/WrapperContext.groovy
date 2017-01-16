@@ -57,6 +57,8 @@ class WrapperContext extends AbstractExtensibleContext {
             @RequiresPlugin(id = 'ruby-runtime')
     ])
     void rbenv(String rubyVersion, @DslContext(RbenvContext) Closure rbenvClosure = null) {
+        jobManagement.logPluginDeprecationWarning('rbenv', '0.0.17')
+
         RbenvContext rbenvContext = new RbenvContext()
         ContextHelper.executeInContext(rbenvClosure, rbenvContext)
 
@@ -107,9 +109,9 @@ class WrapperContext extends AbstractExtensibleContext {
     }
 
     private String getRubyWrapperClass() {
-        jobManagement.logPluginDeprecationWarning('ruby-runtime', '0.13')
+        jobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
 
-        jobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.13') ? 'Jenkins::Tasks::BuildWrapperProxy' :
+        jobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') ? 'Jenkins::Tasks::BuildWrapperProxy' :
                 'Jenkins::Plugin::Proxies::BuildWrapper'
     }
 
@@ -186,10 +188,30 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'ssh-agent')
     void sshAgent(String credentials) {
+        jobManagement.logPluginDeprecationWarning('ssh-agent', '1.5')
         Preconditions.checkNotNull(credentials, 'credentials must not be null')
 
         wrapperNodes << new NodeBuilder().'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper' {
             user(credentials)
+        }
+    }
+
+    /**
+     * Provide SSH credentials to builds via a ssh-agent in Jenkins.
+     *
+     * @param credentials name of the credentials to use
+     * @since 1.56
+     */
+    @RequiresPlugin(id = 'ssh-agent', minimumVersion = '1.5')
+    void sshAgent(String... credentials) {
+        Preconditions.checkNotNull(credentials, 'credentials must not be null')
+
+        wrapperNodes << new NodeBuilder().'com.cloudbees.jenkins.plugins.sshagent.SSHAgentBuildWrapper' {
+            credentialIds {
+                credentials.each {
+                    string(it)
+                }
+            }
         }
     }
 

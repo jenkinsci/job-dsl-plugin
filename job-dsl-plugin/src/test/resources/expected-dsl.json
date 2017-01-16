@@ -121,6 +121,10 @@
                 }
               ],
               "extension": true
+            },
+            {
+              "parameters": [],
+              "generated": true
             }
           ]
         },

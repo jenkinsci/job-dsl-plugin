@@ -43,6 +43,7 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
 import org.jenkinsci.lib.configprovider.model.Config;
+import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
 import org.jenkinsci.plugins.vSphereCloud;
 import org.xml.sax.SAXException;
 
@@ -69,6 +70,7 @@ import static hudson.Util.fixEmptyAndTrim;
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static java.lang.String.format;
+import static java.util.UUID.randomUUID;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.createNewConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfig;
 import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider;
@@ -269,20 +271,18 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
 
         Config config = findConfig(configProvider, configFile.getName());
-        if (config == null) {
-            config = configProvider.newConfig();
-        } else if (ignoreExisting) {
+        if (config != null && ignoreExisting) {
             return config.id;
         }
 
-        config = createNewConfig(config, configFile);
+        config = createNewConfig(config == null ? randomUUID().toString() : config.id, configFile);
         if (config == null) {
             throw new DslException(
                     format(Messages.CreateOrUpdateConfigFile_UnknownConfigFileType(), configFile.getClass())
             );
         }
 
-        configProvider.save(config);
+        jenkins.getExtensionList(GlobalConfigFiles.class).get(GlobalConfigFiles.class).save(config);
         return config.id;
     }
 

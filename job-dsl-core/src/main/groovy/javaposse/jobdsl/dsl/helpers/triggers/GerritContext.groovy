@@ -92,9 +92,9 @@ class GerritContext implements Context {
     }
 
     /**
-     * Specifies on which Gerrit projects to trigger a build on. Use a {@code '<type>:<pattern>'} notation to specify
-     * a project or branch name pattern. Supported types are {@code plain} (default), {@code ant} (called "Path" in the
-     * UI) and {@code reg_exp}.
+     * Specifies on which Gerrit projects to trigger a build on. Use a {@code '&lt;type&gt;:&lt;pattern&gt;'} notation
+     * to specify a project or branch name pattern. Supported types are {@code plain} (default), {@code ant} (called
+     * "Path" in the UI) and {@code reg_exp}.
      */
     void project(String projectName, List<String> branches) {
         projects << [
@@ -104,9 +104,9 @@ class GerritContext implements Context {
     }
 
     /**
-     * Specifies on which Gerrit projects to trigger a build on. Use a {@code '<type>:<pattern>'} notation to specify
-     * a project or branch name pattern. Supported types are {@code plain} (default), {@code ant} (called "Path" in the
-     * UI) and {@code reg_exp}.
+     * Specifies on which Gerrit projects to trigger a build on. Use a {@code '&lt;type&gt;:&lt;pattern&gt;'} notation
+     * to specify a project or branch name pattern. Supported types are {@code plain} (default), {@code ant} (called
+     * "Path" in the UI) and {@code reg_exp}.
      */
     void project(String projectName, String branch) {
         project(projectName, [branch])

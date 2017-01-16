@@ -3,10 +3,11 @@ package javaposse.jobdsl.dsl
 import org.codehaus.groovy.control.CompilationFailedException
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
-import org.codehaus.groovy.runtime.InvokerHelper
 
 import java.util.logging.Level
 import java.util.logging.Logger
+
+import static groovy.lang.GroovyShell.DEFAULT_CODE_BASE
 
 /**
  * Runs provided DSL scripts via an external {@link JobManagement}.
@@ -34,48 +35,24 @@ class DslScriptLoader {
      * @since 1.45
      */
     GeneratedItems runScripts(Collection<ScriptRequest> scriptRequests) throws IOException {
-        ClassLoader parentClassLoader = DslScriptLoader.classLoader
-        CompilerConfiguration config = createCompilerConfiguration()
-
-        // Otherwise baseScript won't take effect
-        GroovyClassLoader groovyClassLoader = new GroovyClassLoader(parentClassLoader, config)
-
-        try {
-            runScriptsWithClassLoader(scriptRequests, groovyClassLoader, config)
-        } finally {
-            if (groovyClassLoader instanceof Closeable) {
-                ((Closeable) groovyClassLoader).close()
-            }
-        }
-    }
-
-    /**
-     * Executes the script and returns the generated items.
-     *
-     * @since 1.47
-     */
-    GeneratedItems runScript(String script) throws IOException {
-        runScripts([new ScriptRequest(script)])
-    }
-
-    private GeneratedItems runScriptsWithClassLoader(Collection<ScriptRequest> scriptRequests,
-                                                     GroovyClassLoader groovyClassLoader,
-                                                     CompilerConfiguration config) {
         GeneratedItems generatedItems = new GeneratedItems()
-        Map<String, GroovyScriptEngine> engineCache = [:]
-
+        CompilerConfiguration config = createCompilerConfiguration()
+        Map<String, GroovyShell> groovyShellCache = [:]
         try {
             scriptRequests.each { ScriptRequest scriptRequest ->
                 String key = scriptRequest.urlRoots*.toString().sort().join(',')
 
-                GroovyScriptEngine engine = engineCache[key]
-                if (!engine) {
-                    engine = new GroovyScriptEngine(scriptRequest.urlRoots, groovyClassLoader)
-                    engine.config = config
-                    engineCache[key] = engine
+                GroovyShell groovyShell = groovyShellCache[key]
+                if (!groovyShell) {
+                    groovyShell = new GroovyShell(
+                            new URLClassLoader(scriptRequest.urlRoots, DslScriptLoader.classLoader),
+                            new Binding(),
+                            config
+                    )
+                    groovyShellCache[key] = groovyShell
                 }
 
-                JobParent jobParent = runScriptEngine(scriptRequest, engine)
+                JobParent jobParent = runScriptEngine(scriptRequest, groovyShell)
 
                 generatedItems.configFiles.addAll(
                         extractGeneratedConfigFiles(jobParent.referencedConfigFiles, scriptRequest.ignoreExisting)
@@ -93,40 +70,54 @@ class DslScriptLoader {
                 scheduleJobsToRun(jobParent.queueToBuild)
             }
         } finally {
-            engineCache.values().each { GroovyScriptEngine engine ->
-                if (engine?.groovyClassLoader instanceof Closeable) {
-                    ((Closeable) engine.groovyClassLoader).close()
+            groovyShellCache.values().each { GroovyShell groovyShell ->
+                if (groovyShell.classLoader instanceof Closeable) {
+                    ((Closeable) groovyShell.classLoader).close()
+                }
+                if (groovyShell.classLoader.parent instanceof Closeable) {
+                    ((Closeable) groovyShell.classLoader.parent).close()
                 }
             }
         }
-
         generatedItems
     }
 
-    private JobParent runScriptEngine(ScriptRequest scriptRequest, GroovyScriptEngine engine) {
-        LOGGER.log(Level.FINE, String.format("Request for ${scriptRequest.location}"))
+    /**
+     * Executes the script and returns the generated items.
+     *
+     * @since 1.47
+     */
+    GeneratedItems runScript(String script) throws IOException {
+        runScripts([new ScriptRequest(script)])
+    }
 
-        Binding binding = createBinding(scriptRequest)
+    private JobParent runScriptEngine(ScriptRequest scriptRequest, GroovyShell groovyShell) {
         try {
-            Script script
-            if (scriptRequest.body != null) {
-                logger.println('Processing provided DSL script')
-                Class cls = engine.groovyClassLoader.parseClass(scriptRequest.body, 'script')
-                script = InvokerHelper.createScript(cls, binding)
+            if (scriptRequest.scriptPath || scriptRequest.location) {
+                String scriptName = scriptRequest.location ?: new File(scriptRequest.scriptPath).name
+                logger.println("Processing DSL script ${ scriptName}")
+                checkValidScriptName(scriptName)
+                checkCollidingScriptName(scriptName, groovyShell.classLoader, logger)
             } else {
-                logger.println("Processing DSL script ${scriptRequest.location}")
-                checkValidScriptName(scriptRequest.location)
-                checkCollidingScriptName(scriptRequest.location, engine.groovyClassLoader, logger)
-                script = engine.createScript(scriptRequest.location, binding)
+                logger.println('Processing provided DSL script')
             }
-            assert script instanceof JobParent
+
+            GroovyCodeSource source
+            if (scriptRequest.body != null) {
+                source = new GroovyCodeSource(
+                        scriptRequest.body, scriptRequest.scriptPath ?: 'script', DEFAULT_CODE_BASE
+                )
+            } else {
+                source = new GroovyCodeSource(new URL(scriptRequest.urlRoots[0], scriptRequest.location))
+            }
+            Script script = groovyShell.parse(source)
+            script.binding = createBinding(scriptRequest)
+            script.binding.setVariable('jobFactory', script)
 
             JobParent jobParent = (JobParent) script
             jobParent.setJm(jobManagement)
 
-            binding.setVariable('jobFactory', jobParent)
-
-            script.run()
+            jobParent.run()
 
             return jobParent
         } catch (CompilationFailedException e) {

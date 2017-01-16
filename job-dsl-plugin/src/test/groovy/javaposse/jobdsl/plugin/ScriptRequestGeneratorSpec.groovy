@@ -17,6 +17,8 @@ import static javaposse.jobdsl.plugin.ScriptRequestGenerator.getAbsolutePath
 @Unroll
 class ScriptRequestGeneratorSpec extends Specification {
     private static final String SCRIPT = 'my script'
+    private static final String SCRIPT_A = 'my script A'
+    private static final String SCRIPT_B = 'my script B'
 
     @Shared
     @ClassRule
@@ -33,8 +35,8 @@ class ScriptRequestGeneratorSpec extends Specification {
         build.workspace.child('classes').mkdirs()
         build.workspace.child('test/classes').mkdirs()
         build.workspace.child('output').mkdirs()
-        build.workspace.child('a.groovy').write(SCRIPT, 'UTF-8')
-        build.workspace.child('b.groovy').write(SCRIPT, 'UTF-8')
+        build.workspace.child('a.groovy').write(SCRIPT_A, 'UTF-8')
+        build.workspace.child('b.groovy').write(SCRIPT_B, 'UTF-8')
         build.workspace.child('lib/a.jar').write(SCRIPT, 'UTF-8')
         build.workspace.child('lib/b.jar').write(SCRIPT, 'UTF-8')
 
@@ -42,7 +44,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('remote-foo')
         job.assignedLabel = Label.get('label1')
         remoteBuild = jenkinsRule.buildAndAssertSuccess(job)
-        remoteBuild.workspace.child('a.groovy').write(SCRIPT, 'UTF-8')
+        remoteBuild.workspace.child('a.groovy').write(SCRIPT_A, 'UTF-8')
         remoteBuild.workspace.child('lib/a.jar').write(SCRIPT, 'UTF-8')
         remoteBuild.workspace.child('lib/b.jar').write(SCRIPT, 'UTF-8')
     }
@@ -153,8 +155,8 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == 'a.groovy'
-        requests[0].body == null
+        requests[0].location == null
+        requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
         !requests[0].ignoreExisting
@@ -171,8 +173,8 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == 'a.groovy'
-        requests[0].body == null
+        requests[0].location == null
+        requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
         !requests[0].ignoreExisting
@@ -189,8 +191,8 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == 'a.groovy'
-        requests[0].body == null
+        requests[0].location == null
+        requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
         requests[0].ignoreExisting
@@ -209,14 +211,14 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 2
-        requests[0].location == 'a.groovy'
-        requests[0].body == null
+        requests[0].location == null
+        requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
         !requests[0].ignoreExisting
         requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
-        requests[1].location == 'b.groovy'
-        requests[1].body == null
+        requests[1].location == null
+        requests[1].body == SCRIPT_B
         requests[1].urlRoots.length == 1
         requests[1].urlRoots[0].toString() == 'workspace:/'
         !requests[1].ignoreExisting
@@ -233,14 +235,14 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 2
-        requests[0].location == 'a.groovy'
-        requests[0].body == null
+        requests[0].location == null
+        requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
         !requests[0].ignoreExisting
         requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
-        requests[1].location == 'b.groovy'
-        requests[1].body == null
+        requests[1].location == null
+        requests[1].body == SCRIPT_B
         requests[1].urlRoots.length == 1
         requests[1].urlRoots[0].toString() == 'workspace:/'
         !requests[1].ignoreExisting
@@ -259,16 +261,16 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 2
-        requests[0].location == 'a.groovy'
-        requests[0].body == null
+        requests[0].location == null
+        requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 3
         requests[0].urlRoots[0].toString() == 'workspace:/'
         requests[0].urlRoots[1] == new URL(build.workspace.toURI().toURL(), 'classes/')
         requests[0].urlRoots[2] == new URL(build.workspace.toURI().toURL(), 'output/')
         !requests[0].ignoreExisting
         requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
-        requests[1].location == 'b.groovy'
-        requests[1].body == null
+        requests[1].location == null
+        requests[1].body == SCRIPT_B
         requests[1].urlRoots.length == 3
         requests[1].urlRoots[0].toString() == 'workspace:/'
         requests[0].urlRoots[1] == new URL(build.workspace.toURI().toURL(), 'classes/')
@@ -289,8 +291,8 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == 'a.groovy'
-        requests[0].body == null
+        requests[0].location == null
+        requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 3
         requests[0].urlRoots[0].toString() == 'workspace:/'
         requests[0].urlRoots[1] == new URL(build.workspace.toURI().toURL(), 'lib/a.jar')
@@ -311,8 +313,8 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == 'a.groovy'
-        requests[0].body == null
+        requests[0].location == null
+        requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 3
         requests[0].urlRoots[0].toString() == 'workspace:/'
         URL tempDirUrl = new File(System.getProperty('java.io.tmpdir')).toURI().toURL()
