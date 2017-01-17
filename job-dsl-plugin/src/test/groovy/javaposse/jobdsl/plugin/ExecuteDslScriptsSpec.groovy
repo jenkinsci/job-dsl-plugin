@@ -247,35 +247,6 @@ class ExecuteDslScriptsSpec extends Specification {
         executeDslScripts.additionalClasspath == null
     }
 
-    @WithoutJenkins
-    def 'script location'() {
-        setup:
-        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
-
-        expect:
-        executeDslScripts.scriptLocation == null
-
-        when:
-        executeDslScripts.scriptLocation = new ExecuteDslScripts.ScriptLocation()
-
-        then:
-        executeDslScripts.scriptLocation == null
-        executeDslScripts.scriptText == null
-        executeDslScripts.targets == null
-        !executeDslScripts.usingScriptText
-        executeDslScripts.useScriptText == null
-
-        when:
-        executeDslScripts.scriptLocation = null
-
-        then:
-        executeDslScripts.scriptLocation == null
-        executeDslScripts.scriptText == null
-        executeDslScripts.targets == null
-        executeDslScripts.usingScriptText
-        executeDslScripts.useScriptText == null
-    }
-
     def scheduleBuildOnMasterUsingScriptText() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')

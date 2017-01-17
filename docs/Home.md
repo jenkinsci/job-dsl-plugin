@@ -52,6 +52,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [Migration](Migration#migrating-to-158)
  * Support for the older versions of the [GitLab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin) is
    deprecated, see [Migration](Migration#migrating-to-158)
+ * Removed anything that has been deprecated in 1.49, see [Migration](Migration#migrating-to-149)
 * 1.57 (January 15 2017)
  * Updated optional
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) dependency to
