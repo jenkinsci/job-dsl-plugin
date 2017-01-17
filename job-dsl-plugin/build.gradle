@@ -81,7 +81,9 @@ jpi {
 }
 
 dependencies {
-    compile project(':job-dsl-core')
+    compile(project(':job-dsl-core'))  {
+        exclude group: 'org.jvnet.hudson', module:'xstream'
+    }
     compile 'org.jenkins-ci:symbol-annotation:1.1'
     jenkinsPlugins 'org.jenkins-ci.plugins:structs:1.2@jar'
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:vsphere-cloud:1.1.11@jar'
