@@ -27,6 +27,7 @@ abstract class JobParent extends Script implements DslFactory {
     JobManagement jm
     Set<Item> referencedJobs = new LinkedHashSet<>()
     Set<View> referencedViews = new LinkedHashSet<>()
+    @Deprecated
     Set<ConfigFile> referencedConfigFiles = new LinkedHashSet<>()
     Set<UserContent> referencedUserContents = new LinkedHashSet<>()
     List<String> queueToBuild = []
@@ -206,6 +207,7 @@ abstract class JobParent extends Script implements DslFactory {
     /**
      * @since 1.30
      */
+    @Deprecated
     ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.Custom, closure)
     }
@@ -213,6 +215,7 @@ abstract class JobParent extends Script implements DslFactory {
     /**
      * @since 1.30
      */
+    @Deprecated
     MavenSettingsConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.MavenSettings, MavenSettingsConfigFile, closure)
     }
@@ -220,6 +223,7 @@ abstract class JobParent extends Script implements DslFactory {
     /**
      * @since 1.39
      */
+    @Deprecated
     MavenSettingsConfigFile globalMavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.GlobalMavenSettings, MavenSettingsConfigFile, closure)
     }
@@ -227,6 +231,7 @@ abstract class JobParent extends Script implements DslFactory {
     /**
      * @since 1.40
      */
+    @Deprecated
     ParametrizedConfigFile managedScriptConfigFile(String name,
                                                    @DslContext(ParametrizedConfigFile) Closure closure = null) {
         processConfigFile(name, ConfigFileType.ManagedScript, ParametrizedConfigFile, closure)

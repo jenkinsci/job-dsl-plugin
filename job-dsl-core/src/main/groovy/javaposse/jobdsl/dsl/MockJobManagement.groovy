@@ -31,6 +31,7 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    @Deprecated
     String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
         throw new UnsupportedOperationException()
     }
@@ -81,6 +82,7 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    @Deprecated
     String getConfigFileId(ConfigFileType type, String name) {
         null
     }

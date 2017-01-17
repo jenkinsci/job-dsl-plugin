@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.Preconditions
 
 class ConfigFilesContext extends AbstractContext {
     List<ConfigFileContext> configFiles = []
@@ -19,8 +18,8 @@ class ConfigFilesContext extends AbstractContext {
      *
      * @see #custom(java.lang.String, groovy.lang.Closure)
      */
-    void file(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
-        custom(fileName, configFileClosure)
+    void file(String fileIdOrName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
+        custom(fileIdOrName, configFileClosure)
     }
 
     /**
@@ -28,8 +27,8 @@ class ConfigFilesContext extends AbstractContext {
      *
      * @since 1.35
      */
-    void custom(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
-        configFile(fileName, ConfigFileType.Custom, configFileClosure)
+    void custom(String fileIdOrName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
+        configFile(fileIdOrName, ConfigFileType.Custom, configFileClosure)
     }
 
     /**
@@ -37,8 +36,8 @@ class ConfigFilesContext extends AbstractContext {
      *
      * @since 1.35
      */
-    void mavenSettings(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
-        configFile(fileName, ConfigFileType.MavenSettings, configFileClosure)
+    void mavenSettings(String fileIdOrName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
+        configFile(fileIdOrName, ConfigFileType.MavenSettings, configFileClosure)
     }
 
     /**
@@ -46,15 +45,14 @@ class ConfigFilesContext extends AbstractContext {
      *
      * @since 1.39
      */
-    void globalMavenSettings(String fileName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
-        configFile(fileName, ConfigFileType.GlobalMavenSettings, configFileClosure)
+    void globalMavenSettings(String fileIdOrName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
+        configFile(fileIdOrName, ConfigFileType.GlobalMavenSettings, configFileClosure)
     }
 
-    private void configFile(String fileName, ConfigFileType type, Closure configFileClosure) {
-        String configFileId = jobManagement.getConfigFileId(type, fileName)
-        Preconditions.checkNotNull(configFileId, "${type} config file with name '${fileName}' not found")
+    private void configFile(String fileIdOrName, ConfigFileType type, Closure configFileClosure) {
+        String configFileId = jobManagement.getConfigFileId(type, fileIdOrName)
 
-        ConfigFileContext configFileContext = new ConfigFileContext(configFileId)
+        ConfigFileContext configFileContext = new ConfigFileContext(configFileId ?: fileIdOrName)
         ContextHelper.executeInContext(configFileClosure, configFileContext)
 
         configFiles << configFileContext

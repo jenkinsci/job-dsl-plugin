@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.step
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresCore
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
@@ -76,29 +75,25 @@ class MavenContext extends AbstractContext {
     /**
      * Specifies the managed Maven settings to be used.
      *
-     * @param settings name of the managed Maven settings
      * @since 1.25
      */
     @RequiresPlugin(id = 'config-file-provider')
-    void providedSettings(String settingsName) {
-        String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
-        Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")
+    void providedSettings(String settingsIdOrName) {
+        String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsIdOrName)
 
-        this.providedSettingsId = settingsId
+        this.providedSettingsId = settingsId ?: settingsIdOrName
     }
 
     /**
      * Specifies the managed global Maven settings to be used.
      *
-     * @param settings name of the managed global Maven settings
      * @since 1.39
      */
     @RequiresPlugin(id = 'config-file-provider')
-    void providedGlobalSettings(String settingsName) {
-        String settingsId = jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsName)
-        Preconditions.checkNotNull(settingsId, "Managed global Maven settings with name '${settingsName}' not found")
+    void providedGlobalSettings(String settingsIdOrName) {
+        String settingsId = jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsIdOrName)
 
-        this.providedGlobalSettingsId = settingsId
+        this.providedGlobalSettingsId = settingsId ?: settingsIdOrName
     }
 
     /**

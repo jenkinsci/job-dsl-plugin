@@ -36,6 +36,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   ([JENKINS-41001](https://issues.jenkins-ci.org/browse/JENKINS-41001))
  * Improved error message for invalid enum values
   ([JENKINS-41270](https://issues.jenkins-ci.org/browse/JENKINS-41270))
+ * The syntax for creating config files is changing, see [Migration](Migration#migrating-to-158)
+ * Most classes and related methods for creating config files are deprecated, see
+   [Migration](Migration#migrating-to-158)
 * 1.57 (January 15 2017)
  * Updated optional
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) dependency to

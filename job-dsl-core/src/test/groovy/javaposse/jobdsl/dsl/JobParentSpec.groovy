@@ -261,6 +261,7 @@ class JobParentSpec extends Specification {
         configFile.comment == 'foo'
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requirePlugin('config-file-provider', true)
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'custom config file without closure'() {
@@ -272,6 +273,7 @@ class JobParentSpec extends Specification {
         configFile.type == ConfigFileType.Custom
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requirePlugin('config-file-provider', true)
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'Maven settings config file'() {
@@ -287,6 +289,7 @@ class JobParentSpec extends Specification {
         configFile instanceof MavenSettingsConfigFile
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requirePlugin('config-file-provider', true)
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'Maven settings config file without closure'() {
@@ -299,6 +302,7 @@ class JobParentSpec extends Specification {
         configFile instanceof MavenSettingsConfigFile
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requirePlugin('config-file-provider', true)
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'global Maven settings config file'() {
@@ -314,6 +318,7 @@ class JobParentSpec extends Specification {
         configFile instanceof MavenSettingsConfigFile
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requirePlugin('config-file-provider', true)
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'global Maven settings config file without closure'() {
@@ -326,6 +331,7 @@ class JobParentSpec extends Specification {
         configFile instanceof MavenSettingsConfigFile
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requirePlugin('config-file-provider', true)
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'managed script config file'() {
@@ -342,6 +348,7 @@ class JobParentSpec extends Specification {
         configFile.arguments == ['bar']
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1', true)
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'managed script config file without closure'() {
@@ -354,6 +361,7 @@ class JobParentSpec extends Specification {
         configFile.arguments == []
         parent.referencedConfigFiles.contains(configFile)
         1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1', true)
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'readFileInWorkspace from seed job'() {

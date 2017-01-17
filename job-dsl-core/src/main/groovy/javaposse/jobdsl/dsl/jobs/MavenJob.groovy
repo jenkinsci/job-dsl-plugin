@@ -311,13 +311,12 @@ class MavenJob extends Job {
      * @since 1.25
      */
     @RequiresPlugin(id = 'config-file-provider')
-    void providedSettings(String settingsName) {
-        String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName)
-        Preconditions.checkNotNull(settingsId, "Managed Maven settings with name '${settingsName}' not found")
+    void providedSettings(String settingsIdOrName) {
+        String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsIdOrName)
 
         configure { Node project ->
             project / settings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider') {
-                settingsConfigId(settingsId)
+                settingsConfigId(settingsId ?: settingsIdOrName)
             }
         }
     }
@@ -328,13 +327,12 @@ class MavenJob extends Job {
      * @since 1.39
      */
     @RequiresPlugin(id = 'config-file-provider')
-    void providedGlobalSettings(String settingsName) {
-        String settingsId = jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsName)
-        Preconditions.checkNotNull(settingsId, "Managed global Maven settings with name '${settingsName}' not found")
+    void providedGlobalSettings(String settingsIdOrName) {
+        String settingsId = jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsIdOrName)
 
         configure { Node project ->
             project / globalSettings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider') {
-                settingsConfigId(settingsId)
+                settingsConfigId(settingsId ?: settingsIdOrName)
             }
         }
     }

@@ -226,7 +226,7 @@ class MavenJobSpec extends Specification {
         job.node.mavenName[0].value() == 'test'
     }
 
-    def 'call maven method with unknown provided settings'() {
+    def 'call maven method with provided settings ID'() {
         setup:
         String settingsName = 'lalala'
 
@@ -234,11 +234,15 @@ class MavenJobSpec extends Specification {
         job.providedSettings(settingsName)
 
         then:
-        Exception e = thrown(DslScriptException)
-        e.message.contains(settingsName)
+        job.node.settings.size() == 1
+        with(job.node.settings[0]) {
+            attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
+            children().size() == 1
+            settingsConfigId[0].value() == settingsName
+        }
     }
 
-    def 'call maven method with provided settings'() {
+    def 'call maven method with provided settings name'() {
         setup:
         String settingsName = 'maven-proxy'
         String settingsId = '123123415'
@@ -256,7 +260,7 @@ class MavenJobSpec extends Specification {
         }
     }
 
-    def 'call maven method with unknown provided global settings'() {
+    def 'call maven method with provided global settings ID'() {
         setup:
         String settingsName = 'lalala'
 
@@ -264,11 +268,15 @@ class MavenJobSpec extends Specification {
         job.providedGlobalSettings(settingsName)
 
         then:
-        Exception e = thrown(DslScriptException)
-        e.message.contains(settingsName)
+        job.node.globalSettings.size() == 1
+        with(job.node.globalSettings[0]) {
+            attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider'
+            children().size() == 1
+            settingsConfigId[0].value() == settingsName
+        }
     }
 
-    def 'call maven method with provided global settings'() {
+    def 'call maven method with provided global settings name'() {
         setup:
         String settingsName = 'maven-proxy'
         String settingsId = '123123415'
