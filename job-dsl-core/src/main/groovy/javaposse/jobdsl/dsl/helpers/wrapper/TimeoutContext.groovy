@@ -24,11 +24,14 @@ class TimeoutContext extends AbstractContext {
      *
      * @since 1.24
      */
-    void elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60) {
+    @RequiresPlugin(id = 'build-timeout', minimumVersion = '1.16')
+    void elastic(int percentage = 150, int numberOfBuilds = 3, int minutesDefault = 60,
+                 boolean failSafeTimeout = false) {
         setStrategy('Elastic') {
             timeoutPercentage(percentage)
             delegate.numberOfBuilds(numberOfBuilds)
             timeoutMinutesElasticDefault(minutesDefault)
+            failSafeTimeoutDuration(failSafeTimeout)
         }
     }
 
