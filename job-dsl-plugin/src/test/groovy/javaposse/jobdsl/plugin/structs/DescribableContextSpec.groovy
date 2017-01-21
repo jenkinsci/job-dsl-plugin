@@ -221,11 +221,8 @@ class DescribableContextSpec extends Specification {
         context.anEnum('true')
 
         then:
-        MissingMethodException e = thrown(MissingMethodException)
-        e.type == DescribableContext
-        e.method == 'anEnum'
-        e.arguments == ['true']
-        !e.static
+        Exception e = thrown(DslScriptException)
+        e.message =~ "invalid enum value 'true', must be one of 'NEW', 'RUNNABLE', 'BLOCKED', 'WAITING', 'TIMED_WAITING"
     }
 
     def 'enum property with string value'() {
@@ -280,11 +277,8 @@ class DescribableContextSpec extends Specification {
         context.anEnum(null)
 
         then:
-        MissingMethodException e = thrown(MissingMethodException)
-        e.type == DescribableContext
-        e.method == 'anEnum'
-        e.arguments == [null]
-        !e.static
+        Exception e = thrown(DslScriptException)
+        e.message =~ "invalid enum value 'null', must be one of 'NEW', 'RUNNABLE', 'BLOCKED', 'WAITING', 'TIMED_WAITING"
     }
 
     def 'heterogeneous property with invalid type'() {
