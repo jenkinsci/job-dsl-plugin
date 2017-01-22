@@ -80,11 +80,13 @@ class DescribableContext implements Context {
                     return value.every { isAssignable(it, (AtomicType) arrayType.elementType) }
                 } else if (arrayType.elementType instanceof EnumType) {
                     EnumType enumType = (EnumType) arrayType.elementType
-                    return value.every { isValidEnumValue(enumType, it) }
+                    value.each { checkValidEnumValue(enumType, it) }
+                    return true
                 }
             }
         } else if (parameterType instanceof EnumType) {
-            return isValidEnumValue((EnumType) parameterType, value)
+            checkValidEnumValue((EnumType) parameterType, value)
+            return true
         } else if (parameterType instanceof AtomicType) {
             return (value != null && isAssignable(value, parameterType)) ||
                     (value == null && !((AtomicType) parameterType).type.primitive)
@@ -138,7 +140,11 @@ class DescribableContext implements Context {
         ClassUtils.isAssignable(normalizedType, parameterType.type, true)
     }
 
-    private static boolean isValidEnumValue(EnumType enumType, Object value) {
-        enumType.type.isInstance(value) || enumType.values.contains(value)
+    private static void checkValidEnumValue(EnumType enumType, Object value) {
+        if (!enumType.type.isInstance(value) && !enumType.values.contains(value)) {
+            throw new DslScriptException(
+                    "invalid enum value '${value}', must be one of '${enumType.values.join("', '")}'"
+            )
+        }
     }
 }
