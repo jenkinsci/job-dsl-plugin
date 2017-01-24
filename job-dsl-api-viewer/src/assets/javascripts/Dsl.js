@@ -12,6 +12,7 @@ _.extend(App.Dsl.prototype, {
         context.simpleClassName = tokens[tokens.length - 1];
 
         context.methods.forEach(function(method) {
+            method.signatures = _.reject(method.signatures, function(signature){ return !window.App.config.embedded && signature.embeddedOnly; });
             method.signatures.forEach(function (signature) {
                 // maintain compatibility with older data
                 if (signature.plugin) {
@@ -49,6 +50,7 @@ _.extend(App.Dsl.prototype, {
                 })
                 .value();
         });
+        context.methods = _.reject(context.methods, function(method){ return method.signatures.length == 0; });
     },
 
     getContext: function(contextClass) {

@@ -187,6 +187,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    @Deprecated
     public String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
         validateNameArg(configFile.getName());
 
@@ -374,6 +375,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
+    @Deprecated
     public String getConfigFileId(ConfigFileType type, String name) {
         Jenkins jenkins = Jenkins.getInstance();
         if (jenkins.getPlugin("config-file-provider") != null) {
@@ -381,6 +383,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             if (configProvider != null) {
                 Config config = findConfig(configProvider, name);
                 if (config != null) {
+                    logDeprecationWarning("finding managed config files by name");
                     return config.id;
                 }
             }

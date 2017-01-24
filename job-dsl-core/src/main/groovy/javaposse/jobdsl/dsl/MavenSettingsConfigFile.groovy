@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+@Deprecated
 class MavenSettingsConfigFile extends ConfigFile {
     Boolean replaceAll
     Map<String, String> credentialsMapping = [:]

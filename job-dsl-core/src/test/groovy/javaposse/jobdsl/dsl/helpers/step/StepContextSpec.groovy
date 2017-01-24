@@ -569,35 +569,57 @@ class StepContextSpec extends Specification {
         mavenStep.injectBuildVariables[0].value() == true
     }
 
-    def 'call maven method with unknown provided settings'() {
+    def 'call maven method with provided settings ID'() {
         setup:
-        String settingsName = 'lalala'
+        String settingsId = 'lalala'
 
         when:
         context.maven {
-            providedSettings(settingsName)
+            providedSettings(settingsId)
         }
 
         then:
-        Exception e = thrown(DslScriptException)
-        e.message.contains(settingsName)
+        with(context.stepNodes[0]) {
+            name() == 'hudson.tasks.Maven'
+            children().size() == 5
+            targets[0].value() == ''
+            jvmOptions[0].value() == ''
+            usePrivateRepository[0].value() == false
+            mavenName[0].value() == '(Default)'
+            with(settings[0]) {
+                attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider'
+                children().size() == 1
+                settingsConfigId[0].value() == settingsId
+            }
+        }
     }
 
-    def 'call maven method with unknown provided global settings'() {
+    def 'call maven method with provided global settings ID'() {
         setup:
-        String settingsName = 'lalala'
+        String settingsId = 'lalala'
 
         when:
         context.maven {
-            providedGlobalSettings(settingsName)
+            providedGlobalSettings(settingsId)
         }
 
         then:
-        Exception e = thrown(DslScriptException)
-        e.message.contains(settingsName)
+        with(context.stepNodes[0]) {
+            name() == 'hudson.tasks.Maven'
+            children().size() == 5
+            targets[0].value() == ''
+            jvmOptions[0].value() == ''
+            usePrivateRepository[0].value() == false
+            mavenName[0].value() == '(Default)'
+            with(globalSettings[0]) {
+                attribute('class') == 'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider'
+                children().size() == 1
+                settingsConfigId[0].value() == settingsId
+            }
+        }
     }
 
-    def 'call maven method with provided settings'() {
+    def 'call maven method with provided settings names'() {
         setup:
         String settingsName = 'maven-proxy'
         String settingsId = '123123415'

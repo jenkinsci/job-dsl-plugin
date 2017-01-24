@@ -86,7 +86,7 @@ class ApiDocGenerator {
                 !(it.declaringClass in [Object, Script]) &&
                 Modifier.isPublic(it.modifiers) &&
                 !it.name.contains('$') &&
-                !it.getAnnotation(NoDoc) &&
+                (!it.getAnnotation(NoDoc) || it.getAnnotation(NoDoc).embeddedOnly()) &&
                 !(it.name in ['invokeMethod', 'executeWithXmlActions', 'methodMissing'])
         }*.name.unique().sort()
         methodNames.collect { processMethodName it, clazz }
@@ -172,6 +172,10 @@ class ApiDocGenerator {
                 map.deprecatedText = stripTags(deprecatedText)
                 map.deprecatedHtml = deprecatedText
             }
+        }
+
+        if (method.getAnnotation(NoDoc) && method.getAnnotation(NoDoc).embeddedOnly()) {
+            map.embeddedOnly = true
         }
 
         String availableSince = tags.find { it.name() == 'since' }?.text()

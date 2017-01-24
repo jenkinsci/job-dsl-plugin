@@ -9,6 +9,7 @@ class MemoryJobManagement extends MockJobManagement {
     final Map<String, String> availableConfigs = [:]
     final Map<String, String> savedConfigs = [:]
     final Map<String, String> savedViews = [:]
+    @Deprecated
     final Set<ConfigFile> savedConfigFiles = []
     final Map<String, String> availableFiles = [:]
 
@@ -48,6 +49,7 @@ class MemoryJobManagement extends MockJobManagement {
     }
 
     @Override
+    @Deprecated
     String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
         validateNameArg(configFile.name)
         savedConfigFiles << configFile
@@ -74,6 +76,7 @@ class MemoryJobManagement extends MockJobManagement {
     }
 
     @Override
+    @Deprecated
     String getConfigFileId(ConfigFileType type, String name) {
         ConfigFile configFile = savedConfigFiles.find { it.type == type && it.name == name }
         configFile == null ? null : createConfigFileId(configFile)

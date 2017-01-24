@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+@Deprecated
 class ParametrizedConfigFile extends ConfigFile {
     List<String> arguments = []
 

@@ -1050,15 +1050,14 @@ class StepContext extends AbstractExtensibleContext {
      * @since 1.40
      */
     @RequiresPlugin(id = 'managed-scripts', minimumVersion = '1.2.1')
-    void managedScript(String scriptName, @DslContext(ManagedScriptContext) Closure closure = null) {
-        String scriptId = jobManagement.getConfigFileId(ConfigFileType.ManagedScript, scriptName)
-        Preconditions.checkNotNull(scriptId, "managed script with name '${scriptName}' not found")
+    void managedScript(String scriptIdOrName, @DslContext(ManagedScriptContext) Closure closure = null) {
+        String scriptId = jobManagement.getConfigFileId(ConfigFileType.ManagedScript, scriptIdOrName)
 
         ManagedScriptContext context = new ManagedScriptContext()
         ContextHelper.executeInContext(closure, context)
 
         stepNodes << new NodeBuilder().'org.jenkinsci.plugins.managedscripts.ScriptBuildStep' {
-            buildStepId(scriptId)
+            buildStepId(scriptId ?: scriptIdOrName)
             buildStepArgs {
                 context.arguments.each {
                     string(it)

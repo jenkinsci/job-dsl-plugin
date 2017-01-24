@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl
 
+@Deprecated
 class ConfigFile implements Context {
     final ConfigFileType type
     final JobManagement jobManagement

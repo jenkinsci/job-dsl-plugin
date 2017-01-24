@@ -24,6 +24,9 @@ import javaposse.jobdsl.plugin.actions.GeneratedViewsAction
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction
 import javaposse.jobdsl.plugin.actions.SeedJobAction
 import javaposse.jobdsl.plugin.fixtures.ExampleJobDslExtension
+import org.jenkinsci.plugins.configfiles.GlobalConfigFiles
+import org.jenkinsci.plugins.configfiles.custom.CustomConfig
+import org.jenkinsci.plugins.managedscripts.PowerShellConfig
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
@@ -1342,6 +1345,54 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         build.result == FAILURE
+    }
+
+    def 'creates config files'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(scriptText: getClass().getResource('configFiles.groovy').text))
+        job.onCreatedFromScratch()
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        GlobalConfigFiles.get().getById('one') instanceof CustomConfig
+        GlobalConfigFiles.get().getById('one').name == 'Config 1'
+        GlobalConfigFiles.get().getById('one').comment == 'lorem'
+        GlobalConfigFiles.get().getById('one').content == 'ipsum'
+        GlobalConfigFiles.get().getById('one').providerId == '???'
+        GlobalConfigFiles.get().getById('two') instanceof PowerShellConfig
+        GlobalConfigFiles.get().getById('two').name == 'Config 2'
+        GlobalConfigFiles.get().getById('two').comment == 'foo'
+        GlobalConfigFiles.get().getById('two').content == 'bar'
+    }
+
+    def 'creates config files ignore existing'() {
+        setup:
+        GlobalConfigFiles.get().save(new CustomConfig('one', '111', '222', '333', '444'))
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(
+                scriptText: getClass().getResource('configFiles.groovy').text,
+                ignoreExisting: true
+        ))
+        job.onCreatedFromScratch()
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        GlobalConfigFiles.get().getById('one') instanceof CustomConfig
+        GlobalConfigFiles.get().getById('one').name == '111'
+        GlobalConfigFiles.get().getById('one').comment == '222'
+        GlobalConfigFiles.get().getById('one').content == '333'
+        GlobalConfigFiles.get().getById('one').providerId == '444'
+        GlobalConfigFiles.get().getById('two') instanceof PowerShellConfig
+        GlobalConfigFiles.get().getById('two').name == 'Config 2'
+        GlobalConfigFiles.get().getById('two').comment == 'foo'
+        GlobalConfigFiles.get().getById('two').content == 'bar'
     }
 
     private static final String SCRIPT = """job('test-job') {

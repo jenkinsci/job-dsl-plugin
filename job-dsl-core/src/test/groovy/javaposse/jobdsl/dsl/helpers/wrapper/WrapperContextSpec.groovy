@@ -1080,18 +1080,28 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('config-file-provider')
     }
 
-    def 'call configFile with unknown fileName'() {
+    def 'call configFile with file ID'() {
         setup:
-        String configName = 'lala'
+        String configId = 'lala'
 
         when:
         context.configFiles {
-            file(configName)
+            file(configId)
         }
 
         then:
-        Exception e = thrown(DslScriptException)
-        e.message.contains(configName)
+        with(context.wrapperNodes[0]) {
+            name() == 'org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper'
+            children().size() == 1
+            managedFiles[0].children().size() == 1
+            with(managedFiles[0].'org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile'[0]) {
+                children().size() == 3
+                fileId[0].value() == configId
+                targetLocation[0].value() == ''
+                variable[0].value() == ''
+            }
+        }
+        1 * mockJobManagement.requirePlugin('config-file-provider')
     }
 
     def 'call exclusion with single arg'() {

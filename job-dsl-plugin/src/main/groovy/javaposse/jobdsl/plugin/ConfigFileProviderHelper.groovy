@@ -15,6 +15,7 @@ import org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig
 import org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping
 import org.jenkinsci.plugins.managedscripts.ScriptConfig
 
+@Deprecated
 class ConfigFileProviderHelper {
     private static final Map<ConfigFileType, String> CONFIG_PROVIDERS = [
             (ConfigFileType.Custom):
