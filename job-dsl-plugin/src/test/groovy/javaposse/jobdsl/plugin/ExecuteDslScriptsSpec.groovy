@@ -4,7 +4,6 @@ import com.cloudbees.hudson.plugins.folder.Folder
 import hudson.FilePath
 import hudson.model.AbstractItem
 import hudson.model.AbstractProject
-import hudson.model.Action
 import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
 import hudson.model.Items
@@ -17,7 +16,6 @@ import hudson.model.View
 import hudson.slaves.DumbSlave
 import javaposse.jobdsl.dsl.GeneratedJob
 import javaposse.jobdsl.dsl.GeneratedView
-import javaposse.jobdsl.plugin.actions.ApiViewerAction
 import javaposse.jobdsl.plugin.actions.GeneratedJobsAction
 import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction
 import javaposse.jobdsl.plugin.actions.GeneratedViewsAction
@@ -276,21 +274,6 @@ class ExecuteDslScriptsSpec extends Specification {
         executeDslScripts.targets == null
         executeDslScripts.usingScriptText
         executeDslScripts.useScriptText == null
-    }
-
-    @WithoutJenkins
-    def 'getProjectActions'() {
-        setup:
-        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
-        AbstractProject project = Mock(AbstractProject)
-
-        when:
-        List<? extends Action> actions = new ArrayList<? extends Action>(executeDslScripts.getProjectActions(project))
-
-        then:
-        actions != null
-        actions.size() == 1
-        actions[0] instanceof ApiViewerAction
     }
 
     def scheduleBuildOnMasterUsingScriptText() {

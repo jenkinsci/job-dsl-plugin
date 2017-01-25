@@ -13,7 +13,6 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Action;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Items;
@@ -31,7 +30,6 @@ import javaposse.jobdsl.dsl.GeneratedUserContent;
 import javaposse.jobdsl.dsl.GeneratedView;
 import javaposse.jobdsl.dsl.JobManagement;
 import javaposse.jobdsl.dsl.ScriptRequest;
-import javaposse.jobdsl.plugin.actions.ApiViewerAction;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesAction;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedJobsAction;
@@ -50,7 +48,6 @@ import javax.annotation.Nonnull;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -264,11 +261,6 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     @DataBoundSetter
     public void setAdditionalClasspath(String additionalClasspath) {
         this.additionalClasspath = fixEmptyAndTrim(additionalClasspath);
-    }
-
-    @Override
-    public Collection<? extends Action> getProjectActions(AbstractProject<?, ?> project) {
-        return Collections.singleton(new ApiViewerAction());
     }
 
     @Deprecated
