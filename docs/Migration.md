@@ -169,6 +169,11 @@ The classes `javaposse.jobdsl.dsl.Config`, `javaposse.jobdsl.dsl.ConfigFile`,
 `getConfigFileId` in `javaposse.jobdsl.dsl.JobManagement` and it's implementing classes are
 [[deprecated|Deprecation-Policy]] and will be removed.
 
+### GitLab
+
+Support for versions older than 1.4.0 of the [GitLab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin)
+is [[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.57
 
 ### Rbenv

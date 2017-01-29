@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
@@ -21,7 +22,8 @@ class GitLabTriggerContext extends AbstractContext {
     boolean addVoteOnMergeRequest = true
     boolean useCiFeatures = false
     boolean acceptMergeRequestOnSuccess = false
-    boolean allowAllBranches = false
+    String noteRegex = 'Jenkins please retry a build'
+    boolean skipWorkInProgressMergeRequest = true
 
     GitLabTriggerContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -86,6 +88,7 @@ class GitLabTriggerContext extends AbstractContext {
     /**
      * If set, adds a note with build status on merge requests. Defaults to {@code true}.
      */
+    @Deprecated
     void addNoteOnMergeRequest(boolean addNoteOnMergeRequest = true) {
         this.addNoteOnMergeRequest = addNoteOnMergeRequest
     }
@@ -93,6 +96,7 @@ class GitLabTriggerContext extends AbstractContext {
     /**
      * If set, adds a vote to note with build status on merge requests. Defaults to {@code true}.
      */
+    @Deprecated
     void addVoteOnMergeRequest(boolean addVoteOnMergeRequest = true) {
         this.addVoteOnMergeRequest = addVoteOnMergeRequest
     }
@@ -100,6 +104,7 @@ class GitLabTriggerContext extends AbstractContext {
     /**
      * If set, enables GitLab 8.1 CI features. Defaults to {@code false}.
      */
+    @Deprecated
     void useCiFeatures(boolean useCiFeatures = true) {
         this.useCiFeatures = useCiFeatures
     }
@@ -107,16 +112,9 @@ class GitLabTriggerContext extends AbstractContext {
     /**
      * If set, accepts merge request on success. Defaults to {@code false}.
      */
+    @Deprecated
     void acceptMergeRequestOnSuccess(boolean acceptMergeRequestOnSuccess = true) {
         this.acceptMergeRequestOnSuccess = acceptMergeRequestOnSuccess
-    }
-
-    /**
-     * If set, ignores filtered branches. Defaults to {@code false}.
-     */
-    @Deprecated
-    void allowAllBranches(boolean allowAllBranches = true) {
-        this.allowAllBranches = allowAllBranches
     }
 
     /**
@@ -130,5 +128,25 @@ class GitLabTriggerContext extends AbstractContext {
                 "rebuildOpenMergeRequest must be one of ${VALID_EXECUTION_STATUSES.join(', ')}"
         )
         this.rebuildOpenMergeRequest = rebuildOpenMergeRequest
+    }
+
+    /**
+     * When filled, commenting this phrase in the merge request will trigger a build.
+     *
+     * @since 1.58
+     */
+    @RequiresPlugin(id = 'gitlab-plugin', minimumVersion = '1.2.4')
+    void commentTrigger(String commentTrigger) {
+        this.noteRegex = commentTrigger
+    }
+
+    /**
+     * If set, ignores work in progress pull requests.
+     *
+     * @since 1.58
+     */
+    @RequiresPlugin(id = 'gitlab-plugin', minimumVersion = '1.2.4')
+    void skipWorkInProgressMergeRequest(boolean skipWorkInProgressMergeRequest = true) {
+        this.skipWorkInProgressMergeRequest = skipWorkInProgressMergeRequest
     }
 }

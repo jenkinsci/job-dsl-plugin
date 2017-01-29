@@ -379,6 +379,41 @@ class TriggerContextSpec extends Specification {
             acceptMergeRequestOnSuccess[0].value() == false
         }
         1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.2.0')
+        1 * mockJobManagement.logPluginDeprecationWarning('gitlab-plugin', '1.4.0')
+    }
+
+    def 'call gitlabPush trigger with no options and newer plugin version'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('gitlab-plugin', '1.2.4') >> true
+
+        when:
+        context.gitlabPush {
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
+            children().size() == 17
+            spec[0].value().empty
+            triggerOnPush[0].value() == true
+            triggerOnMergeRequest[0].value() == true
+            triggerOpenMergeRequestOnPush[0].value() == 'never'
+            ciSkip[0].value() == true
+            setBuildDescription[0].value() == true
+            addNoteOnMergeRequest[0].value() == true
+            addCiMessage[0].value() == false
+            addVoteOnMergeRequest[0].value() == true
+            branchFilterType[0].value() == 'all'
+            includeBranchesSpec[0].value().empty
+            excludeBranchesSpec[0].value().empty
+            targetBranchRegex[0].value().empty
+            acceptMergeRequestOnSuccess[0].value() == false
+            triggerOnNoteRequest[0].value() == true
+            noteRegex[0].value() == 'Jenkins please retry a build'
+            skipWorkInProgressMergeRequest[0].value() == true
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.2.0')
+        1 * mockJobManagement.logPluginDeprecationWarning('gitlab-plugin', '1.4.0')
     }
 
     def 'call gitlabPush trigger with all options and name based filter'() {
@@ -417,6 +452,59 @@ class TriggerContextSpec extends Specification {
             acceptMergeRequestOnSuccess[0].value() == value
         }
         1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.2.0')
+        1 * mockJobManagement.logPluginDeprecationWarning('gitlab-plugin', '1.4.0')
+        4 * mockJobManagement.logDeprecationWarning()
+
+        where:
+        value << [true, false]
+    }
+
+    def 'call gitlabPush trigger with all options, name based filter and newer plugin version'() {
+        setup:
+        mockJobManagement.isMinimumPluginVersionInstalled('gitlab-plugin', '1.2.4') >> true
+
+        when:
+        context.gitlabPush {
+            buildOnMergeRequestEvents(value)
+            buildOnPushEvents(value)
+            enableCiSkip(value)
+            setBuildDescription(value)
+            addNoteOnMergeRequest(value)
+            rebuildOpenMergeRequest('both')
+            addVoteOnMergeRequest(value)
+            useCiFeatures(value)
+            acceptMergeRequestOnSuccess(value)
+            includeBranches('include1,include2')
+            excludeBranches('exclude1,exclude2')
+            commentTrigger(null)
+            skipWorkInProgressMergeRequest(value)
+        }
+
+        then:
+        with(context.triggerNodes[0]) {
+            name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
+            children().size() == 17
+            spec[0].value().empty
+            triggerOnPush[0].value() == value
+            triggerOnMergeRequest[0].value() == value
+            triggerOpenMergeRequestOnPush[0].value() == 'both'
+            ciSkip[0].value() == value
+            setBuildDescription[0].value() == value
+            addNoteOnMergeRequest[0].value() == value
+            addCiMessage[0].value() == value
+            addVoteOnMergeRequest[0].value() == value
+            branchFilterType[0].value() == 'nameBasedFilter'
+            includeBranchesSpec[0].value() == 'include1,include2'
+            excludeBranchesSpec[0].value() == 'exclude1,exclude2'
+            targetBranchRegex[0].value().empty
+            acceptMergeRequestOnSuccess[0].value() == value
+            triggerOnNoteRequest[0].value() == false
+            noteRegex[0].value() == ''
+            skipWorkInProgressMergeRequest[0].value() == value
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.2.0')
+        1 * mockJobManagement.logPluginDeprecationWarning('gitlab-plugin', '1.4.0')
+        4 * mockJobManagement.logDeprecationWarning()
 
         where:
         value << [true, false]
@@ -457,6 +545,8 @@ class TriggerContextSpec extends Specification {
             acceptMergeRequestOnSuccess[0].value() == value
         }
         1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.2.0')
+        1 * mockJobManagement.logPluginDeprecationWarning('gitlab-plugin', '1.4.0')
+        4 * mockJobManagement.logDeprecationWarning()
 
         where:
         value << [true, false]
