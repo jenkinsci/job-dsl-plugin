@@ -86,10 +86,9 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
     protected S runScriptEngine(ScriptRequest scriptRequest, GroovyShell groovyShell) {
         try {
             if (scriptRequest.scriptPath || scriptRequest.location) {
-                String scriptName = scriptRequest.location ?: new File(scriptRequest.scriptPath).name
-                logger.println("Processing DSL script ${ scriptName}")
-                checkValidScriptName(scriptName)
-                checkCollidingScriptName(scriptName, groovyShell.classLoader, logger)
+                logger.println("Processing DSL script ${scriptRequest.scriptName}")
+                checkValidScriptName(scriptRequest)
+                checkCollidingScriptName(scriptRequest, groovyShell.classLoader, logger)
             } else {
                 logger.println('Processing provided DSL script')
             }
@@ -97,7 +96,7 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
             GroovyCodeSource source
             if (scriptRequest.body != null) {
                 source = new GroovyCodeSource(
-                        scriptRequest.body, scriptRequest.scriptPath ?: 'script', DEFAULT_CODE_BASE
+                        scriptRequest.body, scriptRequest.scriptName ?: 'script', DEFAULT_CODE_BASE
                 )
             } else {
                 source = new GroovyCodeSource(new URL(scriptRequest.urlRoots[0], scriptRequest.location))
@@ -123,8 +122,8 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
         }
     }
 
-    private static boolean isValidScriptName(String scriptFile) {
-        String normalizedName = getScriptName(scriptFile)
+    private static boolean isValidScriptName(ScriptRequest scriptRequest) {
+        String normalizedName = scriptRequest.scriptBaseName
         if (normalizedName.length() == 0 || !Character.isJavaIdentifierStart(normalizedName.charAt(0))) {
             return false
         }
@@ -136,30 +135,25 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
         true
     }
 
-    private static void checkValidScriptName(String scriptName) {
-        if (!isValidScriptName(scriptName)) {
+    private static void checkValidScriptName(ScriptRequest scriptRequest) {
+        if (!isValidScriptName(scriptRequest)) {
             throw new DslException(
-                "invalid script name '${scriptName}; script names may only contain " +
+                "invalid script name '${scriptRequest.scriptName}; script names may only contain " +
                     'letters, digits and underscores, but may not start with a digit'
             )
         }
     }
 
-    private static void checkCollidingScriptName(String scriptFile, ClassLoader classLoader, PrintStream logger) {
-        String scriptName = getScriptName(scriptFile)
+    private static void checkCollidingScriptName(ScriptRequest scriptRequest, ClassLoader classLoader,
+                                                 PrintStream logger) {
+        String scriptName = scriptRequest.scriptBaseName
         Package[] packages = new SnitchingClassLoader(classLoader).packages
         if (packages.any { it.name == scriptName || it.name.startsWith("${scriptName}.") }) {
             logger.println(
-                    "Warning: the script name '${scriptFile} is identical to a package name; choose a different " +
-                            'script name to avoid problems'
+                    "Warning: the script name '${scriptRequest.scriptName} is identical to a package name; choose a " +
+                            'different script name to avoid problems'
             )
         }
-    }
-
-    private static String getScriptName(String scriptFile) {
-        String fileName = new File(scriptFile).name
-        int idx = fileName.lastIndexOf('.')
-        idx > -1 ? fileName[0..idx - 1] : fileName
     }
 
     /**

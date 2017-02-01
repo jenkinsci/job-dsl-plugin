@@ -289,6 +289,28 @@ folder('folder-b') {
         e.message =~ /test-script\.dsl/
     }
 
+    def 'JENKINS-41612 Windows paths'() {
+        setup:
+        ScriptRequest request = new ScriptRequest(loadScript('test-script.dsl'), resourcesDir, false, 'foo\\bar.dsl')
+
+        when:
+        dslScriptLoader.runScripts([request])
+
+        then:
+        noExceptionThrown()
+    }
+
+    def 'JENKINS-41612 Unix paths'() {
+        setup:
+        ScriptRequest request = new ScriptRequest(loadScript('test-script.dsl'), resourcesDir, false, 'foo/bar.dsl')
+
+        when:
+        dslScriptLoader.runScripts([request])
+
+        then:
+        noExceptionThrown()
+    }
+
     def 'JENKINS-32628 script name which collides with package name'() {
         setup:
         ScriptRequest request = new ScriptRequest(loadScript('java.dsl'), resourcesDir, false, 'java.dsl')
