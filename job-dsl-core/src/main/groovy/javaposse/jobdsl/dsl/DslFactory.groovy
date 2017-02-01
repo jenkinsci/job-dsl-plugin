@@ -159,10 +159,10 @@ interface DslFactory extends ViewFactory {
      * Creates or updates an organization folder job.
      *
      * @since 1.56
-     * @see #organizationFolderJob(java.lang.String)
+     * @see #organizationFolder(java.lang.String)
      */
     @RequiresPlugin(id = 'branch-api', minimumVersion = '1.11')
-    OrganizationFolderJob organizationFolderJob(String name, @DslContext(OrganizationFolderJob) Closure closure)
+    OrganizationFolderJob organizationFolder(String name, @DslContext(OrganizationFolderJob) Closure closure)
 
     /**
      * Creates or updates an organization folder job.
@@ -170,7 +170,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.56
      */
     @RequiresPlugin(id = 'branch-api', minimumVersion = '1.11')
-    OrganizationFolderJob organizationFolderJob(String name)
+    OrganizationFolderJob organizationFolder(String name)
 
     /**
      * Creates or updates a multibranch pipeline job.

@@ -155,8 +155,8 @@ abstract class JobParent extends Script implements DslFactory {
     /**
      * @since 1.56
      */
-    @Override
-    OrganizationFolderJob organizationFolderJob(String name,
+
+    OrganizationFolderJob organizationFolder(String name,
                                                 @DslContext(OrganizationFolderJob) Closure closure = null) {
         processItem(name, OrganizationFolderJob, closure)
     }

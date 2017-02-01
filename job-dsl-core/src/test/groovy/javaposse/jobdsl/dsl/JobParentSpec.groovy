@@ -546,7 +546,7 @@ class JobParentSpec extends Specification {
 
     def 'organization folder job'() {
         when:
-        OrganizationFolderJob job = parent.organizationFolderJob('test') {
+        OrganizationFolderJob job = parent.organizationFolder('test') {
         }
 
         then:
