@@ -1224,7 +1224,7 @@ class ExecuteDslScriptsSpec extends Specification {
         testFile.text == 'bar'
     }
 
-    def 'whitelist is used and script text is not valid'() {
+    def 'script dsl whitelist is used and script text is not valid'() {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         seedJob.buildersList.add(new ExecuteDslScripts(
@@ -1242,7 +1242,7 @@ class ExecuteDslScriptsSpec extends Specification {
         job == null
     }
 
-    def 'whitelist is used and script text is valid'() {
+    def 'script dsl whitelist is used and script text is valid'() {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         seedJob.buildersList.add(new ExecuteDslScripts(

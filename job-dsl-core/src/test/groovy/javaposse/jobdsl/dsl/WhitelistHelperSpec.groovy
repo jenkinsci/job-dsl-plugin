@@ -77,7 +77,7 @@ class WhitelistHelperSpec extends Specification {
         }
     }
 
-    def 'node valid for whitelist with no children'() {
+    def 'node valid for script DSL whitelist with no children'() {
         when:
         WhitelistHelper.verifyNode(lotsOfChildren, noProjectChildren)
 
@@ -85,7 +85,7 @@ class WhitelistHelperSpec extends Specification {
         noExceptionThrown()
     }
 
-    def 'node not valid if whitelist does not include'() {
+    def 'node not valid if script DSL whitelist does not include'() {
         when:
         WhitelistHelper.verifyNodeChildren(lotsOfChildren, onlyTriggersChild)
 
@@ -93,7 +93,7 @@ class WhitelistHelperSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'node valid if whitelist includes'() {
+    def 'node valid if script DSL whitelist includes'() {
         when:
         WhitelistHelper.verifyNodeChildren(onlyTriggersChild, lotsOfChildren)
 
@@ -101,7 +101,7 @@ class WhitelistHelperSpec extends Specification {
         noExceptionThrown()
     }
 
-    def 'node not valid if whitelist includes but at wrong level'() {
+    def 'node not valid if script DSL whitelist includes but at wrong level'() {
         when:
         WhitelistHelper.verifyNodeChildren(triggerAtWrongLevel, lotsOfChildren)
 
@@ -109,14 +109,48 @@ class WhitelistHelperSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'configure block not valid if whitelist does not include'() {
+    def 'configure block not valid if script DSL whitelist does not include'() {
         when:
         WhitelistHelper.verifyRawJobDsl({ Node project ->
             Node node = methodMissing('customWorkspace', workspacePath)
             project / node
-        }, lotsOfChildren)
+        }, lotsOfChildren, null)
 
         then:
         thrown(DslScriptException)
+    }
+
+    def 'raw configure block from external class not valid if external class whitelist does not include'() {
+        when:
+        WhitelistHelper.verifyExternalClassThatDefinesConfigureBlock(TestDSLConfigBlocks.rawConfigProperties(),
+                'blah blah blah')
+
+        then:
+        thrown(DslScriptException)
+    }
+    def 'raw configure block from external class valid when external class whitelist does not include'() {
+        when:
+        WhitelistHelper.verifyExternalClassThatDefinesConfigureBlock(TestDSLConfigBlocks.rawConfigProperties(),
+                'javaposse.jobdsl.dsl.TestDSLConfigBlocks')
+
+        then:
+        noExceptionThrown()
+    }
+
+    def 'triggers configure block from external class not valid if external class whitelist does not include'() {
+        when:
+        WhitelistHelper.verifyExternalClassThatDefinesConfigureBlock(TestDSLConfigBlocks.polling(),
+                'blah blah blah')
+
+        then:
+        thrown(DslScriptException)
+    }
+    def 'triggers configure block from external class valid when external class whitelist does not include'() {
+        when:
+        WhitelistHelper.verifyExternalClassThatDefinesConfigureBlock(TestDSLConfigBlocks.polling(),
+                'javaposse.jobdsl.dsl.TestDSLConfigBlocks')
+
+        then:
+        noExceptionThrown()
     }
 }

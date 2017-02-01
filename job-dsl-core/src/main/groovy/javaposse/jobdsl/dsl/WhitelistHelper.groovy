@@ -16,14 +16,18 @@ class WhitelistHelper {
                                                                      String[] allowedExternalClasses) {
         if (isClosureFromExternalClass(configureBlock)) {
             // if this closure is defined in an external class, let's check it
-            String closureParentClass = configureBlock.delegate['name']
-            verifyExternalClass(closureParentClass, allowedExternalClasses)
+            String parentClassName = configureBlock.thisObject['name']
+            verifyExternalClass(parentClassName, allowedExternalClasses)
         }
         // if it's not we're good!
     }
 
     private static boolean isClosureFromExternalClass(Closure closure) {
-        closure.delegate instanceof Class
+        if (closure?.hasProperty('thisObject')) {
+            return closure.thisObject instanceof Class
+        } else {
+            return false
+        }
     }
 
     /**
@@ -39,10 +43,10 @@ class WhitelistHelper {
     }
 
     /**
-     * Verify that configure block is valid according to the whitelist node
+     *  Verify that configure block is valid according to the whitelist node
      */
-    static void verifyRawJobDsl(Closure configureBlock, Node whitelistNode) {
-        if (!isClosureFromExternalClass(configureBlock)) {
+    static void verifyRawJobDsl(Closure configureBlock, Node whitelistNode, Closure originalConfigureBlock) {
+        if (!(isClosureFromExternalClass(configureBlock) || isClosureFromExternalClass(originalConfigureBlock))) {
             // if this closure is not from an external class - we have to check the raw job dsl
             Node node = new Node(null, 'project')
 
