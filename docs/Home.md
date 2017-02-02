@@ -36,6 +36,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    ([JENKINS-41485](https://issues.jenkins-ci.org/browse/JENKINS-41485))
  * Fixed a problem with the plugin's dependencies 
   ([JENKINS-41001](https://issues.jenkins-ci.org/browse/JENKINS-41001))
+ * Fixed a problem with Windows paths on Unix
+  ([JENKINS-41612](https://issues.jenkins-ci.org/browse/JENKINS-41612))
  * Improved error message for invalid enum values
   ([JENKINS-41270](https://issues.jenkins-ci.org/browse/JENKINS-41270))
  * Show only one link to embedded API viewer
