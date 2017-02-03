@@ -15,8 +15,8 @@ class DslContext implements Context {
     boolean ignoreExisting = false
     String additionalClasspath
     String lookupStrategy = 'JENKINS_ROOT'
-    private String allowedElementsForRawJobDslAsXml = ''
-    private String allowedExternalClassesThatDefineJobDslBlocks = ''
+    String allowedElementsForRawJobDslAsXml = ''
+    String allowedExternalClassesThatDefineJobDslBlocks = ''
 
     /**
      * Sets the Job DSL script.
