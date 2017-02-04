@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.workflow.OrganizationFolderTriggerContext
 import javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext
 import spock.lang.Specification
 
