@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl
 
 import groovy.transform.ThreadInterrupt
-
 import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.IvyJob
