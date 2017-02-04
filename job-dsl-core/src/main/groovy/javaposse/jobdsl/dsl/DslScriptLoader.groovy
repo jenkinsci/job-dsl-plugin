@@ -277,7 +277,6 @@ class DslScriptLoader {
         icz.addImports('javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation')
         icz.addImports('javaposse.jobdsl.dsl.helpers.publisher.WeblogicDeployerContext.WeblogicDeploymentStageModes')
         icz.addImports('javaposse.jobdsl.dsl.helpers.triggers.BuildResultTriggerContext.BuildResult')
-        icz.addImports('javaposse.jobdsl.dsl.helpers.workflow.OrganizationFolderTriggerContext.PeriodicFolderTrigger')
         config.addCompilationCustomizers(icz)
 
         config.output = new PrintWriter(jobManagement.outputStream) // This seems to do nothing

@@ -24,13 +24,7 @@ class OrganizationFolderJobSpec extends Specification {
             navigators.size() == 1
             navigators[0].children().size() == 0
             triggers.size() == 1
-            with(triggers[0]) {
-                it.'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger'.size() == 1
-                with(it.'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger'[0]) {
-                    spec.size() == 1
-                    interval.size() == 1
-                }
-            }
+            triggers[0].children().size() == 0
             healthMetrics.size() == 1
             with(healthMetrics[0]) {
                 it.'com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric'.size() == 1
@@ -96,24 +90,19 @@ It can also contain multiple lines.
     }
 
     def "can configure triggers"() {
-        given:
-        String expectedCron = 'H * * * *'
-
         when:
         job.triggers {
-            cron(expectedCron)
-            periodicIfNotOtherwiseTriggered(OrganizationFolderTriggerContext.PeriodicFolderTrigger.ONE_WEEK)
+            periodic(2)
         }
 
         then:
         with(job.node) {
             triggers.size() == 1
             with(triggers[0]) {
-                children().size() == 2
-                it.'hudson.triggers.TimerTrigger'.size() == 1
-                it.'hudson.triggers.TimerTrigger'[0].children().size() == 1
+                children().size() == 1
                 it.'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger'.size() == 1
-                it.'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger'[0].children().size() == 2
+                it.'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger'[0].interval[0].text() ==
+                  '120000'
             }
         }
     }

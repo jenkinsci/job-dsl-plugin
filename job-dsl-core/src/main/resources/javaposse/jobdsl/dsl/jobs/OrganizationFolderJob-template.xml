@@ -27,10 +27,6 @@
         <numToKeep>0</numToKeep>
     </orphanedItemStrategy>
     <triggers>
-        <com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger>
-            <spec>H H * * *</spec>
-            <interval>86400000</interval>
-        </com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger>
     </triggers>
     <navigators/>
     <projectFactories>

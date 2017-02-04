@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Folder
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.workflow.OrganizationFolderTriggerContext
+import javaposse.jobdsl.dsl.helpers.triggers.MultibranchWorkflowTriggerContext
 import javaposse.jobdsl.dsl.helpers.workflow.OrphanedItemStrategyContext
 import javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext
 
@@ -64,15 +64,13 @@ class OrganizationFolderJob extends Folder {
      * Sets the build triggers for this job.
      * @since 1.56
      */
-    void triggers(@DslContext(OrganizationFolderTriggerContext) Closure closure) {
-        OrganizationFolderTriggerContext context = new OrganizationFolderTriggerContext(jobManagement, this)
+    void triggers(@DslContext(MultibranchWorkflowTriggerContext) Closure closure) {
+        MultibranchWorkflowTriggerContext context = new MultibranchWorkflowTriggerContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         configure { Node project ->
-            Node triggers = project / 'triggers'
-            triggers.children().clear()
             context.triggerNodes.each {
-                triggers << it
+                project / 'triggers' << it
             }
         }
     }
