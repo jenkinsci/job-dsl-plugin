@@ -32,7 +32,6 @@ class OrganizationFolderJob extends Folder {
 
         configure { Node project ->
             Node navigators = project / navigators
-            navigators.children().clear()
             context.scmNavigatorNodes.each {
                 navigators << it
             }
