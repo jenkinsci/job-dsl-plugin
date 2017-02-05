@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jenkins.branch.OrganizationFolder>
+    <actions/>
+    <description/>
+    <properties/>
+    <views>
+        <hudson.model.AllView>
+            <owner class="jenkins.branch.OrganizationFolder" reference="../../.."/>
+            <name>All</name>
+            <filterExecutors>false</filterExecutors>
+            <filterQueue>false</filterQueue>
+            <properties class="hudson.model.View$PropertyList"/>
+        </hudson.model.AllView>
+    </views>
+    <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
+    <healthMetrics>
+        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
+    </healthMetrics>
+    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
+    <orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy">
+        <pruneDeadBranches>true</pruneDeadBranches>
+        <daysToKeep>0</daysToKeep>
+        <numToKeep>0</numToKeep>
+    </orphanedItemStrategy>
+    <triggers/>
+    <navigators/>
+    <projectFactories>
+        <org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectFactory/>
+    </projectFactories>
+</jenkins.branch.OrganizationFolder>

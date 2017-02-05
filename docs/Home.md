@@ -27,6 +27,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.58 (unreleased)
+ * Added support for the
+   [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
+   ([JENKINS-39977](https://issues.jenkins-ci.org/browse/JENKINS-39977))
  * Enhanced support for
    [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
    ([JENKINS-33630](https://issues.jenkins-ci.org/browse/JENKINS-33630),

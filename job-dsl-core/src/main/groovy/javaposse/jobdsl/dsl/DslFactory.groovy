@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.jobs.IvyJob
 import javaposse.jobdsl.dsl.jobs.MatrixJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
+import javaposse.jobdsl.dsl.jobs.OrganizationFolderJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
 import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
 
@@ -154,6 +155,23 @@ interface DslFactory extends ViewFactory {
      */
     @RequiresPlugin(id = 'workflow-multibranch', minimumVersion = '1.12', failIfMissing = true)
     MultibranchWorkflowJob multibranchPipelineJob(String name)
+
+    /**
+     * Creates or updates an organization folder job.
+     *
+     * @since 1.58
+     * @see #organizationFolder(java.lang.String)
+     */
+    @RequiresPlugin(id = 'branch-api', minimumVersion = '1.11', failIfMissing = true)
+    OrganizationFolderJob organizationFolder(String name, @DslContext(OrganizationFolderJob) Closure closure)
+
+    /**
+     * Creates or updates an organization folder job.
+     *
+     * @since 1.58
+     */
+    @RequiresPlugin(id = 'branch-api', minimumVersion = '1.11', failIfMissing = true)
+    OrganizationFolderJob organizationFolder(String name)
 
     /**
      * Creates or updates a multibranch pipeline job.
