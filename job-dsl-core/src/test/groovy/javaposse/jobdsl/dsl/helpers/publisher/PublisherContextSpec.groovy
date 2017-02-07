@@ -2986,6 +2986,9 @@ class PublisherContextSpec extends Specification {
         context.stashNotifier {
             commitSha1('sha1')
             keepRepeatedBuilds(true)
+            userName('name')
+            password('password')
+            serverBaseUrl('serverUrl')
         }
 
         then:
@@ -2993,9 +2996,9 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
-            stashServerBaseUrl[0].value().empty
-            stashUserName[0].value().empty
-            stashUserPassword[0].value().empty
+            stashServerBaseUrl[0].value() == 'serverUrl'
+            stashUserName[0].value() == 'name'
+            stashUserPassword[0].value() == 'password'
             ignoreUnverifiedSSLPeer[0].value() == false
             commitSha1[0].value() == 'sha1'
             includeBuildNumberInKey[0].value() == true
