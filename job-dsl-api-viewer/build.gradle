@@ -145,7 +145,7 @@ task extractWebJars(type: Sync) {
 }
 
 task downloadUpdateCenter(type: Download) {
-    src 'https://updates.jenkins-ci.org/update-center.json'
+    src 'https://updates.jenkins.io/update-center.json'
     dest 'build/download/update-center.jsonp'
     onlyIfNewer true
 }
