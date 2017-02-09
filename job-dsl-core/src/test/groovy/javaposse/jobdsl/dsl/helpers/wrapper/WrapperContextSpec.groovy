@@ -393,7 +393,13 @@ class WrapperContextSpec extends Specification {
 
     def 'sshAgent without credentials'() {
         when:
-        context.sshAgent(null)
+        context.sshAgent((String) null)
+
+        then:
+        thrown(DslScriptException)
+
+        when:
+        context.sshAgent((String[]) null)
 
         then:
         thrown(DslScriptException)
