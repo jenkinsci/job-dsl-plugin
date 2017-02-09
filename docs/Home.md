@@ -36,7 +36,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    [JENKINS-39754](https://issues.jenkins-ci.org/browse/JENKINS-39754),
    [JENKINS-40719](https://issues.jenkins-ci.org/browse/JENKINS-40719))
  * Enhanced support for the [GitLab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin)
-   ([JENKINS-41485](https://issues.jenkins-ci.org/browse/JENKINS-41485))
+   ([JENKINS-41485](https://issues.jenkins-ci.org/browse/JENKINS-41485),
+   [JENKINS-41789](https://issues.jenkins-ci.org/browse/JENKINS-41789))
  * Fixed a problem with the plugin's dependencies 
   ([JENKINS-41001](https://issues.jenkins-ci.org/browse/JENKINS-41001))
  * Fixed a problem with Windows paths on Unix

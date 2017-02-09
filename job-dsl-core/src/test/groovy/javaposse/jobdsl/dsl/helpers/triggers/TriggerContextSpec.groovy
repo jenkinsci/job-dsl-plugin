@@ -372,7 +372,7 @@ class TriggerContextSpec extends Specification {
             addNoteOnMergeRequest[0].value() == true
             addCiMessage[0].value() == false
             addVoteOnMergeRequest[0].value() == true
-            branchFilterType[0].value() == 'all'
+            branchFilterType[0].value() == 'All'
             includeBranchesSpec[0].value().empty
             excludeBranchesSpec[0].value().empty
             targetBranchRegex[0].value().empty
@@ -403,7 +403,7 @@ class TriggerContextSpec extends Specification {
             addNoteOnMergeRequest[0].value() == true
             addCiMessage[0].value() == false
             addVoteOnMergeRequest[0].value() == true
-            branchFilterType[0].value() == 'all'
+            branchFilterType[0].value() == 'All'
             includeBranchesSpec[0].value().empty
             excludeBranchesSpec[0].value().empty
             targetBranchRegex[0].value().empty
@@ -445,7 +445,7 @@ class TriggerContextSpec extends Specification {
             addNoteOnMergeRequest[0].value() == value
             addCiMessage[0].value() == value
             addVoteOnMergeRequest[0].value() == value
-            branchFilterType[0].value() == 'nameBasedFilter'
+            branchFilterType[0].value() == 'NameBasedFilter'
             includeBranchesSpec[0].value() == 'include1,include2'
             excludeBranchesSpec[0].value() == 'exclude1,exclude2'
             targetBranchRegex[0].value().empty
@@ -493,7 +493,7 @@ class TriggerContextSpec extends Specification {
             addNoteOnMergeRequest[0].value() == value
             addCiMessage[0].value() == value
             addVoteOnMergeRequest[0].value() == value
-            branchFilterType[0].value() == 'nameBasedFilter'
+            branchFilterType[0].value() == 'NameBasedFilter'
             includeBranchesSpec[0].value() == 'include1,include2'
             excludeBranchesSpec[0].value() == 'exclude1,exclude2'
             targetBranchRegex[0].value().empty
@@ -538,7 +538,7 @@ class TriggerContextSpec extends Specification {
             addNoteOnMergeRequest[0].value() == value
             addCiMessage[0].value() == value
             addVoteOnMergeRequest[0].value() == value
-            branchFilterType[0].value() == 'regexBasedFilter'
+            branchFilterType[0].value() == 'RegexBasedFilter'
             includeBranchesSpec[0].value().empty
             excludeBranchesSpec[0].value().empty
             targetBranchRegex[0].value() == '(.*debug.*|.*release.*)'
