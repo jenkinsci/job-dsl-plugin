@@ -36,6 +36,10 @@ import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
 import org.jvnet.hudson.test.recipes.WithPluginManager
 import spock.lang.Specification
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertTrue
+import static org.junit.Assert.assertNull
+import static org.junit.Assert.assertFalse
 
 import static com.google.common.base.Charsets.UTF_8
 import static com.google.common.io.Resources.getResource
@@ -44,6 +48,36 @@ import static hudson.model.Result.UNSTABLE
 class JenkinsJobManagementSpec extends Specification {
     private static final String FILE_NAME = 'test.txt'
     private static final String JOB_NAME = 'test-job'
+
+    static final String EMPTY_PROJECT_XML = '''<?xml version="1.0" encoding="UTF-8"?>
+<project>
+</project>
+'''
+
+    static final String INVALID_XML = '''<?xml version="1.0" encoding="UTF-8"?>
+<project>
+'''
+
+    static final String XML_WITH_LOTS_OF_CHILDREN = '''<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+      <builder/>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
+'''
 
     @Rule
     JenkinsRule jenkinsRule = new JenkinsRule()
@@ -872,6 +906,82 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         noExceptionThrown()
+    }
+
+    def 'set allowed elements when valid xml but no children'() {
+        when:
+        jobManagement.setAllowedElementsAsXml(EMPTY_PROJECT_XML)
+
+        then:
+        noExceptionThrown()
+        assertNotNull(jobManagement.allowedRawJobdslElementsAsNode)
+        assertTrue(jobManagement.restrictedRawJobDsl)
+    }
+
+    def 'set allowed elements when valid xml with children'() {
+        when:
+        jobManagement.setAllowedElementsAsXml(XML_WITH_LOTS_OF_CHILDREN)
+
+        then:
+        noExceptionThrown()
+        assertNotNull(jobManagement.allowedRawJobdslElementsAsNode)
+        assertTrue(jobManagement.restrictedRawJobDsl)
+    }
+
+    def 'set allowed elements when invalid xml'() {
+        when:
+        jobManagement.setAllowedElementsAsXml(INVALID_XML)
+
+        then:
+        thrown(DslException)
+        assertNull(jobManagement.allowedRawJobdslElementsAsNode)
+        assertFalse(jobManagement.restrictedRawJobDsl)
+    }
+
+    def 'set allowed exteral classes for job dsl blocks - null String'() {
+        when:
+        jobManagement.setAllowedExternalClassesThatDefineJobDslBlocks(null)
+
+        then:
+        assertNotNull(jobManagement.allowedExternalClassesThatDefineJobDslBlocks)
+        assert(jobManagement.allowedExternalClassesThatDefineJobDslBlocks.length == 0)
+        assertFalse(jobManagement.restrictedExternalJobDsl)
+    }
+
+    def 'set allowed exteral classes for job dsl blocks - empty String'() {
+        when:
+        jobManagement.setAllowedExternalClassesThatDefineJobDslBlocks('')
+
+        then:
+        assertNotNull(jobManagement.allowedExternalClassesThatDefineJobDslBlocks)
+        assert(jobManagement.allowedExternalClassesThatDefineJobDslBlocks.length == 0)
+        assertFalse(jobManagement.restrictedExternalJobDsl)
+    }
+
+    def 'set allowed exteral classes for job dsl blocks - valid list'() {
+        setup:
+        String allowedExternalClasses = 'helperClass \n myPackage.is.cool  \n company.UtilityMethods'
+
+        when:
+        jobManagement.setAllowedExternalClassesThatDefineJobDslBlocks(allowedExternalClasses)
+
+        then:
+        assertNotNull(jobManagement.allowedExternalClassesThatDefineJobDslBlocks)
+        assert(jobManagement.allowedExternalClassesThatDefineJobDslBlocks.length == 3)
+        assertTrue(jobManagement.restrictedExternalJobDsl)
+    }
+
+    def 'make sure white space is trimmed when we set allowed external classes'() {
+        setup:
+        String allowedExternalClasses = '    helperClass    \n   myPackage.is.cool    \n    company.UtilityMethods    '
+
+        when:
+        jobManagement.setAllowedExternalClassesThatDefineJobDslBlocks(allowedExternalClasses)
+
+        then:
+        assert(jobManagement.allowedExternalClassesThatDefineJobDslBlocks[0] == 'helperClass')
+        assert(jobManagement.allowedExternalClassesThatDefineJobDslBlocks[1] == 'myPackage.is.cool')
+        assert(jobManagement.allowedExternalClassesThatDefineJobDslBlocks[2] == 'company.UtilityMethods')
     }
 
     private static boolean isXmlIdentical(String expected, Node actual) throws Exception {

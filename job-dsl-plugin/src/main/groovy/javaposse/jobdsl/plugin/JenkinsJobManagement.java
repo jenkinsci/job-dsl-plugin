@@ -38,13 +38,16 @@ import jenkins.model.DirectlyModifiableTopLevelItemGroup;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
 import org.jenkinsci.lib.configprovider.model.Config;
 import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
 import org.jenkinsci.plugins.vSphereCloud;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
@@ -63,6 +66,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static hudson.Util.fixEmptyAndTrim;
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static java.lang.String.format;
@@ -86,6 +90,10 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
     private boolean failOnMissingPlugin;
     private boolean unstableOnDeprecation;
+    private boolean restrictedRawJobDsl = false;
+    private Node allowedRawJobdslElementsAsNode;
+    private boolean restrictedExternalJobDsl;
+    private String[] allowedExternalClassesThatDefineJobDslBlocks;
 
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, Run<?, ?> run,
                                 FilePath workspace, LookupStrategy lookupStrategy) {
@@ -103,6 +111,65 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     void setFailOnMissingPlugin(boolean failOnMissingPlugin) {
         this.failOnMissingPlugin = failOnMissingPlugin;
+    }
+
+    /**
+     * Returns string of xml for valid elements that job dsl processor is allowed to use
+     */
+    @Override
+    public boolean isRestrictedRawJobDsl(){
+        return this.restrictedRawJobDsl;
+    }
+
+    void setAllowedElementsAsXml(String allowedElementsAsXml) {
+        try {
+            this.allowedRawJobdslElementsAsNode = (StringUtils.isEmpty(allowedElementsAsXml)) ? null : new XmlParser().parse(new StringReader(allowedElementsAsXml));
+            this.restrictedRawJobDsl = allowedRawJobdslElementsAsNode != null;
+        }catch (ParserConfigurationException pce) {
+            throw new DslException("no valid parser could be found to process the 'Raw Job DSL elements allowed' xml", pce);
+        }
+        catch (SAXException se) {
+            throw new DslException("xml entered for 'Raw Job DSL elements allowed' is not valid", se);
+        }
+        catch (IOException ie) {
+            throw new DslException("could not read xml entered for 'Raw Job DSL elements allowed'", ie);
+        }
+    }
+
+    /**
+     * Returns string of xml for valid elements that job dsl processor is allowed to use
+     */
+    @Override
+    public Node getAllowedRawJobdslElementsAsNode(){
+        return this.allowedRawJobdslElementsAsNode;
+    }
+
+    /**
+     * Returns the whitelist for external classes this job dsl processor can inherit job dsl blocks for
+     */
+    @Override
+    public boolean isRestrictedExternalJobDsl() {
+        return this.restrictedExternalJobDsl;
+    }
+
+    void setAllowedExternalClassesThatDefineJobDslBlocks(String allowedExternalClassesThatDefineJobDslBlocks) {
+        this.allowedExternalClassesThatDefineJobDslBlocks = (StringUtils.isEmpty(allowedExternalClassesThatDefineJobDslBlocks)) ? new String[0] : allowedExternalClassesThatDefineJobDslBlocks.split("\n");
+
+        // make sure we trim up white space on the individual class names
+        for(int i = 0; i < this.allowedExternalClassesThatDefineJobDslBlocks.length; i++ ) {
+            this.allowedExternalClassesThatDefineJobDslBlocks[i] =
+                    fixEmptyAndTrim(this.allowedExternalClassesThatDefineJobDslBlocks[i]) ;
+        }
+
+        this.restrictedExternalJobDsl = this.allowedExternalClassesThatDefineJobDslBlocks.length > 0;
+    }
+
+    /**
+     * Returns the whitelist for external classes this job dsl processor can inherit job dsl blocks for
+     */
+    @Override
+    public String[] getAllowedExternalClassesThatDefineJobDslBlocks(){
+        return this.allowedExternalClassesThatDefineJobDslBlocks;
     }
 
     void setUnstableOnDeprecation(boolean unstableOnDeprecation) {

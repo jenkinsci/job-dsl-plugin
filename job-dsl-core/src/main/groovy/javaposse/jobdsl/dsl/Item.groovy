@@ -2,12 +2,16 @@ package javaposse.jobdsl.dsl
 
 abstract class Item extends AbstractContext {
     String name
+    boolean isRestrictedRawJobDsl
+    boolean isRestrictedExternalJobDsl
 
     private final List<Closure> configureBlocks = []
 
     protected Item(JobManagement jobManagement, String name) {
         super(jobManagement)
         this.name = name
+        this.isRestrictedExternalJobDsl = (jobManagement != null) ? jobManagement.isRestrictedExternalJobDsl() : false
+        this.isRestrictedRawJobDsl = (jobManagement != null) ? jobManagement.isRestrictedRawJobDsl() : false
     }
 
     @Deprecated
@@ -26,6 +30,36 @@ abstract class Item extends AbstractContext {
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
     void configure(Closure configureBlock) {
+        // verify that no restrictions are violated before we add the configure blocks to be processed
+        if (this.isRestrictedRawJobDsl) {
+            WhitelistHelper.verifyRawJobDsl(configureBlock, jobManagement.allowedRawJobdslElementsAsNode, null)
+        }
+        if (this.isRestrictedExternalJobDsl) {
+            WhitelistHelper.verifyExternalClassThatDefinesConfigureBlock(configureBlock,
+                    jobManagement.allowedExternalClassesThatDefineJobDslBlocks)
+        }
+        configureBlocks << configureBlock
+    }
+
+    /**
+     * Allows direct manipulation of the generated XML.
+     * This configure method focus' on configure call that stem from the Job class, where the
+     * original config block must be passed in so we can evaluate where it came from.
+     *
+     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
+     */
+    void configure(Closure configureBlock, Closure originalConfigureBlock) {
+        // verify that no restrictions are violated before we add the configure blocks to be processed
+        if (this.isRestrictedRawJobDsl) {
+            WhitelistHelper.verifyRawJobDsl(configureBlock, jobManagement.allowedRawJobdslElementsAsNode,
+                    originalConfigureBlock)
+        }
+        // when this method is called, we are checking the original configure block. This is the object that will
+        // have the correct class information that it was inherited from
+        if (this.isRestrictedExternalJobDsl) {
+            WhitelistHelper.verifyExternalClassThatDefinesConfigureBlock(originalConfigureBlock,
+                    jobManagement.allowedExternalClassesThatDefineJobDslBlocks)
+        }
         configureBlocks << configureBlock
     }
 

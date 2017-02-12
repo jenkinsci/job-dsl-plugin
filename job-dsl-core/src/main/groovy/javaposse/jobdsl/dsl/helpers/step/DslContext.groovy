@@ -15,6 +15,8 @@ class DslContext implements Context {
     boolean ignoreExisting = false
     String additionalClasspath
     String lookupStrategy = 'JENKINS_ROOT'
+    String allowedElementsForRawJobDslAsXml = ''
+    String allowedExternalClassesThatDefineJobDslBlocks = ''
 
     /**
      * Sets the Job DSL script.
@@ -58,6 +60,20 @@ class DslContext implements Context {
                 "removeAction must be one of: ${REMOVE_JOB_ACTIONS.join(', ')}"
         )
         this.removedJobAction = action
+    }
+
+    /**
+     * Specifies what elements are allowed for Raw Job Dsl
+     */
+    void allowedElementsForRawJobDslAsXml(String allowedElements) {
+        this.allowedElementsForRawJobDslAsXml = allowedElements
+    }
+
+    /**
+     * Specifies what elements are allowed for Raw Job Dsl
+     */
+    void allowedExternalClassesThatDefineJobDslBlocks(String allowedClasses) {
+        this.allowedExternalClassesThatDefineJobDslBlocks = allowedClasses
     }
 
     /**

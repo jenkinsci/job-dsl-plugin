@@ -1341,7 +1341,7 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 10
             targets[0].value() == ''
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == false
@@ -1350,6 +1350,8 @@ class StepContextSpec extends Specification {
             scriptText[0].value() == ''
             additionalClasspath[0].value() == ''
             lookupStrategy[0].value() == 'JENKINS_ROOT'
+            allowedElementsForRawJobDslAsXml[0].value() == ''
+            allowedExternalClassesThatDefineJobDslBlocks[0].value() == ''
         }
     }
 
@@ -1363,12 +1365,14 @@ class StepContextSpec extends Specification {
             removeViewAction('DELETE')
             additionalClasspath('some/path')
             lookupStrategy('SEED_JOB')
+            allowedElementsForRawJobDslAsXml('<project></project>')
+            allowedExternalClassesThatDefineJobDslBlocks('helpers.DSLConfigBlocks')
         }
 
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 10
             targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == true
@@ -1377,6 +1381,8 @@ class StepContextSpec extends Specification {
             scriptText[0].value() == ''
             additionalClasspath[0].value() == 'some/path'
             lookupStrategy[0].value() == 'SEED_JOB'
+            allowedElementsForRawJobDslAsXml[0].value() == '<project></project>'
+            allowedExternalClassesThatDefineJobDslBlocks[0].value() == 'helpers.DSLConfigBlocks'
         }
     }
 
@@ -1425,12 +1431,14 @@ class StepContextSpec extends Specification {
             removeViewAction('DELETE')
             additionalClasspath('some/path')
             lookupStrategy('SEED_JOB')
+            allowedElementsForRawJobDslAsXml('<project></project>')
+            allowedExternalClassesThatDefineJobDslBlocks('helpers.DSLConfigBlocks')
         }
 
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 10
             targets[0].value() == ''
             usingScriptText[0].value() == true
             ignoreExisting[0].value() == true
@@ -1445,6 +1453,8 @@ class StepContextSpec extends Specification {
 '''
             additionalClasspath[0].value() == 'some/path'
             lookupStrategy[0].value() == 'SEED_JOB'
+            allowedElementsForRawJobDslAsXml[0].value() == '<project></project>'
+            allowedExternalClassesThatDefineJobDslBlocks[0].value() == 'helpers.DSLConfigBlocks'
         }
     }
 
@@ -1455,7 +1465,7 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 10
             targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == false
@@ -1464,6 +1474,8 @@ class StepContextSpec extends Specification {
             scriptText[0].value() == ''
             additionalClasspath[0].value() == ''
             lookupStrategy[0].value() == 'JENKINS_ROOT'
+            allowedElementsForRawJobDslAsXml[0].value() == ''
+            allowedExternalClassesThatDefineJobDslBlocks[0].value() == ''
         }
     }
 
@@ -1474,7 +1486,7 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 10
             targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == true
@@ -1483,6 +1495,8 @@ class StepContextSpec extends Specification {
             scriptText[0].value() == ''
             additionalClasspath[0].value() == ''
             lookupStrategy[0].value() == 'JENKINS_ROOT'
+            allowedElementsForRawJobDslAsXml[0].value() == ''
+            allowedExternalClassesThatDefineJobDslBlocks[0].value() == ''
         }
     }
 
@@ -1499,12 +1513,14 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 10
             targets[0].value() == ''
             usingScriptText[0].value() == true
             ignoreExisting[0].value() == false
             removedJobAction[0].value() == 'DELETE'
             removedViewAction[0].value() == 'IGNORE'
+            allowedElementsForRawJobDslAsXml[0].value() == ''
+            allowedExternalClassesThatDefineJobDslBlocks[0].value() == ''
             scriptText[0].value() == '''job {
   foo()
   bar {

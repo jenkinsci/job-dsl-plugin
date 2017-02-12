@@ -126,6 +126,10 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private boolean unstableOnDeprecation;
 
+    private String allowedElementsForRawJobDslAsXml;
+
+    private String allowedExternalClassesThatDefineJobDslBlocks;
+
     private RemovedJobAction removedJobAction = RemovedJobAction.IGNORE;
 
     private RemovedViewAction removedViewAction = RemovedViewAction.IGNORE;
@@ -227,6 +231,24 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.unstableOnDeprecation = unstableOnDeprecation;
     }
 
+    public String getAllowedElementsForRawJobDslAsXml() {
+        return allowedElementsForRawJobDslAsXml;
+    }
+
+    @DataBoundSetter
+    public void setAllowedElementsForRawJobDslAsXml(String allowedElementsAsXml) {
+        this.allowedElementsForRawJobDslAsXml = fixEmptyAndTrim(allowedElementsAsXml);
+    }
+
+    public String getAllowedExternalClassesThatDefineJobDslBlocks() {
+        return allowedExternalClassesThatDefineJobDslBlocks;
+    }
+
+    @DataBoundSetter
+    public void setAllowedExternalClassesThatDefineJobDslBlocks(String allowedExternalClassesThatDefineJobDslBlocks) {
+        this.allowedExternalClassesThatDefineJobDslBlocks = fixEmptyAndTrim(allowedExternalClassesThatDefineJobDslBlocks);
+    }
+
     public RemovedJobAction getRemovedJobAction() {
         return removedJobAction;
     }
@@ -295,6 +317,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             );
             jenkinsJobManagement.setFailOnMissingPlugin(failOnMissingPlugin);
             jenkinsJobManagement.setUnstableOnDeprecation(unstableOnDeprecation);
+            jenkinsJobManagement.setAllowedElementsAsXml(allowedElementsForRawJobDslAsXml);
+            jenkinsJobManagement.setAllowedExternalClassesThatDefineJobDslBlocks(allowedExternalClassesThatDefineJobDslBlocks);
             JobManagement jobManagement = new InterruptibleJobManagement(jenkinsJobManagement);
 
             ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env);

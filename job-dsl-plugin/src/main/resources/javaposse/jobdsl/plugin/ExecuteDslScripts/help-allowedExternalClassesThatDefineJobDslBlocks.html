@@ -1,0 +1,26 @@
+<div>
+    This is a new line separated list<br/>
+    If one or more classes are added to this whitelist, External Class Whitelisting is "turned on" for this Process
+    Job DSLs step and if any dsl blocks are used that are defined in an exernal class that is not whitelisted,
+    this step will fail, and not create or update the job accordingly.<br/>
+    The only types of configure blocks supported are configure, steps, triggers, publishers, and wrappers. To add
+    support for more types, contribute back to the job-dsl plugin<br/>
+    For more information on how to pull a re-usable configure block into an external, helper
+    class, look at
+    <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block"> The Configure Block Wiki</a> page
+    <br/><br/>
+
+    <b>Example job dsl code: </b>(in this case, if the closures used below are defined in the external helper class -
+    <i>helper.DSLConfigBlocks</i>, then <i>helper.DSLConfigBlocks</i> would need to be in the whitelist for this job dsl to be
+    processed successfully)<br/><br/>
+
+    import helpers.DSLConfigBlocks<br/><br/>
+
+    job() {<br/>
+    &ensp;configure DSLConfigBlocks.myCustomConfigDefinition()<br/>
+    &ensp;steps DSLConfigBlocks.myCustomStepDefinition()<br/>
+    &ensp;triggers DSLConfigBlocks.myCustomTriggerDefinition()<br/>
+    &ensp;publishers DSLConfigBlocks.myCustomPublishDefinition()<br/>
+    &ensp;wrappers DSLConfigBlocks.myCustomWrapperDefinition()<br/>
+    }
+</div>

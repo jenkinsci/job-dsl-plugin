@@ -45,5 +45,16 @@
         <f:entry title="Mark build as unstable when using deprecated features:" field="unstableOnDeprecation">
             <f:checkbox name="unstableOnDeprecation" checked="${instance.unstableOnDeprecation}"/>
         </f:entry>
+
+         <f:block>
+                <h4>Use Whitelisting options below to restrict the job dsl that is allowed to be processed</h4>
+            </f:block>
+            <f:entry title="Whitelist external classes" field="allowedExternalClassesThatDefineJobDslBlocks">
+                <f:expandableTextbox/>
+            </f:entry>
+
+            <f:entry title="Whitelist script DSL" field="allowedElementsForRawJobDslAsXml">
+                <f:expandableTextbox/>
+            </f:entry>
     </f:advanced>
 </j:jelly>

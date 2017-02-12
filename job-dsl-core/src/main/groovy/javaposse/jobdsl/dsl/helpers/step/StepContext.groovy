@@ -214,6 +214,8 @@ class StepContext extends AbstractExtensibleContext {
             removedViewAction(context.removedViewAction)
             lookupStrategy(context.lookupStrategy)
             additionalClasspath(context.additionalClasspath ?: '')
+            allowedElementsForRawJobDslAsXml(context.allowedElementsForRawJobDslAsXml ?: '')
+            allowedExternalClassesThatDefineJobDslBlocks(context.allowedExternalClassesThatDefineJobDslBlocks ?: '')
         }
     }
 

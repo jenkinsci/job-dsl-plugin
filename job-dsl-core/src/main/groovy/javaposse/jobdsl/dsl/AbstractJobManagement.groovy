@@ -11,6 +11,42 @@ abstract class AbstractJobManagement implements JobManagement {
         this.outputStream = out
     }
 
+    /**
+     * We set this for Jenkins Job Management, since we need it for processing Job-Dsl. For other Job Management types
+     * we will simply return false.
+     */
+    @Override
+    boolean isRestrictedRawJobDsl() {
+        false
+    }
+
+    /**
+     * We set this for Jenkins Job Management, since we need it for processing Job-Dsl. For other Job Management types
+     * we will simply return an empty node.
+     */
+    @Override
+    Node getAllowedRawJobdslElementsAsNode() {
+        new Node(null, null)
+    }
+
+    /**
+     * We set this for Jenkins Job Management, since we need it for processing Job-Dsl. For other Job Management types
+     * we will simply return false.
+     */
+    @Override
+    boolean isRestrictedExternalJobDsl() {
+        false
+    }
+
+    /**
+     * We set this for Jenkins Job Management, since we need it for processing Job-Dsl. For other Job Management types
+     * we will simply return an empty array.
+     */
+    @Override
+    String[] getAllowedExternalClassesThatDefineJobDslBlocks() {
+        []
+    }
+
     @Override
     void logDeprecationWarning() {
         List<StackTraceElement> currentStackTrack = DslScriptHelper.stackTrace

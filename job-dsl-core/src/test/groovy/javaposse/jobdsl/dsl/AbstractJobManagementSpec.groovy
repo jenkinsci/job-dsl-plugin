@@ -1,6 +1,8 @@
 package javaposse.jobdsl.dsl
 
 import spock.lang.Specification
+import static org.junit.Assert.assertNull
+import static org.junit.Assert.assertFalse
 
 import static org.codehaus.groovy.runtime.InvokerHelper.createScript
 
@@ -102,6 +104,25 @@ class AbstractJobManagementSpec extends Specification {
 
         then:
         buffer.toString().trim() == 'Warning: (DSL script, line 12) foo is deprecated'
+    }
+
+    def 'whitelisting features do not apply'() {
+        setup:
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream()
+        AbstractJobManagement jobManagement = new TestJobManagement(new PrintStream(buffer))
+
+        when:
+        boolean isRestrictedExternal = jobManagement.isRestrictedExternalJobDsl()
+        String[] allowedExternalClasses = jobManagement.allowedExternalClassesThatDefineJobDslBlocks
+        boolean isRestrictedRaw = jobManagement.isRestrictedRawJobDsl()
+        Node allowedRawAsNode = jobManagement.allowedRawJobdslElementsAsNode
+
+        then:
+        assertFalse(isRestrictedExternal)
+        assert(allowedExternalClasses.length == 0)
+        assertFalse(isRestrictedRaw)
+        assertNull(allowedRawAsNode.name())
+        assertNull(allowedRawAsNode.parent())
     }
 
     static class TestJobManagement extends MockJobManagement {
