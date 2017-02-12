@@ -27,6 +27,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.58 (unreleased)
+ * Increased the minimum supported Jenkins version to 1.651
  * Added support for the
    [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
    ([JENKINS-39977](https://issues.jenkins-ci.org/browse/JENKINS-39977))
