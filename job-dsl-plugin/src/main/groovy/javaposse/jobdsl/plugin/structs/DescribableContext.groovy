@@ -60,7 +60,7 @@ class DescribableContext implements Context {
             }
             if (isValidValue(parameter.type, value)) {
                 if (parameter.deprecated) {
-                    jobManagement.logDeprecationWarning()
+                    jobManagement.logDeprecationWarning(name)
                 }
                 values[name] = getValue(parameter.type, value)
                 return null

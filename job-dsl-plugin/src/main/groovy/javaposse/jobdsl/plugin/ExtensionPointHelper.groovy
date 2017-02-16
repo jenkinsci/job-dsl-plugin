@@ -66,6 +66,8 @@ class ExtensionPointHelper {
     interface DslExtension {
         Object call(DslEnvironment environment, JobManagement jobManagement, Object[] args)
                 throws InvocationTargetException
+
+        boolean isDeprecated()
     }
 
     static class ExtensionPointMethod implements DslExtension {
@@ -80,6 +82,11 @@ class ExtensionPointHelper {
         @Override
         String toString() {
             "${extensionPoint.class}.${method.name}(${method.parameterTypes*.name.join(', ')}"
+        }
+
+        @Override
+        boolean isDeprecated() {
+            method.getAnnotation(Deprecated) != null
         }
 
         @Override
@@ -108,6 +115,11 @@ class ExtensionPointHelper {
                 ContextHelper.executeInContext((Closure) args[0], delegate)
             }
             delegate.createInstance()
+        }
+
+        @Override
+        boolean isDeprecated() {
+            describableModel.deprecated
         }
 
         @Override
