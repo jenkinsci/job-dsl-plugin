@@ -1,5 +1,5 @@
 {
-    "version": "1.58",
+    "version": "1.57",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -12656,7 +12656,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "settingsIdOrName",
+                                    "name": "settingsName",
                                     "type": "String"
                                 }
                             ],
@@ -12677,7 +12677,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "settingsIdOrName",
+                                    "name": "settingsName",
                                     "type": "String"
                                 }
                             ],
@@ -15084,7 +15084,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "scriptIdOrName",
+                                    "name": "scriptName",
                                     "type": "String"
                                 },
                                 {
@@ -23986,7 +23986,6 @@
                                     "defaultValue": "true"
                                 }
                             ],
-                            "deprecated": true,
                             "html": "If set, accepts merge request on success. Defaults to <TT>false</TT>.",
                             "firstSentenceCommentText": "If set, accepts merge request on success. "
                         }
@@ -24003,7 +24002,6 @@
                                     "defaultValue": "true"
                                 }
                             ],
-                            "deprecated": true,
                             "html": "If set, adds a note with build status on merge requests. Defaults to <TT>true</TT>.",
                             "firstSentenceCommentText": "If set, adds a note with build status on merge requests. "
                         }
@@ -24020,9 +24018,25 @@
                                     "defaultValue": "true"
                                 }
                             ],
-                            "deprecated": true,
                             "html": "If set, adds a vote to note with build status on merge requests. Defaults to <TT>true</TT>.",
                             "firstSentenceCommentText": "If set, adds a vote to note with build status on merge requests. "
+                        }
+                    ]
+                },
+                {
+                    "name": "allowAllBranches",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "allowAllBranches",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "deprecated": true,
+                            "html": "If set, ignores filtered branches. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "If set, ignores filtered branches. "
                         }
                     ]
                 },
@@ -24055,28 +24069,6 @@
                             ],
                             "html": "If set, builds on push events request events. Defaults to <TT>true</TT>.",
                             "firstSentenceCommentText": "If set, builds on push events request events. "
-                        }
-                    ]
-                },
-                {
-                    "name": "commentTrigger",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "commentTrigger",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.58",
-                            "plugins": [
-                                {
-                                    "id": "gitlab-plugin",
-                                    "minimumVersion": "1.2.4"
-                                }
-                            ],
-                            "html": "When filled, commenting this phrase in the merge request will trigger a build.",
-                            "firstSentenceCommentText": "When filled, commenting this phrase in the merge request will trigger a build."
                         }
                     ]
                 },
@@ -24142,29 +24134,6 @@
                     ]
                 },
                 {
-                    "name": "skipWorkInProgressMergeRequest",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "skipWorkInProgressMergeRequest",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.58",
-                            "plugins": [
-                                {
-                                    "id": "gitlab-plugin",
-                                    "minimumVersion": "1.2.4"
-                                }
-                            ],
-                            "html": "If set, ignores work in progress pull requests.",
-                            "firstSentenceCommentText": "If set, ignores work in progress pull requests."
-                        }
-                    ]
-                },
-                {
                     "name": "targetBranchRegex",
                     "signatures": [
                         {
@@ -24191,7 +24160,6 @@
                                     "defaultValue": "true"
                                 }
                             ],
-                            "deprecated": true,
                             "html": "If set, enables GitLab 8.1 CI features. Defaults to <TT>false</TT>.",
                             "firstSentenceCommentText": "If set, enables GitLab 8.1 CI features. "
                         }
@@ -24607,7 +24575,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.GitLabTriggerContext"
                         }
                     ],
-                    "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            rebuildOpenMergeRequest('never')\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}"
+                    "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            addNoteOnMergeRequest(false)\r\n            rebuildOpenMergeRequest('never')\r\n            addVoteOnMergeRequest(false)\r\n            useCiFeatures(false)\r\n            acceptMergeRequestOnSuccess()\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "rundeck",
@@ -24985,7 +24953,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "fileIdOrName",
+                                    "name": "fileName",
                                     "type": "String"
                                 },
                                 {
@@ -25007,7 +24975,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "fileIdOrName",
+                                    "name": "fileName",
                                     "type": "String"
                                 },
                                 {
@@ -25028,7 +24996,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "fileIdOrName",
+                                    "name": "fileName",
                                     "type": "String"
                                 },
                                 {
@@ -25050,7 +25018,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "fileIdOrName",
+                                    "name": "fileName",
                                     "type": "String"
                                 },
                                 {
@@ -29862,12 +29830,6 @@
                     ],
                     "examples": "categorizedJobsView('project-A') {\r\n    statusFilter(StatusFilter.ENABLED)\r\n}"
                 }
-            ]
-        },
-        "javaposse.jobdsl.dsl.helpers.ConfigFilesContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.ConfigFilesContext",
-            "methods": [
-                
             ]
         },
         "javaposse.jobdsl.dsl.ConfigFile": {
@@ -36967,7 +36929,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.GitLabTriggerContext"
                         }
                     ],
-                    "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            rebuildOpenMergeRequest('never')\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}"
+                    "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            addNoteOnMergeRequest(false)\r\n            rebuildOpenMergeRequest('never')\r\n            addVoteOnMergeRequest(false)\r\n            useCiFeatures(false)\r\n            acceptMergeRequestOnSuccess()\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "rundeck",
@@ -38857,7 +38819,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "settingsIdOrName",
+                                    "name": "settingsName",
                                     "type": "String"
                                 }
                             ],
@@ -38879,7 +38841,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "settingsIdOrName",
+                                    "name": "settingsName",
                                     "type": "String"
                                 }
                             ],
@@ -40119,7 +40081,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "scriptIdOrName",
+                                    "name": "scriptName",
                                     "type": "String"
                                 },
                                 {
@@ -42914,164 +42876,6 @@
                 }
             ]
         },
-        "javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext",
-            "methods": [
-                
-            ]
-        },
-        "javaposse.jobdsl.dsl.jobs.OrganizationFolderJob": {
-            "type": "javaposse.jobdsl.dsl.jobs.OrganizationFolderJob",
-            "methods": [
-                {
-                    "name": "authorization",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.31",
-                            "html": "Creates permission records.",
-                            "firstSentenceCommentText": "Creates permission records.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.AuthorizationContext"
-                        }
-                    ],
-                    "examples": "// gives permission for the special authenticated group to create jobs in the folder\r\nfolder('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Create:authenticated')\r\n    }\r\n}\r\n\r\n// gives discover permission for the special anonymous user\r\nfolder('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Discover', 'anonymous')\r\n    }\r\n}\r\n\r\n// gives all permissions to the special anonymous user\r\nfolder('example-3') {\r\n    authorization {\r\n        permissionAll('anonymous')\r\n    }\r\n}"
-                },
-                {
-                    "name": "configure",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "configureBlock",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Allows direct manipulation of the generated XML.",
-                            "firstSentenceCommentText": "Allows direct manipulation of the generated XML."
-                        }
-                    ],
-                    "examples": "folder('example-2') {\r\n    configure { folder ->\r\n        folder / icon(class: 'org.example.MyFolderIcon')\r\n    }\r\n}"
-                },
-                {
-                    "name": "description",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "description",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets a description for the folder.",
-                            "firstSentenceCommentText": "Sets a description for the folder."
-                        }
-                    ],
-                    "examples": "folder('project-a') {\r\n    description('Folder for project A')\r\n}"
-                },
-                {
-                    "name": "displayName",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "displayName",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the name to display instead of the actual folder name.",
-                            "firstSentenceCommentText": "Sets the name to display instead of the actual folder name."
-                        }
-                    ],
-                    "examples": "folder('project-a') {\r\n    displayName('Project A')\r\n}"
-                },
-                {
-                    "name": "organizations",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Sets the organizations in this folder.",
-                            "firstSentenceCommentText": "Sets the organizations in this folder.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "orphanedItemStrategy",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Sets the orphaned branch strategy.",
-                            "firstSentenceCommentText": "Sets the orphaned branch strategy.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.OrphanedItemStrategyContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "primaryView",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "primaryViewArg",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.36",
-                            "html": "Changes the initial view to show when the folder contains multiple views. Defaults to the <TT>'All'</TT> view.",
-                            "firstSentenceCommentText": "Changes the initial view to show when the folder contains multiple views. "
-                        }
-                    ]
-                },
-                {
-                    "name": "properties",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.47",
-                            "html": "Adds custom properties to the folder.",
-                            "firstSentenceCommentText": "Adds custom properties to the folder.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.properties.FolderPropertiesContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "triggers",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Adds build triggers to the job.",
-                            "firstSentenceCommentText": "Adds build triggers to the job.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.MultibranchWorkflowTriggerContext"
-                        }
-                    ]
-                }
-            ]
-        },
         "javaposse.jobdsl.dsl.helpers.workflow.CpsContext": {
             "type": "javaposse.jobdsl.dsl.helpers.workflow.CpsContext",
             "methods": [
@@ -44154,29 +43958,6 @@
                     "examples": "categorizedJobsView('example') {\r\n    jobs {\r\n        regex(/configuration_.*/)\r\n    }\r\n    categorizationCriteria {\r\n        regexGroupingRule(/^configuration_([^_]+).*$/)\r\n    }\r\n    columns {\r\n        status()\r\n        categorizedJob()\r\n        buildButton()\r\n    }\r\n}"
                 },
                 {
-                    "name": "configFiles",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "embeddedOnly": true,
-                            "availableSince": "1.58",
-                            "plugins": [
-                                {
-                                    "id": "config-file-provider"
-                                }
-                            ],
-                            "html": "Creates managed config files.",
-                            "firstSentenceCommentText": "Creates managed config files.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.ConfigFilesContext"
-                        }
-                    ]
-                },
-                {
                     "name": "customConfigFile",
                     "signatures": [
                         {
@@ -44186,9 +43967,6 @@
                                     "type": "String"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
-                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
                             "availableSince": "1.30",
                             "plugins": [
                                 {
@@ -44209,9 +43987,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
-                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
                             "availableSince": "1.31",
                             "plugins": [
                                 {
@@ -44399,9 +44174,6 @@
                                     "type": "String"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
-                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
                             "availableSince": "1.39",
                             "plugins": [
                                 {
@@ -44422,9 +44194,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
-                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
                             "availableSince": "1.39",
                             "plugins": [
                                 {
@@ -44557,9 +44326,6 @@
                                     "type": "String"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
-                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
                             "availableSince": "1.40",
                             "plugins": [
                                 {
@@ -44581,9 +44347,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
-                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
                             "availableSince": "1.40",
                             "plugins": [
                                 {
@@ -44696,9 +44459,6 @@
                                     "type": "String"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
-                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
                             "availableSince": "1.30",
                             "plugins": [
                                 {
@@ -44719,9 +44479,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
-                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
                             "availableSince": "1.31",
                             "plugins": [
                                 {
@@ -44865,51 +44622,6 @@
                         }
                     ],
                     "examples": "nestedView('project-a') {\r\n    views {\r\n        listView('overview') {\r\n            jobs {\r\n                regex(/project-A-.*/)\r\n            }\r\n            columns {\r\n                status()\r\n                weather()\r\n                name()\r\n                lastSuccess()\r\n                lastFailure()\r\n            }\r\n        }\r\n        buildPipelineView('pipeline') {\r\n            selectedJob('project-a-compile')\r\n        }\r\n    }\r\n}"
-                },
-                {
-                    "name": "organizationFolder",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.58",
-                            "plugins": [
-                                {
-                                    "id": "branch-api",
-                                    "minimumVersion": "1.11"
-                                }
-                            ],
-                            "html": "Creates or updates an organization folder job.",
-                            "firstSentenceCommentText": "Creates or updates an organization folder job.",
-                            "contextClass": "javaposse.jobdsl.dsl.jobs.OrganizationFolderJob"
-                        },
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.58",
-                            "plugins": [
-                                {
-                                    "id": "branch-api",
-                                    "minimumVersion": "1.11"
-                                }
-                            ],
-                            "html": "Creates or updates an organization folder job.",
-                            "firstSentenceCommentText": "Creates or updates an organization folder job."
-                        }
-                    ],
-                    "examples": "organizationFolder('example') {\r\n    description('This contains branch source jobs for Bitbucket and GitHub')\r\n    displayName('Organization Folder')\r\n    triggers {\r\n        periodic(86400)\r\n    }\r\n}"
                 },
                 {
                     "name": "pipelineJob",
