@@ -46,10 +46,7 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('job-node-stalker')
     }
 
-    def 'add rbenv-controlled ruby version with'() {
-        setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> true
-
+    def 'add rbenv-controlled ruby version'() {
         when:
         context.rbenv('2.1.2')
 
@@ -90,58 +87,8 @@ class WrapperContextSpec extends Specification {
             ruby__build__revision[0].'@ruby-class' == 'String'
         }
         1 * mockJobManagement.requirePlugin('rbenv')
-        1 * mockJobManagement.requirePlugin('ruby-runtime')
+        1 * mockJobManagement.requireMinimumPluginVersion('ruby-runtime', '0.12')
         1 * mockJobManagement.logPluginDeprecationWarning('rbenv', '0.0.17')
-        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
-    }
-
-    def 'add rbenv-controlled ruby version with older runtime'() {
-        setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> false
-
-        when:
-        context.rbenv('2.1.2')
-
-        then:
-        context.wrapperNodes[0].name() == 'ruby-proxy-object'
-        def rootObject = context.wrapperNodes[0].'ruby-object'[0]
-        rootObject.'@pluginid' == 'rbenv'
-        rootObject.'@ruby-class' == 'Jenkins::Plugin::Proxies::BuildWrapper'
-        rootObject.'pluginid'[0].value() == 'rbenv'
-        rootObject.'pluginid'[0].'@ruby-class' == 'String'
-        rootObject.'pluginid'[0].'@pluginid' == 'rbenv'
-        rootObject.object[0].'@ruby-class' == 'RbenvWrapper'
-        rootObject.object[0].'@pluginid' == 'rbenv'
-        with(rootObject.object[0]) {
-            version[0].value() == '2.1.2'
-            version[0].'@pluginid' == 'rbenv'
-            version[0].'@ruby-class' == 'String'
-            ignore__local__version[0].value() == false
-            ignore__local__version[0].'@pluginid' == 'rbenv'
-            ignore__local__version[0].'@ruby-class' == 'String'
-            gem__list[0].value() == ''
-            gem__list[0].'@pluginid' == 'rbenv'
-            gem__list[0].'@ruby-class' == 'String'
-            rbenv__root[0].value() == '$HOME/.rbenv'
-            rbenv__root[0].'@pluginid' == 'rbenv'
-            rbenv__root[0].'@ruby-class' == 'String'
-            rbenv__repository[0].value() == 'https://github.com/sstephenson/rbenv.git'
-            rbenv__repository[0].'@pluginid' == 'rbenv'
-            rbenv__repository[0].'@ruby-class' == 'String'
-            rbenv__revision[0].value() == 'master'
-            rbenv__revision[0].'@pluginid' == 'rbenv'
-            rbenv__revision[0].'@ruby-class' == 'String'
-            ruby__build__repository[0].value() == 'https://github.com/sstephenson/ruby-build.git'
-            ruby__build__repository[0].'@pluginid' == 'rbenv'
-            ruby__build__repository[0].'@ruby-class' == 'String'
-            ruby__build__revision[0].value() == 'master'
-            ruby__build__revision[0].'@pluginid' == 'rbenv'
-            ruby__build__revision[0].'@ruby-class' == 'String'
-        }
-        1 * mockJobManagement.requirePlugin('rbenv')
-        1 * mockJobManagement.requirePlugin('ruby-runtime')
-        1 * mockJobManagement.logPluginDeprecationWarning('rbenv', '0.0.17')
-        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
     }
 
     def 'add rbenv-controlled override defaults'() {
@@ -169,14 +116,11 @@ class WrapperContextSpec extends Specification {
             ruby__build__revision[0].value() == '1.0'
         }
         1 * mockJobManagement.requirePlugin('rbenv')
-        1 * mockJobManagement.requirePlugin('ruby-runtime')
-        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
+        1 * mockJobManagement.requireMinimumPluginVersion('ruby-runtime', '0.12')
+        1 * mockJobManagement.logPluginDeprecationWarning('rbenv', '0.0.17')
     }
 
     def 'add rvm-controlled ruby version'() {
-        setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> true
-
         when:
         context.rvm('ruby-1.9.3')
 
@@ -184,27 +128,8 @@ class WrapperContextSpec extends Specification {
         context.wrapperNodes[0].name() == 'ruby-proxy-object'
         context.wrapperNodes[0].'ruby-object'[0].object[0].impl[0].value() == 'ruby-1.9.3'
         context.wrapperNodes[0].'ruby-object'[0].attribute('ruby-class') == 'Jenkins::Tasks::BuildWrapperProxy'
-        1 * mockJobManagement.requirePlugin('rvm')
-        1 * mockJobManagement.requirePlugin('ruby-runtime')
-        1 * mockJobManagement.logPluginDeprecationWarning('rvm', '0.6')
-        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
-    }
-
-    def 'add rvm-controlled ruby version with older runtime'() {
-        setup:
-        mockJobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') >> false
-
-        when:
-        context.rvm('ruby-1.9.3')
-
-        then:
-        context.wrapperNodes[0].name() == 'ruby-proxy-object'
-        context.wrapperNodes[0].'ruby-object'[0].object[0].impl[0].value() == 'ruby-1.9.3'
-        context.wrapperNodes[0].'ruby-object'[0].attribute('ruby-class') == 'Jenkins::Plugin::Proxies::BuildWrapper'
-        1 * mockJobManagement.requirePlugin('rvm')
-        1 * mockJobManagement.requirePlugin('ruby-runtime')
-        1 * mockJobManagement.logPluginDeprecationWarning('rvm', '0.6')
-        1 * mockJobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
+        1 * mockJobManagement.requireMinimumPluginVersion('rvm', '0.6')
+        1 * mockJobManagement.requireMinimumPluginVersion('ruby-runtime', '0.12')
     }
 
     def 'default timeout works'() {

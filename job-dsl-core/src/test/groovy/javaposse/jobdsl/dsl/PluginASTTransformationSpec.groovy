@@ -72,7 +72,7 @@ class PluginASTTransformationSpec extends Specification {
         }
 
         then:
-        1 * jobManagement.requirePlugin('rvm')
-        1 * jobManagement.requirePlugin('ruby-runtime')
+        1 * jobManagement.requireMinimumPluginVersion('rvm', '0.6')
+        1 * jobManagement.requireMinimumPluginVersion('ruby-runtime', '0.12')
     }
 }

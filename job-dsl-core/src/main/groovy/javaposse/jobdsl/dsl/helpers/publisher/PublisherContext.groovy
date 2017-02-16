@@ -1113,7 +1113,7 @@ class PublisherContext extends AbstractExtensibleContext {
      *    DSL</a> instead
      */
     @Deprecated
-    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.4')
+    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.5.4')
     void rundeck(String jobIdentifier, @DslContext(RundeckContext) Closure rundeckClosure = null) {
         checkNotNullOrEmpty(jobIdentifier, 'jobIdentifier cannot be null or empty')
 
@@ -1128,9 +1128,7 @@ class PublisherContext extends AbstractExtensibleContext {
             shouldWaitForRundeckJob(rundeckContext.shouldWaitForRundeckJob)
             shouldFailTheBuild(rundeckContext.shouldFailTheBuild)
             includeRundeckLogs(rundeckContext.includeRundeckLogs)
-            if (jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.5.4')) {
-                rundeckInstance(rundeckContext.rundeckInstance ?: 'Default')
-            }
+            rundeckInstance(rundeckContext.rundeckInstance ?: 'Default')
         }
     }
 

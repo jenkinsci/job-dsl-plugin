@@ -298,7 +298,7 @@ class TriggerContextSpec extends Specification {
             jobsIdentifiers[0].value().empty
             executionStatuses[0].value().empty
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('rundeck', '3.4')
+        1 * mockJobManagement.requireMinimumPluginVersion('rundeck', '3.5.4')
         1 * mockJobManagement.logDeprecationWarning()
     }
 
@@ -326,7 +326,7 @@ class TriggerContextSpec extends Specification {
                 children().any { it.name() == 'string' && it.value() == 'ABORTED' }
             }
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('rundeck', '3.4')
+        1 * mockJobManagement.requireMinimumPluginVersion('rundeck', '3.5.4')
         1 * mockJobManagement.logDeprecationWarning()
     }
 

@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class RundeckContext extends AbstractContext {
     Map<String, String> options = [:]
@@ -88,7 +87,6 @@ class RundeckContext extends AbstractContext {
      *
      * @since 1.51
      */
-    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.5.4')
     void rundeckInstance(String rundeckInstance) {
         this.rundeckInstance = rundeckInstance
     }

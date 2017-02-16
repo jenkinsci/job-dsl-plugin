@@ -34,6 +34,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Updated the troubleshooting section for [[The Configure Block]]
    ([JENKINS-41958](https://issues.jenkins-ci.org/browse/JENKINS-41958))
  * Updated [Structs Plugin](https://github.com/jenkinsci/structs-plugin) dependency to version 1.6
+ * Removed anything that has been deprecated in 1.51, see [Migration](Migration#migrating-to-151)
 * 1.58 (February 16 2017)
  * Increased the minimum supported Jenkins version to 1.651
  * Added support for the
