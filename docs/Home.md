@@ -26,7 +26,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.58 (unreleased)
+* 1.58 (February 16 2017)
  * Increased the minimum supported Jenkins version to 1.651
  * Added support for the
    [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
