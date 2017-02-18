@@ -50,7 +50,11 @@ class DescribableListContext implements Context {
                         Arrays.toString(candidates*.type*.name)
                 ))
             } else if (candidates.size() == 1) {
-                DescribableContext delegate = new DescribableContext(candidates.first(), jobManagement)
+                DescribableModel candidate = candidates.first()
+                if (candidate.deprecated) {
+                    jobManagement.logDeprecationWarning(name)
+                }
+                DescribableContext delegate = new DescribableContext(candidate, jobManagement)
                 if (args.size() == 1) {
                     executeInContext((Closure) argsArray[0], delegate)
                 }

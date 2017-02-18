@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.plugin.fixtures.ADescribable
 import javaposse.jobdsl.plugin.fixtures.ADuplicateBuilder
 import javaposse.jobdsl.plugin.fixtures.BDuplicateBuilder
+import javaposse.jobdsl.plugin.fixtures.DeprecatedTrigger
 import jenkins.triggers.ReverseBuildTrigger
 import org.jenkinsci.plugins.structs.describable.DescribableModel
 import org.junit.ClassRule
@@ -125,5 +126,19 @@ class DescribableListContextSpec extends Specification {
         context.values[0].spec == '@daily'
         context.values[1] instanceof TimerTrigger
         context.values[1].spec == '@midnight'
+    }
+
+    def 'log deprecation warning'() {
+        setup:
+        DescribableListContext context = new DescribableListContext(
+                [new DescribableModel(DeprecatedTrigger)],
+                jobManagement
+        )
+
+        when:
+        context.old()
+
+        then:
+        1 * jobManagement.logDeprecationWarning('old')
     }
 }

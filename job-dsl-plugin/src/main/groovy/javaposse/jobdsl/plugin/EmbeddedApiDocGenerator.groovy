@@ -186,6 +186,9 @@ class EmbeddedApiDocGenerator {
                 .element('parameters', model.parameters ? [generateOptionalClosureParameter()] : [])
                 .element('generated', true)
 
+        if (model.deprecated) {
+            signature.element('deprecated', true)
+        }
         if (model.parameters) {
             signature.element('contextClass', getContextClassName(model))
             addContext(model)

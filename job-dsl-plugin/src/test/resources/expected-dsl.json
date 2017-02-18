@@ -183,6 +183,7 @@
                 }
               ],
               "generated": true,
+              "deprecated": true,
               "contextClass": "javaposse.jobdsl.plugin.fixtures.DeprecatedTrigger"
             }
           ]

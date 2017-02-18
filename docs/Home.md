@@ -27,6 +27,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.59 (unreleased)
+ * Log deprecation warnings for [[Automatically Generated DSL]] and DSL extensions
+ * Updated [Structs Plugin](https://github.com/jenkinsci/structs-plugin) dependency to version 1.6
 * 1.58 (February 16 2017)
  * Increased the minimum supported Jenkins version to 1.651
  * Added support for the

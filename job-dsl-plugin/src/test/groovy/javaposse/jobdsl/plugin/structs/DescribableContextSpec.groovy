@@ -926,6 +926,6 @@ class DescribableContextSpec extends Specification {
         context.deprecatedOption('foo')
 
         then:
-        1 * jobManagement.logDeprecationWarning()
+        1 * jobManagement.logDeprecationWarning('deprecatedOption')
     }
 }
