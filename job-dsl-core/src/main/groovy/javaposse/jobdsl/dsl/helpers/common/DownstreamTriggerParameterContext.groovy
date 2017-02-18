@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.common
 
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
@@ -8,6 +9,7 @@ import javaposse.jobdsl.dsl.AbstractExtensibleContext
 /**
  * @since 1.38
  */
+@ContextType('hudson.plugins.parameterizedtrigger.AbstractBuildParameters')
 class DownstreamTriggerParameterContext extends AbstractExtensibleContext {
     Map<String, Boolean> booleanParams = [:]
     boolean sameNode
