@@ -27,6 +27,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.59 (unreleased)
+ * Enable [[Automatically Generated DSL]] for
+   [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
+   ([JENKINS-41741](https://issues.jenkins-ci.org/browse/JENKINS-41741))
  * Log deprecation warnings for [[Automatically Generated DSL]] and DSL extensions
  * Updated [Structs Plugin](https://github.com/jenkinsci/structs-plugin) dependency to version 1.6
 * 1.58 (February 16 2017)
