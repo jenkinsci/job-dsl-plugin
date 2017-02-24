@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-    id 'org.jenkins-ci.jpi' version '0.21.0'
+    id 'org.jenkins-ci.jpi' version '0.22.0'
 }
 
 description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
@@ -70,7 +70,7 @@ configurations {
     compile.exclude group: 'org.kohsuke', module: 'windows-package-checker'
 }
 
-jpi {
+war {
     into('api-viewer') {
         from(project(':job-dsl-api-viewer').projectDir) {
             include 'index.html'
