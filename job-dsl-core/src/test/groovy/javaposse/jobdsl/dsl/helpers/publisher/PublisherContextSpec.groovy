@@ -5341,59 +5341,62 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'net.masterthought.jenkins.CucumberReportPublisher'
-            children().size() == 11
-            jsonReportDirectory[0].value().empty
-            pluginUrlPath[0].value().empty
-            fileIncludePattern[0].value().empty
-            fileExcludePattern[0].value().empty
-            skippedFails[0].value() == false
-            pendingFails[0].value() == false
-            undefinedFails[0].value() == false
-            missingFails[0].value() == false
-            noFlashCharts[0].value() == false
-            ignoreFailedTests[0].value() == false
+            children().size() == 13
+            jsonReportDirectory[0].value() == null
+            fileIncludePattern[0].value() == null
+            fileExcludePattern[0].value() == null
+            failedStepsNumber[0].value() == 0
+            skippedStepsNumber[0].value() == 0
+            pendingStepsNumber[0].value() == 0
+            undefinedStepsNumber[0].value() == 0
+            failedScenariosNumber[0].value() == 0
+            failedFeaturesNumber[0].value() == 0
+            buildStatus[0].value() == null
+            trendsLimit[0].value() == 0
             parallelTesting[0].value() == false
+            classifications[0].value() == null
         }
-        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6.0')
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '3.6.0')
     }
 
     def 'call cucumberReports with all options'() {
         when:
         context.cucumberReports {
-            jsonReportPath('files.json')
-            pluginUrlPath('url')
-            fileIncludePattern('included')
-            fileExcludePattern('excluded')
-            failOnSkipSteps(value)
-            failOnPendingSteps(value)
-            failOnUndefinedSteps(value)
-            failOnMissingSteps(value)
-            turnOffFlashCharts(value)
-            ignoreFailedTests(value)
-            parallelTesting(value)
+            jsonReportDirectory('')
+            fileIncludePattern('**/cucumber-reports.json')
+            fileExcludePattern('xyz.json')
+            failedStepsNumber(1)
+            skippedStepsNumber(2)
+            pendingStepsNumber(3)
+            undefinedStepsNumber(4)
+            failedScenariosNumber(5)
+            failedFeaturesNumber(6)
+            buildStatus('UNSTABLE')
+            trendsLimit(17)
+            parallelTesting(true)
+            classifications([])
         }
 
         then:
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'net.masterthought.jenkins.CucumberReportPublisher'
-            children().size() == 11
-            jsonReportDirectory[0].value() == 'files.json'
-            pluginUrlPath[0].value() == 'url'
-            fileIncludePattern[0].value() == 'included'
-            fileExcludePattern[0].value() == 'excluded'
-            skippedFails[0].value() == value
-            pendingFails[0].value() == value
-            undefinedFails[0].value() == value
-            missingFails[0].value() == value
-            noFlashCharts[0].value() == value
-            ignoreFailedTests[0].value() == value
-            parallelTesting[0].value() == value
+            children().size() == 13
+            jsonReportDirectory[0].value() == ''
+            fileIncludePattern[0].value() == '**/cucumber-reports.json'
+            fileExcludePattern[0].value() == 'xyz.json'
+            failedStepsNumber[0].value() == 1
+            skippedStepsNumber[0].value() == 2
+            pendingStepsNumber[0].value() == 3
+            undefinedStepsNumber[0].value() == 4
+            failedScenariosNumber[0].value() == 5
+            failedFeaturesNumber[0].value() == 6
+            buildStatus[0].value() == 'UNSTABLE'
+            trendsLimit[0].value() == 17
+            parallelTesting[0].value() == true
+            classifications[0].value() == []
         }
-        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6.0')
-
-        where:
-        value << [true, false]
+        1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '3.6.0')
     }
 
     def 'call cucumberTestResults with no options'() {

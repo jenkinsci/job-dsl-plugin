@@ -1666,23 +1666,27 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.41
      */
-    @RequiresPlugin(id = 'cucumber-reports', minimumVersion = '0.6.0')
+    @RequiresPlugin(id = 'cucumber-reports', minimumVersion = '3.6.0')
     void cucumberReports(@DslContext(CucumberReportsContext) Closure closure) {
         CucumberReportsContext context = new CucumberReportsContext()
         ContextHelper.executeInContext(closure, context)
 
         publisherNodes << new NodeBuilder().'net.masterthought.jenkins.CucumberReportPublisher' {
-            jsonReportDirectory(context.jsonReportPath ?: '')
-            pluginUrlPath(context.pluginUrlPath ?: '')
-            fileIncludePattern(context.fileIncludePattern ?: '')
-            fileExcludePattern(context.fileExcludePattern ?: '')
-            skippedFails(context.failOnSkippedSteps)
-            pendingFails(context.failOnPendingSteps)
-            undefinedFails(context.failOnUndefinedSteps)
-            missingFails(context.failOnMissingSteps)
-            noFlashCharts(context.turnOffFlashCharts)
-            ignoreFailedTests(context.ignoreFailedTests)
+            jsonReportDirectory(context.jsonReportDirectory)
+            fileIncludePattern(context.fileIncludePattern)
+            fileExcludePattern(context.fileExcludePattern)
+
+            failedStepsNumber(context.failedStepsNumber)
+            skippedStepsNumber(context.skippedStepsNumber)
+            pendingStepsNumber(context.pendingStepsNumber)
+            undefinedStepsNumber(context.undefinedStepsNumber)
+            failedScenariosNumber(context.failedScenariosNumber)
+            failedFeaturesNumber(context.failedFeaturesNumber)
+            buildStatus(context.buildStatus)
+
+            trendsLimit(context.trendsLimit)
             parallelTesting(context.parallelTesting)
+            classifications(context.classifications)
         }
     }
 
