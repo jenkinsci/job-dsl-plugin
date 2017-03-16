@@ -1,17 +1,16 @@
 job('example') {
     publishers {
         cucumberReports {
-            jsonReportPath('files.json')
-            pluginUrlPath('url')
-            fileIncludePattern('included')
-            fileExcludePattern('excluded')
-            failOnSkipSteps()
-            failOnPendingSteps()
-            failOnUndefinedSteps()
-            failOnMissingSteps()
-            turnOffFlashCharts()
-            ignoreFailedTests()
-            parallelTesting()
+            jsonReportDirectory('')
+            fileIncludePattern('**/*.json')
+            fileExcludePattern('')
+            failedStepsNumber()
+            skippedStepsNumber()
+            pendingStepsNumber()
+            undefinedStepsNumber()
+            failedScenariosNumber()
+            failedFeaturesNumber()
+            buildStatus()
         }
     }
 }
