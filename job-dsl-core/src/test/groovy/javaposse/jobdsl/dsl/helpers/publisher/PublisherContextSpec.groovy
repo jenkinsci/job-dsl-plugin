@@ -3174,50 +3174,6 @@ class PublisherContextSpec extends Specification {
             shouldWaitForRundeckJob()
             shouldFailTheBuild()
             includeRundeckLogs()
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
-            children().size() == 7
-            jobId[0].value() == 'jobId'
-            options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-            nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-            tag[0].value() == 'tag'
-            shouldWaitForRundeckJob[0].value() == true
-            shouldFailTheBuild[0].value() == true
-            includeRundeckLogs[0].value() == true
-        }
-        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'call rundeck with default values'() {
-        when:
-        context.rundeck('jobId')
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
-            children().size() == 7
-            jobId[0].value() == 'jobId'
-            options[0].value().isEmpty()
-            nodeFilters[0].value().isEmpty()
-            tag[0].value() == ''
-            shouldWaitForRundeckJob[0].value() == false
-            shouldFailTheBuild[0].value() == false
-            includeRundeckLogs[0].value() == false
-        }
-        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'call rundeck with rundeckInstance selected (version 3.5.4)'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.5.4') >> true
-
-        when:
-        context.rundeck('jobId') {
             rundeckInstance('myRundeckInstance')
         }
 
@@ -3226,23 +3182,19 @@ class PublisherContextSpec extends Specification {
             name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
             children().size() == 8
             jobId[0].value() == 'jobId'
-            options[0].value().isEmpty()
-            nodeFilters[0].value().isEmpty()
-            tag[0].value() == ''
-            shouldWaitForRundeckJob[0].value() == false
-            shouldFailTheBuild[0].value() == false
-            includeRundeckLogs[0].value() == false
+            options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+            nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
+            tag[0].value() == 'tag'
+            shouldWaitForRundeckJob[0].value() == true
+            shouldFailTheBuild[0].value() == true
+            includeRundeckLogs[0].value() == true
             rundeckInstance[0].value() == 'myRundeckInstance'
         }
-        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
         1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.5.4')
         1 * jobManagement.logDeprecationWarning()
     }
 
-    def 'call rundeck without rundeckInstance selected (version 3.5.4)'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.5.4') >> true
-
+    def 'call rundeck with default values'() {
         when:
         context.rundeck('jobId')
 
@@ -3259,7 +3211,7 @@ class PublisherContextSpec extends Specification {
             includeRundeckLogs[0].value() == false
             rundeckInstance[0].value() == 'Default'
         }
-        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.4')
+        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.5.4')
         1 * jobManagement.logDeprecationWarning()
     }
 
@@ -5176,75 +5128,6 @@ class PublisherContextSpec extends Specification {
 
         then:
         thrown(DslScriptException)
-    }
-
-    def 'slackNotifications with no options'() {
-        when:
-        context.slackNotifications {}
-
-        then:
-        context.publisherNodes[0].name() == 'jenkins.plugins.slack.SlackNotifier'
-        with(item.node.'properties'.'jenkins.plugins.slack.SlackNotifier_-SlackJobProperty') {
-            teamDomain.text() == ''
-            token.text() == ''
-            room.text() == ''
-            startNotification.text() == 'false'
-            notifySuccess.text() == 'false'
-            notifyAborted.text() == 'false'
-            notifyNotBuilt.text() == 'false'
-            notifyUnstable.text() == 'false'
-            notifyFailure.text() == 'false'
-            notifyBackToNormal.text() == 'false'
-            notifyRepeatedFailure.text() == 'false'
-            includeTestSummary.text() == 'false'
-            showCommitList.text() == 'false'
-            includeCustomMessage.text() == 'false'
-            customMessage.text() == ''
-        }
-        1 * jobManagement.requireMinimumPluginVersion('slack', '1.8')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'slackNotifications with all options'() {
-        when:
-        context.slackNotifications {
-            teamDomain('testdomain')
-            integrationToken('token1')
-            projectChannel('channel1')
-            notifyBuildStart()
-            notifyAborted()
-            notifyFailure()
-            notifyNotBuilt()
-            notifySuccess()
-            notifyUnstable()
-            notifyBackToNormal()
-            notifyRepeatedFailure()
-            includeTestSummary()
-            showCommitList()
-            customMessage('testing customMessage')
-        }
-
-        then:
-        context.publisherNodes[0].name() == 'jenkins.plugins.slack.SlackNotifier'
-        with(item.node.'properties'.'jenkins.plugins.slack.SlackNotifier_-SlackJobProperty') {
-            teamDomain.text() == 'testdomain'
-            token.text() == 'token1'
-            room.text() == 'channel1'
-            startNotification.text() == 'true'
-            notifySuccess.text() == 'true'
-            notifyAborted.text() == 'true'
-            notifyNotBuilt.text() == 'true'
-            notifyUnstable.text() == 'true'
-            notifyFailure.text() == 'true'
-            notifyBackToNormal.text() == 'true'
-            notifyRepeatedFailure.text() == 'true'
-            includeTestSummary.text() == 'true'
-            showCommitList.text() == 'true'
-            includeCustomMessage.text() == 'true'
-            customMessage.text() == 'testing customMessage'
-        }
-        1 * jobManagement.requireMinimumPluginVersion('slack', '1.8')
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'debianPackage with no options'() {

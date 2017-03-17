@@ -13,7 +13,7 @@ class GitLabTriggerContext extends AbstractContext {
     String excludeBranches
     String targetBranchRegex
     String rebuildOpenMergeRequest = 'never'
-    String branchFilterType = 'all'
+    String branchFilterType = 'All'
     boolean buildOnMergeRequestEvents = true
     boolean buildOnPushEvents = true
     boolean enableCiSkip = true
@@ -34,7 +34,7 @@ class GitLabTriggerContext extends AbstractContext {
      */
     void includeBranches(String includeBranches) {
         this.includeBranches = includeBranches
-        this.branchFilterType = 'nameBasedFilter'
+        this.branchFilterType = 'NameBasedFilter'
     }
 
     /**
@@ -42,7 +42,7 @@ class GitLabTriggerContext extends AbstractContext {
      */
     void excludeBranches(String excludeBranches) {
         this.excludeBranches = excludeBranches
-        this.branchFilterType = 'nameBasedFilter'
+        this.branchFilterType = 'NameBasedFilter'
     }
 
     /**
@@ -54,7 +54,7 @@ class GitLabTriggerContext extends AbstractContext {
      */
     void targetBranchRegex(String targetBranchRegex) {
         this.targetBranchRegex = targetBranchRegex
-        this.branchFilterType = 'regexBasedFilter'
+        this.branchFilterType = 'RegexBasedFilter'
     }
 
     /**

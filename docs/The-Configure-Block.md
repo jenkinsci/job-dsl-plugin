@@ -196,6 +196,73 @@ job('example') {
 }
 ```
 
+## Append (<<) Not Working With Attributes
+
+The behavior of the `/` operator changes when specifying attributes on the right side. In this case the `/` does not
+only find or create the element on the right side of the operator, but also replaces children and attributes of the node
+on the left side with children and attributes from the node on the right side.
+
+The following example demonstrates the problem:
+
+```groovy
+job('example') {
+    configure {
+        it / scm(class: 'org.MyScm') << 'aChild' {
+            serverUrl('http://example.org/product-a')
+        }
+        it / scm(class: 'org.MyScm') << 'aChild' {
+            serverUrl('http://example.org/product-b')
+        }
+    }
+}
+```
+
+It will not generate two `aChild` elements within the `scm` element, but only one since the second `/` operator will
+replace the content appended above. The outcome looks like this:
+
+```xml
+<project>
+   <scm class='org.MyScm'>
+        <aChild>
+            <serverUrl>http://example.org/product-a</serverUrl>
+        </aChild>
+    </scm>
+</project>
+```
+
+To avoid the problem, the selected node can be assigned to a variable, so that the `/` operator will only be used once:
+
+```groovy
+job('example') {
+    configure {
+        def scm = it / scm(class: 'org.MyScm')
+        scm << 'aChild' {
+            serverUrl('http://example.org/product-a')
+        }
+        scm << 'aChild' {
+            serverUrl('http://example.org/product-b')
+        }
+    }
+}
+```
+
+This change leads to the desired result:
+
+```xml
+<project>
+    <scm class='org.MyScm'>
+        <aChild>
+            <serverUrl>http://example.org/product-a</serverUrl>
+        </aChild>
+        <aChild>
+            <serverUrl>http://example.org/product-b</serverUrl>
+        </aChild>
+    </scm>
+</project>
+```
+
+See also [JENKINS-41958](https://issues.jenkins-ci.org/browse/JENKINS-41958).
+
 # Samples
 
 Here is an (inelegant) configure block which may explain what Groovy sees, e.g.

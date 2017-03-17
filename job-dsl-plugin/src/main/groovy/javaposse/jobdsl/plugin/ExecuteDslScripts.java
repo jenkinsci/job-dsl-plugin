@@ -66,43 +66,6 @@ import static javaposse.jobdsl.plugin.actions.GeneratedObjectsAction.extractGene
 public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     private static final Logger LOGGER = Logger.getLogger(ExecuteDslScripts.class.getName());
 
-    // Artifact of how Jelly/Stapler puts conditional variables in blocks, which NEED to map to a sub-Object.
-    // The alternative would have been to mess with DescriptorImpl.getInstance
-    @Deprecated
-    public static class ScriptLocation {
-        private Boolean usingScriptText;
-        private String targets;
-        private String scriptText;
-        private boolean ignoreMissingFiles;
-
-        @DataBoundConstructor
-        public ScriptLocation() {
-        }
-
-        @DataBoundSetter
-        public void setValue(String value) {
-            this.usingScriptText = value == null || Boolean.parseBoolean(value);
-        }
-
-        @DataBoundSetter
-        public void setTargets(String targets) {
-            this.targets = fixEmptyAndTrim(targets);
-        }
-
-        @DataBoundSetter
-        public void setScriptText(String scriptText) {
-            this.scriptText = fixEmptyAndTrim(scriptText);
-            if (this.scriptText != null && this.usingScriptText == null) {
-                usingScriptText = true;
-            }
-        }
-
-        @DataBoundSetter
-        public void setIgnoreMissingFiles(boolean ignoreMissingFiles) {
-            this.ignoreMissingFiles = ignoreMissingFiles;
-        }
-    }
-
     /**
      * Newline-separated list of locations to load as dsl scripts.
      */
@@ -136,11 +99,6 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     @DataBoundConstructor
     public ExecuteDslScripts() {
-    }
-
-    @Deprecated
-    public ExecuteDslScripts(ScriptLocation scriptLocation) {
-        setScriptLocation(scriptLocation);
     }
 
     ExecuteDslScripts(String scriptText) {
@@ -261,20 +219,6 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     @DataBoundSetter
     public void setAdditionalClasspath(String additionalClasspath) {
         this.additionalClasspath = fixEmptyAndTrim(additionalClasspath);
-    }
-
-    @Deprecated
-    public ScriptLocation getScriptLocation() {
-        return null;
-    }
-
-    @DataBoundSetter
-    @Deprecated
-    public void setScriptLocation(ScriptLocation scriptLocation) {
-        this.usingScriptText = scriptLocation == null || (scriptLocation.usingScriptText != null && scriptLocation.usingScriptText);
-        this.targets = scriptLocation == null ? null : scriptLocation.targets;
-        this.scriptText = scriptLocation == null ? null : scriptLocation.scriptText;
-        this.ignoreMissingFiles = scriptLocation != null && scriptLocation.ignoreMissingFiles;
     }
 
     /**

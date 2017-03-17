@@ -27,6 +27,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NameNotProvidedException
 import javaposse.jobdsl.dsl.UserContent
 import javaposse.jobdsl.dsl.helpers.step.StepContext
+import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.views.ColumnsContext
 import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint
 import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint2
@@ -305,6 +306,14 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         isXmlIdentical('view-extension.xml', result)
+    }
+
+    def 'call deprecated extension'() {
+        when:
+        jobManagement.callExtension('old', null, TriggerContext)
+
+        then:
+        buffer.toString() =~ /Warning: \(.+, line \d+\) old is deprecated/
     }
 
     def 'extension is being notified'() {

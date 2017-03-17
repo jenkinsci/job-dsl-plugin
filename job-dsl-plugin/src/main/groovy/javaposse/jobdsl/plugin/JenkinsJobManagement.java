@@ -432,7 +432,11 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
 
         try {
-            Object result = Iterables.getOnlyElement(candidates).call(getSession(item), this, args);
+            DslExtension extension = Iterables.getOnlyElement(candidates);
+            if (extension.isDeprecated()) {
+                logDeprecationWarning(name);
+            }
+            Object result = extension.call(getSession(item), this, args);
             return result == null ? NO_VALUE : new XmlParser().parseText(Items.XSTREAM2.toXML(result));
         } catch (InvocationTargetException e) {
             throw e.getCause();

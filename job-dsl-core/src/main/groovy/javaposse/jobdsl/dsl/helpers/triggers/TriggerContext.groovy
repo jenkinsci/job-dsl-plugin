@@ -168,7 +168,7 @@ class TriggerContext extends ItemTriggerContext {
      *    DSL</a> instead
      */
     @Deprecated
-    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.4')
+    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.5.4')
     void rundeck(@DslContext(RundeckTriggerContext) Closure closure = null) {
         RundeckTriggerContext context = new RundeckTriggerContext()
         ContextHelper.executeInContext(closure, context)

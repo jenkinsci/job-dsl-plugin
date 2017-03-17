@@ -16,6 +16,8 @@ import java.lang.annotation.Target;
 public @interface RequiresCore {
     /**
      * The least acceptable version of Jenkins core.
+     *
+     * @return the least acceptable version of Jenkins core
      */
     String minimumVersion();
 }

@@ -247,35 +247,6 @@ class ExecuteDslScriptsSpec extends Specification {
         executeDslScripts.additionalClasspath == null
     }
 
-    @WithoutJenkins
-    def 'script location'() {
-        setup:
-        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
-
-        expect:
-        executeDslScripts.scriptLocation == null
-
-        when:
-        executeDslScripts.scriptLocation = new ExecuteDslScripts.ScriptLocation()
-
-        then:
-        executeDslScripts.scriptLocation == null
-        executeDslScripts.scriptText == null
-        executeDslScripts.targets == null
-        !executeDslScripts.usingScriptText
-        executeDslScripts.useScriptText == null
-
-        when:
-        executeDslScripts.scriptLocation = null
-
-        then:
-        executeDslScripts.scriptLocation == null
-        executeDslScripts.scriptText == null
-        executeDslScripts.targets == null
-        executeDslScripts.usingScriptText
-        executeDslScripts.useScriptText == null
-    }
-
     def scheduleBuildOnMasterUsingScriptText() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
@@ -552,7 +523,6 @@ class ExecuteDslScriptsSpec extends Specification {
     private static FreeStyleBuild runBuild(FreeStyleProject job, ExecuteDslScripts builder) {
         job.buildersList.clear()
         job.buildersList.add(builder)
-        job.onCreatedFromScratch() // need this to updateTransientActions
 
         FreeStyleBuild build = job.scheduleBuild2(0).get()
 
@@ -724,7 +694,6 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(JOB_IN_FOLDER_SCRIPT))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -740,7 +709,6 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.createProject(Folder, 'folder-a').createProject(FreeStyleProject, 'test-job')
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(JOB_IN_FOLDER_SCRIPT))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -760,7 +728,6 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(VIEW_SCRIPT))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -795,7 +762,6 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(VIEW_IN_FOLDER_SCRIPT))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -812,7 +778,6 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.addView(new ListView('test-view'))
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(VIEW_SCRIPT))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -833,7 +798,6 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.createProject(Folder, 'folder-a').addView(new ListView('test-view'))
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(VIEW_IN_FOLDER_SCRIPT))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -856,7 +820,6 @@ class ExecuteDslScriptsSpec extends Specification {
         ExecuteDslScripts builder = new ExecuteDslScripts(VIEW_SCRIPT)
         builder.ignoreExisting = true
         job.buildersList.add(builder)
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -979,7 +942,6 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(FOLDER_SCRIPT))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1014,7 +976,6 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(FOLDER_IN_FOLDER_SCRIPT))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1030,7 +991,6 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.createProject(Folder, 'test-folder')
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(FOLDER_SCRIPT))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1051,7 +1011,6 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.createProject(Folder, 'folder-a').createProject(Folder, 'folder-b')
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(FOLDER_IN_FOLDER_SCRIPT))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1074,7 +1033,6 @@ class ExecuteDslScriptsSpec extends Specification {
         ExecuteDslScripts builder = new ExecuteDslScripts(FOLDER_SCRIPT)
         builder.ignoreExisting = true
         job.buildersList.add(builder)
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1094,7 +1052,6 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(FOLDER_SCRIPT))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1179,7 +1136,6 @@ class ExecuteDslScriptsSpec extends Specification {
                 scriptText: this.class.getResourceAsStream('deprecation.groovy').text,
                 unstableOnDeprecation: unstableOnDeprecation
         ))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild build = job.scheduleBuild2(0).get()
@@ -1202,7 +1158,6 @@ class ExecuteDslScriptsSpec extends Specification {
                 scriptText: this.class.getResourceAsStream('missingPlugin.groovy').text,
                 failOnMissingPlugin: failOnMissingPlugin
         ))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild build = job.scheduleBuild2(0).get()
@@ -1227,7 +1182,6 @@ class ExecuteDslScriptsSpec extends Specification {
         builder.removedJobAction = RemovedJobAction.DISABLE
         builder.lookupStrategy = LookupStrategy.SEED_JOB
         job.buildersList.add(builder)
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1242,7 +1196,6 @@ class ExecuteDslScriptsSpec extends Specification {
         job.scheduleBuild2(0).get() // run a build to create a workspace
         job.someWorkspace.child('jenkins.dsl').write('job("test")', 'UTF-8')
         job.buildersList.add(new ExecuteDslScripts(targets: 'jenkins.dsl'))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1257,7 +1210,6 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         Project job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(scriptText: this.class.getResourceAsStream('gstring.groovy').text))
-        job.onCreatedFromScratch()
 
         when:
         Run build = job.scheduleBuild2(0).get()
@@ -1270,7 +1222,6 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(targets: 'jenkins.dsl', ignoreMissingFiles: true))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1283,7 +1234,6 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(targets: '*.dsl', ignoreMissingFiles: true))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1301,7 +1251,6 @@ class ExecuteDslScriptsSpec extends Specification {
         job.someWorkspace.child('projectB/Utils.groovy').write('class Utils { static NAME = "projectB" }', 'UTF-8')
         job.someWorkspace.child('projectB/script.groovy').write('job(Utils.NAME)', 'UTF-8')
         job.buildersList.add(new ExecuteDslScripts(targets: 'projectA/script.groovy\nprojectB/script.groovy'))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1321,7 +1270,6 @@ class ExecuteDslScriptsSpec extends Specification {
                 scriptText: 'job("folder/nested/foo")',
                 lookupStrategy: LookupStrategy.SEED_JOB
         ))
-        job.onCreatedFromScratch()
 
         when:
         Run build = job.scheduleBuild2(0).get()
@@ -1334,7 +1282,6 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(scriptText: getClass().getResource('configFiles.groovy').text))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
@@ -1360,7 +1307,6 @@ class ExecuteDslScriptsSpec extends Specification {
                 scriptText: getClass().getResource('configFiles.groovy').text,
                 ignoreExisting: true
         ))
-        job.onCreatedFromScratch()
 
         when:
         FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()

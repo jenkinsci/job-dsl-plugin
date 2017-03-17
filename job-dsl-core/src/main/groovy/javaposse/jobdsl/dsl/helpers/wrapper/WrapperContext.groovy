@@ -54,7 +54,7 @@ class WrapperContext extends AbstractExtensibleContext {
      */
     @RequiresPlugins([
             @RequiresPlugin(id = 'rbenv'),
-            @RequiresPlugin(id = 'ruby-runtime')
+            @RequiresPlugin(id = 'ruby-runtime', minimumVersion = '0.12')
     ])
     void rbenv(String rubyVersion, @DslContext(RbenvContext) Closure rbenvClosure = null) {
         jobManagement.logPluginDeprecationWarning('rbenv', '0.0.17')
@@ -63,7 +63,7 @@ class WrapperContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(rbenvClosure, rbenvContext)
 
         wrapperNodes << new NodeBuilder().'ruby-proxy-object' {
-            'ruby-object'('ruby-class': rubyWrapperClass, pluginid: 'rbenv') {
+            'ruby-object'('ruby-class': 'Jenkins::Tasks::BuildWrapperProxy', pluginid: 'rbenv') {
                 pluginid('rbenv', [pluginid: 'rbenv', 'ruby-class': 'String'])
                 object('ruby-class': 'RbenvWrapper', pluginid: 'rbenv') {
                     version(rubyVersion, [pluginid: 'rbenv', 'ruby-class': 'String'])
@@ -89,30 +89,20 @@ class WrapperContext extends AbstractExtensibleContext {
      *                          (i.e. ruby-1.9.3, ruby-2.0.0@gemset-foo)
      */
     @RequiresPlugins([
-            @RequiresPlugin(id = 'rvm'),
-            @RequiresPlugin(id = 'ruby-runtime')
+            @RequiresPlugin(id = 'rvm', minimumVersion = '0.6'),
+            @RequiresPlugin(id = 'ruby-runtime', minimumVersion = '0.12')
     ])
     void rvm(String rubySpecification) {
-        jobManagement.logPluginDeprecationWarning('rvm', '0.6')
-
         Preconditions.checkArgument(rubySpecification as Boolean, 'Please specify at least the ruby version')
 
         wrapperNodes << new NodeBuilder().'ruby-proxy-object' {
-            'ruby-object'('ruby-class': rubyWrapperClass, pluginid: 'rvm') {
-
+            'ruby-object'('ruby-class': 'Jenkins::Tasks::BuildWrapperProxy', pluginid: 'rvm') {
                 pluginid('rvm', [pluginid: 'rvm', 'ruby-class': 'String'])
                 object('ruby-class': 'RvmWrapper', pluginid: 'rvm') {
                     impl(rubySpecification, [pluginid: 'rvm', 'ruby-class': 'String'])
                 }
             }
         }
-    }
-
-    private String getRubyWrapperClass() {
-        jobManagement.logPluginDeprecationWarning('ruby-runtime', '0.12')
-
-        jobManagement.isMinimumPluginVersionInstalled('ruby-runtime', '0.10') ? 'Jenkins::Tasks::BuildWrapperProxy' :
-                'Jenkins::Plugin::Proxies::BuildWrapper'
     }
 
     /**

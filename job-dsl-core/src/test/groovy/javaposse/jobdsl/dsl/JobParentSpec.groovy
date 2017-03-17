@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.jobs.IvyJob
 import javaposse.jobdsl.dsl.jobs.MatrixJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
+import javaposse.jobdsl.dsl.jobs.OrganizationFolderJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
 import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
 import javaposse.jobdsl.dsl.views.BuildMonitorView
@@ -549,5 +550,16 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         1 * jobManagement.requireMinimumPluginVersion('workflow-multibranch', '1.12', true)
+    }
+
+    def 'organization folder job'() {
+        when:
+        OrganizationFolderJob job = parent.organizationFolder('test') {
+        }
+
+        then:
+        job.name == 'test'
+        parent.referencedJobs.contains(job)
+        1 * jobManagement.requireMinimumPluginVersion('branch-api', '1.11', true)
     }
 }

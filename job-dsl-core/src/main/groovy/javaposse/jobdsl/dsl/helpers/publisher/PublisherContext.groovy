@@ -1113,7 +1113,7 @@ class PublisherContext extends AbstractExtensibleContext {
      *    DSL</a> instead
      */
     @Deprecated
-    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.4')
+    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.5.4')
     void rundeck(String jobIdentifier, @DslContext(RundeckContext) Closure rundeckClosure = null) {
         checkNotNullOrEmpty(jobIdentifier, 'jobIdentifier cannot be null or empty')
 
@@ -1128,9 +1128,7 @@ class PublisherContext extends AbstractExtensibleContext {
             shouldWaitForRundeckJob(rundeckContext.shouldWaitForRundeckJob)
             shouldFailTheBuild(rundeckContext.shouldFailTheBuild)
             includeRundeckLogs(rundeckContext.includeRundeckLogs)
-            if (jobManagement.isMinimumPluginVersionInstalled('rundeck', '3.5.4')) {
-                rundeckInstance(rundeckContext.rundeckInstance ?: 'Default')
-            }
+            rundeckInstance(rundeckContext.rundeckInstance ?: 'Default')
         }
     }
 
@@ -1591,40 +1589,6 @@ class PublisherContext extends AbstractExtensibleContext {
             commentSize(phabricatorNotifierContext.commentSize)
             preserveFormatting(phabricatorNotifierContext.preserveFormatting)
             uberallsEnabled(phabricatorNotifierContext.enableUberalls)
-        }
-    }
-
-    /**
-     * Sends notifications to Slack.
-     *
-     * @since 1.36
-     */
-    @RequiresPlugin(id = 'slack', minimumVersion = '1.8')
-    @Deprecated
-    void slackNotifications(@DslContext(SlackNotificationsContext) Closure slackNotificationsClosure) {
-        SlackNotificationsContext context = new SlackNotificationsContext()
-        ContextHelper.executeInContext(slackNotificationsClosure, context)
-
-        publisherNodes << new NodeBuilder().'jenkins.plugins.slack.SlackNotifier'()
-
-        item.configure {
-            it / 'properties' / 'jenkins.plugins.slack.SlackNotifier_-SlackJobProperty' {
-                teamDomain(context.teamDomain ?: '')
-                token(context.integrationToken ?: '')
-                room(context.projectChannel ?: '')
-                startNotification(context.notifyBuildStart)
-                notifySuccess(context.notifySuccess)
-                notifyAborted(context.notifyAborted)
-                notifyNotBuilt(context.notifyNotBuilt)
-                notifyUnstable(context.notifyUnstable)
-                notifyFailure(context.notifyFailure)
-                notifyBackToNormal(context.notifyBackToNormal)
-                notifyRepeatedFailure(context.notifyRepeatedFailure)
-                includeTestSummary(context.includeTestSummary)
-                showCommitList(context.showCommitList)
-                includeCustomMessage(context.customMessage as boolean)
-                customMessage(context.customMessage ?: '')
-            }
         }
     }
 
