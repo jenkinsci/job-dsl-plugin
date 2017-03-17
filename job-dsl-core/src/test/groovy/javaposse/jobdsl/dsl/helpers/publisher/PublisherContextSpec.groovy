@@ -4764,7 +4764,7 @@ class PublisherContextSpec extends Specification {
             notifyBackToNormal[0].value() == false
             notifyRepeatedFailure[0].value() == false
             includeTestSummary[0].value() == false
-            showCommitList[0].value() == false
+            commitInfoChoice[0].value() == 'NONE'
             includeCustomMessage[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('mattermost', '1.5.0')
@@ -4786,7 +4786,7 @@ class PublisherContextSpec extends Specification {
             notifyBackToNormal()
             notifyRepeatedFailure()
             includeTestSummary()
-            showCommitList()
+            commitInfoChoice('AUTHORS_AND_TITLES')
         }
 
         then:
@@ -4806,7 +4806,7 @@ class PublisherContextSpec extends Specification {
             notifyBackToNormal[0].value() == true
             notifyRepeatedFailure[0].value() == true
             includeTestSummary[0].value() == true
-            showCommitList[0].value() == true
+            commitInfoChoice[0].value() == 'AUTHORS_AND_TITLES'
             includeCustomMessage[0].value() == true
         }
         1 * jobManagement.requireMinimumPluginVersion('mattermost', '1.5.0')
