@@ -4768,6 +4768,7 @@ class PublisherContextSpec extends Specification {
             includeCustomMessage[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('mattermost', '1.5.0')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'mattermost notification with all options'() {
@@ -4810,6 +4811,7 @@ class PublisherContextSpec extends Specification {
             includeCustomMessage[0].value() == true
         }
         1 * jobManagement.requireMinimumPluginVersion('mattermost', '1.5.0')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call publishOverSsh without server'() {
