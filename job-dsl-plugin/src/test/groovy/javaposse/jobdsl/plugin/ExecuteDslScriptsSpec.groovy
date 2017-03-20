@@ -4,14 +4,18 @@ import com.cloudbees.hudson.plugins.folder.Folder
 import hudson.FilePath
 import hudson.model.AbstractItem
 import hudson.model.AbstractProject
+import hudson.model.Computer
 import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
+import hudson.model.Item
 import hudson.model.Items
 import hudson.model.Label
 import hudson.model.ListView
 import hudson.model.Project
+import hudson.model.Queue
 import hudson.model.Result
 import hudson.model.Run
+import hudson.model.User
 import hudson.model.View
 import hudson.slaves.DumbSlave
 import javaposse.jobdsl.dsl.GeneratedJob
@@ -22,6 +26,10 @@ import javaposse.jobdsl.plugin.actions.GeneratedViewsAction
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction
 import javaposse.jobdsl.plugin.actions.SeedJobAction
 import javaposse.jobdsl.plugin.fixtures.ExampleJobDslExtension
+import jenkins.model.Jenkins
+import jenkins.security.QueueItemAuthenticator
+import jenkins.security.QueueItemAuthenticatorConfiguration
+import org.acegisecurity.Authentication
 import org.jenkinsci.plugins.configfiles.GlobalConfigFiles
 import org.jenkinsci.plugins.configfiles.custom.CustomConfig
 import org.jenkinsci.plugins.managedscripts.PowerShellConfig
@@ -29,6 +37,7 @@ import org.jenkinsci.plugins.scriptsecurity.scripts.ClasspathEntry
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import org.jvnet.hudson.test.BuildWatcher
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.MockAuthorizationStrategy
 import org.jvnet.hudson.test.WithoutJenkins
@@ -45,6 +54,9 @@ import static org.junit.Assert.assertTrue
 @Unroll
 class ExecuteDslScriptsSpec extends Specification {
     private static final String UTF_8 = 'UTF-8'
+
+    @Rule // normally @ClassRule but that does not seem to work here
+    public BuildWatcher buildWatcher = new BuildWatcher()
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule()
@@ -1357,14 +1369,36 @@ class ExecuteDslScriptsSpec extends Specification {
         build.result == SUCCESS
     }
 
+    private void setupQIA(String user, FreeStyleProject job) {
+        QueueItemAuthenticatorConfiguration.get().getAuthenticators().add(new QIA(user, job.getFullName()));
+    }
+    private static final class QIA extends QueueItemAuthenticator {
+        private final String user;
+        private final String item;
+        QIA(String user, String item) {
+            this.user = user;
+            this.item = item;
+        }
+        @Override
+        public Authentication authenticate(Queue.Task task) {
+            if (task instanceof Item && ((Item) task).getFullName().equals(item)) {
+                return User.get(user).impersonate();
+            } else {
+                return null;
+            }
+        }
+    }
+
     def 'run script in sandbox'() {
         setup:
         String script = 'job("test") { description("foo") }'
 
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.ADMINISTER).everywhere().to('admin')
 
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
+        setupQIA('admin', job);
 
         when:
         FreeStyleBuild build = job.scheduleBuild2(0).get()
@@ -1377,16 +1411,36 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         String script = 'System.exit(0)'
 
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
-
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.ADMINISTER).everywhere().to('admin')
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
+        setupQIA('admin', job);
 
         when:
         FreeStyleBuild build = job.scheduleBuild2(0).get()
 
         then:
         build.result == FAILURE
+    }
+
+    def 'cannot run script in sandbox without job create permission'() {
+        setup:
+        String script = 'job("test") { description("foo") }'
+
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.READ, Item.READ, Item.BUILD, Computer.BUILD).everywhere().to('dev')
+
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
+        setupQIA('dev', job);
+
+        when:
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
+
+        then:
+        build.result == FAILURE
+        build.log.contains('dev is missing the Job/Create permission')
     }
 
     def 'run script in sandbox with approved classpath'() {
@@ -1396,12 +1450,13 @@ class ExecuteDslScriptsSpec extends Specification {
 
         ScriptApproval.get().configuring(new ClasspathEntry(jar.absolutePath), ApprovalContext.create())
 
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
-
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.ADMINISTER).everywhere().to('admin')
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(
                 scriptText: script, sandbox: true, additionalClasspath: jar.absolutePath
         ))
+        setupQIA('admin', job);
 
         when:
         FreeStyleBuild build = job.scheduleBuild2(0).get()
@@ -1415,12 +1470,13 @@ class ExecuteDslScriptsSpec extends Specification {
         String script = 'job("test")'
         File jar = temporaryFolder.newFile()
 
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
-
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.ADMINISTER).everywhere().to('admin')
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(
                 scriptText: script, sandbox: true,  additionalClasspath: jar.absolutePath
         ))
+        setupQIA('admin', job);
 
         when:
         FreeStyleBuild build = job.scheduleBuild2(0).get()

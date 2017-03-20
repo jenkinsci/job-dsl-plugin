@@ -10,6 +10,7 @@ bin
 .nb-gradle-properties
 work
 nbactions.xml
+/.nb-gradle/
 /.gradle
 gradle-app.setting
 .*.sw?

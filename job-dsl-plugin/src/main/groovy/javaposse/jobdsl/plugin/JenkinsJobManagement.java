@@ -80,8 +80,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private final Map<String, ?> envVars;
     private final Run<?, ?> run;
     private final FilePath workspace;
-    private final Item project;
-    private final LookupStrategy lookupStrategy;
+    final Item project;
+    final LookupStrategy lookupStrategy;
     private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments =
             new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
     private boolean failOnMissingPlugin;
@@ -222,6 +222,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public void createOrUpdateUserContent(UserContent userContent, boolean ignoreExisting) {
+        // As in git-userContent-plugin:
+        Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
         try {
             FilePath file = Jenkins.getInstance().getRootPath().child("userContent").child(userContent.getPath());
             if (!(file.exists() && ignoreExisting)) {
@@ -272,6 +274,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     public String readFileInWorkspace(String jobName, String relLocation) throws IOException, InterruptedException {
         Item item = Jenkins.getInstance().getItemByFullName(jobName);
         if (item instanceof AbstractProject) {
+            item.checkPermission(Item.WORKSPACE);
             FilePath workspace = ((AbstractProject) item).getSomeWorkspace();
             if (workspace != null) {
                 try {

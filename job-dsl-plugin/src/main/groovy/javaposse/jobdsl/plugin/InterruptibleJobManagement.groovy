@@ -21,7 +21,7 @@ import javaposse.jobdsl.dsl.ExtensibleContext
 @ThreadInterrupt
 class InterruptibleJobManagement implements JobManagement {
     // can't use @Delegate because @ThreadInterrupt is evaluated before @Delegate
-    private final JobManagement delegate
+    final JobManagement delegate
 
     InterruptibleJobManagement(JobManagement delegate) {
         this.delegate = delegate
