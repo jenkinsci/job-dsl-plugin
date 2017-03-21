@@ -3,7 +3,7 @@ package javaposse.jobdsl.plugin.actions
 import hudson.model.Action
 import javaposse.jobdsl.dsl.GeneratedUserContent
 
-class GeneratedUserContentsBuildAction extends GeneratedObjectsRunAction<GeneratedUserContent> {
+public class GeneratedUserContentsBuildAction extends GeneratedObjectsRunAction<GeneratedUserContent> {
     GeneratedUserContentsBuildAction(Collection<GeneratedUserContent> modifiedUserContents) {
         super(modifiedUserContents)
     }

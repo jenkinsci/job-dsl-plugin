@@ -7,7 +7,7 @@ import javaposse.jobdsl.plugin.LookupStrategy
 
 import static javaposse.jobdsl.plugin.LookupStrategy.JENKINS_ROOT
 
-class GeneratedJobsBuildAction extends GeneratedObjectsRunAction<GeneratedJob> {
+public class GeneratedJobsBuildAction extends GeneratedObjectsRunAction<GeneratedJob> {
     @SuppressWarnings('UnnecessaryTransientModifier')
     @Deprecated
     private transient Set<GeneratedJob> modifiedJobs

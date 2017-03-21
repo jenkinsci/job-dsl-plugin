@@ -5,7 +5,7 @@ import hudson.model.Run
 import hudson.model.View
 import javaposse.jobdsl.dsl.GeneratedView
 
-class GeneratedViewsAction extends GeneratedObjectsAction<GeneratedView, GeneratedViewsBuildAction> {
+public class GeneratedViewsAction extends GeneratedObjectsAction<GeneratedView, GeneratedViewsBuildAction> {
     GeneratedViewsAction(Job job) {
         super(job, GeneratedViewsBuildAction)
     }

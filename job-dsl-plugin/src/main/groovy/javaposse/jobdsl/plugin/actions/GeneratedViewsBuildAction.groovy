@@ -10,7 +10,7 @@ import org.apache.commons.io.FilenameUtils
 
 import static javaposse.jobdsl.plugin.LookupStrategy.JENKINS_ROOT
 
-class GeneratedViewsBuildAction extends GeneratedObjectsRunAction<GeneratedView> {
+public class GeneratedViewsBuildAction extends GeneratedObjectsRunAction<GeneratedView> {
     @SuppressWarnings('UnnecessaryTransientModifier')
     @Deprecated
     private transient Set<GeneratedView> modifiedViews
