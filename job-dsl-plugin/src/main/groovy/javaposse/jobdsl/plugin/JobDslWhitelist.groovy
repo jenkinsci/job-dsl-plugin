@@ -14,6 +14,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.JobParent
 import javaposse.jobdsl.dsl.ViewFactory
 import jenkins.model.Jenkins
+import org.acegisecurity.AccessDeniedException
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.AbstractWhitelist
 
 import java.lang.reflect.Method
@@ -72,7 +73,10 @@ class JobDslWhitelist extends AbstractWhitelist {
 
     /** Whether this build is running as an actual user. */
     private static boolean authenticated() {
-        return !ACL.SYSTEM.equals(Jenkins.getAuthentication());
+        if (ACL.SYSTEM.equals(Jenkins.getAuthentication())) {
+            throw new AccessDeniedException(Messages.JobDslWhitelist_NotAuthenticated())
+        }
+        return true;
     }
 
 }

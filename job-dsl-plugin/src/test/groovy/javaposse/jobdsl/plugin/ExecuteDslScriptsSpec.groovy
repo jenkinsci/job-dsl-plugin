@@ -35,12 +35,14 @@ import org.jenkinsci.plugins.configfiles.custom.CustomConfig
 import org.jenkinsci.plugins.managedscripts.PowerShellConfig
 import org.jenkinsci.plugins.scriptsecurity.scripts.ClasspathEntry
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage
+import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.jvnet.hudson.test.BuildWatcher
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.MockAuthorizationStrategy
 import org.jvnet.hudson.test.WithoutJenkins
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext
@@ -55,7 +57,8 @@ import static org.junit.Assert.assertTrue
 class ExecuteDslScriptsSpec extends Specification {
     private static final String UTF_8 = 'UTF-8'
 
-    @Rule // normally @ClassRule but that does not seem to work here
+    @Shared
+    @ClassRule
     public BuildWatcher buildWatcher = new BuildWatcher()
 
     @Rule
@@ -1405,6 +1408,7 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         build.result == SUCCESS
+        ScriptApproval.get().getPendingSignatures().isEmpty()
     }
 
     def 'run script in sandbox with unapproved signature'() {
@@ -1422,6 +1426,26 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         build.result == FAILURE
+        ScriptApproval.get().getPendingSignatures()*.signature == ['staticMethod java.lang.System exit int']
+    }
+
+    def 'cannot run script in sandbox without queue item authentication'() {
+        setup:
+        String script = 'job("test") { description("foo") }'
+
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.ADMINISTER).everywhere().to('admin')
+
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
+
+        when:
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
+
+        then:
+        build.result == FAILURE
+        build.log.contains(Messages.JobDslWhitelist_NotAuthenticated())
+        ScriptApproval.get().getPendingSignatures().isEmpty()
     }
 
     def 'cannot run script in sandbox without job create permission'() {
@@ -1441,6 +1465,7 @@ class ExecuteDslScriptsSpec extends Specification {
         then:
         build.result == FAILURE
         build.log.contains('dev is missing the Job/Create permission')
+        ScriptApproval.get().getPendingSignatures().isEmpty()
     }
 
     def 'run script in sandbox with approved classpath'() {
