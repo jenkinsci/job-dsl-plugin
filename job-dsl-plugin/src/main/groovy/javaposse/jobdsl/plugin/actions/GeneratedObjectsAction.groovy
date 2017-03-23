@@ -4,7 +4,7 @@ import hudson.model.Action
 import hudson.model.Job
 import hudson.model.Run
 
-public abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsRunAction<T>> implements Action {
+abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsRunAction<T>> implements Action {
     protected final Job<? extends Job, ? extends Run> job
     private final Class<B> buildActionClass
 

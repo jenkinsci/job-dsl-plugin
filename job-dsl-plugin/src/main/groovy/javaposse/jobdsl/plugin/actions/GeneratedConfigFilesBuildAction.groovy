@@ -3,7 +3,7 @@ package javaposse.jobdsl.plugin.actions
 import hudson.model.Action
 import javaposse.jobdsl.dsl.GeneratedConfigFile
 
-public class GeneratedConfigFilesBuildAction extends GeneratedObjectsRunAction<GeneratedConfigFile> {
+class GeneratedConfigFilesBuildAction extends GeneratedObjectsRunAction<GeneratedConfigFile> {
     @SuppressWarnings('UnnecessaryTransientModifier')
     @Deprecated
     private transient Set<GeneratedConfigFile> modifiedConfigFiles

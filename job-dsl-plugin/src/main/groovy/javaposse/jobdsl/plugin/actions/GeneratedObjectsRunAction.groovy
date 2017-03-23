@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-public abstract class GeneratedObjectsRunAction<T> implements RunAction2, SimpleBuildStep.LastBuildAction {
+abstract class GeneratedObjectsRunAction<T> implements RunAction2, SimpleBuildStep.LastBuildAction {
     private final Set<T> modifiedObjects;
     protected transient Run owner;
 
