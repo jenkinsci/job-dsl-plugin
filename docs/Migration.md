@@ -1,3 +1,60 @@
+## Migrating to 1.59
+
+### Mattermost
+
+Support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin) is
+[deprecated|Deprecation-Policy]] and will be removed. Use the syntax provided by the [[Automatically Generated DSL]]
+instead.
+
+DSL prior to 1.59
+```
+job('example') {
+    publishers {
+        mattermost {
+            endpoint(String endpoint)
+            showCommitList(boolean showCommitList = true)
+            customMessage(String customMessage)
+            icon(String icon)
+            includeTestSummary(boolean includeTestSummary = true)
+            notifyAborted(boolean notifyAborted = true)
+            notifyBackToNormal(boolean notifyBackToNormal = true)
+            notifyFailure(boolean notifyFailure = true)
+            notifyNotBuilt(boolean notifyNotBuilt = true)
+            notifyRepeatedFailure(boolean notifyRepeatedFailure = true)
+            notifySuccess(boolean notifySuccess = true)
+            notifyUnstable(boolean notifyUnstable = true)
+            room(String room)
+            notifyBuildStart(boolean notifyBuildStart = true)
+        }
+    }
+}
+```
+
+DSL since 1.59
+```
+job('example') {
+    publishers {
+        mattermostNotifier {
+            endpoint(String value)
+            commitInfoChoice(String value)
+            customMessage(String value)
+            includeCustomMessage(boolean value)
+            icon(String value)
+            includeTestSummary(boolean value)
+            notifyAborted(boolean value)
+            notifyBackToNormal(boolean value)
+            notifyFailure(boolean value)
+            notifyNotBuilt(boolean value)
+            notifyRepeatedFailure(boolean value)
+            notifySuccess(boolean value)
+            notifyUnstable(boolean value)
+            room(String value)
+            startNotification(boolean value)
+        }
+    }
+}
+```
+
 ## Migrating to 1.58
 
 ### Config Files

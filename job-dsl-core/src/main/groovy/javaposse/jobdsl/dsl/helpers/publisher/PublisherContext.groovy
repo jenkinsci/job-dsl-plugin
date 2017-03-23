@@ -1466,8 +1466,11 @@ class PublisherContext extends AbstractExtensibleContext {
      * Sends notifications to Mattermost.
      *
      * @since 1.44
+     * @deprecated use the <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL">
+     *     Automatically Generated DSL</a> instead
      */
     @RequiresPlugin(id = 'mattermost', minimumVersion = '1.5.0')
+    @Deprecated
     void mattermost(@DslContext(MattermostPublisherContext) Closure mattermostClosure = null) {
         MattermostPublisherContext mattermostContext = new MattermostPublisherContext()
         ContextHelper.executeInContext(mattermostClosure, mattermostContext)

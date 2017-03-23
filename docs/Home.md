@@ -34,6 +34,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
  * Updated the troubleshooting section for [[The Configure Block]]
    ([JENKINS-41958](https://issues.jenkins-ci.org/browse/JENKINS-41958))
  * Updated [Structs Plugin](https://github.com/jenkinsci/structs-plugin) dependency to version 1.6
+ * Support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin) is
+   deprecated, see [Migration](Migration#migrating-to-159)
+   ([JENKINS-42887](https://issues.jenkins-ci.org/browse/JENKINS-42887))
  * Removed anything that has been deprecated in 1.51, see [Migration](Migration#migrating-to-151)
  * Removed anything that has been deprecated in 1.47, see [Migration](Migration#migrating-to-147)
 * 1.58 (February 16 2017)
