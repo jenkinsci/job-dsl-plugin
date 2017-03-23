@@ -1319,14 +1319,20 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         String script = 'job("test")'
 
-        ScriptApproval.get().configuring(script, GroovyLanguage.get(), ApprovalContext.create())
-
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.READ, Item.READ, Item.CONFIGURE).everywhere().to('dev')
 
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(scriptText: script))
 
         when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().login('dev').getPage(job, 'configure').getFormByName('config'))
+
+        then:
+        assert ScriptApproval.get().pendingScripts*.script == [script]
+
+        when:
+        ScriptApproval.get().preapprove(script, GroovyLanguage.get())
         FreeStyleBuild build = job.scheduleBuild2(0).get()
 
         then:
@@ -1397,18 +1403,24 @@ class ExecuteDslScriptsSpec extends Specification {
         String script = 'job("test") { description("foo") }'
 
         jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.ADMINISTER).everywhere().to('admin')
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.READ, Item.READ, Item.CONFIGURE, Item.CREATE, Computer.BUILD).everywhere().to('dev')
 
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
-        setupQIA('admin', job);
+        setupQIA('dev', job);
+
+        when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().login('dev').getPage(job, 'configure').getFormByName('config'))
+
+        then:
+        assert ScriptApproval.get().pendingScripts*.script == []
 
         when:
         FreeStyleBuild build = job.scheduleBuild2(0).get()
 
         then:
         build.result == SUCCESS
-        ScriptApproval.get().getPendingSignatures().isEmpty()
+        assert ScriptApproval.get().pendingScripts*.script == []
     }
 
     def 'run script in sandbox with unapproved signature'() {

@@ -236,7 +236,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     }
 
     void configure(Item ancestor) {
-        if (isUsingScriptText() && DescriptorImpl.isSecurityEnabled()) {
+        if (!sandbox && isUsingScriptText() && DescriptorImpl.isSecurityEnabled()) {
             ScriptApproval.get().configuring(scriptText, GroovyLanguage.get(), ApprovalContext.create().withCurrentUser().withItem(ancestor));
         }
     }
