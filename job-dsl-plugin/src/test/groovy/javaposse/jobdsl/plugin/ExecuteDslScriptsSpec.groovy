@@ -6,6 +6,7 @@ import hudson.model.AbstractItem
 import hudson.model.AbstractProject
 import hudson.model.FreeStyleBuild
 import hudson.model.FreeStyleProject
+import hudson.model.Item
 import hudson.model.Items
 import hudson.model.Label
 import hudson.model.ListView
@@ -22,6 +23,7 @@ import javaposse.jobdsl.plugin.actions.GeneratedViewsAction
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction
 import javaposse.jobdsl.plugin.actions.SeedJobAction
 import javaposse.jobdsl.plugin.fixtures.ExampleJobDslExtension
+import jenkins.model.Jenkins
 import org.jenkinsci.plugins.configfiles.GlobalConfigFiles
 import org.jenkinsci.plugins.configfiles.custom.CustomConfig
 import org.jenkinsci.plugins.managedscripts.PowerShellConfig
@@ -1304,14 +1306,20 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         String script = 'job("test")'
 
-        ScriptApproval.get().configuring(script, GroovyLanguage.get(), ApprovalContext.create())
-
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.READ, Item.READ, Item.CONFIGURE).everywhere().to('dev')
 
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(scriptText: script))
 
         when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().login('dev').getPage(job, 'configure').getFormByName('config'))
+
+        then:
+        assert ScriptApproval.get().pendingScripts*.script == [script]
+
+        when:
+        ScriptApproval.get().preapprove(script, GroovyLanguage.get())
         FreeStyleBuild build = job.scheduleBuild2(0).get()
 
         then:
@@ -1361,16 +1369,24 @@ class ExecuteDslScriptsSpec extends Specification {
         setup:
         String script = 'job("test") { description("foo") }'
 
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.READ, Item.READ, Item.CONFIGURE).everywhere().to('dev')
 
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
+
+        when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().login('dev').getPage(job, 'configure').getFormByName('config'))
+
+        then:
+        assert ScriptApproval.get().pendingScripts*.script == []
 
         when:
         FreeStyleBuild build = job.scheduleBuild2(0).get()
 
         then:
         build.result == SUCCESS
+        assert ScriptApproval.get().pendingScripts*.script == []
     }
 
     def 'run script in sandbox with unapproved signature'() {
