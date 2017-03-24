@@ -27,7 +27,6 @@ import jenkins.model.Jenkins
 import org.jenkinsci.plugins.configfiles.GlobalConfigFiles
 import org.jenkinsci.plugins.configfiles.custom.CustomConfig
 import org.jenkinsci.plugins.managedscripts.PowerShellConfig
-import org.jenkinsci.plugins.scriptsecurity.scripts.ClasspathEntry
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -36,7 +35,6 @@ import org.jvnet.hudson.test.MockAuthorizationStrategy
 import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.Specification
 import spock.lang.Unroll
-import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
 
 import static hudson.model.Result.FAILURE
@@ -1307,7 +1305,8 @@ class ExecuteDslScriptsSpec extends Specification {
         String script = 'job("test")'
 
         jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.READ, Item.READ, Item.CONFIGURE).everywhere().to('dev')
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+                .grant(Jenkins.READ, Item.READ, Item.CONFIGURE).everywhere().to('dev')
 
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(scriptText: script))
@@ -1326,51 +1325,13 @@ class ExecuteDslScriptsSpec extends Specification {
         build.result == SUCCESS
     }
 
-    def 'can not run approved script with pending classpath approval'() {
-        setup:
-        String script = 'job("test")'
-        File jar = temporaryFolder.newFile()
-
-        ScriptApproval.get().configuring(script, GroovyLanguage.get(), ApprovalContext.create())
-
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
-
-        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
-        job.buildersList.add(new ExecuteDslScripts(scriptText: script, additionalClasspath: jar.absolutePath))
-
-        when:
-        FreeStyleBuild build = job.scheduleBuild2(0).get()
-
-        then:
-        build.result == FAILURE
-    }
-
-    def 'run approved script with approved classpath'() {
-        setup:
-        String script = 'job("test")'
-        File jar = temporaryFolder.newFile()
-
-        ScriptApproval.get().configuring(script, GroovyLanguage.get(), ApprovalContext.create())
-        ScriptApproval.get().configuring(new ClasspathEntry(jar.absolutePath), ApprovalContext.create())
-
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
-
-        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
-        job.buildersList.add(new ExecuteDslScripts(scriptText: script, additionalClasspath: jar.absolutePath))
-
-        when:
-        FreeStyleBuild build = job.scheduleBuild2(0).get()
-
-        then:
-        build.result == SUCCESS
-    }
-
     def 'run script in sandbox'() {
         setup:
         String script = 'job("test") { description("foo") }'
 
         jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy().grant(Jenkins.READ, Item.READ, Item.CONFIGURE).everywhere().to('dev')
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+                .grant(Jenkins.READ, Item.READ, Item.CONFIGURE).everywhere().to('dev')
 
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
@@ -1397,46 +1358,6 @@ class ExecuteDslScriptsSpec extends Specification {
 
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
         job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
-
-        when:
-        FreeStyleBuild build = job.scheduleBuild2(0).get()
-
-        then:
-        build.result == FAILURE
-    }
-
-    def 'run script in sandbox with approved classpath'() {
-        setup:
-        String script = 'job("test") { description("foo") }'
-        File jar = temporaryFolder.newFile()
-
-        ScriptApproval.get().configuring(new ClasspathEntry(jar.absolutePath), ApprovalContext.create())
-
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
-
-        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
-        job.buildersList.add(new ExecuteDslScripts(
-                scriptText: script, sandbox: true, additionalClasspath: jar.absolutePath
-        ))
-
-        when:
-        FreeStyleBuild build = job.scheduleBuild2(0).get()
-
-        then:
-        build.result == SUCCESS
-    }
-
-    def 'can not run script in sandbox with pending classpath approval'() {
-        setup:
-        String script = 'job("test")'
-        File jar = temporaryFolder.newFile()
-
-        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
-
-        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
-        job.buildersList.add(new ExecuteDslScripts(
-                scriptText: script, sandbox: true,  additionalClasspath: jar.absolutePath
-        ))
 
         when:
         FreeStyleBuild build = job.scheduleBuild2(0).get()

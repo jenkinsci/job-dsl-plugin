@@ -2,10 +2,10 @@
 
 ### Script Security
 
-Starting with Job DSL 1.55, script security for Job DSL scripts and classpath entries is enabled by default if Jenkins
+Starting with Job DSL 1.55, script security for Job DSL scripts is enabled by default if Jenkins
 security is enabled. As a consequence, DSL scripts have either to be approved by an Jenkins administrator or run in an
-restricted sandbox. Classpath entries also have to be approved by an Jenkins administrator. To avoid loading arbitrary
-code from the workspace without approval, the script directory is no longer added to the classpath.
+restricted sandbox. To avoid loading arbitrary code from the workspace without approval, the script directory is not 
+added to the classpath and additional classpath entries are not supported when security is enabled. 
 
 To restore the old behavior, Job DSL script security can be disabled on the "Configure Global Security" page. But this
 decision should be taken with care and only if understanding the consequences as it would allow users to run arbitrary

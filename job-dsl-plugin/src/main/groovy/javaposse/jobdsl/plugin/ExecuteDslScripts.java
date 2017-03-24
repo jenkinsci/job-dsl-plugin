@@ -236,7 +236,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     }
 
     void configure(Item ancestor) {
-        if (!sandbox && isUsingScriptText() && DescriptorImpl.isSecurityEnabled()) {
+        if (!sandbox && isUsingScriptText() && ((DescriptorImpl) getDescriptor()).isSecurityEnabled()) {
             ScriptApproval.get().configuring(scriptText, GroovyLanguage.get(), ApprovalContext.create().withCurrentUser().withItem(ancestor));
         }
     }
@@ -273,7 +273,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 );
 
                 JenkinsDslScriptLoader dslScriptLoader;
-                if (DescriptorImpl.isSecurityEnabled()) {
+                if (((DescriptorImpl) getDescriptor()).isSecurityEnabled()) {
                     if (sandbox) {
                         dslScriptLoader = new SandboxDslScriptLoader(jobManagement, run.getParent());
                     } else {

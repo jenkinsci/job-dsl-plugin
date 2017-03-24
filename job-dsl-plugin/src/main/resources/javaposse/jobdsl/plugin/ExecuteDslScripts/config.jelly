@@ -18,9 +18,11 @@
             <f:checkbox name="ignoreMissingFiles" checked="${instance.ignoreMissingFiles}"/>
         </f:entry>
     </f:radioBlock>
-    <f:entry title="Use Groovy Sandbox:" field="sandbox">
-        <f:checkbox default="${!h.hasPermission(app.RUN_SCRIPTS)}"/>
-    </f:entry>
+    <j:if test="${descriptor.isSecurityEnabled()}">
+        <f:entry title="Use Groovy Sandbox:" field="sandbox">
+            <f:checkbox default="${!h.hasPermission(app.RUN_SCRIPTS)}"/>
+        </f:entry>
+    </j:if>
     <f:entry title="Action for existing jobs and views:" field="ignoreExisting">
         <f:checkbox name="ignoreExisting" title="Ignore changes" checked="${instance.ignoreExisting}"
                     description="What to do with previously generated jobs and views when generated config is not the same?"/>
@@ -37,9 +39,11 @@
             <f:select default="JENKINS_ROOT"/>
         </f:entry>
 
-        <f:entry title="Additional classpath" field="additionalClasspath" description="${descriptor.classpathApprovalWarning}">
-            <f:expandableTextbox/>
-        </f:entry>
+        <j:if test="${!descriptor.isSecurityEnabled()}">
+            <f:entry title="Additional classpath" field="additionalClasspath">
+                <f:expandableTextbox/>
+            </f:entry>
+        </j:if>
 
         <f:entry title="Fail build if a plugin must be installed or updated:" field="failOnMissingPlugin">
             <f:checkbox name="failOnMissingPlugin" checked="${instance.failOnMissingPlugin}"/>

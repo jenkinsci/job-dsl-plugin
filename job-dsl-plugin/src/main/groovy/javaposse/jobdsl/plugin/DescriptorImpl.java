@@ -101,10 +101,6 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         return isSecurityEnabled() && !Jenkins.getInstance().hasPermission(Jenkins.RUN_SCRIPTS) ? Messages.ScriptSecurity_ScriptApprovalWarning() : "";
     }
 
-    public String getClasspathApprovalWarning() {
-        return isSecurityEnabled() && !Jenkins.getInstance().hasPermission(Jenkins.RUN_SCRIPTS) ? Messages.ScriptSecurity_ClasspathApprovalWarning() : "";
-    }
-
     @Initializer(before = InitMilestone.PLUGINS_STARTED)
     public static void addAliases() {
         Run.XSTREAM2.addCompatibilityAlias(
@@ -118,7 +114,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         );
     }
 
-    static boolean isSecurityEnabled() {
+    public boolean isSecurityEnabled() {
         Jenkins jenkins = Jenkins.getInstance();
         return jenkins.isUseSecurity() && jenkins.getDescriptorByType(GlobalJobDslSecurityConfiguration.class).isUseScriptSecurity();
     }
