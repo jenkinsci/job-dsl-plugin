@@ -37,6 +37,12 @@ class GlobalJobDslSecurityConfigurationSpec extends Specification {
         then:
         result
         config.useScriptSecurity
+
+        when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().goTo('configureSecurity').getFormByName('config'))
+
+        then:
+        config.useScriptSecurity
     }
 
     def 'disable security'() {
@@ -50,6 +56,12 @@ class GlobalJobDslSecurityConfigurationSpec extends Specification {
 
         then:
         result
+        !config.useScriptSecurity
+
+        when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().goTo('configureSecurity').getFormByName('config'))
+
+        then:
         !config.useScriptSecurity
     }
 }
