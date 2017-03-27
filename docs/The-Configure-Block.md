@@ -102,6 +102,9 @@ To ease navigation, two key operators have been overridden. Try to use them as m
 * `<<` - appends as a child. If a Node is provided, it is directly added. A string is created as a node. A closure is
   processed like a NodeBuilder, allowing many nodes to be appended.
 
+Note that these operators are not available when Jenkins security is enabled and the DSL script is running in the
+restricted sandbox, use the [Node](http://docs.groovy-lang.org/latest/html/gapi/groovy/util/Node.html) API instead.
+
 # Reusable Configure Blocks
 
 To reuse an configure block for many jobs, the configure block can be refactored into a helper function.

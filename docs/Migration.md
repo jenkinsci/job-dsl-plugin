@@ -7,6 +7,9 @@ security is enabled. As a consequence, DSL scripts have either to be approved by
 restricted sandbox. To avoid loading arbitrary code from the workspace without approval, the script directory is not 
 added to the classpath and additional classpath entries are not supported when security is enabled. 
 
+Note that some operators in [[configure blocks|The Configure Block]] are not available when running in the restricted
+sandbox.
+
 To restore the old behavior, Job DSL script security can be disabled on the "Configure Global Security" page. But this
 decision should be taken with care and only if understanding the consequences as it would allow users to run arbitrary
 code within the Jenkins process (even changing its security settings or running shell commands on the server).
