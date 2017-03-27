@@ -38,7 +38,9 @@ class DslScriptHelper {
 
     static String getSourceDetails(List<StackTraceElement> stackTrace) {
         StackTraceElement source = stackTrace.find {
-            isApplicationClass(it.className) && !it.className.startsWith('javaposse.jobdsl.')
+            isApplicationClass(it.className) && !it.className.startsWith('javaposse.jobdsl.') &&
+                    !it.className.startsWith('org.kohsuke.groovy.sandbox.') &&
+                    !it.className.startsWith('org.jenkinsci.plugins.scriptsecurity.sandbox.')
         }
         getSourceDetails(source?.fileName, source == null ? -1 : source.lineNumber)
     }
