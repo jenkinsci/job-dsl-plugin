@@ -1,6 +1,5 @@
 package javaposse.jobdsl.plugin
 
-import hudson.Extension
 import hudson.model.Item
 import hudson.model.ItemGroup
 import hudson.security.ACL
@@ -24,7 +23,6 @@ import java.lang.reflect.Method
  * @see org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.AclAwareWhitelist
  */
 // TODO Jenkins 2: @CompileStatic
-@Extension
 class JobDslWhitelist extends AbstractWhitelist {
     @Override
     boolean permitsMethod(Method method, Object receiver, Object[] args) {
