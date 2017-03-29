@@ -7,6 +7,7 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException
 import org.jenkinsci.plugins.scriptsecurity.sandbox.Whitelist
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.GroovySandbox
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.ProxyWhitelist
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
 
@@ -31,7 +32,7 @@ class SandboxDslScriptLoader extends SecureDslScriptLoader {
     @Override
     protected void runScript(Script script) {
         try {
-            GroovySandbox.run(script, Whitelist.all())
+            GroovySandbox.run(script, new ProxyWhitelist(Whitelist.all(), new JobDslWhitelist()))
         } catch (RejectedAccessException e) {
             ScriptApproval.get().accessRejected(e, ApprovalContext.create().withItem(seedJob))
             throw new DslException(e.message, e)
