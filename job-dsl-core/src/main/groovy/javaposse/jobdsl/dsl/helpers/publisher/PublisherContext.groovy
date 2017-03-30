@@ -2029,6 +2029,17 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Activates the ci-game for this job
+     *
+     * @since 1.49
+     */
+    @RequiresPlugin(id = 'ci-game')
+    void ciGame() {
+        publisherNodes << new NodeBuilder().'hudson.plugins.cigame.GamePublisher' {
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
