@@ -24,7 +24,6 @@ import java.lang.reflect.Method
  * The exception is top-level methods until the right permission checks have been made.
  * @see org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.AclAwareWhitelist
  */
-// TODO Jenkins 2: @CompileStatic
 class JobDslWhitelist extends AbstractWhitelist {
     private final JenkinsJobManagement jobManagement
 
