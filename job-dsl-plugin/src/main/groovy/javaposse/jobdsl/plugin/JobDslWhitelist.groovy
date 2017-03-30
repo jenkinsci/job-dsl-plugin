@@ -60,7 +60,6 @@ class JobDslWhitelist extends AbstractWhitelist {
         } else if (declaringClass == DslFactory) {
             Class<?> returnType = method.returnType
             if (javaposse.jobdsl.dsl.Item.isAssignableFrom(returnType)) {
-                // TODO need some sort of abstraction defined for internal use to access getItem/getParent cleanly
                 Item existing = jobManagement.lookupStrategy.getItem(jobManagement.project, (String) args[0], Item)
                 if (existing != null) {
                     existing.checkPermission(Item.CONFIGURE)
