@@ -3,7 +3,18 @@ package javaposse.jobdsl.dsl
 class GeneratedJob implements Comparable<GeneratedJob> {
     final String templateName
     final String jobName
+    final Item item
 
+    GeneratedJob(String templateName, Item item) {
+        if (! item) {
+            throw new IllegalArgumentException('item cannot be null')
+        }
+        this.templateName = templateName
+        this.jobName = item.name
+        this.item = item
+    }
+
+    @Deprecated
     GeneratedJob(String templateName, String jobName) {
         if (jobName == null) {
             throw new IllegalArgumentException()

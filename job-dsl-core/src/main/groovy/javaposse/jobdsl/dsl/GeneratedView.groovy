@@ -2,7 +2,17 @@ package javaposse.jobdsl.dsl
 
 class GeneratedView implements Comparable<GeneratedView> {
     final String name
+    final View view
 
+    GeneratedView(View view) {
+        if (! view) {
+            throw new IllegalArgumentException('view cannot be null')
+        }
+        this.name = view.name
+        this.view = view
+    }
+
+    @Deprecated
     GeneratedView(String name) {
         if (name == null) {
             throw new IllegalArgumentException()

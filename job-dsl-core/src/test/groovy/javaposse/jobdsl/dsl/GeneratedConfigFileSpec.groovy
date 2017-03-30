@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 import spock.lang.Specification
 
 class GeneratedConfigFileSpec extends Specification {
-    def 'id is null'() {
+    def 'id is null (deprecated)'() {
         when:
         new GeneratedConfigFile(null, 'foo')
 
@@ -11,9 +11,26 @@ class GeneratedConfigFileSpec extends Specification {
         thrown(IllegalArgumentException)
     }
 
+    def 'name is null (deprecated)'() {
+        when:
+        new GeneratedConfigFile('235421345', (String) null)
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'id is null'() {
+        when:
+        def foo = new ConfigFile(ConfigFileType.Custom, new MemoryJobManagement()).with { name = 'foo'; it }
+        new GeneratedConfigFile(null, foo)
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
     def 'name is null'() {
         when:
-        new GeneratedConfigFile('235421345', null)
+        new GeneratedConfigFile('235421345', (ConfigFile) null)
 
         then:
         thrown(IllegalArgumentException)
@@ -21,7 +38,8 @@ class GeneratedConfigFileSpec extends Specification {
 
     def 'get name and id'() {
         when:
-        GeneratedConfigFile configFile = new GeneratedConfigFile('235421345', 'foo')
+        def foo = new ConfigFile(ConfigFileType.Custom, new MemoryJobManagement()).with { name = 'foo'; it }
+        GeneratedConfigFile configFile = new GeneratedConfigFile('235421345', foo)
 
         then:
         configFile.id == '235421345'
@@ -31,9 +49,12 @@ class GeneratedConfigFileSpec extends Specification {
     @SuppressWarnings('ChangeToOperator')
     def 'only id is relevant for hashCode and equals'() {
         when:
-        GeneratedConfigFile configFile1 = new GeneratedConfigFile('235421345', 'foo')
-        GeneratedConfigFile configFile2 = new GeneratedConfigFile('235421345', 'new name')
-        GeneratedConfigFile configFile3 = new GeneratedConfigFile('235421346', 'other')
+        def foo = new ConfigFile(ConfigFileType.Custom, new MemoryJobManagement()).with { name = 'foo'; it }
+        def newName = new ConfigFile(ConfigFileType.Custom, new MemoryJobManagement()).with { name = 'new name'; it }
+        def other = new ConfigFile(ConfigFileType.Custom, new MemoryJobManagement()).with { name = 'other'; it }
+        GeneratedConfigFile configFile1 = new GeneratedConfigFile('235421345', foo)
+        GeneratedConfigFile configFile2 = new GeneratedConfigFile('235421345', newName)
+        GeneratedConfigFile configFile3 = new GeneratedConfigFile('235421346', other)
 
         then:
         configFile1.hashCode() == configFile2.hashCode()
@@ -44,7 +65,8 @@ class GeneratedConfigFileSpec extends Specification {
 
     def 'test toString'() {
         when:
-        GeneratedConfigFile configFile = new GeneratedConfigFile('235421345', 'foo')
+        def foo = new ConfigFile(ConfigFileType.Custom, new MemoryJobManagement()).with { name = 'foo'; it }
+        GeneratedConfigFile configFile = new GeneratedConfigFile('235421345', foo)
 
         then:
         configFile.toString() == "GeneratedConfigFile{name='foo', id='235421345'}"

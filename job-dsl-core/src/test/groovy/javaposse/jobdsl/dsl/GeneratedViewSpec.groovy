@@ -5,7 +5,8 @@ import spock.lang.Specification
 class GeneratedViewSpec extends Specification {
     def 'name'() {
         when:
-        GeneratedView view = new GeneratedView('test')
+        def test = new TestView(new MemoryJobManagement()) {}.with { name = 'test'; it }
+        GeneratedView view = new GeneratedView(test)
 
         then:
         view.name == 'test'
@@ -22,27 +23,32 @@ class GeneratedViewSpec extends Specification {
     @SuppressWarnings(['ChangeToOperator', 'GrEqualsBetweenInconvertibleTypes'])
     def 'test equals'() {
         when:
-        GeneratedView view = new GeneratedView('test')
+        def test = new TestView(new MemoryJobManagement()) {}.with { name = 'test'; it }
+        def foo = new TestView(new MemoryJobManagement()) {}.with { name = 'foo'; it }
+        GeneratedView view = new GeneratedView(test)
 
         then:
         view.equals(view)
-        view.equals(new GeneratedView('test'))
-        !view.equals(new GeneratedView('foo'))
+        view.equals(new GeneratedView(test))
+        !view.equals(new GeneratedView(foo))
         !view.equals('test')
     }
 
     def 'test hashCode'() {
         when:
-        GeneratedView view = new GeneratedView('test')
+        def test = new TestView(new MemoryJobManagement()) {}.with { name = 'test'; it }
+        def other = new TestView(new MemoryJobManagement()) {}.with { name = 'other'; it }
+        GeneratedView view = new GeneratedView(test)
 
         then:
-        view.hashCode() == new GeneratedView('test').hashCode()
-        view.hashCode() != new GeneratedView('other').hashCode()
+        view.hashCode() == new GeneratedView(test).hashCode()
+        view.hashCode() != new GeneratedView(other).hashCode()
     }
 
     def 'test toString'() {
         when:
-        GeneratedView view = new GeneratedView('test')
+        def test = new TestView(new MemoryJobManagement()) {}.with { name = 'test'; it }
+        GeneratedView view = new GeneratedView(test)
 
         then:
         view.toString() == "GeneratedView{name='test'}"

@@ -1,11 +1,13 @@
 package javaposse.jobdsl.dsl
 
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Specification
 
 class GeneratedJobSpec extends Specification {
     def 'toString without template'() {
         when:
-        GeneratedJob generatedJob = new GeneratedJob(null, 'test')
+        def test = new FreeStyleJob(new MemoryJobManagement()).with { name = 'test'; it }
+        GeneratedJob generatedJob = new GeneratedJob(null, test)
 
         then:
         generatedJob.toString() == "GeneratedJob{name='test'}"
@@ -13,7 +15,8 @@ class GeneratedJobSpec extends Specification {
 
     def 'toString with template'() {
         when:
-        GeneratedJob generatedJob = new GeneratedJob('foo', 'test')
+        def test = new FreeStyleJob(new MemoryJobManagement()).with { name = 'test'; it }
+        GeneratedJob generatedJob = new GeneratedJob('foo', test)
 
         then:
         generatedJob.toString() == "GeneratedJob{name='test', template='foo'}"

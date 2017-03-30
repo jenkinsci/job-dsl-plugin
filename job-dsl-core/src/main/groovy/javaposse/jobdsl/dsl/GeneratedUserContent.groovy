@@ -2,7 +2,17 @@ package javaposse.jobdsl.dsl
 
 class GeneratedUserContent implements Comparable<GeneratedUserContent> {
     final String path
+    final UserContent userContent
 
+    GeneratedUserContent(UserContent userContent) {
+        if (! userContent) {
+            throw new IllegalArgumentException('userContent cannot be null')
+        }
+        this.path = userContent.path
+        this.userContent = userContent
+    }
+
+    @Deprecated
     GeneratedUserContent(String path) {
         if (path == null) {
             throw new IllegalArgumentException()
