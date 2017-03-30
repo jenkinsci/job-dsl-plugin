@@ -5,7 +5,6 @@ import hudson.model.Item
 import hudson.model.ItemGroup
 import hudson.security.ACL
 import hudson.security.AccessControlled
-import hudson.security.Permission
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslFactory
@@ -29,54 +28,54 @@ import java.lang.reflect.Method
 class JobDslWhitelist extends AbstractWhitelist {
     @Override
     boolean permitsMethod(Method method, Object receiver, Object[] args) {
-        Class<?> declaringClass = method.getDeclaringClass();
+        Class<?> declaringClass = method.declaringClass
         if (!Context.isAssignableFrom(declaringClass)) {
-            return false;
+            return false
         } else if (declaringClass == ViewFactory) {
-            return false; // TODO check View.CREATE/CONFIGURE
+            return false // TODO check View.CREATE/CONFIGURE
         } else if (declaringClass == DslFactory) {
-            Class<?> returnType = method.getReturnType();
+            Class<?> returnType = method.returnType
             if (javaposse.jobdsl.dsl.Item.isAssignableFrom(returnType)) {
                 // TODO need some sort of abstraction defined for internal use to access getItem/getParent cleanly
-                JobManagement jm = ((JobParent) receiver).jm;
+                JobManagement jm = ((JobParent) receiver).jm
                 if (jm instanceof InterruptibleJobManagement) {
-                    jm = ((InterruptibleJobManagement) jm).delegate;
+                    jm = ((InterruptibleJobManagement) jm).delegate
                 }
-                JenkinsJobManagement jjm = (JenkinsJobManagement) jm;
-                Item existing = jjm.lookupStrategy.getItem(jjm.project, (String) args[0], Item.class);
+                JenkinsJobManagement jjm = (JenkinsJobManagement) jm
+                Item existing = jjm.lookupStrategy.getItem(jjm.project, (String) args[0], Item)
                 if (existing != null) {
-                    existing.checkPermission(Item.CONFIGURE);
+                    existing.checkPermission(Item.CONFIGURE)
                 } else {
-                    ItemGroup parent = jjm.lookupStrategy.getParent(jjm.project, (String) args[0]);
+                    ItemGroup parent = jjm.lookupStrategy.getParent(jjm.project, (String) args[0])
                     if (parent instanceof AccessControlled) {
-                        ((AccessControlled) parent).checkPermission(Item.CREATE);
+                        ((AccessControlled) parent).checkPermission(Item.CREATE)
                     } else {
                         // Not sure what we got; safest to restrict to admins.
-                        Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
+                        Jenkins.activeInstance.checkPermission(Jenkins.ADMINISTER)
                     }
                 }
-                return authenticated();
+                return authenticated()
             } else if (ConfigFile.isAssignableFrom(returnType)) {
-                Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
-                return authenticated();
-            } else if (method.getName().equals("queue")) {
-                return false; // TODO need to look up item, check Item.BUILD
+                Jenkins.activeInstance.checkPermission(Jenkins.ADMINISTER)
+                return authenticated()
+            } else if (method.name == 'queue') {
+                return false // TODO need to look up item, check Item.BUILD
             } else {
-                return authenticated(); // need to do per-method access control checks in JenkinsJobManagement
+                return authenticated() // need to do per-method access control checks in JenkinsJobManagement
             }
-        } else if (declaringClass == Job && method.getName().equals("using")) {
-            return false; // TODO look up existing job and check Item.VIEW_CONFIGURATION?
+        } else if (declaringClass == Job && method.name == 'using') {
+            return false // TODO look up existing job and check Item.VIEW_CONFIGURATION?
         } else { // internal DSL method which on its own does nothing
-            return true;
+            return true
         }
     }
 
     /** Whether this build is running as an actual user. */
     private static boolean authenticated() {
-        if (ACL.SYSTEM.equals(Jenkins.getAuthentication())) {
+        if (ACL.SYSTEM == Jenkins.authentication) {
             throw new AccessDeniedException(Messages.JobDslWhitelist_NotAuthenticated())
         }
-        return true;
+        true
     }
 
 }
