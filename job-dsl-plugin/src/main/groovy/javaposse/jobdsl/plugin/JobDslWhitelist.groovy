@@ -4,7 +4,6 @@ import hudson.model.Item
 import hudson.model.ItemGroup
 import hudson.model.View
 import hudson.model.ViewGroup
-import hudson.security.ACL
 import hudson.security.AccessControlled
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.Context
@@ -12,7 +11,6 @@ import javaposse.jobdsl.dsl.DslFactory
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.ViewFactory
 import jenkins.model.Jenkins
-import org.acegisecurity.AccessDeniedException
 import org.apache.commons.io.FilenameUtils
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.AbstractWhitelist
 
@@ -54,7 +52,7 @@ class JobDslWhitelist extends AbstractWhitelist {
                 // Not sure what we got; safest to restrict to admins.
                 Jenkins.activeInstance.checkPermission(Jenkins.ADMINISTER)
             }
-            return authenticated()
+            return true
         } else if (declaringClass == DslFactory) {
             Class<?> returnType = method.returnType
             if (javaposse.jobdsl.dsl.Item.isAssignableFrom(returnType)) {
@@ -70,24 +68,15 @@ class JobDslWhitelist extends AbstractWhitelist {
                         Jenkins.activeInstance.checkPermission(Jenkins.ADMINISTER)
                     }
                 }
-                return authenticated()
+                return true
             } else if (ConfigFile.isAssignableFrom(returnType)) {
                 Jenkins.activeInstance.checkPermission(Jenkins.ADMINISTER)
-                return authenticated()
+                return true
             } else {
-                return authenticated() // need to do per-method access control checks in JenkinsJobManagement
+                return true // need to do per-method access control checks in JenkinsJobManagement
             }
         } else { // internal DSL method which on its own does nothing
             return true
         }
     }
-
-    /** Whether this build is running as an actual user. */
-    private static boolean authenticated() {
-        if (ACL.SYSTEM == Jenkins.authentication) {
-            throw new AccessDeniedException(Messages.JobDslWhitelist_NotAuthenticated())
-        }
-        true
-    }
-
 }
