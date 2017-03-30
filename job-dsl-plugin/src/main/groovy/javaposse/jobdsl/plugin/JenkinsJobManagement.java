@@ -252,6 +252,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         validateNameArg(path);
 
         BuildableItem project = lookupStrategy.getItem(this.project, path, BuildableItem.class);
+        project.checkPermission(Item.BUILD);
 
         LOGGER.log(Level.INFO, format("Scheduling build of %s from %s", path, project.getName()));
         project.scheduleBuild(run == null ? new JobDslCause() : new Cause.UpstreamCause(run));

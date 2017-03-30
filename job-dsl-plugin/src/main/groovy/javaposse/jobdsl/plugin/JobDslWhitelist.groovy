@@ -62,8 +62,6 @@ class JobDslWhitelist extends AbstractWhitelist {
             } else if (ConfigFile.isAssignableFrom(returnType)) {
                 Jenkins.activeInstance.checkPermission(Jenkins.ADMINISTER)
                 return authenticated()
-            } else if (method.name == 'queue') {
-                return false // TODO need to look up item, check Item.BUILD
             } else {
                 return authenticated() // need to do per-method access control checks in JenkinsJobManagement
             }
