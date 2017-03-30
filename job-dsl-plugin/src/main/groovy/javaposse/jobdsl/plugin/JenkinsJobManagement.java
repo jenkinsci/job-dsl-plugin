@@ -471,6 +471,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
         AbstractItem item = lookupStrategy.getItem(project, path, AbstractItem.class);
         if (item != null) {
+            item.checkPermission(Item.EXTENDED_READ);
             XmlFile xmlFile = item.getConfigFile();
             String jobXml = xmlFile.asString();
             LOGGER.log(Level.FINE, format("Looked up item with config %s", jobXml));

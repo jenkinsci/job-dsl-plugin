@@ -9,7 +9,6 @@ import hudson.security.AccessControlled
 import javaposse.jobdsl.dsl.ConfigFile
 import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslFactory
-import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.ViewFactory
 import jenkins.model.Jenkins
@@ -78,8 +77,6 @@ class JobDslWhitelist extends AbstractWhitelist {
             } else {
                 return authenticated() // need to do per-method access control checks in JenkinsJobManagement
             }
-        } else if (declaringClass == Job && method.name == 'using') {
-            return false // TODO look up existing job and check Item.VIEW_CONFIGURATION?
         } else { // internal DSL method which on its own does nothing
             return true
         }
