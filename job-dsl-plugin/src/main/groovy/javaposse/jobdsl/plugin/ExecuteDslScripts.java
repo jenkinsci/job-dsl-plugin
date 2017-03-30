@@ -40,6 +40,7 @@ import javaposse.jobdsl.plugin.actions.GeneratedViewsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
+import org.acegisecurity.AccessDeniedException;
 import org.apache.commons.io.FilenameUtils;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
@@ -304,7 +305,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 generator.close();
             }
         } catch (RuntimeException e) {
-            if (!(e instanceof DslException)) {
+            if (!(e instanceof DslException) && !(e instanceof AccessDeniedException)) {
                 e.printStackTrace(listener.getLogger());
             }
             LOGGER.log(Level.FINE, String.format("Exception while processing DSL scripts: %s", e.getMessage()), e);
