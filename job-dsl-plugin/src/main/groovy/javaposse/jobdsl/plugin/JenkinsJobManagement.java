@@ -486,6 +486,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         String config = dslItem.getXml();
         boolean created;
 
+        item.checkPermission(Item.EXTENDED_READ);
+
         // Leverage XMLUnit to perform diffs
         Diff diff;
         try {
@@ -519,6 +521,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private void checkItemType(AbstractItem item, javaposse.jobdsl.dsl.Item dslItem) {
         Node oldConfig;
 
+        item.checkPermission(Item.EXTENDED_READ);
         try {
             oldConfig = new XmlParser().parse(item.getConfigFile().getFile());
         } catch (Exception e) {
