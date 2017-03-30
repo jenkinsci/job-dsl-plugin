@@ -2,6 +2,8 @@ package javaposse.jobdsl.plugin
 
 import hudson.model.Item
 import hudson.model.ItemGroup
+import hudson.model.View
+import hudson.model.ViewGroup
 import hudson.security.ACL
 import hudson.security.AccessControlled
 import javaposse.jobdsl.dsl.ConfigFile
@@ -12,6 +14,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.ViewFactory
 import jenkins.model.Jenkins
 import org.acegisecurity.AccessDeniedException
+import org.apache.commons.io.FilenameUtils
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.AbstractWhitelist
 
 import java.lang.reflect.Method
@@ -41,7 +44,19 @@ class JobDslWhitelist extends AbstractWhitelist {
         if (!Context.isAssignableFrom(declaringClass)) {
             return false
         } else if (declaringClass == ViewFactory) {
-            return false // TODO check View.CREATE/CONFIGURE
+            ItemGroup parent = jobManagement.lookupStrategy.getParent(jobManagement.project, (String) args[0])
+            if (parent instanceof ViewGroup) {
+                View view = ((ViewGroup) parent).getView(FilenameUtils.getName((String) args[0]))
+                if (view == null) {
+                    ((ViewGroup) parent).checkPermission(View.CREATE)
+                } else {
+                    view.checkPermission(View.CONFIGURE)
+                }
+            } else {
+                // Not sure what we got; safest to restrict to admins.
+                Jenkins.activeInstance.checkPermission(Jenkins.ADMINISTER)
+            }
+            return authenticated()
         } else if (declaringClass == DslFactory) {
             Class<?> returnType = method.returnType
             if (javaposse.jobdsl.dsl.Item.isAssignableFrom(returnType)) {
