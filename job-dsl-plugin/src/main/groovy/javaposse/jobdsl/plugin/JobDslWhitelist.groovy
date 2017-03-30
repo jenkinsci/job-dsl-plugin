@@ -9,7 +9,6 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslFactory
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.JobParent
 import javaposse.jobdsl.dsl.ViewFactory
 import jenkins.model.Jenkins
 import org.acegisecurity.AccessDeniedException
@@ -24,6 +23,18 @@ import java.lang.reflect.Method
  */
 // TODO Jenkins 2: @CompileStatic
 class JobDslWhitelist extends AbstractWhitelist {
+    private final JenkinsJobManagement jobManagement
+
+    JobDslWhitelist(JobManagement jobManagement) {
+        if (jobManagement instanceof InterruptibleJobManagement) {
+            this.jobManagement = ((InterruptibleJobManagement) jobManagement).delegate
+        } else if (jobManagement instanceof JenkinsJobManagement) {
+            this.jobManagement = (JenkinsJobManagement) jobManagement
+        } else {
+            throw new IllegalArgumentException("jobManagement must be an instance of ${JenkinsJobManagement.name}")
+        }
+    }
+
     @Override
     boolean permitsMethod(Method method, Object receiver, Object[] args) {
         Class<?> declaringClass = method.declaringClass
@@ -35,16 +46,11 @@ class JobDslWhitelist extends AbstractWhitelist {
             Class<?> returnType = method.returnType
             if (javaposse.jobdsl.dsl.Item.isAssignableFrom(returnType)) {
                 // TODO need some sort of abstraction defined for internal use to access getItem/getParent cleanly
-                JobManagement jm = ((JobParent) receiver).jm
-                if (jm instanceof InterruptibleJobManagement) {
-                    jm = ((InterruptibleJobManagement) jm).delegate
-                }
-                JenkinsJobManagement jjm = (JenkinsJobManagement) jm
-                Item existing = jjm.lookupStrategy.getItem(jjm.project, (String) args[0], Item)
+                Item existing = jobManagement.lookupStrategy.getItem(jobManagement.project, (String) args[0], Item)
                 if (existing != null) {
                     existing.checkPermission(Item.CONFIGURE)
                 } else {
-                    ItemGroup parent = jjm.lookupStrategy.getParent(jjm.project, (String) args[0])
+                    ItemGroup parent = jobManagement.lookupStrategy.getParent(jobManagement.project, (String) args[0])
                     if (parent instanceof AccessControlled) {
                         ((AccessControlled) parent).checkPermission(Item.CREATE)
                     } else {
