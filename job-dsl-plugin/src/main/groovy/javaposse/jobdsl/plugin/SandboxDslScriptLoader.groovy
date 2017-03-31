@@ -40,7 +40,7 @@ class SandboxDslScriptLoader extends SecureDslScriptLoader {
         }
 
         try {
-            GroovySandbox.run(script, new ProxyWhitelist(Whitelist.all(), new JobDslWhitelist(jobManagement)))
+            GroovySandbox.run(script, new ProxyWhitelist(Whitelist.all(), new JobDslWhitelist()))
         } catch (RejectedAccessException e) {
             ScriptApproval.get().accessRejected(e, ApprovalContext.create().withItem(seedJob))
             throw new DslException(e.message, e)

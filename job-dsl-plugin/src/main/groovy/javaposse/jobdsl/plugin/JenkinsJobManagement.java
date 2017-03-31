@@ -80,8 +80,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private final Map<String, ?> envVars;
     private final Run<?, ?> run;
     private final FilePath workspace;
-    final Item project;
-    final LookupStrategy lookupStrategy;
+    private final Item project;
+    private final LookupStrategy lookupStrategy;
     private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments =
             new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
     private boolean failOnMissingPlugin;
@@ -164,6 +164,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
                 View view = ((ViewGroup) parent).getView(viewBaseName);
                 if (view == null) {
                     if (parent instanceof ModifiableViewGroup) {
+                        ((ModifiableViewGroup) parent).checkPermission(View.CREATE);
                         ((ModifiableViewGroup) parent).addView(createViewFromXML(viewBaseName, inputStream));
                     } else {
                         LOGGER.log(Level.WARNING, format("Could not create view within %s", parent.getClass()));
@@ -190,6 +191,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     @Deprecated
     public String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
         validateNameArg(configFile.getName());
+        Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
 
         Jenkins jenkins = Jenkins.getInstance();
 
@@ -261,12 +263,14 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public InputStream streamFileInWorkspace(String relLocation) throws IOException, InterruptedException {
+        project.checkPermission(Item.WORKSPACE);
         FilePath filePath = locateValidFileInWorkspace(workspace, relLocation);
         return filePath.read();
     }
 
     @Override
     public String readFileInWorkspace(String relLocation) throws IOException, InterruptedException {
+        project.checkPermission(Item.WORKSPACE);
         FilePath filePath = locateValidFileInWorkspace(workspace, relLocation);
         return filePath.readToString();
     }
