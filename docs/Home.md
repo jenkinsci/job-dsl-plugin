@@ -26,6 +26,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
+* 1.60 (unreleased)
 * 1.59 (March 31 2017)
  * Enable [[Automatically Generated DSL]] for
    [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
