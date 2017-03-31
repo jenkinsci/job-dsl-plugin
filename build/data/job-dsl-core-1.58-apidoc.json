@@ -1,5 +1,5 @@
 {
-    "version": "1.59",
+    "version": "1.58",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -16820,6 +16820,12 @@
                                 }
                             ],
                             "availableSince": "1.51",
+                            "plugins": [
+                                {
+                                    "id": "rundeck",
+                                    "minimumVersion": "3.5.4"
+                                }
+                            ],
                             "html": "If set, selects the configured Rundeck instance from the global config.",
                             "firstSentenceCommentText": "If set, selects the configured Rundeck instance from the global config."
                         }
@@ -17066,6 +17072,231 @@
                             ],
                             "html": "If set, uses the status of test commands instead of suites to determine build result.\r\n Defaults to <TT>false</TT>.",
                             "firstSentenceCommentText": "If set, uses the status of test commands instead of suites to determine build result.\r\n "
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.helpers.publisher.SlackNotificationsContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.publisher.SlackNotificationsContext",
+            "methods": [
+                {
+                    "name": "customMessage",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "customMessage",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Specifies a custom message that will be included with the notifications.",
+                            "firstSentenceCommentText": "Specifies a custom message that will be included with the notifications."
+                        }
+                    ]
+                },
+                {
+                    "name": "includeTestSummary",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "includeTestSummary",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "If set, includes a test summary in the message. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "If set, includes a test summary in the message. "
+                        }
+                    ]
+                },
+                {
+                    "name": "integrationToken",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "integrationToken",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the integration token to use for sending notifications.\r\n\r\n For security reasons, do not use a hard-coded token. See\r\n <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials\">Handling Credentials</a> for\r\n details about handling credentials in DSL scripts.",
+                            "firstSentenceCommentText": "Sets the integration token to use for sending notifications."
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyAborted",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyAborted",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is aborted. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is aborted. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyBackToNormal",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyBackToNormal",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is failed. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is failed. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyBuildStart",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyBuildStart",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build starts. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build starts. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyFailure",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyFailure",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is failed. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is failed. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyNotBuilt",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyNotBuilt",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is not run. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is not run. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyRepeatedFailure",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyRepeatedFailure",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build failed repeatedly. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build failed repeatedly. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifySuccess",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifySuccess",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is successful. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is successful. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyUnstable",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyUnstable",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is unstable. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is unstable. "
+                        }
+                    ]
+                },
+                {
+                    "name": "projectChannel",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "projectChannel",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Specifies the channel names to which notifications should be sent.",
+                            "firstSentenceCommentText": "Specifies the channel names to which notifications should be sent."
+                        }
+                    ]
+                },
+                {
+                    "name": "showCommitList",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "showCommitList",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "If set, includes a list of commits in the message. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "If set, includes a list of commits in the message. "
+                        }
+                    ]
+                },
+                {
+                    "name": "teamDomain",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "teamDomain",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the Slack subdomain to which notifications should be sent.",
+                            "firstSentenceCommentText": "Sets the Slack subdomain to which notifications should be sent."
                         }
                     ]
                 }
@@ -19784,9 +20015,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use the \r\nAutomatically Generated DSL instead",
-                            "deprecatedHtml": "use the <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">\r\nAutomatically Generated DSL</a> instead",
                             "availableSince": "1.44",
                             "plugins": [
                                 {
@@ -20415,7 +20643,7 @@
                             "plugins": [
                                 {
                                     "id": "rundeck",
-                                    "minimumVersion": "3.5.4"
+                                    "minimumVersion": "3.4"
                                 }
                             ],
                             "html": "Triggers a Rundeck job.",
@@ -20515,6 +20743,31 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        seleniumReport('myproject/target/test-reports/*.html') {\r\n            useTestCommands()\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "slackNotifications",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "slackNotificationsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.36",
+                            "plugins": [
+                                {
+                                    "id": "slack",
+                                    "minimumVersion": "1.8"
+                                }
+                            ],
+                            "html": "Sends notifications to Slack.",
+                            "firstSentenceCommentText": "Sends notifications to Slack.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.SlackNotificationsContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        slackNotifications {\r\n            projectChannel('Dev Team A')\r\n            notifyAborted()\r\n            notifyFailure()\r\n            notifyNotBuilt()\r\n            notifyUnstable()\r\n            notifyBackToNormal()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "slocCount",
@@ -22250,9 +22503,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use the \r\nAutomatically Generated DSL instead",
-                            "deprecatedHtml": "use the <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">\r\nAutomatically Generated DSL</a> instead",
                             "availableSince": "1.44",
                             "plugins": [
                                 {
@@ -22881,7 +23131,7 @@
                             "plugins": [
                                 {
                                     "id": "rundeck",
-                                    "minimumVersion": "3.5.4"
+                                    "minimumVersion": "3.4"
                                 }
                             ],
                             "html": "Triggers a Rundeck job.",
@@ -22981,6 +23231,31 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        seleniumReport('myproject/target/test-reports/*.html') {\r\n            useTestCommands()\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "slackNotifications",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "slackNotificationsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.36",
+                            "plugins": [
+                                {
+                                    "id": "slack",
+                                    "minimumVersion": "1.8"
+                                }
+                            ],
+                            "html": "Sends notifications to Slack.",
+                            "firstSentenceCommentText": "Sends notifications to Slack.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.SlackNotificationsContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        slackNotifications {\r\n            projectChannel('Dev Team A')\r\n            notifyAborted()\r\n            notifyFailure()\r\n            notifyNotBuilt()\r\n            notifyUnstable()\r\n            notifyBackToNormal()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "slocCount",
@@ -24352,7 +24627,7 @@
                             "plugins": [
                                 {
                                     "id": "rundeck",
-                                    "minimumVersion": "3.5.4"
+                                    "minimumVersion": "3.4"
                                 }
                             ],
                             "html": "Allows to schedule a build on Jenkins after a job execution on RunDeck.",
@@ -26847,8 +27122,7 @@
                                     "id": "rbenv"
                                 },
                                 {
-                                    "id": "ruby-runtime",
-                                    "minimumVersion": "0.12"
+                                    "id": "ruby-runtime"
                                 }
                             ],
                             "html": "Specifies the rbenv wrapper to be used during job execution.",
@@ -26919,12 +27193,10 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "rvm",
-                                    "minimumVersion": "0.6"
+                                    "id": "rvm"
                                 },
                                 {
-                                    "id": "ruby-runtime",
-                                    "minimumVersion": "0.12"
+                                    "id": "ruby-runtime"
                                 }
                             ],
                             "html": "Configures the job to prepare a Ruby environment controlled by RVM for the build.",
@@ -35486,9 +35758,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
-                            "deprecatedText": "use the \r\nAutomatically Generated DSL instead",
-                            "deprecatedHtml": "use the <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">\r\nAutomatically Generated DSL</a> instead",
                             "availableSince": "1.44",
                             "plugins": [
                                 {
@@ -36117,7 +36386,7 @@
                             "plugins": [
                                 {
                                     "id": "rundeck",
-                                    "minimumVersion": "3.5.4"
+                                    "minimumVersion": "3.4"
                                 }
                             ],
                             "html": "Triggers a Rundeck job.",
@@ -36217,6 +36486,31 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        seleniumReport('myproject/target/test-reports/*.html') {\r\n            useTestCommands()\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "slackNotifications",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "slackNotificationsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.36",
+                            "plugins": [
+                                {
+                                    "id": "slack",
+                                    "minimumVersion": "1.8"
+                                }
+                            ],
+                            "html": "Sends notifications to Slack.",
+                            "firstSentenceCommentText": "Sends notifications to Slack.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.SlackNotificationsContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        slackNotifications {\r\n            projectChannel('Dev Team A')\r\n            notifyAborted()\r\n            notifyFailure()\r\n            notifyNotBuilt()\r\n            notifyUnstable()\r\n            notifyBackToNormal()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "slocCount",
@@ -36693,7 +36987,7 @@
                             "plugins": [
                                 {
                                     "id": "rundeck",
-                                    "minimumVersion": "3.5.4"
+                                    "minimumVersion": "3.4"
                                 }
                             ],
                             "html": "Allows to schedule a build on Jenkins after a job execution on RunDeck.",
@@ -37507,8 +37801,7 @@
                                     "id": "rbenv"
                                 },
                                 {
-                                    "id": "ruby-runtime",
-                                    "minimumVersion": "0.12"
+                                    "id": "ruby-runtime"
                                 }
                             ],
                             "html": "Specifies the rbenv wrapper to be used during job execution.",
@@ -37579,12 +37872,10 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "rvm",
-                                    "minimumVersion": "0.6"
+                                    "id": "rvm"
                                 },
                                 {
-                                    "id": "ruby-runtime",
-                                    "minimumVersion": "0.12"
+                                    "id": "ruby-runtime"
                                 }
                             ],
                             "html": "Configures the job to prepare a Ruby environment controlled by RVM for the build.",
