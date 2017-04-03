@@ -1463,7 +1463,7 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         build.result == FAILURE
-        build.log.contains(Messages.JobDslWhitelist_NotAuthenticated())
+        build.log.contains(Messages.SandboxDslScriptLoader_NotAuthenticated())
         ScriptApproval.get().pendingSignatures.isEmpty()
     }
 

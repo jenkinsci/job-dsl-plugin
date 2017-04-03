@@ -36,7 +36,7 @@ class SandboxDslScriptLoader extends SecureDslScriptLoader {
     protected void runScript(Script script) {
         if (ACL.SYSTEM == Jenkins.authentication) {
             // the build must run as an actual user
-            throw new AccessDeniedException(Messages.JobDslWhitelist_NotAuthenticated())
+            throw new AccessDeniedException(Messages.SandboxDslScriptLoader_NotAuthenticated())
         }
 
         try {
