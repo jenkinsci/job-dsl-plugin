@@ -10,6 +10,9 @@ added to the classpath and additional classpath entries are not supported when s
 Note that some operators in [[configure blocks|The Configure Block]] are not available when running in the restricted
 sandbox.
 
+When using the sandbox, Jenkins access control checks are also applied. For this to work, the DSL job needs to run as
+a particular user. This is generally accomplished by installing and configuring the Authorize Project plugin.
+
 To restore the old behavior, Job DSL script security can be disabled on the "Configure Global Security" page. But this
 decision should be taken with care and only if understanding the consequences as it would allow users to run arbitrary
 code within the Jenkins process (even changing its security settings or running shell commands on the server).

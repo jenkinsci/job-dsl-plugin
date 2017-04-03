@@ -5,6 +5,9 @@ import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.AbstractWhitelist
 
 import java.lang.reflect.Method
 
+/**
+ * Allows methods defined in {@link Context}.
+ */
 class JobDslWhitelist extends AbstractWhitelist {
     @Override
     boolean permitsMethod(Method method, Object receiver, Object[] args) {
