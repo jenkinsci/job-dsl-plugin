@@ -27,6 +27,13 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.60 (unreleased)
+  * Enabled script approval with the
+    [Script Security Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin), see
+    [Migration](Migration#migrating-to-160)
+    ([SECURITY-369](https://issues.jenkins-ci.org/browse/SECURITY-369))
+  * Added permission checks and enforced running the build as a particular user, see
+    [Migration](Migration#migrating-to-160)
+    ([SECURITY-363](https://issues.jenkins-ci.org/browse/SECURITY-363))
 * 1.59 (March 31 2017)
   * Enable [[Automatically Generated DSL]] for
     [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)

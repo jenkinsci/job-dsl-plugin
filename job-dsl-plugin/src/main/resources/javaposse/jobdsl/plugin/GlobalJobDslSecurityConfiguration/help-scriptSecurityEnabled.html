@@ -1,0 +1,16 @@
+<div>
+    <p>
+        If script security is <b>enabled</b>, users will need to wait for an administrator to approve Job DSL scripts or
+        run scripts within a restricted sandbox. Importing classes from the workspace is not possible since the classes
+        are not subject to the approval process. Entries in the "Additional classpath" also need to be approved and only
+        JAR files are supported.
+    </p>
+    <p>
+        If script security is <b>disabled</b>, any user can run arbitrary code within the Jenkins process (e.g.
+        terminating Jenkins or undermining the security model). This includes users who are permitted to push Job DSL
+        scripts to SCM repositories and thus may trigger jobs running a Job DSL build step.
+    </p>
+    <p>
+        This setting is only effective if security is enabled.
+    </p>
+</div>

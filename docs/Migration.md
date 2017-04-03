@@ -1,3 +1,23 @@
+## Migrating to 1.60
+
+### Script Security
+
+Starting with Job DSL 1.60, script security for Job DSL scripts is enabled by default if Jenkins
+security is enabled. As a consequence, DSL scripts have either to be approved by an Jenkins administrator or run in an
+restricted sandbox. To avoid loading arbitrary code from the workspace without approval, the script directory is not 
+added to the classpath and additional classpath entries are not supported when security is enabled. 
+
+Note that some operators in [[configure blocks|The Configure Block]] are not available when running in the restricted
+sandbox.
+
+When using the sandbox, Jenkins access control checks are also applied. For this to work, the DSL job needs to run as
+a particular user. This is generally accomplished by installing and configuring the
+[Authorize Project plugin](https://wiki.jenkins-ci.org/display/JENKINS/Authorize+Project+plugin).
+
+To restore the old behavior, Job DSL script security can be disabled on the "Configure Global Security" page. But this
+decision should be taken with care and only if understanding the consequences as it would allow users to run arbitrary
+code within the Jenkins process (even changing its security settings or running shell commands on the server).
+
 ## Migrating to 1.59
 
 ### Mattermost

@@ -40,6 +40,7 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
     G runScripts(Collection<ScriptRequest> scriptRequests) throws IOException {
         G generatedItems = generatedItemsClass.newInstance()
         CompilerConfiguration config = createCompilerConfiguration()
+        customizeCompilerConfiguration(config)
         Map<String, GroovyShell> groovyShellCache = [:]
         try {
             scriptRequests.each { ScriptRequest scriptRequest ->
@@ -47,8 +48,9 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
 
                 GroovyShell groovyShell = groovyShellCache[key]
                 if (!groovyShell) {
+                    ClassLoader classLoader = prepareClassLoader(AbstractDslScriptLoader.classLoader)
                     groovyShell = new GroovyShell(
-                            new URLClassLoader(scriptRequest.urlRoots, AbstractDslScriptLoader.classLoader),
+                            new URLClassLoader(scriptRequest.urlRoots, classLoader),
                             new Binding(),
                             config
                     )
@@ -93,22 +95,14 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
                 logger.println('Processing provided DSL script')
             }
 
-            GroovyCodeSource source
-            if (scriptRequest.body != null) {
-                source = new GroovyCodeSource(
-                        scriptRequest.body, scriptRequest.scriptName ?: 'script', DEFAULT_CODE_BASE
-                )
-            } else {
-                source = new GroovyCodeSource(new URL(scriptRequest.urlRoots[0], scriptRequest.location))
-            }
-            Script script = groovyShell.parse(source)
+            Script script = groovyShell.parse(createGroovyCodeSource(scriptRequest))
             script.binding = createBinding(scriptRequest)
             script.binding.setVariable('jobFactory', script)
 
             S jobParent = (S) script
             jobParent.setJm(jobManagement)
 
-            jobParent.run()
+            runScript(script)
 
             return jobParent
         } catch (CompilationFailedException e) {
@@ -120,6 +114,22 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
         } catch (ScriptException e) {
             throw new IOException('Unable to run script', e)
         }
+    }
+
+    protected ClassLoader prepareClassLoader(ClassLoader classLoader) {
+        classLoader
+    }
+
+    protected GroovyCodeSource createGroovyCodeSource(ScriptRequest scriptRequest) {
+        if (scriptRequest.body != null) {
+            new GroovyCodeSource(scriptRequest.body, scriptRequest.scriptPath ?: 'script', DEFAULT_CODE_BASE)
+        } else {
+            new GroovyCodeSource(new URL(scriptRequest.urlRoots[0], scriptRequest.location))
+        }
+    }
+
+    protected void runScript(Script script) {
+        script.run()
     }
 
     private static boolean isValidScriptName(ScriptRequest scriptRequest) {
@@ -256,8 +266,11 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
         binding
     }
 
-    private CompilerConfiguration createCompilerConfiguration() {
-        CompilerConfiguration config = new CompilerConfiguration(CompilerConfiguration.DEFAULT)
+    protected CompilerConfiguration createCompilerConfiguration() {
+        new CompilerConfiguration(CompilerConfiguration.DEFAULT)
+    }
+
+    private void customizeCompilerConfiguration(CompilerConfiguration config) {
         config.scriptBaseClass = scriptBaseClass.name
 
         // Import some of our helper classes so that user doesn't have to.
@@ -284,7 +297,6 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
         config.addCompilationCustomizers(icz)
 
         config.output = new PrintWriter(jobManagement.outputStream) // This seems to do nothing
-        config
     }
 
     private static class SnitchingClassLoader extends ClassLoader {

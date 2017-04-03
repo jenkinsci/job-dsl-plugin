@@ -164,6 +164,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
                 View view = ((ViewGroup) parent).getView(viewBaseName);
                 if (view == null) {
                     if (parent instanceof ModifiableViewGroup) {
+                        ((ModifiableViewGroup) parent).checkPermission(View.CREATE);
                         ((ModifiableViewGroup) parent).addView(createViewFromXML(viewBaseName, inputStream));
                     } else {
                         LOGGER.log(Level.WARNING, format("Could not create view within %s", parent.getClass()));
@@ -190,6 +191,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     @Deprecated
     public String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
         validateNameArg(configFile.getName());
+        Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
 
         Jenkins jenkins = Jenkins.getInstance();
 
@@ -222,6 +224,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public void createOrUpdateUserContent(UserContent userContent, boolean ignoreExisting) {
+        // As in git-userContent-plugin:
+        Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
         try {
             FilePath file = Jenkins.getInstance().getRootPath().child("userContent").child(userContent.getPath());
             if (!(file.exists() && ignoreExisting)) {
@@ -250,6 +254,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         validateNameArg(path);
 
         BuildableItem project = lookupStrategy.getItem(this.project, path, BuildableItem.class);
+        project.checkPermission(Item.BUILD);
 
         LOGGER.log(Level.INFO, format("Scheduling build of %s from %s", path, project.getName()));
         project.scheduleBuild(run == null ? new JobDslCause() : new Cause.UpstreamCause(run));
@@ -258,12 +263,14 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public InputStream streamFileInWorkspace(String relLocation) throws IOException, InterruptedException {
+        project.checkPermission(Item.WORKSPACE);
         FilePath filePath = locateValidFileInWorkspace(workspace, relLocation);
         return filePath.read();
     }
 
     @Override
     public String readFileInWorkspace(String relLocation) throws IOException, InterruptedException {
+        project.checkPermission(Item.WORKSPACE);
         FilePath filePath = locateValidFileInWorkspace(workspace, relLocation);
         return filePath.readToString();
     }
@@ -272,6 +279,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     public String readFileInWorkspace(String jobName, String relLocation) throws IOException, InterruptedException {
         Item item = Jenkins.getInstance().getItemByFullName(jobName);
         if (item instanceof AbstractProject) {
+            item.checkPermission(Item.WORKSPACE);
             FilePath workspace = ((AbstractProject) item).getSomeWorkspace();
             if (workspace != null) {
                 try {
@@ -467,6 +475,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
         AbstractItem item = lookupStrategy.getItem(project, path, AbstractItem.class);
         if (item != null) {
+            item.checkPermission(Item.EXTENDED_READ);
             XmlFile xmlFile = item.getConfigFile();
             String jobXml = xmlFile.asString();
             LOGGER.log(Level.FINE, format("Looked up item with config %s", jobXml));
@@ -480,6 +489,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private boolean updateExistingItem(AbstractItem item, javaposse.jobdsl.dsl.Item dslItem) {
         String config = dslItem.getXml();
         boolean created;
+
+        item.checkPermission(Item.EXTENDED_READ);
 
         // Leverage XMLUnit to perform diffs
         Diff diff;
@@ -514,6 +525,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private void checkItemType(AbstractItem item, javaposse.jobdsl.dsl.Item dslItem) {
         Node oldConfig;
 
+        item.checkPermission(Item.EXTENDED_READ);
         try {
             oldConfig = new XmlParser().parse(item.getConfigFile().getFile());
         } catch (Exception e) {
