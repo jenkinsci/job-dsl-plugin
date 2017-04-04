@@ -923,7 +923,7 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['paramName']) {
             name() == 'net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition'
-            children().size() == 8
+            children().size() == 11
             name.text() == 'paramName'
             description[0].value() == ''
             UUID.fromString(uuid[0].value() as String)
@@ -932,6 +932,9 @@ class BuildParametersContextSpec extends Specification {
             tagFilter[0].value() == ''
             sortMode[0].value() == 'NONE'
             defaultValue[0].value() == ''
+            branchFilter[0].value() == ''
+            quickFilterEnabled[0].value() == false
+            useRepository[0].value() == ''
         }
         1 * jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
     }
@@ -945,6 +948,9 @@ class BuildParametersContextSpec extends Specification {
             tagFilter('*')
             sortMode('ASCENDING_SMART')
             defaultValue('foo')
+            branchFilter('*')
+            quickFilterEnabled(true)
+            useRepository('repository')
         }
 
         then:
@@ -952,7 +958,7 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['sha']) {
             name() == 'net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition'
-            children().size() == 8
+            children().size() == 11
             name.text() == 'sha'
             description[0].value() == 'Revision commit SHA'
             UUID.fromString(uuid[0].value() as String)
@@ -961,6 +967,9 @@ class BuildParametersContextSpec extends Specification {
             tagFilter[0].value() == '*'
             sortMode[0].value() == 'ASCENDING_SMART'
             defaultValue[0].value() == 'foo'
+            branchFilter[0].value() == '*'
+            quickFilterEnabled[0].value() == true
+            useRepository[0].value() == 'repository'
         }
         1 * jobManagement.requireMinimumPluginVersion('git-parameter', '0.4.0')
     }

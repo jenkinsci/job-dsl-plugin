@@ -230,6 +230,9 @@ class BuildParametersContext extends AbstractExtensibleContext {
                     tagFilter(context.tagFilter ?: '')
                     sortMode(context.sortMode)
                     defaultValue(context.defaultValue ?: '')
+                    branchFilter(context.branchFilter ?: '')
+                    quickFilterEnabled(context.quickFilterEnabled ?: false)
+                    useRepository(context.useRepository ?: '')
                 }
     }
 
