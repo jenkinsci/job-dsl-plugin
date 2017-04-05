@@ -396,7 +396,12 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                     removed.add(unreferencedJob);
                 } else {
                     if (removedItem instanceof AbstractProject) {
-                        ((AbstractProject) removedItem).disable();
+                        AbstractProject project = (AbstractProject) removedItem;
+                        project.checkPermission(Item.CONFIGURE);
+                        if (project.isInQueue()) {
+                            project.checkPermission(Item.CANCEL); // disable() will cancel queued builds
+                        }
+                        project.disable();
                         disabled.add(unreferencedJob);
                     }
                 }
@@ -469,6 +474,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 if (parent instanceof ViewGroup) {
                     View view = ((ViewGroup) parent).getView(FilenameUtils.getName(viewName));
                     if (view != null) {
+                        view.checkPermission(View.DELETE);
                         ((ViewGroup) parent).deleteView(view);
                         removed.add(unreferencedView);
                     }
