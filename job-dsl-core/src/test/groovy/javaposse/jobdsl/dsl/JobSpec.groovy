@@ -940,6 +940,30 @@ class JobSpec extends Specification {
         1 * jobManagement.requirePlugin('delivery-pipeline-plugin')
         1 * jobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
     }
+    
+    def 'set notification with default properties new url format'() {
+        when:
+        job.notifications {
+            endpoint('http://endpoint.com')
+        }
+
+        then:
+        with(job.node.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty') {
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].children().size() == 7
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo.children.size() == 2
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo[0].urlOrId[0].text() == 
+                'http://endpoint.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo[0].urlType[0].text() == 'PUBLIC'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'HTTP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'all'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 30000
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].loglines[0].value() == 0
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].retries[0].value() == 0
+        }
+        1 * jobManagement.requireMinimumPluginVersion('notification', '1.12')
+    }
 
     def 'set notification with default properties'() {
         when:
@@ -961,6 +985,30 @@ class JobSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('notification', '1.8')
     }
 
+    def 'set notification with all required properties new url format'() {
+        when:
+        job.notifications {
+            endpoint('http://endpoint.com', 'TCP', 'XML')
+        }
+
+        then:
+        with(job.node.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty') {
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].children().size() == 7
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo.children.size() == 2
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo[0].urlOrId[0].text() == 
+                'http://endpoint.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo[0].urlType[0].text() == 'PUBLIC'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'TCP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'XML'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'all'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 30000
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].loglines[0].value() == 0
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].retries[0].value() == 0
+        }
+        1 * jobManagement.requireMinimumPluginVersion('notification', '1.12')
+    }
+    
     def 'set notification with all required properties'() {
         when:
         job.notifications {
@@ -1082,5 +1130,72 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].loglines[0].value() == 0
         }
         1 * jobManagement.requireMinimumPluginVersion('notification', '1.8')
+    }
+    
+    def 'set notification with default properties new url format and secret endpoint'() {
+        when:
+        job.notifications {
+            secretEndpoint('http://endpoint.com')
+        }
+
+        then:
+        with(job.node.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty') {
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 1
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].children().size() == 7
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo.children.size() == 2
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo[0].urlOrId[0].text() == 
+                'http://endpoint.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo[0].urlType[0].text() == 'SECRET'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'HTTP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'all'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 30000
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].loglines[0].value() == 0
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].retries[0].value() == 0
+        }
+        1 * jobManagement.requireMinimumPluginVersion('notification', '1.12')
+    }
+    
+    def 'set notification with secret and public endpoint'() {
+        when:
+        job.notifications {
+            endpoint('http://endpoint1.com')
+            secretEndpoint('http://endpoint2.com', 'TCP', 'XML') {
+                event('started')
+                timeout(10000)
+                logLines(10)
+                retries(3)
+            }
+        }
+
+        then:
+        with(job.node.properties[0].'com.tikal.hudson.plugins.notification.HudsonNotificationProperty') {
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'.size() == 2
+
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].children().size() == 7
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo.children.size() == 2
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo[0].urlOrId[0].text() == 
+                'http://endpoint.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].urlInfo[0].urlType[0].text() == 'PUBLIC'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].protocol[0].text() == 'HTTP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].format[0].text() == 'JSON'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].event[0].text() == 'all'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].timeout[0].value() == 30000
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].loglines[0].value() == 0
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].retries[0].value() == 0
+            
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].children().size() == 7
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].urlInfo.children.size() == 2
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].urlInfo[0].urlOrId[0].text() == 
+                'http://endpoint2.com'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].urlInfo[0].urlType[0].text() == 'SECRET'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].protocol[0].text() == 'TCP'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].format[0].text() == 'XML'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].event[0].text() == 'all'
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].timeout[0].value() == 30000
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].loglines[0].value() == 3
+            endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].retries[0].value() == 0
+        }
+        1 * jobManagement.requireMinimumPluginVersion('notification', '1.12')
     }
 }

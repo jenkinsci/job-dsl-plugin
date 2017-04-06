@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.toplevel
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
@@ -11,6 +12,7 @@ class NotificationEndpointContext extends AbstractContext {
     String event = 'all'
     int timeout = 30000
     int logLines
+    int retries
 
     NotificationEndpointContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -41,5 +43,15 @@ class NotificationEndpointContext extends AbstractContext {
      */
     void logLines(int lines) {
         this.logLines = lines
+    }
+
+    /**
+     * Sets the number of times the endpoint should be retried
+     *
+     * @since 1.60
+     */
+    @RequiresPlugin(id = 'notification', minimumVersion = '1.12')
+    void retries(int retries) {
+        this.retries = retries
     }
 }
