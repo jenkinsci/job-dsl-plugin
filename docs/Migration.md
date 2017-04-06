@@ -18,6 +18,8 @@ To restore the old behavior, Job DSL script security can be disabled on the "Con
 decision should be taken with care and only if understanding the consequences as it would allow users to run arbitrary
 code within the Jenkins process (even changing its security settings or running shell commands on the server).
 
+See [[Script Security]] for details.
+
 ## Migrating to 1.59
 
 ### Mattermost

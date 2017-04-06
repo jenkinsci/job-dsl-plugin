@@ -13,6 +13,8 @@ Highly recommended starting point is [[the tutorial|Tutorial - Using the Jenkins
 Once you know how to create a "seed" job from the tutorial, start looking at the [[real world examples|Real World Examples]] for examples to steal from.
 After you get familiar with some of the commands, try them out at the [Job DSL Playground](http://job-dsl.herokuapp.com/).
 
+Job DSL provides a secure environment for executing DSL scripts. See [[Script Security]] for details.
+
 Not all of the 1000+ Jenkins plugins are supported by the built-in DSL. If the
 [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) does not list support for a certain plugin, the
 [[Automatically Generated DSL]] can be used to fill the gap.
