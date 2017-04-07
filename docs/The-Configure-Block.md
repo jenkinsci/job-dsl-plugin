@@ -122,7 +122,7 @@ job('example-2') {
 }
 ```
 
-To create a reusable, parametrized configure block, the configure block can be recreated in a parametrized function.
+To create a reusable, parameterized configure block, the configure block can be recreated in a parameterized function.
 
 ```groovy
 Closure switchOnOrOff(String value) {
