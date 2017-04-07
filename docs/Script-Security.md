@@ -1,5 +1,5 @@
 Starting with version 1.60, Job DSL integrates with the
-[Script Security plugin](https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin) to provide a secure
+[Script Security plugin](https://plugins.jenkins.io/script-security) to provide a secure
 environment for executing DSL scripts. This provides three options for configuring script security which are described
 in detail below. You should consider these options carefully to choose the option that matches your approach to Job DSL.
 
@@ -9,7 +9,7 @@ Note: Script security for Job DSL is only available when security is enabled in 
 Script Approval
 ---------------
 
-The first, and simpler, security system is to allow any kind of script to be run, but only with an administrator’s
+The first security system is to allow any kind of script to be run, but only with an administrator’s
 approval. There is a globally maintained list of approved scripts which are judged to not perform any malicious actions.
 
 When an administrator saves the seed job, any DSL scripts it contains are automatically added to the approved list. They
@@ -64,31 +64,33 @@ which change state of persisted objects (such as the global configuration) shoul
 All Job DSL methods are whitelisted by default, but Jenkins access control checks are applied. These checks prevent
 users from gaining elevated permissions through Job DSL scripts. For this to work, the DSL job needs to run as a
 particular user. This is generally accomplished by installing and configuring the
-[Authorize Project plugin](https://wiki.jenkins-ci.org/display/JENKINS/Authorize+Project+plugin).
+[Authorize Project plugin](https://plugins.jenkins.io/authorize-project).
 
 After installing Authorize Project plugin, you will find _Access Control for Builds_ in _Manage Jenkins » Configure
-Global Security_. Adding _Project default Build Authorization_ or _Pre-project configurable Build Authorization_ enables
+Global Security_. Adding _Project default Build Authorization_ or _Per-project configurable Build Authorization_ enables
 the Authorize Project plugin.
 
-Choosing _Pre-project configurable Build Authorization_ allows the authentication that a job will run as to be
+Choosing _Per-project configurable Build Authorization_ allows the authentication that a job will run as to be
 configured from the job configuration page. A new side bar menu _Authorization_ will appear in job pages. The
 following strategies are available and can be restricted:
 
 * _Run as the user who triggered the build_: Does what the label says, but does not work for scheduled or polled builds.
-* _Run as anonymous_: Runs the build as the special user 'anonymous' which represents unauthenticated users.
-* _Run as the specified user_: You are requested to enter the password of the specified user except following cases:
+* _Run as anonymous_: Runs the build as the special user 'anonymous' which represents unauthenticated users. This is
+  typically useless for Job DSL.
+* _Run as the specified user_: You are requested to enter the password of the specified user except in the following cases:
   * You are an administrator.
   * You are the specified user.
   * The specified user is not changed from the last configuration, and "No need for re-authentication" is checked. This
     can threaten your Jenkins security. Be careful to use.
-* _Run as SYSTEM_: This options disables Authorize Project plugin.
+* _Run as SYSTEM_: This options disables Authorize Project plugin. This is useless for Job DSL since the build will be
+  rejected.
 
 When choosing _Project default Build Authorization_, the same strategy is applied to all jobs. One of the strategies
 mentioned above can be selected.
 
 Refer to the documentation of the
-[Script Security plugin](https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin) and the
-[Authorize Project plugin](https://wiki.jenkins-ci.org/display/JENKINS/Authorize+Project+plugin) for more details.
+[Script Security plugin](https://plugins.jenkins.io/script-security) and the
+[Authorize Project plugin](https://plugins.jenkins.io/authorize-project) for more details.
 
 Note that some operators in [[configure blocks|The Configure Block]] are not available when running in the restricted
 sandbox.
