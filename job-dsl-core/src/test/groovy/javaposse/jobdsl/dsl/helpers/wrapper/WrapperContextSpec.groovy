@@ -22,6 +22,17 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('timestamper')
     }
 
+    def 'call use sonar build wrapper'() {
+        when:
+        context.useSonarBuildWrapper()
+
+        then:
+        context.wrapperNodes?.size() == 1
+        def sonarBuildWrapper = context.wrapperNodes[0]
+        sonarBuildWrapper.name() == 'hudson.plugins.sonar.SonarBuildWrapper'
+        1 * mockJobManagement.requireMinimumPluginVersion('sonar', '2.4')
+    }
+
     def 'run on same node'() {
         when:
         context.runOnSameNodeAs('testJob')
