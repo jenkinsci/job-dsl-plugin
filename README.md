@@ -29,7 +29,7 @@ job('PROJ-unit-tests') {
         git(gitUrl)
     }
     triggers {
-        scm('*/15 * * * *')
+        cron('*/15 * * * *')
     }
     steps {
         maven('-e clean test')
