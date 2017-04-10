@@ -28,7 +28,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.60 (unreleased)
+* 1.60 (April 10 2017)
   * Enabled script approval with the
     [Script Security Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin), see
     [Migration](Migration#migrating-to-160)
