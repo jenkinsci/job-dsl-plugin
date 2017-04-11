@@ -34,9 +34,7 @@ class GitExtensionContext extends AbstractExtensibleContext {
                 mergeRemote(gitMergeOptionsContext.remote ?: '')
                 mergeTarget(gitMergeOptionsContext.branch ?: '')
                 mergeStrategy(gitMergeOptionsContext.strategy)
-                if (jobManagement.isMinimumPluginVersionInstalled('git', '2.3.5')) {
-                    fastForwardMode(gitMergeOptionsContext.fastForwardMode.name())
-                }
+                fastForwardMode(gitMergeOptionsContext.fastForwardMode.name())
             }
         }
     }
@@ -70,9 +68,7 @@ class GitExtensionContext extends AbstractExtensibleContext {
             if (context.timeout != null) {
                 timeout(context.timeout)
             }
-            if (jobManagement.isMinimumPluginVersionInstalled('git', '2.5.3')) {
-                honorRefspec(context.honorRefspec)
-            }
+            honorRefspec(context.honorRefspec)
         }
     }
 
@@ -87,10 +83,8 @@ class GitExtensionContext extends AbstractExtensibleContext {
             disableSubmodules(context.disable)
             recursiveSubmodules(context.recursive)
             trackingSubmodules(context.tracking)
-            if (jobManagement.isMinimumPluginVersionInstalled('git', '2.4.1')) {
-                reference(context.reference ?: '')
-            }
-            if (jobManagement.isMinimumPluginVersionInstalled('git', '2.2.8') && context.timeout != null) {
+            reference(context.reference ?: '')
+            if (context.timeout != null) {
                 timeout(context.timeout)
             }
             if (jobManagement.isMinimumPluginVersionInstalled('git', '3.0.0')) {

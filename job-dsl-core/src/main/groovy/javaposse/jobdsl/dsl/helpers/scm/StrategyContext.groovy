@@ -34,7 +34,6 @@ class StrategyContext extends AbstractContext {
     /**
      * Selects commits to be build by maximum age and ancestor commit.
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.3.1')
     void ancestry(int maxAge, String commit) {
         buildChooser = NodeBuilder.newInstance().buildChooser(class: 'hudson.plugins.git.util.AncestryBuildChooser') {
             maximumAgeInDays(maxAge)

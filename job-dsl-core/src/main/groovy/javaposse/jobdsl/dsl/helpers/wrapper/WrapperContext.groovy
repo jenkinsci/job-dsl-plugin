@@ -447,7 +447,7 @@ class WrapperContext extends AbstractExtensibleContext {
      *
      * @since 1.24
      */
-    @RequiresPlugin(id = 'Exclusion')
+    @RequiresPlugin(id = 'Exclusion', minimumVersion = '0.12')
     void exclusionResources(String... resourceNames) {
         exclusionResources(resourceNames.toList())
     }
@@ -458,10 +458,8 @@ class WrapperContext extends AbstractExtensibleContext {
      *
      * @since 1.24
      */
-    @RequiresPlugin(id = 'Exclusion')
+    @RequiresPlugin(id = 'Exclusion', minimumVersion = '0.12')
     void exclusionResources(Iterable<String> resourceNames) {
-        jobManagement.logPluginDeprecationWarning('Exclusion', '0.12')
-
         wrapperNodes << new NodeBuilder().'org.jvnet.hudson.plugins.exclusion.IdAllocator' {
             ids {
                 resourceNames.each { String resourceName ->

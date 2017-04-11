@@ -29,6 +29,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.61 (unreleased)
+  * Removed anything that has been deprecated in 1.52, see [Migration](Migration#migrating-to-152)
 * 1.60 (April 10 2017)
   * Enabled script approval with the
     [Script Security Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin), see

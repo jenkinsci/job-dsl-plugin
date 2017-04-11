@@ -60,9 +60,4 @@ abstract class Item extends AbstractContext {
     protected Node getNodeTemplate() {
         new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
     }
-
-    @Deprecated
-    void executeWithXmlActions(Node root) {
-        ContextHelper.executeConfigureBlocks(root, configureBlocks)
-    }
 }

@@ -80,9 +80,4 @@ class Folder extends Item {
             }
         }
     }
-
-    @Deprecated
-    protected void execute(Closure rootClosure) {
-        configure(rootClosure)
-    }
 }

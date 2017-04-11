@@ -928,10 +928,8 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.22
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.5.3')
     void git(@DslContext(GitPublisherContext) Closure gitPublisherClosure) {
-        jobManagement.logPluginDeprecationWarning('git', '2.5.3')
-
         GitPublisherContext context = new GitPublisherContext(jobManagement)
         ContextHelper.executeInContext(gitPublisherClosure, context)
 
@@ -1101,34 +1099,6 @@ class PublisherContext extends AbstractExtensibleContext {
             cleanWhenAborted(context.cleanWhenAborted)
             notFailBuild(!context.failBuild)
             externalDelete(context.deleteCommand ?: '')
-        }
-    }
-
-    /**
-     * Triggers a Rundeck job.
-     *
-     * @since 1.24
-     * @deprecated use the
-     *    <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL">Automatically Generated
-     *    DSL</a> instead
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.5.4')
-    void rundeck(String jobIdentifier, @DslContext(RundeckContext) Closure rundeckClosure = null) {
-        checkNotNullOrEmpty(jobIdentifier, 'jobIdentifier cannot be null or empty')
-
-        RundeckContext rundeckContext = new RundeckContext(jobManagement)
-        ContextHelper.executeInContext(rundeckClosure, rundeckContext)
-
-        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.rundeck.RundeckNotifier' {
-            jobId(jobIdentifier)
-            options(rundeckContext.options.collect { key, value -> "${key}=${value}" }.join('\n'))
-            nodeFilters(rundeckContext.nodeFilters.collect { key, value -> "${key}=${value}" }.join('\n'))
-            tag(rundeckContext.tag ?: '')
-            shouldWaitForRundeckJob(rundeckContext.shouldWaitForRundeckJob)
-            shouldFailTheBuild(rundeckContext.shouldFailTheBuild)
-            includeRundeckLogs(rundeckContext.includeRundeckLogs)
-            rundeckInstance(rundeckContext.rundeckInstance ?: 'Default')
         }
     }
 
@@ -1415,27 +1385,6 @@ class PublisherContext extends AbstractExtensibleContext {
         }
         naginatorNode.append(naginatorContext.delay)
         publisherNodes << naginatorNode
-    }
-
-    /**
-     * Allows to merge the pull request if the build was successful.
-     *
-     * @since 1.33
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'ghprb', minimumVersion = '1.26')
-    void mergePullRequest(@DslContext(PullRequestPublisherContext) Closure contextClosure = null) {
-        PullRequestPublisherContext pullRequestPublisherContext = new PullRequestPublisherContext(jobManagement)
-        ContextHelper.executeInContext(contextClosure, pullRequestPublisherContext)
-
-        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge' {
-            onlyAdminsMerge(pullRequestPublisherContext.onlyAdminsMerge)
-            disallowOwnCode(pullRequestPublisherContext.disallowOwnCode)
-            onlyTriggerPhrase(pullRequestPublisherContext.onlyTriggerPhrase)
-            mergeComment(pullRequestPublisherContext.mergeComment ?: '')
-            failOnNonMerge(pullRequestPublisherContext.failOnNonMerge)
-            deleteOnMerge(pullRequestPublisherContext.deleteOnMerge)
-        }
     }
 
     /**

@@ -160,36 +160,6 @@ class TriggerContext extends ItemTriggerContext {
     }
 
     /**
-     * Allows to schedule a build on Jenkins after a job execution on RunDeck.
-     *
-     * @since 1.33
-     * @deprecated use the
-     *    <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL">Automatically Generated
-     *    DSL</a> instead
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'rundeck', minimumVersion = '3.5.4')
-    void rundeck(@DslContext(RundeckTriggerContext) Closure closure = null) {
-        RundeckTriggerContext context = new RundeckTriggerContext()
-        ContextHelper.executeInContext(closure, context)
-
-        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.rundeck.RundeckTrigger' {
-            spec()
-            filterJobs(context.filterJobs)
-            jobsIdentifiers {
-                context.jobIdentifiers.each { String jobsIdentifier ->
-                    string(jobsIdentifier)
-                }
-            }
-            executionStatuses {
-                context.executionStatuses.each { String status ->
-                    string(status)
-                }
-            }
-        }
-    }
-
-    /**
      * Trigger that runs jobs on push notifications from Bitbucket.
      *
      * @since 1.41

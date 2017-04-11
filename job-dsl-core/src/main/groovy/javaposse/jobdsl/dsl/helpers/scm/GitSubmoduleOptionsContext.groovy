@@ -42,7 +42,6 @@ class GitSubmoduleOptionsContext extends AbstractContext {
      *
      * @since 1.46
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.4.1')
     void reference(String reference) {
         this.reference = reference
     }
@@ -52,7 +51,6 @@ class GitSubmoduleOptionsContext extends AbstractContext {
      *
      * @since 1.46
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.2.8')
     void timeout(Integer timeout) {
         this.timeout = timeout
     }
