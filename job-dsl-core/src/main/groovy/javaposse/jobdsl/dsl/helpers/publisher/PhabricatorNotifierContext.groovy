@@ -8,6 +8,10 @@ class PhabricatorNotifierContext implements Context {
     String commentFile = '.phabricator-comment'
     boolean preserveFormatting
     int commentSize = 1000
+    boolean processLint = true
+    int lintSize = 10000
+    String lintFile = '.phabricator-lint'
+
     boolean commentWithConsoleLinkOnFailure
 
     /**
@@ -52,5 +56,28 @@ class PhabricatorNotifierContext implements Context {
      */
     void commentWithConsoleLinkOnFailure(boolean commentWithConsoleLinkOnFailure = true) {
         this.commentWithConsoleLinkOnFailure = commentWithConsoleLinkOnFailure
+    }
+
+    /**
+     * Read lint violations in Harbormaster JSON format from a file.
+     * Defaults to {@code true}.
+     */
+    void processLint(boolean processLint = true) {
+        this.processLint = processLint
+    }
+
+    /**
+     * Report lint violations to Phabricator from this file.
+     * Defaults to {@code '.phabricator-lint}.
+     */
+    void lintFile(String lintFile) {
+        this.lintFile = lintFile
+    }
+
+    /**
+     * Maximum lint violation character length. Defaults to {@code 10000}.
+     */
+    void lintSize(int lintSize) {
+        this.lintSize = lintSize
     }
 }
