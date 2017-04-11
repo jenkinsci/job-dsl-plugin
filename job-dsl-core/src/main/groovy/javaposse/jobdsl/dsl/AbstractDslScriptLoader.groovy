@@ -122,7 +122,7 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
 
     protected GroovyCodeSource createGroovyCodeSource(ScriptRequest scriptRequest) {
         if (scriptRequest.body != null) {
-            new GroovyCodeSource(scriptRequest.body, scriptRequest.scriptPath ?: 'script', DEFAULT_CODE_BASE)
+            new GroovyCodeSource(scriptRequest.body, scriptRequest.scriptName ?: 'script', DEFAULT_CODE_BASE)
         } else {
             new GroovyCodeSource(new URL(scriptRequest.urlRoots[0], scriptRequest.location))
         }
