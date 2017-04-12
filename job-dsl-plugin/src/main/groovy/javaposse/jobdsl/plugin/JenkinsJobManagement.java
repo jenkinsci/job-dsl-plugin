@@ -391,7 +391,9 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             if (configProvider != null) {
                 Config config = findConfig(configProvider, name);
                 if (config != null) {
-                    logDeprecationWarning("finding managed config files by name");
+                    if (!config.id.equals(name)) {
+                        logDeprecationWarning("finding managed config files by name");
+                    }
                     return config.id;
                 }
             }
