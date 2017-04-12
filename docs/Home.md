@@ -29,6 +29,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.61 (unreleased)
+  * Fixed a problem with `readFileFromWorkspace`
+    ([JENKINS-43537](https://issues.jenkins-ci.org/browse/JENKINS-43537))
 * 1.60 (April 10 2017)
   * Enabled script approval with the
     [Script Security Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin), see
