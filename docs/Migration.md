@@ -1,3 +1,11 @@
+## Migrating to 1.61
+
+### Stash Notifier Plugin
+
+Support for versions older than 1.11.6 of the
+[Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.60
 
 ### Script Security
