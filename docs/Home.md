@@ -29,6 +29,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.61 (unreleased)
+  * Enhanced support for the [Join Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin)
+    ([JENKINS-43219](https://issues.jenkins-ci.org/browse/JENKINS-43219))
+  * Support for the older versions of the [Join Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin) is
+    deprecated, see [Migration](Migration#migrating-to-161)
 * 1.60 (April 10 2017)
   * Enabled script approval with the
     [Script Security Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin), see
