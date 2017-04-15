@@ -263,14 +263,18 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public InputStream streamFileInWorkspace(String relLocation) throws IOException, InterruptedException {
-        project.checkPermission(Item.WORKSPACE);
+        if (project != null) {
+            project.checkPermission(Item.WORKSPACE);
+        }
         FilePath filePath = locateValidFileInWorkspace(workspace, relLocation);
         return filePath.read();
     }
 
     @Override
     public String readFileInWorkspace(String relLocation) throws IOException, InterruptedException {
-        project.checkPermission(Item.WORKSPACE);
+        if (project != null) {
+            project.checkPermission(Item.WORKSPACE);
+        }
         FilePath filePath = locateValidFileInWorkspace(workspace, relLocation);
         return filePath.readToString();
     }

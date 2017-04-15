@@ -31,6 +31,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.61 (unreleased)
   * Enhanced support for the [Join Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin)
     ([JENKINS-43219](https://issues.jenkins-ci.org/browse/JENKINS-43219))
+  * Fixed a problem with `readFileFromWorkspace`
+    ([JENKINS-43537](https://issues.jenkins-ci.org/browse/JENKINS-43537))
   * Do not print a warning when config file name equals config file identifier
     ([JENKINS-43345](https://issues.jenkins-ci.org/browse/JENKINS-43345))
   * Support for the older versions of the [Join Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin) is
