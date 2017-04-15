@@ -5086,6 +5086,7 @@ class PublisherContextSpec extends Specification {
             evenIfDownstreamUnstable[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('join', '1.15')
+        1 * jobManagement.logPluginDeprecationWarning('join', '1.21')
     }
 
     def 'joinTrigger with all options'() {
@@ -5118,6 +5119,76 @@ class PublisherContextSpec extends Specification {
             evenIfDownstreamUnstable[0].value() == true
         }
         1 * jobManagement.requireMinimumPluginVersion('join', '1.15')
+        1 * jobManagement.logPluginDeprecationWarning('join', '1.21')
+    }
+
+    def 'joinTrigger with no options and plugin version 1.20'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('join', '1.20') >> true
+
+        when:
+        context.joinTrigger {
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'join.JoinTrigger'
+            children().size() == 3
+            joinProjects[0].value() == ''
+            joinPublishers[0].value().empty
+            with(resultThreshold[0]) {
+                children().size() == 4
+                name[0].value() == 'SUCCESS'
+                ordinal[0].value() == 0
+                color[0].value() == 'BLUE'
+                completeBuild[0].value() == true
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('join', '1.15')
+        1 * jobManagement.logPluginDeprecationWarning('join', '1.21')
+    }
+
+    def 'joinTrigger with all options and plugin version 1.20'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('join', '1.20') >> true
+
+        when:
+        context.joinTrigger {
+            projects('one')
+            projects('two', 'three')
+            publishers {
+                downstreamParameterized {
+                    trigger('upload-to-staging') {
+                        parameters {
+                            currentBuild()
+                        }
+                    }
+                }
+            }
+            resultThreshold('FAILURE')
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'join.JoinTrigger'
+            children().size() == 3
+            joinProjects[0].value() == 'one, two, three'
+            with(joinPublishers[0]) {
+                children().size() == 1
+                children()[0].name() == 'hudson.plugins.parameterizedtrigger.BuildTrigger'
+                children()[0].children().size() == 1
+            }
+            with(resultThreshold[0]) {
+                children().size() == 4
+                name[0].value() == 'FAILURE'
+                ordinal[0].value() == 2
+                color[0].value() == 'RED'
+                completeBuild[0].value() == true
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('join', '1.15')
+        1 * jobManagement.requireMinimumPluginVersion('join', '1.20')
+        1 * jobManagement.logPluginDeprecationWarning('join', '1.21')
     }
 
     def 'joinTrigger with unsupported publisher'() {

@@ -16,6 +16,7 @@ import static javaposse.jobdsl.dsl.ContextHelper.toNamedNode
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COLOR_MAP
+import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COMPLETED_BUILD
 import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_ORDINAL_MAP
 
 @ContextType('hudson.tasks.Publisher')
@@ -1536,13 +1537,24 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'join', minimumVersion = '1.15')
     void joinTrigger(@DslContext(JoinTriggerContext) Closure joinTriggerClosure) {
+        jobManagement.logPluginDeprecationWarning('join', '1.21')
+
         JoinTriggerContext joinTriggerContext = new JoinTriggerContext(jobManagement, item)
         ContextHelper.executeInContext(joinTriggerClosure, joinTriggerContext)
 
         publisherNodes << new NodeBuilder().'join.JoinTrigger' {
             joinProjects(joinTriggerContext.projects.join(', '))
             joinPublishers(joinTriggerContext.publisherContext.publisherNodes)
-            evenIfDownstreamUnstable(joinTriggerContext.evenIfDownstreamUnstable)
+            if (jobManagement.isMinimumPluginVersionInstalled('join', '1.20')) {
+                resultThreshold {
+                    name(joinTriggerContext.resultThreshold)
+                    ordinal(THRESHOLD_ORDINAL_MAP[joinTriggerContext.resultThreshold])
+                    color(THRESHOLD_COLOR_MAP[joinTriggerContext.resultThreshold])
+                    completeBuild(THRESHOLD_COMPLETED_BUILD[joinTriggerContext.resultThreshold])
+                }
+            } else {
+                evenIfDownstreamUnstable(joinTriggerContext.evenIfDownstreamUnstable)
+            }
         }
     }
 

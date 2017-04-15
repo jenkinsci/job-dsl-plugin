@@ -1,3 +1,10 @@
+## Migrating to 1.61
+
+### Join Plugin
+
+Support for versions older than 1.21 of the [Join Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.60
 
 ### Script Security
