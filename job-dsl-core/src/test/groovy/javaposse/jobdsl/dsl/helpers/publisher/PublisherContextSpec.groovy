@@ -2971,6 +2971,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
+            children().size() == 6
             stashServerBaseUrl[0].value().empty
             stashUserName[0].value().empty
             stashUserPassword[0].value().empty
@@ -2979,13 +2980,16 @@ class PublisherContextSpec extends Specification {
             includeBuildNumberInKey[0].value() == false
         }
         1 * jobManagement.requirePlugin('stashNotifier')
+        1 * jobManagement.logPluginDeprecationWarning('stashNotifier', '1.11.6')
     }
 
     def 'stashNotifier with configuration of all parameters'() {
         when:
         context.stashNotifier {
+            serverBaseUrl('test')
             commitSha1('sha1')
             keepRepeatedBuilds(true)
+            ignoreUnverifiedSSLCertificates(true)
         }
 
         then:
@@ -2993,21 +2997,25 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
-            stashServerBaseUrl[0].value().empty
+            children().size() == 6
+            stashServerBaseUrl[0].value() == 'test'
             stashUserName[0].value().empty
             stashUserPassword[0].value().empty
-            ignoreUnverifiedSSLPeer[0].value() == false
+            ignoreUnverifiedSSLPeer[0].value() == true
             commitSha1[0].value() == 'sha1'
             includeBuildNumberInKey[0].value() == true
         }
         1 * jobManagement.requirePlugin('stashNotifier')
+        1 * jobManagement.logPluginDeprecationWarning('stashNotifier', '1.11.6')
     }
 
     def 'stashNotifier with configuration of all parameters using defaults for boolean parameter'() {
         when:
         context.stashNotifier {
+            serverBaseUrl('test')
             commitSha1('sha1')
             keepRepeatedBuilds()
+            ignoreUnverifiedSSLCertificates()
         }
 
         then:
@@ -3015,14 +3023,70 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
-            stashServerBaseUrl[0].value().empty
+            children().size() == 6
+            stashServerBaseUrl[0].value() == 'test'
             stashUserName[0].value().empty
             stashUserPassword[0].value().empty
-            ignoreUnverifiedSSLPeer[0].value() == false
+            ignoreUnverifiedSSLPeer[0].value() == true
             commitSha1[0].value() == 'sha1'
             includeBuildNumberInKey[0].value() == true
         }
         1 * jobManagement.requirePlugin('stashNotifier')
+        1 * jobManagement.logPluginDeprecationWarning('stashNotifier', '1.11.6')
+    }
+
+    def 'stashNotifier with default configuration and plugin version 1.9.0'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('stashNotifier', '1.9.0') >> true
+
+        when:
+        context.stashNotifier {
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
+            children().size() == 5
+            stashServerBaseUrl[0].value().empty
+            credentialsId[0].value().empty
+            ignoreUnverifiedSSLPeer[0].value() == false
+            commitSha1[0].value() == ''
+            includeBuildNumberInKey[0].value() == false
+        }
+        1 * jobManagement.requirePlugin('stashNotifier')
+        1 * jobManagement.logPluginDeprecationWarning('stashNotifier', '1.11.6')
+    }
+
+    def 'stashNotifier with configuration of all parameters and plugin version 1.9.0'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('stashNotifier', '1.9.0') >> true
+
+        when:
+        context.stashNotifier {
+            serverBaseUrl('test')
+            credentialsId('foo')
+            commitSha1('sha1')
+            keepRepeatedBuilds(true)
+            ignoreUnverifiedSSLCertificates(true)
+        }
+
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
+            children().size() == 5
+            stashServerBaseUrl[0].value() == 'test'
+            credentialsId[0].value() == 'foo'
+            ignoreUnverifiedSSLPeer[0].value() == true
+            commitSha1[0].value() == 'sha1'
+            includeBuildNumberInKey[0].value() == true
+        }
+        1 * jobManagement.requirePlugin('stashNotifier')
+        1 * jobManagement.requireMinimumPluginVersion('stashNotifier', '1.9.0')
+        1 * jobManagement.logPluginDeprecationWarning('stashNotifier', '1.11.6')
     }
 
     def 'mavenDeploymentLinker with regex'() {
