@@ -117,7 +117,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.30
      * @see #multiJob(java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.16', failIfMissing = true)
+    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.22', failIfMissing = true)
     MultiJob multiJob(String name)
 
     /**
@@ -125,7 +125,7 @@ interface DslFactory extends ViewFactory {
      *
      * @since 1.31
      */
-    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.16', failIfMissing = true)
+    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.22', failIfMissing = true)
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure)
 
     /**

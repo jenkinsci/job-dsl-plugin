@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.helpers.scm
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class GitMergeOptionsContext extends AbstractContext {
     private static final Set<String> VALID_STRATEGIES = [
@@ -53,7 +52,6 @@ class GitMergeOptionsContext extends AbstractContext {
      *
      * @since 1.45
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.3.5')
     void fastForwardMode(FastForwardMergeMode fastForwardMode) {
         this.fastForwardMode = fastForwardMode
     }

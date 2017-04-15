@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.Preconditions
 
 class PhaseContext extends AbstractContext {
@@ -47,7 +46,6 @@ class PhaseContext extends AbstractContext {
      *
      * @since 1.52
      */
-    @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.22')
     void executionType(String executionType) {
         Preconditions.checkArgument(
                 VALID_EXECUTION_TYPES.contains(executionType),

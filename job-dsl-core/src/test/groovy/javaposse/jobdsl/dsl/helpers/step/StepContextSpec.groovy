@@ -1054,8 +1054,7 @@ class StepContextSpec extends Specification {
         Node selectorNode9 = context.stepNodes[8].selector[0]
         selectorNode9.attribute('class') == 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector'
         selectorNode9.children().size() == 0
-        1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.17')
-        1 * jobManagement.logPluginDeprecationWarning('jenkins-multijob-plugin', '1.22')
+        1 * jobManagement.requireMinimumPluginVersion('jenkins-multijob-plugin', '1.22')
     }
 
     def 'copyArtifacts with selector extension'() {
@@ -1885,7 +1884,7 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.26')
         1 * jobManagement.requirePlugin('nodelabelparameter')
-        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.5.3')
     }
 
     def 'call downstream build step with no args'() {
@@ -2715,8 +2714,7 @@ class StepContextSpec extends Specification {
         context.stepNodes[0].name() == 'org.jvnet.hudson.plugins.exclusion.CriticalBlockStart'
         context.stepNodes[1].name() == 'hudson.tasks.Shell'
         context.stepNodes[2].name() == 'org.jvnet.hudson.plugins.exclusion.CriticalBlockEnd'
-        1 * jobManagement.requirePlugin('Exclusion')
-        1 * jobManagement.logPluginDeprecationWarning('Exclusion', '0.12')
+        1 * jobManagement.requireMinimumPluginVersion('Exclusion', '0.12')
     }
 
     def 'call rake method'() {

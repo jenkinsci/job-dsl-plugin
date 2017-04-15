@@ -25,9 +25,4 @@ abstract class AbstractExtensibleContext extends AbstractContext implements Exte
     }
 
     protected abstract void addExtensionNode(Node node)
-
-    @Deprecated
-    protected static Node toNamedNode(String name, Node node) {
-        ContextHelper.toNamedNode(name, node)
-    }
 }

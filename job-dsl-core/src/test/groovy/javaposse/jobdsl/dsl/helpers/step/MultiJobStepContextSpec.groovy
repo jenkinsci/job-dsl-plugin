@@ -17,9 +17,10 @@ class MultiJobStepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
-            children().size() == 3
+            children().size() == 4
             phaseName[0].value() == 'First'
             continuationCondition[0].value() == 'SUCCESSFUL'
+            executionType[0].value() == 'PARALLEL'
             phaseJobs[0].value().empty
         }
 
@@ -32,9 +33,10 @@ class MultiJobStepContextSpec extends Specification {
         then:
         with(context.stepNodes[1]) {
             name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
-            children().size() == 3
+            children().size() == 4
             phaseName[0].value() == 'Second'
             continuationCondition[0].value() == 'SUCCESSFUL'
+            executionType[0].value() == 'PARALLEL'
             phaseJobs[0].children().size() == 1
             with(phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]) {
                 children().size() == 7
@@ -60,9 +62,10 @@ class MultiJobStepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
-            children().size() == 3
+            children().size() == 4
             phaseName[0].value() == 'Third'
             continuationCondition[0].value() == 'SUCCESSFUL'
+            executionType[0].value() == 'PARALLEL'
             phaseJobs[0].children().size() == 3
             phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0].jobName[0].value() == 'JobA'
             phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[1].jobName[0].value() == 'JobB'
@@ -100,9 +103,10 @@ class MultiJobStepContextSpec extends Specification {
 
         then:
         with(context.stepNodes[0]) {
-            children().size() == 3
+            children().size() == 4
             phaseName[0].value() == 'Fourth'
             continuationCondition[0].value() == 'SUCCESSFUL'
+            executionType[0].value() == 'PARALLEL'
             phaseJobs[0].children().size() == 1
             with(phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]) {
                 children().size() == 8
@@ -167,7 +171,7 @@ class MultiJobStepContextSpec extends Specification {
             }
         }
 
-        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.5.3')
         1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.26')
     }
 
@@ -185,9 +189,10 @@ class MultiJobStepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'com.tikal.jenkins.plugins.multijob.MultiJobBuilder'
-            children().size() == 3
+            children().size() == 4
             phaseName[0].value() == 'Second'
             continuationCondition[0].value() == 'SUCCESSFUL'
+            executionType[0].value() == 'PARALLEL'
             phaseJobs[0].children().size() == 1
             with(phaseJobs[0].'com.tikal.jenkins.plugins.multijob.PhaseJobsConfig'[0]) {
                 children().size() == 7
@@ -225,9 +230,6 @@ class MultiJobStepContextSpec extends Specification {
     }
 
     def 'call phase with unsupported execution type'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.22') >> true
-
         when:
         context.phase('test') {
             executionType('FOO')
@@ -238,9 +240,6 @@ class MultiJobStepContextSpec extends Specification {
     }
 
     def 'call phase with supported condition'(String condition) {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.22') >> true
-
         when:
         context.phase('test', condition) {
         }
@@ -260,9 +259,6 @@ class MultiJobStepContextSpec extends Specification {
     }
 
     def 'call phase with supported execution type'(String execution) {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('jenkins-multijob-plugin', '1.22') >> true
-
         when:
         context.phase('test') {
             executionType(execution)

@@ -43,6 +43,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Support for the older versions of the
     [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-161)
+  * Removed anything that has been deprecated in 1.52, see [Migration](Migration#migrating-to-152)
 * 1.60 (April 10 2017)
   * Enabled script approval with the
     [Script Security Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin), see

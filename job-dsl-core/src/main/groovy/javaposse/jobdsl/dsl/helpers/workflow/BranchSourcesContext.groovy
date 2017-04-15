@@ -24,10 +24,8 @@ class BranchSourcesContext extends AbstractExtensibleContext {
     /**
      * Adds a Git branch source. Can be called multiple times to add more branch sources.
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.2.6')
+    @RequiresPlugin(id = 'git', minimumVersion = '2.5.3')
     void git(@DslContext(GitBranchSourceContext) Closure branchSourceClosure) {
-        jobManagement.logPluginDeprecationWarning('git', '2.5.3')
-
         GitBranchSourceContext context = new GitBranchSourceContext()
         ContextHelper.executeInContext(branchSourceClosure, context)
 

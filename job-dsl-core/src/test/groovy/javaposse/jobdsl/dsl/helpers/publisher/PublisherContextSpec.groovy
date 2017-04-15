@@ -1417,7 +1417,7 @@ class PublisherContextSpec extends Specification {
         second.configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0] instanceof Node
 
         1 * jobManagement.requireMinimumPluginVersion('parameterized-trigger', '2.26')
-        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.5.3')
 
         when:
         context.downstreamParameterized {
@@ -2517,8 +2517,7 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes[0].pushMerge[0].value() == false
         context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
         context.publisherNodes[0].forcePush[0].value() == false
-        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.5.3')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.5.3')
     }
 
     def 'call git with all options'() {
@@ -2559,8 +2558,7 @@ class PublisherContextSpec extends Specification {
                 branchName[0].value() == 'master'
             }
         }
-        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.5.3')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.5.3')
     }
 
     def 'call git with minimal tag options'() {
@@ -2587,8 +2585,7 @@ class PublisherContextSpec extends Specification {
                 updateTag[0].value() == false
             }
         }
-        1 * jobManagement.requireMinimumPluginVersion('git', '2.2.6')
-        1 * jobManagement.logPluginDeprecationWarning('git', '2.5.3')
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.5.3')
     }
 
     def 'call git without tag targetRepoName'() {
@@ -3211,72 +3208,6 @@ class PublisherContextSpec extends Specification {
             externalDelete[0].value() == 'rm'
         }
         1 * jobManagement.requirePlugin('ws-cleanup')
-    }
-
-    def 'call rundeck with invalid jobId should fail'() {
-        when:
-        context.rundeck(id)
-
-        then:
-        Exception exception = thrown(DslScriptException)
-        exception.message =~ /\(.+, line \d+\) jobIdentifier cannot be null or empty/
-
-        where:
-        id << [null, '']
-    }
-
-    def 'call rundeck with all args should create valid rundeck node'() {
-        when:
-        context.rundeck('jobId') {
-            options(key1: 'value1', key2: 'value2')
-            options(key4: 'value4')
-            option('key3', 'value3')
-            nodeFilters(key1: 'value1', key2: 'value2')
-            nodeFilters(key4: 'value4')
-            nodeFilter('key3', 'value3')
-            tag('tag')
-            shouldWaitForRundeckJob()
-            shouldFailTheBuild()
-            includeRundeckLogs()
-            rundeckInstance('myRundeckInstance')
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
-            children().size() == 8
-            jobId[0].value() == 'jobId'
-            options[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-            nodeFilters[0].value() == 'key1=value1\nkey2=value2\nkey4=value4\nkey3=value3'
-            tag[0].value() == 'tag'
-            shouldWaitForRundeckJob[0].value() == true
-            shouldFailTheBuild[0].value() == true
-            includeRundeckLogs[0].value() == true
-            rundeckInstance[0].value() == 'myRundeckInstance'
-        }
-        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.5.4')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'call rundeck with default values'() {
-        when:
-        context.rundeck('jobId')
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.rundeck.RundeckNotifier'
-            children().size() == 8
-            jobId[0].value() == 'jobId'
-            options[0].value().isEmpty()
-            nodeFilters[0].value().isEmpty()
-            tag[0].value() == ''
-            shouldWaitForRundeckJob[0].value() == false
-            shouldFailTheBuild[0].value() == false
-            includeRundeckLogs[0].value() == false
-            rundeckInstance[0].value() == 'Default'
-        }
-        1 * jobManagement.requireMinimumPluginVersion('rundeck', '3.5.4')
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call s3 without profile'(String profile) {
@@ -4680,51 +4611,6 @@ class PublisherContextSpec extends Specification {
             delay[0].delay[0].value() == 30
         }
         1 * jobManagement.requireMinimumPluginVersion('naginator', '1.15')
-    }
-
-    def 'mergePullRequest with no options'() {
-        when:
-        context.mergePullRequest()
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
-            children().size() == 6
-            mergeComment[0].value() == ''
-            onlyTriggerPhrase[0].value() == false
-            onlyAdminsMerge[0].value() == false
-            disallowOwnCode[0].value() == false
-            failOnNonMerge[0].value() == false
-            deleteOnMerge[0].value() == false
-        }
-        1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.26')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'mergePullRequest with all options'() {
-        when:
-        context.mergePullRequest {
-            mergeComment('Test comment')
-            onlyTriggerPhrase()
-            onlyAdminsMerge()
-            disallowOwnCode()
-            failOnNonMerge()
-            deleteOnMerge()
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge'
-            children().size() == 6
-            mergeComment[0].value() == 'Test comment'
-            onlyTriggerPhrase[0].value() == true
-            onlyAdminsMerge[0].value() == true
-            disallowOwnCode[0].value() == true
-            failOnNonMerge[0].value() == true
-            deleteOnMerge[0].value() == true
-        }
-        1 * jobManagement.requireMinimumPluginVersion('ghprb', '1.26')
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'publishBuild with no options'() {

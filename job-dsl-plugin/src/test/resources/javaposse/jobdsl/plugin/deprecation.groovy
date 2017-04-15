@@ -1,6 +1,1 @@
-job('a') {
-    steps {
-        criticalBlock {
-        }
-    }
-}
+jm.logPluginDeprecationWarning('matrix-auth', '2.0')

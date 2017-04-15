@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.scm
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class GitCloneOptionsContext extends AbstractContext {
     boolean shallow
@@ -40,7 +39,6 @@ class GitCloneOptionsContext extends AbstractContext {
      *
      * @since 1.52
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.5.3')
     void honorRefspec(boolean honorRefspec = true) {
         this.honorRefspec = honorRefspec
     }

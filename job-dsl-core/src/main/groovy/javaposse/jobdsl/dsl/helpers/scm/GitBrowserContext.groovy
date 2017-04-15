@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.scm
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class GitBrowserContext extends AbstractContext {
     Node browser
@@ -49,7 +48,6 @@ class GitBrowserContext extends AbstractContext {
      *
      * @since 1.44
      */
-    @RequiresPlugin(id = 'git', minimumVersion = '2.3')
     void gitiles(String url) {
         browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.Gitiles') {
             delegate.url(url)

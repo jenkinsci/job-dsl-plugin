@@ -82,9 +82,4 @@ abstract class View extends AbstractContext {
         ContextHelper.executeConfigureBlocks(root, configureBlocks)
         root
     }
-
-    @Deprecated
-    protected void execute(Closure rootClosure) {
-        configure(rootClosure)
-    }
 }
