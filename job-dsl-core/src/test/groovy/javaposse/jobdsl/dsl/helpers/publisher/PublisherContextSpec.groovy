@@ -760,6 +760,80 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('testng-plugin', '1.10')
     }
 
+    def 'call valgrind archive with minimal args'() {
+        when:
+        context.archiveValgrind('**/valgrind.xml')
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.valgrind.ValgrindPublisher'
+            children().size() == 1
+
+            with(valgrindPublisherConfig[0]) {
+                children().size() == 11
+
+                pattern[0].value() == '**/valgrind.xml'
+                failThresholdInvalidReadWrite[0].value() == ''
+                failThresholdDefinitelyLost[0].value() == ''
+                failThresholdTotal[0].value() == ''
+                unstableThresholdInvalidReadWrite[0].value() == ''
+                unstableThresholdDefinitelyLost[0].value() == ''
+                unstableThresholdTotal[0].value() == ''
+                publishResultsForAbortedBuilds[0].value() == false
+                publishResultsForFailedBuilds[0].value() == false
+                failBuildOnMissingReports[0].value() == false
+                failBuildOnInvalidReports[0].value() == false
+            }
+        }
+
+        1 * jobManagement.requireMinimumPluginVersion('valgrind', '0.21')
+    }
+
+    def 'call valgrind archive with all args'() {
+        when:
+        context.archiveValgrind('**/valgrind.xml') {
+            publishAborted()
+            publishFailed()
+            failOnMissingReports()
+            failOnInvalidReports()
+
+            failThresholds {
+                invalidReadWrite(5)
+                definitelyLost(10)
+                total(15)
+            }
+            unstableThresholds {
+                invalidReadWrite(25)
+                definitelyLost(30)
+                total(35)
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'org.jenkinsci.plugins.valgrind.ValgrindPublisher'
+            children().size() == 1
+
+            with(valgrindPublisherConfig[0]) {
+                children().size() == 11
+
+                pattern[0].value() == '**/valgrind.xml'
+                failThresholdInvalidReadWrite[0].value() == '5'
+                failThresholdDefinitelyLost[0].value() == '10'
+                failThresholdTotal[0].value() == '15'
+                unstableThresholdInvalidReadWrite[0].value() == '25'
+                unstableThresholdDefinitelyLost[0].value() == '30'
+                unstableThresholdTotal[0].value() == '35'
+                publishResultsForAbortedBuilds[0].value() == true
+                publishResultsForFailedBuilds[0].value() == true
+                failBuildOnMissingReports[0].value() == true
+                failBuildOnInvalidReports[0].value() == true
+            }
+        }
+
+        1 * jobManagement.requireMinimumPluginVersion('valgrind', '0.21')
+    }
+
     def 'calling gatling archive with minimal args'() {
         when:
         context.archiveGatling()

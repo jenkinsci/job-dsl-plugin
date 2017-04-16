@@ -216,6 +216,34 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Publishes Valgrind test result reports.
+     *
+     * @since 1.51
+     */
+    @RequiresPlugin(id = 'valgrind', minimumVersion = '0.21')
+    void archiveValgrind(String glob, @DslContext(ArchiveValgrindContext) Closure valgrindClosure = null) {
+
+        ArchiveValgrindContext valgrindContext = new ArchiveValgrindContext(jobManagement)
+        ContextHelper.executeInContext(valgrindClosure, valgrindContext)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.valgrind.ValgrindPublisher' {
+            valgrindPublisherConfig {
+                pattern(glob)
+                failThresholdInvalidReadWrite(valgrindContext.failThresholdsContext.invalidReadWrite)
+                failThresholdDefinitelyLost(valgrindContext.failThresholdsContext.definitelyLost)
+                failThresholdTotal(valgrindContext.failThresholdsContext.total)
+                unstableThresholdInvalidReadWrite(valgrindContext.unstableThresholdsContext.invalidReadWrite)
+                unstableThresholdDefinitelyLost(valgrindContext.unstableThresholdsContext.definitelyLost)
+                unstableThresholdTotal(valgrindContext.unstableThresholdsContext.total)
+                publishResultsForAbortedBuilds(valgrindContext.publishResultsForAbortedBuilds)
+                publishResultsForFailedBuilds(valgrindContext.publishResultsForFailedBuilds)
+                failBuildOnMissingReports(valgrindContext.failBuildOnMissingReports)
+                failBuildOnInvalidReports(valgrindContext.failBuildOnInvalidReports)
+            }
+        }
+    }
+
+    /**
      * Publishes Gatling load simulation reports.
      *
      * @since 1.41
