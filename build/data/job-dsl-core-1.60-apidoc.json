@@ -1,5 +1,5 @@
 {
-    "version": "1.61",
+    "version": "1.60",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -591,6 +591,12 @@
                                 }
                             ],
                             "availableSince": "1.44",
+                            "plugins": [
+                                {
+                                    "id": "git",
+                                    "minimumVersion": "2.3"
+                                }
+                            ],
                             "html": "Use Gitiles as repository browser.",
                             "firstSentenceCommentText": "Use Gitiles as repository browser."
                         }
@@ -649,6 +655,12 @@
                                     "type": "String"
                                 }
                             ],
+                            "plugins": [
+                                {
+                                    "id": "git",
+                                    "minimumVersion": "2.3.1"
+                                }
+                            ],
                             "html": "Selects commits to be build by maximum age and ancestor commit.",
                             "firstSentenceCommentText": "Selects commits to be build by maximum age and ancestor commit."
                         }
@@ -701,6 +713,12 @@
                                 }
                             ],
                             "availableSince": "1.52",
+                            "plugins": [
+                                {
+                                    "id": "git",
+                                    "minimumVersion": "2.5.3"
+                                }
+                            ],
                             "html": "Honor refspec on initial clone.",
                             "firstSentenceCommentText": "Honor refspec on initial clone."
                         }
@@ -788,6 +806,12 @@
                                 }
                             ],
                             "availableSince": "1.45",
+                            "plugins": [
+                                {
+                                    "id": "git",
+                                    "minimumVersion": "2.3.5"
+                                }
+                            ],
                             "html": "Sets fast-forward merge mode. Defaults to <TT>FastForwardMergeMode.FF</TT>",
                             "firstSentenceCommentText": "Sets fast-forward merge mode. "
                         }
@@ -894,6 +918,12 @@
                                 }
                             ],
                             "availableSince": "1.46",
+                            "plugins": [
+                                {
+                                    "id": "git",
+                                    "minimumVersion": "2.4.1"
+                                }
+                            ],
                             "html": "Specifies a folder containing a repository that will be used by Git as a reference during clone operations.",
                             "firstSentenceCommentText": "Specifies a folder containing a repository that will be used by Git as a reference during clone operations."
                         }
@@ -910,6 +940,12 @@
                                 }
                             ],
                             "availableSince": "1.46",
+                            "plugins": [
+                                {
+                                    "id": "git",
+                                    "minimumVersion": "2.2.8"
+                                }
+                            ],
                             "html": "Specifies a timeout (in minutes) for submodules operations.",
                             "firstSentenceCommentText": "Specifies a timeout (in minutes) for submodules operations."
                         }
@@ -1896,7 +1932,7 @@
                             "plugins": [
                                 {
                                     "id": "git",
-                                    "minimumVersion": "2.5.3"
+                                    "minimumVersion": "2.2.6"
                                 }
                             ],
                             "html": "Adds a Git SCM source.",
@@ -1918,7 +1954,7 @@
                             "plugins": [
                                 {
                                     "id": "git",
-                                    "minimumVersion": "2.5.3"
+                                    "minimumVersion": "2.2.6"
                                 }
                             ],
                             "html": "Adds a Git SCM source. The \"Create a tag for every build\" option will be enabled by default.\r\n\r\n The closure parameter expects a configure block for direct manipulation of the generated XML. The <TT>scm</TT>\r\n node is passed into the configure block.",
@@ -1943,7 +1979,7 @@
                             "plugins": [
                                 {
                                     "id": "git",
-                                    "minimumVersion": "2.5.3"
+                                    "minimumVersion": "2.2.6"
                                 }
                             ],
                             "html": "Adds a Git SCM source. The \"Create a tag for every build\" option will be enabled by default.\r\n\r\n The closure parameter expects a configure block for direct manipulation of the generated XML. The <TT>scm</TT>\r\n node is passed into the configure block.",
@@ -1980,7 +2016,7 @@
                             "plugins": [
                                 {
                                     "id": "git",
-                                    "minimumVersion": "2.5.3"
+                                    "minimumVersion": "2.2.6"
                                 }
                             ],
                             "html": "Adds a Git SCM source for a GitHub repository.",
@@ -2017,7 +2053,7 @@
                             "plugins": [
                                 {
                                     "id": "git",
-                                    "minimumVersion": "2.5.3"
+                                    "minimumVersion": "2.2.6"
                                 }
                             ],
                             "html": "Adds a Git SCM source for a GitHub repository.\r\n\r\n The Git URL will be derived from the <TT>ownerAndProject</TT>, <TT>protocol</TT> and <TT>host</TT> parameters.\r\n Supported protocols are <TT>'https'</TT>, <TT>'ssh'</TT> and <TT>'git'</TT>.\r\n\r\n This will also configure the source browser to point to GitHub and set the GitHub project URL.\r\n\r\n The closure parameter expects a configure block for direct manipulation of the generated XML. The <TT>scm</TT>\r\n node is passed into the configure block.",
@@ -5701,7 +5737,7 @@
                             "plugins": [
                                 {
                                     "id": "git",
-                                    "minimumVersion": "2.5.3"
+                                    "minimumVersion": "2.2.6"
                                 }
                             ],
                             "html": "Passes the Git commit that was used in this build to the downstream builds.",
@@ -9319,7 +9355,6 @@
                                     "defaultValue": "true"
                                 }
                             ],
-                            "deprecated": true,
                             "html": "If set, runs the projects even if the downstream jobs are unstable. Defaults to <TT>false</TT>.",
                             "firstSentenceCommentText": "If set, runs the projects even if the downstream jobs are unstable. "
                         }
@@ -9353,28 +9388,6 @@
                             "html": "Adds publishers to run after all immediate downstream jobs have completed.\r\n\r\n Currently only the <a href='../../../../../PublisherContext.html#downstreamParameterized(groovy.lang.Closure)' title='downstreamParameterized'>downstreamParameterized</a>\r\n publisher is supported by the Join Plugin.",
                             "firstSentenceCommentText": "Adds publishers to run after all immediate downstream jobs have completed.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "resultThreshold",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "threshold",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.61",
-                            "plugins": [
-                                {
-                                    "id": "join",
-                                    "minimumVersion": "1.20"
-                                }
-                            ],
-                            "html": "The result threshold of the downstream projects to be checked. The join projects will be started only when all\r\n downstream projects have results that are better then selected. Defaults to <TT>'SUCCESS'</TT>.\r\n\r\n Possible thresholds are <TT>'SUCCESS'</TT>, <TT>'UNSTABLE'</TT>, <TT>'FAILURE'</TT> or <TT>'ABORTED'</TT>.",
-                            "firstSentenceCommentText": "The result threshold of the downstream projects to be checked. "
                         }
                     ]
                 }
@@ -9637,6 +9650,106 @@
                             ],
                             "html": "Include the commit list with titles and authors in the build message. Defaults to <TT>false</TT>.",
                             "firstSentenceCommentText": "Include the commit list with titles and authors in the build message. "
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.helpers.publisher.PullRequestPublisherContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.publisher.PullRequestPublisherContext",
+            "methods": [
+                {
+                    "name": "deleteOnMerge",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "deleteOnMerge",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Deletes the branch after a successful merge. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Deletes the branch after a successful merge. "
+                        }
+                    ]
+                },
+                {
+                    "name": "disallowOwnCode",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "disallowOwnCode",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Disallows a user to merge their own code. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Disallows a user to merge their own code. "
+                        }
+                    ]
+                },
+                {
+                    "name": "failOnNonMerge",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "failOnNonMerge",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Fails the build if the pull request can't be merged. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Fails the build if the pull request can't be merged. "
+                        }
+                    ]
+                },
+                {
+                    "name": "mergeComment",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "mergeComment",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets a comment that should show up when the merge command is sent to GitHub.",
+                            "firstSentenceCommentText": "Sets a comment that should show up when the merge command is sent to GitHub."
+                        }
+                    ]
+                },
+                {
+                    "name": "onlyAdminsMerge",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "onlyAdminsMerge",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Allows only admin users to trigger a pull request merge. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "Allows only admin users to trigger a pull request merge. "
+                        }
+                    ]
+                },
+                {
+                    "name": "onlyTriggerPhrase",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "onlyTriggerPhrase",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "If set, only commenting the trigger phrase in the pull request will trigger a merge. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "If set, only commenting the trigger phrase in the pull request will trigger a merge. "
                         }
                     ]
                 }
@@ -10797,7 +10910,7 @@
                             "plugins": [
                                 {
                                     "id": "jenkins-multijob-plugin",
-                                    "minimumVersion": "1.22"
+                                    "minimumVersion": "1.17"
                                 }
                             ],
                             "html": "Selects a build triggered by the current MultiJob build.",
@@ -14451,8 +14564,7 @@
                             "availableSince": "1.24",
                             "plugins": [
                                 {
-                                    "id": "Exclusion",
-                                    "minimumVersion": "0.12"
+                                    "id": "Exclusion"
                                 }
                             ],
                             "html": "Contains the build steps of the critical zone defined by the\r\n javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext#exclusionResources(java.lang.Iterable) wrapper.",
@@ -16609,6 +16721,159 @@
                 }
             ]
         },
+        "javaposse.jobdsl.dsl.helpers.publisher.RundeckContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.publisher.RundeckContext",
+            "methods": [
+                {
+                    "name": "includeRundeckLogs",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "includeRundeckLogs",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "availableSince": "1.43",
+                            "html": "If set, job execution logs from Rundeck are included in the console output. Defaults to <TT>false</TT>.\r\n\r\n This also enables waiting for Rundeck job executions to finish.",
+                            "firstSentenceCommentText": "If set, job execution logs from Rundeck are included in the console output. "
+                        }
+                    ]
+                },
+                {
+                    "name": "nodeFilter",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "key",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "value",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Add a filter to optionally filter the nodes on which Rundeck will run. Can be called multiple times to add more\r\n filters.",
+                            "firstSentenceCommentText": "Add a filter to optionally filter the nodes on which Rundeck will run. "
+                        }
+                    ]
+                },
+                {
+                    "name": "nodeFilters",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "nodeFilters",
+                                    "type": "Map<String, String>"
+                                }
+                            ],
+                            "html": "Adds filters to optionally filter the nodes on which Rundeck will run. Can be called multiple times to add more\r\n filters.",
+                            "firstSentenceCommentText": "Adds filters to optionally filter the nodes on which Rundeck will run. "
+                        }
+                    ]
+                },
+                {
+                    "name": "option",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "key",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "value",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Adds an option for the Rundeck job to execute. Can be called multiple times to add more options.",
+                            "firstSentenceCommentText": "Adds an option for the Rundeck job to execute. "
+                        }
+                    ]
+                },
+                {
+                    "name": "options",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "options",
+                                    "type": "Map<String, String>"
+                                }
+                            ],
+                            "html": "Adds options for the Rundeck job to execute. Can be called multiple times to add more options.",
+                            "firstSentenceCommentText": "Adds options for the Rundeck job to execute. "
+                        }
+                    ]
+                },
+                {
+                    "name": "rundeckInstance",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "rundeckInstance",
+                                    "type": "String"
+                                }
+                            ],
+                            "availableSince": "1.51",
+                            "html": "If set, selects the configured Rundeck instance from the global config.",
+                            "firstSentenceCommentText": "If set, selects the configured Rundeck instance from the global config."
+                        }
+                    ]
+                },
+                {
+                    "name": "shouldFailTheBuild",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "shouldFailTheBuild",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "If set, fails the Jenkins build if the job execution on Rundeck could not be scheduled. Defaults to\r\n <TT>false</TT>.",
+                            "firstSentenceCommentText": "If set, fails the Jenkins build if the job execution on Rundeck could not be scheduled. "
+                        }
+                    ]
+                },
+                {
+                    "name": "shouldWaitForRundeckJob",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "shouldWaitForRundeckJob",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "If set, waits for Rundeck job executions to finish. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "If set, waits for Rundeck job executions to finish. "
+                        }
+                    ]
+                },
+                {
+                    "name": "tag",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "tag",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "If set, checks if the SCM changelog contains the given tag, and only schedules a job execution if it is present.",
+                            "firstSentenceCommentText": "If set, checks if the SCM changelog contains the given tag, and only schedules a job execution if it is present."
+                        }
+                    ]
+                }
+            ]
+        },
         "javaposse.jobdsl.dsl.helpers.publisher.S3EntryContext": {
             "type": "javaposse.jobdsl.dsl.helpers.publisher.S3EntryContext",
             "methods": [
@@ -17027,44 +17292,6 @@
                     ]
                 },
                 {
-                    "name": "credentialsId",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "credentialsId",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.61",
-                            "plugins": [
-                                {
-                                    "id": "stashNotifier",
-                                    "minimumVersion": "1.9.0"
-                                }
-                            ],
-                            "html": "Sets credentials for authentication with the Stash server.",
-                            "firstSentenceCommentText": "Sets credentials for authentication with the Stash server."
-                        }
-                    ]
-                },
-                {
-                    "name": "ignoreUnverifiedSSLCertificates",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "ignoreUnverifiedSSLCertificates",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "If set, ignores invalid or self-signed SSL certificates. Defaults to <TT>false</TT>.",
-                            "firstSentenceCommentText": "If set, ignores invalid or self-signed SSL certificates. "
-                        }
-                    ]
-                },
-                {
                     "name": "keepRepeatedBuilds",
                     "signatures": [
                         {
@@ -17077,22 +17304,6 @@
                             ],
                             "html": "If set, results of repeated builds of the same commit will show up in Stash as a list of builds. Defaults to\r\n <TT>false</TT>.",
                             "firstSentenceCommentText": "If set, results of repeated builds of the same commit will show up in Stash as a list of builds. "
-                        }
-                    ]
-                },
-                {
-                    "name": "serverBaseUrl",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "serverBaseUrl",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.61",
-                            "html": "Sets the base URL of the Stash server to notify.",
-                            "firstSentenceCommentText": "Sets the base URL of the Stash server to notify."
                         }
                     ]
                 }
@@ -19334,7 +19545,7 @@
                             "plugins": [
                                 {
                                     "id": "git",
-                                    "minimumVersion": "2.5.3"
+                                    "minimumVersion": "2.2.6"
                                 }
                             ],
                             "html": "Pushes tags or branches to a Git repository.",
@@ -19611,6 +19822,32 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        mavenDeploymentLinker('.*.tar.gz')\r\n    }\r\n}"
+                },
+                {
+                    "name": "mergePullRequest",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "contextClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.33",
+                            "plugins": [
+                                {
+                                    "id": "ghprb",
+                                    "minimumVersion": "1.26"
+                                }
+                            ],
+                            "html": "Allows to merge the pull request if the build was successful.",
+                            "firstSentenceCommentText": "Allows to merge the pull request if the build was successful.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.PullRequestPublisherContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        mergePullRequest {\r\n            mergeComment('merged by Jenkins')\r\n            disallowOwnCode()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "moveJiraIssues",
@@ -20155,6 +20392,38 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        retryBuild {\r\n            rerunIfUnstable()\r\n            retryLimit(3)\r\n            progressiveDelay(60, 600)\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "rundeck",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobIdentifier",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "rundeckClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use the\r\nAutomatically Generated\r\nDSL instead",
+                            "deprecatedHtml": "use the\r\n<a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">Automatically Generated\r\nDSL</a> instead",
+                            "availableSince": "1.24",
+                            "plugins": [
+                                {
+                                    "id": "rundeck",
+                                    "minimumVersion": "3.5.4"
+                                }
+                            ],
+                            "html": "Triggers a Rundeck job.",
+                            "firstSentenceCommentText": "Triggers a Rundeck job.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.RundeckContext"
+                        }
+                    ],
+                    "examples": "job('example-1') {\r\n    publishers {\r\n        rundeck('13eba461-179d-40a1-8a08-bafee33fdc12')\r\n    }\r\n}\r\n\r\njob('example-2') {\r\n    publishers {\r\n        rundeck('13eba461-179d-40a1-8a08-bafee33fdc12') {\r\n            options(artifact: 'app', env: 'dev')\r\n            option('version', '1.1')\r\n            tag('deploy app to dev')\r\n            nodeFilters(hostname: 'dev(\\\\d+).company.net')\r\n            nodeFilter('tags', 'www+dev')\r\n            shouldWaitForRundeckJob()\r\n            shouldFailTheBuild()\r\n            includeRundeckLogs()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "s3",
@@ -21742,7 +22011,7 @@
                             "plugins": [
                                 {
                                     "id": "git",
-                                    "minimumVersion": "2.5.3"
+                                    "minimumVersion": "2.2.6"
                                 }
                             ],
                             "html": "Pushes tags or branches to a Git repository.",
@@ -22019,6 +22288,32 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        mavenDeploymentLinker('.*.tar.gz')\r\n    }\r\n}"
+                },
+                {
+                    "name": "mergePullRequest",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "contextClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.33",
+                            "plugins": [
+                                {
+                                    "id": "ghprb",
+                                    "minimumVersion": "1.26"
+                                }
+                            ],
+                            "html": "Allows to merge the pull request if the build was successful.",
+                            "firstSentenceCommentText": "Allows to merge the pull request if the build was successful.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.PullRequestPublisherContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        mergePullRequest {\r\n            mergeComment('merged by Jenkins')\r\n            disallowOwnCode()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "moveJiraIssues",
@@ -22563,6 +22858,38 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        retryBuild {\r\n            rerunIfUnstable()\r\n            retryLimit(3)\r\n            progressiveDelay(60, 600)\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "rundeck",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobIdentifier",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "rundeckClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use the\r\nAutomatically Generated\r\nDSL instead",
+                            "deprecatedHtml": "use the\r\n<a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">Automatically Generated\r\nDSL</a> instead",
+                            "availableSince": "1.24",
+                            "plugins": [
+                                {
+                                    "id": "rundeck",
+                                    "minimumVersion": "3.5.4"
+                                }
+                            ],
+                            "html": "Triggers a Rundeck job.",
+                            "firstSentenceCommentText": "Triggers a Rundeck job.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.RundeckContext"
+                        }
+                    ],
+                    "examples": "job('example-1') {\r\n    publishers {\r\n        rundeck('13eba461-179d-40a1-8a08-bafee33fdc12')\r\n    }\r\n}\r\n\r\njob('example-2') {\r\n    publishers {\r\n        rundeck('13eba461-179d-40a1-8a08-bafee33fdc12') {\r\n            options(artifact: 'app', env: 'dev')\r\n            option('version', '1.1')\r\n            tag('deploy app to dev')\r\n            nodeFilters(hostname: 'dev(\\\\d+).company.net')\r\n            nodeFilter('tags', 'www+dev')\r\n            shouldWaitForRundeckJob()\r\n            shouldFailTheBuild()\r\n            includeRundeckLogs()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "s3",
@@ -23597,6 +23924,41 @@
                 }
             ]
         },
+        "javaposse.jobdsl.dsl.helpers.triggers.RundeckTriggerContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.triggers.RundeckTriggerContext",
+            "methods": [
+                {
+                    "name": "executionStatuses",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "executionStatuses",
+                                    "type": "String..."
+                                }
+                            ],
+                            "html": "Only triggers a build if the status of the Rundeck execution at the origin of the notification matches one of\r\n  the given statuses.\r\n\r\n Possible values for are <TT>'SUCCEEDED'</TT>, <TT>'FAILED'</TT> and <TT>'ABORTED'</TT>.",
+                            "firstSentenceCommentText": "Only triggers a build if the status of the Rundeck execution at the origin of the notification matches one of\r\n  the given statuses."
+                        }
+                    ]
+                },
+                {
+                    "name": "jobIdentifiers",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobIdentifiers",
+                                    "type": "String..."
+                                }
+                            ],
+                            "html": "Only triggers a new build if the Rundeck execution at the origin of the notification matches one of the following\r\n Rundeck job identifier. The identifier can be either a job UUID or a job reference.",
+                            "firstSentenceCommentText": "Only triggers a new build if the Rundeck execution at the origin of the notification matches one of the following\r\n Rundeck job identifier. "
+                        }
+                    ]
+                }
+            ]
+        },
         "javaposse.jobdsl.dsl.helpers.triggers.ScmTriggerContext": {
             "type": "javaposse.jobdsl.dsl.helpers.triggers.ScmTriggerContext",
             "methods": [
@@ -23971,6 +24333,34 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            rebuildOpenMergeRequest('never')\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "rundeck",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use the\r\nAutomatically Generated\r\nDSL instead",
+                            "deprecatedHtml": "use the\r\n<a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">Automatically Generated\r\nDSL</a> instead",
+                            "availableSince": "1.33",
+                            "plugins": [
+                                {
+                                    "id": "rundeck",
+                                    "minimumVersion": "3.5.4"
+                                }
+                            ],
+                            "html": "Allows to schedule a build on Jenkins after a job execution on RunDeck.",
+                            "firstSentenceCommentText": "Allows to schedule a build on Jenkins after a job execution on RunDeck.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.RundeckTriggerContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    triggers {\r\n        rundeck {\r\n            jobIdentifiers('2027ce89-7924-4ecf-a963-30090ada834f',\r\n                    'my-project-name:main-group/sub-group/my-job')\r\n            executionStatuses('FAILED', 'ABORTED')\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "scm",
@@ -26181,8 +26571,7 @@
                             "availableSince": "1.24",
                             "plugins": [
                                 {
-                                    "id": "Exclusion",
-                                    "minimumVersion": "0.12"
+                                    "id": "Exclusion"
                                 }
                             ],
                             "html": "Configures exclusion plugin resources that are required for the\r\n javaposse.jobdsl.dsl.helpers.step.StepContext#criticalBlock(groovy.lang.Closure) step.",
@@ -26198,8 +26587,7 @@
                             "availableSince": "1.24",
                             "plugins": [
                                 {
-                                    "id": "Exclusion",
-                                    "minimumVersion": "0.12"
+                                    "id": "Exclusion"
                                 }
                             ],
                             "html": "Configures exclusion plugin resources that are required for the\r\n javaposse.jobdsl.dsl.helpers.step.StepContext#criticalBlock(groovy.lang.Closure) step.",
@@ -34859,7 +35247,7 @@
                             "plugins": [
                                 {
                                     "id": "git",
-                                    "minimumVersion": "2.5.3"
+                                    "minimumVersion": "2.2.6"
                                 }
                             ],
                             "html": "Pushes tags or branches to a Git repository.",
@@ -35136,6 +35524,32 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        mavenDeploymentLinker('.*.tar.gz')\r\n    }\r\n}"
+                },
+                {
+                    "name": "mergePullRequest",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "contextClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.33",
+                            "plugins": [
+                                {
+                                    "id": "ghprb",
+                                    "minimumVersion": "1.26"
+                                }
+                            ],
+                            "html": "Allows to merge the pull request if the build was successful.",
+                            "firstSentenceCommentText": "Allows to merge the pull request if the build was successful.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.PullRequestPublisherContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        mergePullRequest {\r\n            mergeComment('merged by Jenkins')\r\n            disallowOwnCode()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "moveJiraIssues",
@@ -35680,6 +36094,38 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        retryBuild {\r\n            rerunIfUnstable()\r\n            retryLimit(3)\r\n            progressiveDelay(60, 600)\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "rundeck",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobIdentifier",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "rundeckClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use the\r\nAutomatically Generated\r\nDSL instead",
+                            "deprecatedHtml": "use the\r\n<a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">Automatically Generated\r\nDSL</a> instead",
+                            "availableSince": "1.24",
+                            "plugins": [
+                                {
+                                    "id": "rundeck",
+                                    "minimumVersion": "3.5.4"
+                                }
+                            ],
+                            "html": "Triggers a Rundeck job.",
+                            "firstSentenceCommentText": "Triggers a Rundeck job.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.RundeckContext"
+                        }
+                    ],
+                    "examples": "job('example-1') {\r\n    publishers {\r\n        rundeck('13eba461-179d-40a1-8a08-bafee33fdc12')\r\n    }\r\n}\r\n\r\njob('example-2') {\r\n    publishers {\r\n        rundeck('13eba461-179d-40a1-8a08-bafee33fdc12') {\r\n            options(artifact: 'app', env: 'dev')\r\n            option('version', '1.1')\r\n            tag('deploy app to dev')\r\n            nodeFilters(hostname: 'dev(\\\\d+).company.net')\r\n            nodeFilter('tags', 'www+dev')\r\n            shouldWaitForRundeckJob()\r\n            shouldFailTheBuild()\r\n            includeRundeckLogs()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "s3",
@@ -36230,6 +36676,34 @@
                     "examples": "job('example') {\r\n    triggers {\r\n        gitlabPush {\r\n            buildOnMergeRequestEvents(false)\r\n            buildOnPushEvents(false)\r\n            enableCiSkip(false)\r\n            setBuildDescription(false)\r\n            rebuildOpenMergeRequest('never')\r\n            includeBranches('include1,include2')\r\n            excludeBranches('exclude1,exclude2')\r\n        }\r\n    }\r\n}"
                 },
                 {
+                    "name": "rundeck",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use the\r\nAutomatically Generated\r\nDSL instead",
+                            "deprecatedHtml": "use the\r\n<a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">Automatically Generated\r\nDSL</a> instead",
+                            "availableSince": "1.33",
+                            "plugins": [
+                                {
+                                    "id": "rundeck",
+                                    "minimumVersion": "3.5.4"
+                                }
+                            ],
+                            "html": "Allows to schedule a build on Jenkins after a job execution on RunDeck.",
+                            "firstSentenceCommentText": "Allows to schedule a build on Jenkins after a job execution on RunDeck.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.RundeckTriggerContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    triggers {\r\n        rundeck {\r\n            jobIdentifiers('2027ce89-7924-4ecf-a963-30090ada834f',\r\n                    'my-project-name:main-group/sub-group/my-job')\r\n            executionStatuses('FAILED', 'ABORTED')\r\n        }\r\n    }\r\n}"
+                },
+                {
                     "name": "scm",
                     "signatures": [
                         {
@@ -36733,8 +37207,7 @@
                             "availableSince": "1.24",
                             "plugins": [
                                 {
-                                    "id": "Exclusion",
-                                    "minimumVersion": "0.12"
+                                    "id": "Exclusion"
                                 }
                             ],
                             "html": "Configures exclusion plugin resources that are required for the\r\n javaposse.jobdsl.dsl.helpers.step.StepContext#criticalBlock(groovy.lang.Closure) step.",
@@ -36750,8 +37223,7 @@
                             "availableSince": "1.24",
                             "plugins": [
                                 {
-                                    "id": "Exclusion",
-                                    "minimumVersion": "0.12"
+                                    "id": "Exclusion"
                                 }
                             ],
                             "html": "Configures exclusion plugin resources that are required for the\r\n javaposse.jobdsl.dsl.helpers.step.StepContext#criticalBlock(groovy.lang.Closure) step.",
@@ -38504,6 +38976,12 @@
                                 }
                             ],
                             "availableSince": "1.52",
+                            "plugins": [
+                                {
+                                    "id": "jenkins-multijob-plugin",
+                                    "minimumVersion": "1.22"
+                                }
+                            ],
                             "html": "Defines how to run the whole MultiJob phase. Must be either <TT>'PARALLEL'</TT> or <TT>'SEQUENTIALLY'</TT>.\r\n Defaults to <TT>'PARALLEL'</TT>.",
                             "firstSentenceCommentText": "Defines how to run the whole MultiJob phase. "
                         }
@@ -38830,8 +39308,7 @@
                             "availableSince": "1.24",
                             "plugins": [
                                 {
-                                    "id": "Exclusion",
-                                    "minimumVersion": "0.12"
+                                    "id": "Exclusion"
                                 }
                             ],
                             "html": "Contains the build steps of the critical zone defined by the\r\n javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext#exclusionResources(java.lang.Iterable) wrapper.",
@@ -41293,7 +41770,7 @@
                             "plugins": [
                                 {
                                     "id": "git",
-                                    "minimumVersion": "2.5.3"
+                                    "minimumVersion": "2.2.6"
                                 }
                             ],
                             "html": "Adds a Git branch source. Can be called multiple times to add more branch sources.",
@@ -43981,7 +44458,7 @@
                             "plugins": [
                                 {
                                     "id": "jenkins-multijob-plugin",
-                                    "minimumVersion": "1.22"
+                                    "minimumVersion": "1.16"
                                 }
                             ],
                             "html": "Creates or updates a multi-job project, suitable for running other jobs.",
@@ -44002,7 +44479,7 @@
                             "plugins": [
                                 {
                                     "id": "jenkins-multijob-plugin",
-                                    "minimumVersion": "1.22"
+                                    "minimumVersion": "1.16"
                                 }
                             ],
                             "html": "Creates or updates a multi-job project, suitable for running other jobs.",
