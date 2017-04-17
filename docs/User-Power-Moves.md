@@ -222,4 +222,8 @@ Options:
 * `lookupStrategy`: optional, when set to `'SEED_JOB'` job names will be interpreted as relative to the pipeline job,
                     defaults to `'JENKINS_ROOT` which will treat all job names as absolute
 * `additionalClasspath`: optional, newline separated list of additional classpath entries for Job DSL scripts, file
-                         names must be relative to the workspace
+                         names must be relative to the workspace; this option will be ignored when script security for
+                         Job DSL is enabled on the "Configure Global Security" page
+* `sandbox`: optional, defaults to `false`, if `false` the DSL script needs to be approved by an administrator; set to
+             `true` to run the DSL scripts in a sandbox with limited abilities (see [[Script Security]]); this option
+              will be ignored when script security for Job DSL is disabled on the "Configure Global Security" page

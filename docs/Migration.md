@@ -17,7 +17,8 @@ Support for versions older than 1.21 of the [Join Plugin](https://wiki.jenkins-c
 Starting with Job DSL 1.60, script security for Job DSL scripts is enabled by default if Jenkins
 security is enabled. As a consequence, DSL scripts have either to be approved by an Jenkins administrator or run in an
 restricted sandbox. To avoid loading arbitrary code from the workspace without approval, the script directory is not 
-added to the classpath and additional classpath entries are not supported when security is enabled. 
+added to the classpath and additional classpath entries are not supported when security is enabled. Thus importing
+classes from the workspace is not possible and the "Additional Classpath" option is not available.
 
 Note that some operators in [[configure blocks|The Configure Block]] are not available when running in the restricted
 sandbox.

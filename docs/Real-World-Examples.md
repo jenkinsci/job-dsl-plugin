@@ -91,3 +91,5 @@ Then from the DSL, add something like this:
 
     def myJob = job('example')
     MyUtilities.addMyFeature(myJob)
+
+Note that importing other files is not possible when [[Script Security]] is enabled.
