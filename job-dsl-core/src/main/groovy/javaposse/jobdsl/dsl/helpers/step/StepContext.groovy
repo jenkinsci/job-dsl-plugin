@@ -1257,6 +1257,32 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Invokes an AWS EB Deployment for the build.
+     *
+     * @since
+     */
+    @RequiresPlugin(id = 'awseb-deployment-plugin', minimumVersion = '0.3.10')
+    void awsEbDeployment(@DslContext(AWSEBDeploymentContext) Closure closure) {
+        AWSEBDeploymentContext awsEbDeployment = new AWSEBDeploymentContext(jobManagement)
+        ContextHelper.executeInContext(closure, awsEbDeployment)
+
+        stepNodes << new NodeBuilder().'br.com.ingenieux.jenkins.plugins.awsebdeployment.AWSEBDeploymentBuilder' {
+            credentialId(awsEbDeployment.credentialId)
+            regionId(awsEbDeployment.regionId)
+            applicationName(awsEbDeployment.applicationName)
+            environmentName(awsEbDeployment.environmentName)
+            bucketName(awsEbDeployment.bucketName)
+            keyPrefix(awsEbDeployment.keyPrefix)
+            versionLabelFormat(awsEbDeployment.versionLabelFormat)
+            rootObject(awsEbDeployment.rootObject)
+            includes(awsEbDeployment.includes)
+            excludes(awsEbDeployment.excludes)
+            zeroDowntime(awsEbDeployment.zeroDowntime)
+            checkHealth(awsEbDeployment.checkHealth)
+        }
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {

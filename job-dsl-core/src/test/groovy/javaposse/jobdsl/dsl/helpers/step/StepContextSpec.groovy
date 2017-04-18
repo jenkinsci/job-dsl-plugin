@@ -3842,4 +3842,58 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('phing', '0.13.3')
     }
+
+    def 'call awsEbDeployment with no options'() {
+        when:
+        context.awsEbDeployment {
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'br.com.ingenieux.jenkins.plugins.awsebdeployment.AWSEBDeploymentBuilder'
+            children().size() == 12
+            zeroDowntime[0].value() == true
+            checkHealth[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('awseb-deployment-plugin', '0.3.10')
+    }
+
+    def 'call awsEbDeployment with all options'() {
+        when:
+        context.awsEbDeployment {
+            credentialId('test-cred')
+            regionId('foo-region')
+            applicationName('bar')
+            environmentName('bar-env')
+            bucketName('foo')
+            keyPrefix('key')
+            versionLabelFormat('version')
+            rootObject('root/object')
+            includes('this')
+            excludes('that')
+            zeroDowntime(true)
+            checkHealth(true)
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'br.com.ingenieux.jenkins.plugins.awsebdeployment.AWSEBDeploymentBuilder'
+            children().size() == 12
+            credentialId[0].value() == 'test-cred'
+            regionId[0].value() == 'foo-region'
+            applicationName[0].value() == 'bar'
+            environmentName[0].value() == 'bar-env'
+            bucketName[0].value() == 'foo'
+            keyPrefix[0].value() == 'key'
+            versionLabelFormat[0].value() == 'version'
+            rootObject[0].value() == 'root/object'
+            includes[0].value() == 'this'
+            excludes[0].value() == 'that'
+            zeroDowntime[0].value() == true
+            checkHealth[0].value() == true
+        }
+        1 * jobManagement.requireMinimumPluginVersion('awseb-deployment-plugin', '0.3.10')
+    }
 }
