@@ -66,8 +66,7 @@ class FileJobManagementSpec extends Specification {
 
     def 'createOrUpdateConfig creates config'() {
         setup:
-        Item item = Mock(Item)
-        item.name >> 'foo'
+        Item item = Mock(Item, constructorArgs: [jobManagement, 'foo'])
         item.xml >> 'bar'
 
         when:
@@ -80,8 +79,7 @@ class FileJobManagementSpec extends Specification {
 
     def 'createOrUpdateConfig creates config in folder'() {
         setup:
-        Item item = Mock(Item)
-        item.name >> 'foo/bar'
+        Item item = Mock(Item, constructorArgs: [jobManagement, 'foo/bar'])
         item.xml >> 'baz'
 
         when:

@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class CoreVersionASTTransformationSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
-    FreeStyleJob job = new FreeStyleJob(jobManagement)
+    FreeStyleJob job = new FreeStyleJob(jobManagement, 'test')
 
     def 'require plugin'() {
         when:

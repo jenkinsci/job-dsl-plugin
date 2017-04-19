@@ -28,11 +28,6 @@ class MavenJob extends Job {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    MavenJob(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     @Override
     @NoDoc
     void steps(@DslContext(StepContext) Closure closure) {

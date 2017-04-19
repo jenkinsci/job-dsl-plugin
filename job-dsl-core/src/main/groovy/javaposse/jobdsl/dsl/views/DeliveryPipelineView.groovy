@@ -13,11 +13,6 @@ class DeliveryPipelineView extends View {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    DeliveryPipelineView(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     @Override
     @NoDoc
     void description(String description) {

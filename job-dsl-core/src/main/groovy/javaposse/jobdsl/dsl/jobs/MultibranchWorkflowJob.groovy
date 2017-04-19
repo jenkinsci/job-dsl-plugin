@@ -11,11 +11,6 @@ class MultibranchWorkflowJob extends ComputedFolder {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    MultibranchWorkflowJob(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     /**
      * Adds branch sources.
      */

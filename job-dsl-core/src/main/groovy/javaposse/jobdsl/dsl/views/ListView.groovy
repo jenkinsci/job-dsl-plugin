@@ -15,11 +15,6 @@ class ListView extends View {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    ListView(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     /**
      * Filter the job list by enabled/disabled status. Defaults to {@code StatusFilter.ALL}.
      */

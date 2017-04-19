@@ -61,8 +61,7 @@ class JobManagementSpec extends Specification {
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
         JobManagement jm = new MemoryJobManagement()
-        Item item = Mock(Item)
-        item.name >> 'NEW-JOB-NAME'
+        Item item = Mock(Item, constructorArgs: [jm, 'NEW-JOB-NAME'])
         item.xml >> null
 
         when:
@@ -76,8 +75,7 @@ class JobManagementSpec extends Specification {
         setup:
         setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
         JobManagement jm = new MemoryJobManagement()
-        Item item = Mock(Item)
-        item.name >> 'NEW-JOB-NAME'
+        Item item = Mock(Item, constructorArgs: [jm, 'NEW-JOB-NAME'])
         item.xml >> ''
 
         when:

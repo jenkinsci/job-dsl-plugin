@@ -11,11 +11,6 @@ class DashboardView extends ListView {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    DashboardView(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     /**
      * Adds portlets to the top of the page.
      */

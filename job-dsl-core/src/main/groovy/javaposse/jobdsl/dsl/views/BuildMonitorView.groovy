@@ -9,11 +9,6 @@ class BuildMonitorView extends ListView {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    BuildMonitorView(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     @Override
     @NoDoc
     void columns(@DslContext(ColumnsContext) Closure columnsClosure) {

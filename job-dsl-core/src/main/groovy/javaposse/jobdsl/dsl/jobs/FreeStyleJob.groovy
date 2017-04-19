@@ -7,9 +7,4 @@ class FreeStyleJob extends Job {
     FreeStyleJob(JobManagement jobManagement, String name) {
         super(jobManagement, name)
     }
-
-    @Deprecated
-    FreeStyleJob(JobManagement jobManagement) {
-        super(jobManagement)
-    }
 }

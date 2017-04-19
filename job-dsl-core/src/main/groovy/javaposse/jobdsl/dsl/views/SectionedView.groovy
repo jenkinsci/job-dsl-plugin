@@ -11,11 +11,6 @@ class SectionedView extends View {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    SectionedView(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     /**
      * Creates a section containing a list of jobs.
      */

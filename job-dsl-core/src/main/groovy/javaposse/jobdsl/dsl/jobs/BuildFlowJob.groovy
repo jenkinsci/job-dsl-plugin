@@ -12,11 +12,6 @@ class BuildFlowJob extends Job {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    BuildFlowJob(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     /**
      * Sets the build flow DSL script.
      * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String)} to read DSL scripts from
