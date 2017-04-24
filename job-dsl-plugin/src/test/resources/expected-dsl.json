@@ -386,7 +386,15 @@
               "parameters": [
                 {
                   "name": "value",
-                  "type": "String"
+                  "type": "String",
+                  "enumConstants": [
+                    "NEW",
+                    "RUNNABLE",
+                    "BLOCKED",
+                    "WAITING",
+                    "TIMED_WAITING",
+                    "TERMINATED"
+                  ]
                 }
               ],
               "deprecated": false,

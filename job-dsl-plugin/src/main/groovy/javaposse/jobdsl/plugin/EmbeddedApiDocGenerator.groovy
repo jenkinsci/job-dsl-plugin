@@ -281,7 +281,7 @@ class EmbeddedApiDocGenerator {
         if (parameterType instanceof AtomicType) {
             return JSONObject.fromObject([name: 'value', type: ((AtomicType) parameterType).type.simpleName])
         } else if (parameterType instanceof EnumType) {
-            return JSONObject.fromObject([name: 'value', type: 'String'])
+            return JSONObject.fromObject([name: 'value', type: 'String', enumConstants: parameterType.values])
         } else if (parameterType instanceof HomogeneousObjectType || parameterType instanceof HeterogeneousObjectType) {
             return generateOptionalClosureParameter()
         } else if (parameterType instanceof ArrayType) {
