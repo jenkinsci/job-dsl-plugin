@@ -53,6 +53,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
+    @RequiresPlugin(id = 'build-flow-plugin', minimumVersion = '0.12')
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure = null) {
         processItem(name, BuildFlowJob, closure)
     }
@@ -61,6 +62,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.38
      */
     @Override
+    @RequiresPlugin(id = 'ivy')
     IvyJob ivyJob(String name, @DslContext(IvyJob) Closure closure = null) {
         processItem(name, IvyJob, closure)
     }
@@ -85,6 +87,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
+    @RequiresPlugin(id = 'jenkins-multijob-plugin')
     MultiJob multiJob(String name, @DslContext(MultiJob) Closure closure = null) {
         processItem(name, MultiJob, closure)
     }
@@ -130,6 +133,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
+    @RequiresPlugin(id = 'sectioned-view')
     SectionedView sectionedView(String name, @DslContext(SectionedView) Closure closure = null) {
         processView(name, SectionedView, closure)
     }
@@ -138,6 +142,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
+    @RequiresPlugin(id = 'nested-view')
     NestedView nestedView(String name, @DslContext(NestedView) Closure closure = null) {
         processView(name, NestedView, closure)
     }
@@ -146,6 +151,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
+    @RequiresPlugin(id = 'delivery-pipeline-plugin')
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
         jm.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
         processView(name, DeliveryPipelineView, closure)
@@ -162,6 +168,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
+    @RequiresPlugin(id = 'build-pipeline-plugin')
     BuildPipelineView buildPipelineView(String name, @DslContext(BuildPipelineView) Closure closure = null) {
         processView(name, BuildPipelineView, closure)
     }
@@ -170,6 +177,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
+    @RequiresPlugin(id = 'build-monitor-plugin')
     BuildMonitorView buildMonitorView(String name, @DslContext(BuildMonitorView) Closure closure = null) {
         processView(name, BuildMonitorView, closure)
     }
@@ -178,6 +186,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.31
      */
     @Override
+    @RequiresPlugin(id = 'categorized-view')
     CategorizedJobsView categorizedJobsView(String name, @DslContext(CategorizedJobsView) Closure closure = null) {
         processView(name, CategorizedJobsView, closure)
     }
@@ -186,6 +195,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.42
      */
     @Override
+    @RequiresPlugin(id = 'dashboard-view')
     DashboardView dashboardView(String name, @DslContext(DashboardView) Closure closure = null) {
         processView(name, DashboardView, closure)
     }
@@ -206,6 +216,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
+    @RequiresPlugin(id = 'cloudbees-folder')
     Folder folder(String name, @DslContext(Folder) Closure closure = null) {
         processItem(name, Folder, closure)
     }
