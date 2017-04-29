@@ -29,6 +29,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.62 (unreleased)
+  * Show enum values for generated DSL in embedded API viewer
+    [#1020](https://github.com/jenkinsci/job-dsl-plugin/pull/1020)
 * 1.61 (April 17 2017)
   * Enhanced support for the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin)
     ([JENKINS-42900](https://issues.jenkins-ci.org/browse/JENKINS-42900),

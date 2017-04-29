@@ -213,7 +213,7 @@ _.extend(App.Dsl.prototype, {
                     var simpleName = typeTokens[typeTokens.length - 1];
                     return {
                         paramName: parameter.name,
-                        values: parameter.enumConstants.map(function(v) { return simpleName + '.' + v; })
+                        values: parameter.enumConstants.map(function(v) { return parameter.type === 'String' ? '\'' + v + '\'' : simpleName + '.' + v; })
                     };
                 })
                 .value();
