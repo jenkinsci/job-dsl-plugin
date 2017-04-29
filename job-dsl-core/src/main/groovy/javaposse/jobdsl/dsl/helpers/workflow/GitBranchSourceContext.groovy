@@ -3,11 +3,21 @@ package javaposse.jobdsl.dsl.helpers.workflow
 import javaposse.jobdsl.dsl.Context
 
 class GitBranchSourceContext implements Context {
+    String id = UUID.randomUUID()
     String remote
     String credentialsId
     String includes = '*'
     String excludes
     boolean ignoreOnPushNotifications
+
+    /**
+     * Specifies a unique ID for this branch source.
+     *
+     * @since 1.62
+     */
+    void id(String id) {
+        this.id = id
+    }
 
     /**
      * Sets the Git remote repository URL.
