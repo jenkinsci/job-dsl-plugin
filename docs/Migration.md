@@ -1,9 +1,18 @@
+## Migrating to 1.62
+
+### Parameterized Remote Trigger Plugin
+
+Support for versions older than 2.0 of the
+[Parameterized Remote Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin)
+is [[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.61
 
 ### Stash Notifier Plugin
 
 Support for versions older than 1.11.6 of the
 [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
 
 ### Join Plugin
 

@@ -1,14 +1,21 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
-class ParameterizedRemoteTriggerContext implements Context {
+class ParameterizedRemoteTriggerContext extends AbstractContext {
     Map<String, String> parameters = [:]
     boolean shouldNotFailBuild = false
     int pollInterval = 10
     boolean preventRemoteBuildQueue = false
     boolean blockBuildUntilComplete = false
     String token
+    String credentialsIds
+
+    ParameterizedRemoteTriggerContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Adds a parameter value for the remote job. Can be called multiple times to add more parameter values.
@@ -69,5 +76,15 @@ class ParameterizedRemoteTriggerContext implements Context {
      */
     void token(String token) {
         this.token = token
+    }
+
+    /**
+     * Specifies credentials for authentication with the remote Jenkins host.
+     *
+     * @since 1.62
+     */
+    @RequiresPlugin(id = 'Parameterized-Remote-Trigger', minimumVersion = '2.0')
+    void overrideCredentials(String credentialsIds) {
+        this.credentialsIds = credentialsIds
     }
 }

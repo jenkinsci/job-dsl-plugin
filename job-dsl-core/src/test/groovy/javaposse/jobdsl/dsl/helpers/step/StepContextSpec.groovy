@@ -2590,13 +2590,15 @@ class StepContextSpec extends Specification {
             queryString[0].value() == []
         }
         1 * jobManagement.requirePlugin('Parameterized-Remote-Trigger')
+        1 * jobManagement.logPluginDeprecationWarning('Parameterized-Remote-Trigger', '2.0')
     }
 
-    def 'call remoteTrigger with parameters'() {
+    def 'call remoteTrigger with parameters and credentials'() {
         when:
         context.remoteTrigger('dev-ci', 'test') {
             parameter 'foo', '1'
             parameters bar: '2', baz: '3'
+            overrideCredentials('test')
         }
 
         then:
@@ -2616,10 +2618,12 @@ class StepContextSpec extends Specification {
             parameterList[0].string[0].value() == 'foo=1'
             parameterList[0].string[1].value() == 'bar=2'
             parameterList[0].string[2].value() == 'baz=3'
-            overrideAuth[0].value() == false
+            overrideAuth[0].value() == true
             auth[0].children().size() == 1
             with(auth[0].'org.jenkinsci.plugins.ParameterizedRemoteTrigger.Auth'[0]) {
-                children().size() == 3
+                children().size() == 5
+                authType[0].value() == 'credentialsPlugin'
+                creds[0].value() == 'test'
                 NONE[0].value() == 'none'
                 API__TOKEN[0].value() == 'apiToken'
                 CREDENTIALS__PLUGIN[0].value() == 'credentialsPlugin'
@@ -2629,6 +2633,8 @@ class StepContextSpec extends Specification {
             queryString[0].value() == []
         }
         1 * jobManagement.requirePlugin('Parameterized-Remote-Trigger')
+        1 * jobManagement.requireMinimumPluginVersion('Parameterized-Remote-Trigger', '2.0')
+        1 * jobManagement.logPluginDeprecationWarning('Parameterized-Remote-Trigger', '2.0')
     }
 
     def 'call remoteTrigger with parameters and config'() {
@@ -2673,6 +2679,7 @@ class StepContextSpec extends Specification {
             queryString[0].value() == []
         }
         1 * jobManagement.requirePlugin('Parameterized-Remote-Trigger')
+        1 * jobManagement.logPluginDeprecationWarning('Parameterized-Remote-Trigger', '2.0')
     }
 
     def 'call remoteTrigger without jenkins'() {
