@@ -31,7 +31,7 @@ class BranchSourcesContext extends AbstractExtensibleContext {
 
         branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
             source(class: 'jenkins.plugins.git.GitSCMSource') {
-                id(UUID.randomUUID())
+                id(context.id)
                 remote(context.remote ?: '')
                 credentialsId(context.credentialsId ?: '')
                 includes(context.includes ?: '')
@@ -58,7 +58,7 @@ class BranchSourcesContext extends AbstractExtensibleContext {
 
         branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
             source(class: 'org.jenkinsci.plugins.github_branch_source.GitHubSCMSource') {
-                id(UUID.randomUUID())
+                id(context.id)
                 if (context.apiUri) {
                     apiUri(context.apiUri)
                 }

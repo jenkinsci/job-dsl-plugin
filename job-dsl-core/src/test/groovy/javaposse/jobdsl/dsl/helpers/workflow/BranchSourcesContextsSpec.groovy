@@ -30,7 +30,7 @@ class BranchSourcesContextsSpec extends Specification {
             children().size() == 2
             with(source[0]) {
                 children().size() == 6
-                id[0].value() instanceof UUID
+                id[0].value() instanceof String
                 remote[0].value().empty
                 credentialsId[0].value().empty
                 includes[0].value() == '*'
@@ -50,6 +50,7 @@ class BranchSourcesContextsSpec extends Specification {
     def 'git with all options'() {
         when:
         context.git {
+            id('test')
             remote('foo')
             credentialsId('bar')
             includes('lorem')
@@ -64,7 +65,7 @@ class BranchSourcesContextsSpec extends Specification {
             children().size() == 2
             with(source[0]) {
                 children().size() == 6
-                id[0].value() instanceof UUID
+                id[0].value() == 'test'
                 remote[0].value() == 'foo'
                 credentialsId[0].value() == 'bar'
                 includes[0].value() == 'lorem'
@@ -92,7 +93,7 @@ class BranchSourcesContextsSpec extends Specification {
             children().size() == 2
             with(source[0]) {
                 children().size() == 7
-                id[0].value() instanceof UUID
+                id[0].value() instanceof String
                 scanCredentialsId[0].value().empty
                 checkoutCredentialsId[0].value() == 'SAME'
                 repoOwner[0].value().empty
@@ -114,6 +115,7 @@ class BranchSourcesContextsSpec extends Specification {
     def 'github with all options'() {
         when:
         context.github {
+            id('test')
             apiUri('https://custom.url')
             scanCredentialsId('scanCreds')
             checkoutCredentialsId('checkoutCreds')
@@ -131,7 +133,7 @@ class BranchSourcesContextsSpec extends Specification {
             children().size() == 2
             with(source[0]) {
                 children().size() == 8
-                id[0].value() instanceof UUID
+                id[0].value() == 'test'
                 apiUri[0].value() == 'https://custom.url'
                 scanCredentialsId[0].value() == 'scanCreds'
                 checkoutCredentialsId[0].value() == 'checkoutCreds'
@@ -166,7 +168,7 @@ class BranchSourcesContextsSpec extends Specification {
             children().size() == 2
             with(source[0]) {
                 children().size() == 13
-                id[0].value() instanceof UUID
+                id[0].value() instanceof String
                 scanCredentialsId[0].value().empty
                 checkoutCredentialsId[0].value() == 'SAME'
                 repoOwner[0].value().empty
@@ -197,6 +199,7 @@ class BranchSourcesContextsSpec extends Specification {
 
         when:
         context.github {
+            id('test')
             apiUri('https://custom.url')
             scanCredentialsId('scanCreds')
             checkoutCredentialsId('checkoutCreds')
@@ -220,7 +223,7 @@ class BranchSourcesContextsSpec extends Specification {
             children().size() == 2
             with(source[0]) {
                 children().size() == 14
-                id[0].value() instanceof UUID
+                id[0].value() == 'test'
                 apiUri[0].value() == 'https://custom.url'
                 scanCredentialsId[0].value() == 'scanCreds'
                 checkoutCredentialsId[0].value() == 'checkoutCreds'
