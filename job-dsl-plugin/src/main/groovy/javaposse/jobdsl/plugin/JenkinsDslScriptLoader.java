@@ -6,7 +6,6 @@ import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.dsl.JobManagement;
 import javaposse.jobdsl.dsl.ScriptRequest;
 import jenkins.model.Jenkins;
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.jenkinsci.lib.configprovider.model.Config;
 import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
 
@@ -22,7 +21,7 @@ public class JenkinsDslScriptLoader extends AbstractDslScriptLoader<JenkinsJobPa
     protected void extractGeneratedItems(GeneratedItems generatedItems, JenkinsJobParent jobParent, ScriptRequest scriptRequest) {
         super.extractGeneratedItems(generatedItems, jobParent, scriptRequest);
 
-        if (DefaultGroovyMethods.asBoolean(Jenkins.getInstance().getPluginManager().getPlugin("config-file-provider"))) {
+        if (Jenkins.getInstance().getPluginManager().getPlugin("config-file-provider") != null) {
             GlobalConfigFiles globalConfigFiles = GlobalConfigFiles.get();
             for (Object o : jobParent.getReferencedConfigs()) {
                 Config config = (Config) o;

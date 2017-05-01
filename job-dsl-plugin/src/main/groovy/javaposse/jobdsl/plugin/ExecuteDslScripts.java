@@ -42,6 +42,7 @@ import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import org.acegisecurity.AccessDeniedException;
 import org.apache.commons.io.FilenameUtils;
+import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
@@ -98,6 +99,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     private RemovedJobAction removedJobAction = RemovedJobAction.IGNORE;
 
     private RemovedViewAction removedViewAction = RemovedViewAction.IGNORE;
+
+    private RemovedConfigFilesAction removedConfigFilesAction = RemovedConfigFilesAction.IGNORE;
 
     private LookupStrategy lookupStrategy = LookupStrategy.JENKINS_ROOT;
 
@@ -216,6 +219,21 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     @DataBoundSetter
     public void setRemovedViewAction(RemovedViewAction removedViewAction) {
         this.removedViewAction = removedViewAction;
+    }
+
+    /**
+     * @since 1.62
+     */
+    public RemovedConfigFilesAction getRemovedConfigFilesAction() {
+        return removedConfigFilesAction;
+    }
+
+    /**
+     * @since 1.62
+     */
+    @DataBoundSetter
+    public void setRemovedConfigFilesAction(RemovedConfigFilesAction removedConfigFilesAction) {
+        this.removedConfigFilesAction = removedConfigFilesAction;
     }
 
     public LookupStrategy getLookupStrategy() {
@@ -499,6 +517,14 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         logItems(listener, "Added config files", added);
         logItems(listener, "Existing config files", existing);
         logItems(listener, "Unreferenced config files", unreferenced);
+
+        if (removedConfigFilesAction == RemovedConfigFilesAction.DELETE && Jenkins.getInstance().getPluginManager().getPlugin("config-file-provider") != null) {
+            GlobalConfigFiles globalConfigFiles = GlobalConfigFiles.get();
+            for (GeneratedConfigFile unreferencedConfigFile : unreferenced) {
+                Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
+                globalConfigFiles.remove(unreferencedConfigFile.getId());
+            }
+        }
     }
 
     private void updateGeneratedUserContents(Job seedJob, TaskListener listener,

@@ -77,6 +77,17 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         return items;
     }
 
+    /**
+     * @since 1.62
+     */
+    public ListBoxModel doFillRemovedConfigFilesActionItems() {
+        ListBoxModel items = new ListBoxModel();
+        for (RemovedConfigFilesAction action : RemovedConfigFilesAction.values()) {
+            items.add(action.getDisplayName(), action.name());
+        }
+        return items;
+    }
+
     public ListBoxModel doFillLookupStrategyItems() {
         ListBoxModel items = new ListBoxModel();
         for (LookupStrategy item : LookupStrategy.values()) {

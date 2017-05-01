@@ -33,6 +33,9 @@
      <f:entry title="Action for removed views:" field="removedViewAction">
         <f:select/>
     </f:entry>
+    <f:entry title="Action for removed config files:" field="removedConfigFilesAction">
+        <f:select/>
+    </f:entry>
 
     <f:advanced>
         <f:entry title="Context to use for relative job names:" field="lookupStrategy">

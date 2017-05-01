@@ -31,6 +31,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.62 (unreleased)
   * Show enum values for generated DSL in embedded API viewer
     [#1020](https://github.com/jenkinsci/job-dsl-plugin/pull/1020)
+  * Added option to remove unreferenced config files
+    ([JENKINS-40720](https://issues.jenkins-ci.org/browse/JENKINS-40720))
   * Enhanced support for the
     [Pipeline Multibranch Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Pipeline+Multibranch+Plugin)
     ([JENKINS-43693](https://issues.jenkins-ci.org/browse/JENKINS-43693))
