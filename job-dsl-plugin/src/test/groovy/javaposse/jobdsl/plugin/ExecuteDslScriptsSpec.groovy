@@ -1510,6 +1510,77 @@ class ExecuteDslScriptsSpec extends Specification {
         GlobalConfigFiles.get().getById('two').content == 'bar'
     }
 
+    def 'remove config files'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        ExecuteDslScripts scripts = new ExecuteDslScripts(scriptText: getClass().getResource('configFiles.groovy').text)
+        job.buildersList.add(scripts)
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        GlobalConfigFiles.get().getById('one') instanceof CustomConfig
+        GlobalConfigFiles.get().getById('one').name == 'Config 1'
+        GlobalConfigFiles.get().getById('one').comment == 'lorem'
+        GlobalConfigFiles.get().getById('one').content == 'ipsum'
+        GlobalConfigFiles.get().getById('one').providerId == '???'
+        GlobalConfigFiles.get().getById('two') instanceof PowerShellConfig
+        GlobalConfigFiles.get().getById('two').name == 'Config 2'
+        GlobalConfigFiles.get().getById('two').comment == 'foo'
+        GlobalConfigFiles.get().getById('two').content == 'bar'
+
+        when:
+        scripts.removedConfigFilesAction = RemovedConfigFilesAction.DELETE
+        scripts.scriptText = 'job("foo")'
+        freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        GlobalConfigFiles.get().getById('one') == null
+        GlobalConfigFiles.get().getById('two') == null
+    }
+
+    def 'ignore removed config files'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        ExecuteDslScripts scripts = new ExecuteDslScripts(scriptText: getClass().getResource('configFiles.groovy').text)
+        job.buildersList.add(scripts)
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        GlobalConfigFiles.get().getById('one') instanceof CustomConfig
+        GlobalConfigFiles.get().getById('one').name == 'Config 1'
+        GlobalConfigFiles.get().getById('one').comment == 'lorem'
+        GlobalConfigFiles.get().getById('one').content == 'ipsum'
+        GlobalConfigFiles.get().getById('one').providerId == '???'
+        GlobalConfigFiles.get().getById('two') instanceof PowerShellConfig
+        GlobalConfigFiles.get().getById('two').name == 'Config 2'
+        GlobalConfigFiles.get().getById('two').comment == 'foo'
+        GlobalConfigFiles.get().getById('two').content == 'bar'
+
+        when:
+        scripts.removedConfigFilesAction = RemovedConfigFilesAction.IGNORE
+        scripts.scriptText = 'job("foo")'
+        freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        GlobalConfigFiles.get().getById('one') instanceof CustomConfig
+        GlobalConfigFiles.get().getById('one').name == 'Config 1'
+        GlobalConfigFiles.get().getById('one').comment == 'lorem'
+        GlobalConfigFiles.get().getById('one').content == 'ipsum'
+        GlobalConfigFiles.get().getById('one').providerId == '???'
+        GlobalConfigFiles.get().getById('two') instanceof PowerShellConfig
+        GlobalConfigFiles.get().getById('two').name == 'Config 2'
+        GlobalConfigFiles.get().getById('two').comment == 'foo'
+        GlobalConfigFiles.get().getById('two').content == 'bar'
+    }
+
     private static final String SCRIPT = """job('test-job') {
 }"""
 

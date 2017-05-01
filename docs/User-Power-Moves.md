@@ -219,6 +219,8 @@ Options:
                       DSL scripts, defaults to `'IGNORE'`
 * `removedViewAction`: optional, set to `'DELETE'` to delete views that have been removed from Job DSL scripts, defaults
                        to `'IGNORE'`
+* `removedConfigFilesAction`: optional, set to `'DELETE'` to delete config files that have been removed from Job DSL
+                              scripts, defaults to `'IGNORE'`
 * `lookupStrategy`: optional, when set to `'SEED_JOB'` job names will be interpreted as relative to the pipeline job,
                     defaults to `'JENKINS_ROOT` which will treat all job names as absolute
 * `additionalClasspath`: optional, newline separated list of additional classpath entries for Job DSL scripts, file
