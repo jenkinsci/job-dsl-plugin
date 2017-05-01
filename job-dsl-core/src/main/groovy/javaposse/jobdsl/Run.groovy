@@ -17,7 +17,14 @@ class Run {
 
     @SuppressWarnings('NoDef')
     static void main(String[] args) throws Exception {
-        if (args.length == 0) {
+        boolean scriptClasspath
+        String[] files = args
+        if (files.length > 0 && files[0] == '-j') {
+            files = files[1..-1]
+            scriptClasspath = true
+        }
+
+        if (files.length == 0) {
             LOG.severe('Script name is required')
             return
         }
@@ -31,10 +38,11 @@ class Run {
             jm.parameters.put(key.toString(), value.toString())
         }
 
-        args.each { String scriptName ->
+        files.each { String scriptName ->
             File scriptFile = new File(scriptName)
             String scriptBody = scriptFile.getText('UTF-8')
-            ScriptRequest request = new ScriptRequest(scriptBody, cwdURL, false, scriptFile.absolutePath)
+            URL urlRoot = scriptClasspath ? scriptFile.absoluteFile.parentFile.toURI().toURL() : cwdURL
+            ScriptRequest request = new ScriptRequest(scriptBody, urlRoot, false, scriptFile.absolutePath)
             GeneratedItems generatedItems = new DslScriptLoader(jm).runScripts([request])
 
             for (GeneratedJob job : generatedItems.jobs) {

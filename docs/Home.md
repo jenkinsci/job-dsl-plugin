@@ -37,6 +37,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the [Parameterized Remote Trigger
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin)
     ([JENKINS-43025](https://issues.jenkins-ci.org/browse/JENKINS-43025))
+  * Added a switch to the command line runner to put the script's directory on the classpath, see
+    [User-Power-Moves](User-Power-Moves#run-a-dsl-script-locally)
+    ([JENKINS-42299](https://issues.jenkins-ci.org/browse/JENKINS-42299))
   * Support for the older versions of the [Parameterized Remote Trigger
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-162)
