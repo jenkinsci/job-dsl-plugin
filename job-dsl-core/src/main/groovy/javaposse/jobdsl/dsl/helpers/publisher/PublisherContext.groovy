@@ -1569,6 +1569,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.39
      */
     @RequiresPlugin(id = 'artifactdeployer', minimumVersion = '0.33')
+    @Deprecated
     void artifactDeployer(@DslContext(ArtifactDeployerPublisherContext) Closure closure) {
         ArtifactDeployerPublisherContext context = new ArtifactDeployerPublisherContext()
         ContextHelper.executeInContext(closure, context)

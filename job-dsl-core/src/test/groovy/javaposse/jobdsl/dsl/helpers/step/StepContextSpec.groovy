@@ -3426,6 +3426,7 @@ class StepContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call artifactDeployer with all options'() {
@@ -3462,6 +3463,7 @@ class StepContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call managedScript with minimal options'() {

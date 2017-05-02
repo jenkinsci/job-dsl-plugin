@@ -5220,6 +5220,7 @@ class PublisherContextSpec extends Specification {
             entries[0].value().empty
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call artifactDeployer with all options'() {
@@ -5278,6 +5279,7 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'slocCount with no options'() {
