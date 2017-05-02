@@ -1323,6 +1323,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.31
      */
     @RequiresPlugin(id = 'postbuildscript', minimumVersion = '0.17')
+    @Deprecated
     void postBuildScripts(@DslContext(PostBuildScriptsContext) Closure closure) {
         PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement, item)
         ContextHelper.executeInContext(closure, context)
