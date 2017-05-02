@@ -30,6 +30,12 @@ The [ArtifactDeployer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Artifa
 the Update Center due to [Security Vulnerabilities](https://jenkins.io/security/advisory/2017-04-10/). As a consequence
 the DSL support is [[deprecated|Deprecation-Policy]] and will be removed.
 
+### Subversion Tagging Plugin
+
+The [Subversion Tagging Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Tagging+Plugin) has been removed
+from the Update Center due to [Security Vulnerabilities](https://jenkins.io/security/advisory/2017-04-10/). As a
+consequence the DSL support is [[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.61
 
 ### Stash Notifier Plugin

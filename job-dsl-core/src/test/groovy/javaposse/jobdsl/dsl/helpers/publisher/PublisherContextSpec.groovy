@@ -5339,6 +5339,7 @@ class PublisherContextSpec extends Specification {
             tagDeleteComment[0].value() == 'Delete old tag by svn-tag Jenkins plugin.'
         }
         1 * jobManagement.requireMinimumPluginVersion('svn-tag', '1.18')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'svnTag with all options'() {
@@ -5359,6 +5360,7 @@ class PublisherContextSpec extends Specification {
             tagDeleteComment[0].value() == 'delete comment'
         }
         1 * jobManagement.requireMinimumPluginVersion('svn-tag', '1.18')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call cucumberReports with no options'() {

@@ -1622,6 +1622,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.41
      */
     @RequiresPlugin(id = 'svn-tag', minimumVersion = '1.18')
+    @Deprecated
     void svnTag(@DslContext(SubversionTagContext) Closure closure) {
         SubversionTagContext context = new SubversionTagContext()
         ContextHelper.executeInContext(closure, context)
