@@ -6,6 +6,12 @@ Support for versions older than 2.0 of the
 [Parameterized Remote Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin)
 is [[deprecated|Deprecation-Policy]] and will be removed.
 
+### Build Flow Plugin
+
+The [Build Flow Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Plugin) has been removed from the Update
+Center due to [Security Vulnerabilities](https://jenkins.io/security/advisory/2017-04-10/). As a consequence the DSL
+support is [[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.61
 
 ### Stash Notifier Plugin

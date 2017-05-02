@@ -53,6 +53,7 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.30
      */
     @Override
+    @Deprecated
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure = null) {
         processItem(name, BuildFlowJob, closure)
     }

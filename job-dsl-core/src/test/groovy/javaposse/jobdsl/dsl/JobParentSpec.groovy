@@ -473,6 +473,7 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         1 * jobManagement.requirePlugin('build-flow-plugin', true)
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'ivyJob'() {
