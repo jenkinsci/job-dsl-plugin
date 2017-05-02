@@ -1005,6 +1005,7 @@ class BuildParametersContextSpec extends Specification {
             filterable.text() == 'false'
         }
         1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'active choice param with all options and groovy script'() {
@@ -1037,6 +1038,7 @@ class BuildParametersContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'active choice param with all options and scriptler script'() {
@@ -1075,6 +1077,7 @@ class BuildParametersContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'active choice reactive param without options'() {
@@ -1096,6 +1099,7 @@ class BuildParametersContextSpec extends Specification {
             script.text() == ''
             referencedParameters.text() == ''
         }
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'active choice reactive param with all options and groovy script'() {
@@ -1131,6 +1135,7 @@ class BuildParametersContextSpec extends Specification {
             }
             referencedParameters.text() == 'param1, param2'
         }
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'active choice reactive reference param without options'() {
@@ -1152,6 +1157,7 @@ class BuildParametersContextSpec extends Specification {
             referencedParameters.text() == ''
             omitValueField.text() == 'false'
         }
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'active choice reactive reference param with all options and scriptler script'() {
@@ -1189,6 +1195,7 @@ class BuildParametersContextSpec extends Specification {
             }
             referencedParameters.text() == 'param3, param4'
         }
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'credentials parameter with minimal options'() {
