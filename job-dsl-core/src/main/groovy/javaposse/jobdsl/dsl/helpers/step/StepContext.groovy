@@ -459,6 +459,7 @@ class StepContext extends AbstractExtensibleContext {
      * Builds a Grails project.
      */
     @RequiresPlugin(id = 'grails')
+    @Deprecated
     void grails(@DslContext(GrailsContext) Closure grailsClosure) {
         grails null, false, grailsClosure
     }
@@ -467,6 +468,7 @@ class StepContext extends AbstractExtensibleContext {
      * Builds a Grails project.
      */
     @RequiresPlugin(id = 'grails')
+    @Deprecated
     void grails(String targets, @DslContext(GrailsContext) Closure grailsClosure) {
         grails targets, false, grailsClosure
     }
@@ -475,6 +477,7 @@ class StepContext extends AbstractExtensibleContext {
      * Builds a Grails project.
      */
     @RequiresPlugin(id = 'grails')
+    @Deprecated
     void grails(String targets = null, boolean useWrapper = false,
                 @DslContext(GrailsContext) Closure grailsClosure = null) {
         GrailsContext grailsContext = new GrailsContext(

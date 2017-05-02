@@ -320,6 +320,7 @@ class StepContextSpec extends Specification {
         grailsStep0.forceUpgrade[0].value() == false
         grailsStep0.nonInteractive[0].value() == true
         (1.._) * jobManagement.requirePlugin('grails')
+        1 * jobManagement.logDeprecationWarning()
 
         when:
         context.grails('compile', true)
@@ -338,6 +339,7 @@ class StepContextSpec extends Specification {
         grailsStep1.forceUpgrade[0].value() == false
         grailsStep1.nonInteractive[0].value() == true
         (1.._) * jobManagement.requirePlugin('grails')
+        1 * jobManagement.logDeprecationWarning()
 
         when:
         context.grails('compile', false) {
@@ -359,6 +361,7 @@ class StepContextSpec extends Specification {
         grailsStep2.forceUpgrade[0].value() == false
         grailsStep2.nonInteractive[0].value() == false
         (1.._) * jobManagement.requirePlugin('grails')
+        1 * jobManagement.logDeprecationWarning()
 
         when:
         context.grails {
@@ -389,6 +392,7 @@ class StepContextSpec extends Specification {
         grailsStep3.forceUpgrade[0].value() == true
         grailsStep3.nonInteractive[0].value() == false
         (1.._) * jobManagement.requirePlugin('grails')
+        (1.._) * jobManagement.logDeprecationWarning()
 
         when:
         context.grails '"test-app --stacktrace"', {
@@ -415,6 +419,7 @@ class StepContextSpec extends Specification {
         grailsStep4.forceUpgrade[0].value() == true
         grailsStep4.nonInteractive[0].value() == false
         (1.._) * jobManagement.requirePlugin('grails')
+        (1.._) * jobManagement.logDeprecationWarning()
 
         when:
         context.grails {
@@ -434,6 +439,7 @@ class StepContextSpec extends Specification {
         grailsStep5.forceUpgrade[0].value() == false
         grailsStep5.nonInteractive[0].value() == true
         (1.._) * jobManagement.requirePlugin('grails')
+        (1.._) * jobManagement.logDeprecationWarning()
     }
 
     def 'call maven methods'() {
