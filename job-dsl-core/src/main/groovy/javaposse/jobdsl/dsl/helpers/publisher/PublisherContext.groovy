@@ -350,6 +350,7 @@ class PublisherContext extends AbstractExtensibleContext {
                         reportName(target.reportName)
                         reportDir(target.reportDir)
                         reportFiles(target.reportFiles)
+                        reportTitles(target.reportTitles)
                         keepAll(target.keepAll)
                         allowMissing(target.allowMissing)
                         alwaysLinkToLastBuild(target.alwaysLinkToLastBuild)

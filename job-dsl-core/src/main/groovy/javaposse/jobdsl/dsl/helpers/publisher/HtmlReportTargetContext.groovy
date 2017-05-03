@@ -8,6 +8,7 @@ class HtmlReportTargetContext extends AbstractContext {
 
     String reportName = ''
     String reportFiles = 'index.html'
+    String reportTitles = ''
     boolean keepAll
     boolean allowMissing
     boolean alwaysLinkToLastBuild
@@ -29,6 +30,13 @@ class HtmlReportTargetContext extends AbstractContext {
      */
     void reportFiles(String reportFiles) {
         this.reportFiles = reportFiles
+    }
+
+    /**
+     * Sets the path to the HTML report directory relative to the workspace.
+     */
+    void reportTitles(String reportFiles) {
+        this.reportTitles = reportFiles
     }
 
     /**
