@@ -521,7 +521,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         if (removedConfigFilesAction == RemovedConfigFilesAction.DELETE && Jenkins.getInstance().getPluginManager().getPlugin("config-file-provider") != null) {
             GlobalConfigFiles globalConfigFiles = GlobalConfigFiles.get();
             for (GeneratedConfigFile unreferencedConfigFile : unreferenced) {
-                Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
+                Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
                 globalConfigFiles.remove(unreferencedConfigFile.getId());
             }
         }

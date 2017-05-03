@@ -187,7 +187,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     @Deprecated
     public String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
         validateNameArg(configFile.getName());
-        Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
+        Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
 
         Jenkins jenkins = Jenkins.getInstance();
 
@@ -221,7 +221,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     @Override
     public void createOrUpdateUserContent(UserContent userContent, boolean ignoreExisting) {
         // As in git-userContent-plugin:
-        Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
+        Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
         try {
             FilePath file = Jenkins.getInstance().getRootPath().child("userContent").child(userContent.getPath());
             if (!(file.exists() && ignoreExisting)) {

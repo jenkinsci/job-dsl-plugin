@@ -117,15 +117,16 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'logPluginDeprecationWarning for plugin'() {
         when:
-        jobManagement.logPluginDeprecationWarning('ldap', '20.0')
+        jobManagement.logPluginDeprecationWarning('script-security', '20.0')
 
         then:
-        buffer.toString() =~ /Warning: \(.+, line \d+\) support for LDAP Plugin versions older than 20.0 is deprecated/
+        buffer.toString() =~
+                /Warning: \(.+, line \d+\) support for Script Security Plugin versions older than 20.0 is deprecated/
     }
 
     def 'logPluginDeprecationWarning does not log anything if plugin version is newer'() {
         when:
-        jobManagement.logPluginDeprecationWarning('ldap', '1.0')
+        jobManagement.logPluginDeprecationWarning('script-security', '1.0')
 
         then:
         buffer.size() == 0
@@ -159,7 +160,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'requirePlugin success'() {
         when:
-        jobManagement.requirePlugin('ldap', failIfMissing)
+        jobManagement.requirePlugin('script-security', failIfMissing)
 
         then:
         0 * build.setResult(UNSTABLE)
@@ -206,7 +207,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'checkMinimumPluginVersion success'() {
         when:
-        jobManagement.requireMinimumPluginVersion('ldap', '1.1', failIfMissing)
+        jobManagement.requireMinimumPluginVersion('script-security', '1.1', failIfMissing)
 
         then:
         0 * build.setResult(UNSTABLE)
@@ -545,13 +546,13 @@ class JenkinsJobManagementSpec extends Specification {
 
     def isMinimumPluginVersionInstalled() {
         when:
-        boolean result = jobManagement.isMinimumPluginVersionInstalled('cvs', '0.1')
+        boolean result = jobManagement.isMinimumPluginVersionInstalled('script-security', '0.1')
 
         then:
         result
 
         when:
-        result = jobManagement.isMinimumPluginVersionInstalled('cvs', '10.0')
+        result = jobManagement.isMinimumPluginVersionInstalled('script-security', '10.0')
 
         then:
         !result
