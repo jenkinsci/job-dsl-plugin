@@ -33,7 +33,7 @@ class HtmlReportTargetContext extends AbstractContext {
     }
 
     /**
-     * Sets the path to the HTML report directory relative to the workspace.
+     * Sets the title for html files.
      */
     void reportTitles(String reportFiles) {
         this.reportTitles = reportFiles
