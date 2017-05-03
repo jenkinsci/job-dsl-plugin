@@ -81,8 +81,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private final FilePath workspace;
     private final Item project;
     private final LookupStrategy lookupStrategy;
-    private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments =
-            new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
+    private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments = new HashMap<>();
     private boolean failOnMissingPlugin;
     private boolean unstableOnDeprecation;
 
@@ -237,7 +236,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public Map<String, Object> getParameters() {
-        Map<String, Object> result = new HashMap<String, Object>(envVars);
+        Map<String, Object> result = new HashMap<>(envVars);
         if (project != null && !result.containsKey("SEED_JOB")) {
             result.put("SEED_JOB", project);
         }
