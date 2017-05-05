@@ -22,7 +22,7 @@ class GitCloneOptionsContext extends AbstractContext {
     }
 
     /**
-     * Do not check out tags.
+     * Do not check out tags. Defaults to {@code false}.
      */
     void noTags(boolean noTags = true) {
         this.noTags = noTags
