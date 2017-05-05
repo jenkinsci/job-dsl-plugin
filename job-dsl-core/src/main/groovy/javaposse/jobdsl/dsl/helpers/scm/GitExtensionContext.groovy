@@ -64,6 +64,7 @@ class GitExtensionContext extends AbstractExtensibleContext {
 
         extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.CloneOption' {
             shallow(context.shallow)
+            noTags(context.noTags)
             reference(context.reference ?: '')
             if (context.timeout != null) {
                 timeout(context.timeout)
