@@ -10,8 +10,9 @@ abstract class SecureDslScriptLoader extends JenkinsDslScriptLoader {
     }
 
     @Override
-    GeneratedItems runScripts(Collection<ScriptRequest> scriptRequests) throws IOException {
-        super.runScripts(createSecureScriptRequests(scriptRequests))
+    GeneratedItems runScripts(Collection<ScriptRequest> scriptRequests,
+                              Map<String, Object> additionalParameters = null) throws IOException {
+        super.runScripts(createSecureScriptRequests(scriptRequests), additionalParameters)
     }
 
     protected Collection<ScriptRequest> createSecureScriptRequests(Collection<ScriptRequest> scriptRequests) {

@@ -269,6 +269,29 @@ class ExecuteDslScriptsSpec extends Specification {
         executeDslScripts.additionalClasspath == null
     }
 
+    @WithoutJenkins
+    def 'additional parameters'() {
+        setup:
+        Map<String, Object> params = [:]
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.additionalParameters == null
+
+        when:
+        executeDslScripts.additionalParameters = params
+
+        then:
+        executeDslScripts.additionalParameters == params
+
+        when:
+        executeDslScripts.additionalParameters = null
+
+        then:
+        executeDslScripts.additionalParameters == null
+
+    }
+
     def scheduleBuildOnMasterUsingScriptText() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')

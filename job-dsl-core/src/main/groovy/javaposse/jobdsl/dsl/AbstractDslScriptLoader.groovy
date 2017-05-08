@@ -37,7 +37,8 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
      *
      * @since 1.45
      */
-    G runScripts(Collection<ScriptRequest> scriptRequests) throws IOException {
+    G runScripts(Collection<ScriptRequest> scriptRequests,
+                 Map<String, Object> additionalParameters = null) throws IOException {
         G generatedItems = generatedItemsClass.newInstance()
         CompilerConfiguration config = createCompilerConfiguration()
         customizeCompilerConfiguration(config)
@@ -57,7 +58,7 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
                     groovyShellCache[key] = groovyShell
                 }
 
-                S jobParent = runScriptEngine(scriptRequest, groovyShell)
+                S jobParent = runScriptEngine(scriptRequest, groovyShell, additionalParameters)
 
                 extractGeneratedItems(generatedItems, jobParent, scriptRequest)
 
@@ -81,11 +82,12 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
      *
      * @since 1.47
      */
-    G runScript(String script) throws IOException {
-        runScripts([new ScriptRequest(script)])
+    G runScript(String script, Map<String, Object> additionalParameters = null) throws IOException {
+        runScripts([new ScriptRequest(script)], additionalParameters)
     }
 
-    protected S runScriptEngine(ScriptRequest scriptRequest, GroovyShell groovyShell) {
+    protected S runScriptEngine(ScriptRequest scriptRequest, GroovyShell groovyShell,
+                                Map<String, Object> additionalParameters) {
         try {
             if (scriptRequest.scriptPath || scriptRequest.location) {
                 logger.println("Processing DSL script ${scriptRequest.scriptName}")
@@ -96,7 +98,7 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
             }
 
             Script script = groovyShell.parse(createGroovyCodeSource(scriptRequest))
-            script.binding = createBinding(scriptRequest)
+            script.binding = createBinding(scriptRequest, additionalParameters)
             script.binding.setVariable('jobFactory', script)
 
             S jobParent = (S) script
@@ -252,17 +254,29 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
         }
     }
 
-    private Binding createBinding(ScriptRequest scriptRequest) {
+    private Binding createBinding(ScriptRequest scriptRequest, Map<String, Object> additionalParameters) {
         Binding binding = new Binding()
         binding.setVariable('out', jobManagement.outputStream) // Works for println, but not System.out
         if (scriptRequest.scriptPath) {
             binding.setVariable('__FILE__', scriptRequest.scriptPath)
         }
 
+        LOGGER.fine('Binding job parameters')
         jobManagement.parameters.each { String key, Object value ->
             LOGGER.fine("Binding ${key} to ${value}")
             binding.setVariable(key, value)
         }
+
+        LOGGER.fine('Binding additional parameters')
+        additionalParameters.each { String parameterName, Object value ->
+            if (binding.hasVariable(parameterName)) {
+                LOGGER.fine("Rebinding ${parameterName} to ${value}")
+            } else {
+                LOGGER.fine("Binding ${parameterName} to ${value}")
+            }
+            binding.setVariable(parameterName, value)
+        }
+
         binding
     }
 

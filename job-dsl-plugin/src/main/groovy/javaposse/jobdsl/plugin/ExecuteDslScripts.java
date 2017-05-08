@@ -106,6 +106,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private String additionalClasspath;
 
+    private Map<String, Object> additionalParameters;
+
     @DataBoundConstructor
     public ExecuteDslScripts() {
     }
@@ -254,6 +256,15 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.additionalClasspath = fixEmptyAndTrim(additionalClasspath);
     }
 
+    public Map<String, Object> getAdditionalParameters() {
+        return additionalParameters;
+    }
+
+    @DataBoundSetter
+    public void setAdditionalParameters(Map<String, Object> additionalParameters) {
+        this.additionalParameters = additionalParameters;
+    }
+
     void configure(Item ancestor) {
         if (!sandbox && isUsingScriptText() && ((DescriptorImpl) getDescriptor()).isSecurityEnabled()) {
             ScriptApproval.get().configuring(scriptText, GroovyLanguage.get(), ApprovalContext.create().withCurrentUser().withItem(ancestor));
@@ -302,7 +313,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                     dslScriptLoader = new JenkinsDslScriptLoader(jobManagement);
                 }
 
-                GeneratedItems generatedItems = dslScriptLoader.runScripts(scriptRequests);
+                GeneratedItems generatedItems = dslScriptLoader.runScripts(scriptRequests, additionalParameters);
                 Set<GeneratedJob> freshJobs = generatedItems.getJobs();
                 Set<GeneratedView> freshViews = generatedItems.getViews();
                 Set<GeneratedConfigFile> freshConfigFiles = generatedItems.getConfigFiles();

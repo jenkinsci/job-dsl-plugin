@@ -109,6 +109,17 @@ class DslScriptLoaderSpec extends Specification {
 
     }
 
+    def 'run engine with additional parameter'() {
+        when:
+        def jobName = "testFromParam"
+        def jobs = dslScriptLoader.runScript(loadScript('simple-from-param.dsl'), [fromParam: jobName]).jobs
+
+        then:
+        jobs != null
+        jobs.size() == 1
+        jobs.iterator().next().jobName == jobName
+    }
+
     def 'run engine with dependent jobs'() {
         setup:
         def scriptStr = '''job('project-a') {
