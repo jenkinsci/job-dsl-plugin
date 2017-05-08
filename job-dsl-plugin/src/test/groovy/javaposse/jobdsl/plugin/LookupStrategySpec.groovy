@@ -60,6 +60,19 @@ class LookupStrategySpec extends Specification {
         SEED_JOB       | 'folder/job'
     }
 
+    def 'getItem not normalized'(LookupStrategy lookupStrategy, String expectedFullName) {
+        when:
+        Item result = lookupStrategy.getItem(seedJob, '../job', Item)
+
+        then:
+        result?.fullName == expectedFullName
+
+        where:
+        lookupStrategy | expectedFullName
+        JENKINS_ROOT   | null
+        SEED_JOB       | 'job'
+    }
+
     def 'getContext'(LookupStrategy lookupStrategy, String expectedFullName) {
         when:
         ItemGroup result = lookupStrategy.getContext(seedJob)
@@ -91,5 +104,22 @@ class LookupStrategySpec extends Specification {
         SEED_JOB       | 'folder/job'  | 'folder/folder'
         JENKINS_ROOT   | '/folder/foo' | 'folder'
         SEED_JOB       | '/folder/foo' | 'folder'
+    }
+
+    def 'getParent not normalized'(LookupStrategy lookupStrategy, String path, String expectedFullName) {
+        when:
+        ItemGroup result = lookupStrategy.getParent(seedJob, path)
+
+        then:
+        result?.fullName == expectedFullName
+
+        where:
+        lookupStrategy | path             | expectedFullName
+        JENKINS_ROOT   | '../folder/job'  | null
+        SEED_JOB       | '../folder/job'  | 'folder'
+        JENKINS_ROOT   | '/folder/../job' | ''
+        SEED_JOB       | '/folder/../job' | ''
+        JENKINS_ROOT   | 'folder/../job'  | ''
+        SEED_JOB       | 'folder/../job'  | 'folder'
     }
 }
