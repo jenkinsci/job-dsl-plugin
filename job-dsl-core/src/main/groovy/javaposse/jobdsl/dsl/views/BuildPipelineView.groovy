@@ -12,11 +12,6 @@ class BuildPipelineView extends View {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    BuildPipelineView(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     /**
      * Sets number of displayed builds. Defaults to 1 and must be greater than zero.
      */

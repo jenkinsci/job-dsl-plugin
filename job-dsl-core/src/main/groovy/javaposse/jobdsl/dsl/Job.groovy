@@ -29,11 +29,6 @@ abstract class Job extends Item {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    protected Job(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     /**
      * Creates a new job configuration, based on the job template referenced by the parameter and stores this.
      *

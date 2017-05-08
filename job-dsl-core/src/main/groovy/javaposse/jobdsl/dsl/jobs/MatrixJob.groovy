@@ -13,11 +13,6 @@ class MatrixJob extends Job {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    MatrixJob(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     /**
      * Specifies the axes for the matrix job.
      */

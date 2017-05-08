@@ -11,11 +11,6 @@ class NestedView extends View {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    NestedView(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     /**
      * Adds nested views.
      */

@@ -11,11 +11,6 @@ class WorkflowJob extends Job {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    WorkflowJob(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     /**
      * Adds a workflow definition.
      */

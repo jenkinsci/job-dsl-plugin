@@ -141,12 +141,4 @@ class GitHubBranchSourceContext extends AbstractContext {
     void buildForkPRHead(boolean buildForkPRHead = true) {
         this.buildForkPRHead = buildForkPRHead
     }
-
-    /**
-     * If set, ignores push notifications. Defaults to {@code false}.
-     */
-    @SuppressWarnings(['GroovyUnusedDeclaration', 'EmptyMethod'])
-    @Deprecated
-    void ignoreOnPushNotifications(boolean ignoreOnPushNotifications = true) {
-    }
 }

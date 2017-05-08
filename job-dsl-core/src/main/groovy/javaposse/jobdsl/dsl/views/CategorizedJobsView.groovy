@@ -10,11 +10,6 @@ class CategorizedJobsView extends ListView {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    CategorizedJobsView(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     /**
      * Adds grouping rules.
      */

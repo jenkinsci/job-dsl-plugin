@@ -123,7 +123,6 @@ class BranchSourcesContextsSpec extends Specification {
             repository('repoName')
             includes('lorem')
             excludes('ipsum')
-            ignoreOnPushNotifications()
         }
 
         then:
@@ -150,7 +149,6 @@ class BranchSourcesContextsSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.6')
-        1 * jobManagement.logDeprecationWarning()
         1 * jobManagement.logPluginDeprecationWarning('github-branch-source', '1.8')
     }
 
@@ -207,7 +205,6 @@ class BranchSourcesContextsSpec extends Specification {
             repository('repoName')
             includes('lorem')
             excludes('ipsum')
-            ignoreOnPushNotifications()
             buildOriginBranch(false)
             buildOriginBranchWithPR(false)
             buildOriginPRMerge()
@@ -247,7 +244,6 @@ class BranchSourcesContextsSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.6')
         6 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.8')
-        1 * jobManagement.logDeprecationWarning()
         1 * jobManagement.logPluginDeprecationWarning('github-branch-source', '1.8')
     }
 }

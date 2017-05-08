@@ -11,11 +11,6 @@ class MultiJob extends Job {
         super(jobManagement, name)
     }
 
-    @Deprecated
-    MultiJob(JobManagement jobManagement) {
-        super(jobManagement)
-    }
-
     void steps(@DslContext(MultiJobStepContext) Closure closure) {
         MultiJobStepContext context = new MultiJobStepContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
