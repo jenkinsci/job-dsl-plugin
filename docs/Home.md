@@ -39,6 +39,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the [Parameterized Remote Trigger
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin)
     ([JENKINS-43025](https://issues.jenkins-ci.org/browse/JENKINS-43025))
+  * Fixed problem with absolute paths when using "Seed Job" lookup strategy
+    ([JENKINS-43991](https://issues.jenkins-ci.org/browse/JENKINS-43991))
+  * Improved error handling and fail if an item or view could not be created or updated
+    ([JENKINS-43991](https://issues.jenkins-ci.org/browse/JENKINS-43991))
   * Added a switch to the command line runner to put the script's directory on the classpath, see
     [User-Power-Moves](User-Power-Moves#run-a-dsl-script-locally)
     ([JENKINS-42299](https://issues.jenkins-ci.org/browse/JENKINS-42299))

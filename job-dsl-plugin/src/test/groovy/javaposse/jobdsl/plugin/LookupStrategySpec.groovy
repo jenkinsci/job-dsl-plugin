@@ -9,6 +9,7 @@ import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import static javaposse.jobdsl.plugin.LookupStrategy.JENKINS_ROOT
 import static javaposse.jobdsl.plugin.LookupStrategy.SEED_JOB
@@ -72,7 +73,8 @@ class LookupStrategySpec extends Specification {
         SEED_JOB       | 'folder'
     }
 
-    def 'getParent'(LookupStrategy lookupStrategy, String path, String expectedFullName) {
+    @Unroll
+    def 'getParent for #lookupStrategy: #path'(LookupStrategy lookupStrategy, String path, String expectedFullName) {
         when:
         ItemGroup result = lookupStrategy.getParent(seedJob, path)
 
@@ -80,12 +82,14 @@ class LookupStrategySpec extends Specification {
         result.fullName == expectedFullName
 
         where:
-        lookupStrategy | path         | expectedFullName
-        JENKINS_ROOT   | 'job'        | ''
-        SEED_JOB       | 'job'        | 'folder'
-        JENKINS_ROOT   | '/job'       | ''
-        SEED_JOB       | '/job'       | ''
-        JENKINS_ROOT   | 'folder/job' | 'folder'
-        SEED_JOB       | 'folder/job' | 'folder/folder'
+        lookupStrategy | path          | expectedFullName
+        JENKINS_ROOT   | 'job'         | ''
+        SEED_JOB       | 'job'         | 'folder'
+        JENKINS_ROOT   | '/job'        | ''
+        SEED_JOB       | '/job'        | ''
+        JENKINS_ROOT   | 'folder/job'  | 'folder'
+        SEED_JOB       | 'folder/job'  | 'folder/folder'
+        JENKINS_ROOT   | '/folder/foo' | 'folder'
+        SEED_JOB       | '/folder/foo' | 'folder'
     }
 }

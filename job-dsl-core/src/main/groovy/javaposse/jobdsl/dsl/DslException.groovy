@@ -11,4 +11,11 @@ class DslException extends RuntimeException {
     DslException(String message, Throwable cause) {
         super(message, cause)
     }
+
+    /**
+     * @since 1.62
+     */
+    DslException(Throwable cause) {
+        super(cause)
+    }
 }

@@ -709,7 +709,7 @@ class JenkinsJobManagementSpec extends Specification {
         jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView>', false)
 
         then:
-        jenkinsRule.instance.getView('test-view') == null
+        thrown(DslException)
     }
 
     def 'readFileFromWorkspace with exception'() {

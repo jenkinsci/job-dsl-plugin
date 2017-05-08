@@ -74,16 +74,21 @@ public enum LookupStrategy {
      */
     public ItemGroup getParent(Item seedJob, String path) {
         Jenkins jenkins = Jenkins.getInstance();
-        int i = path.lastIndexOf('/');
-        switch (i) {
-            case -1:
-                return getContext(seedJob);
-            case 0:
-                return jenkins;
-            default:
-                String fullName = getContext(seedJob).getFullName() + "/" + path.substring(0, i);
-                Item item = jenkins.getItemByFullName(fullName);
-                return item instanceof ItemGroup ? (ItemGroup) item : null;
+
+        String absolutePath;
+        if (path.startsWith("/")) {
+            absolutePath = path.substring(1);
+        } else {
+            String contextPath = getContext(seedJob).getFullName();
+            absolutePath = contextPath.length() == 0 ? path : contextPath + "/" + path;
+        }
+
+        int i = absolutePath.lastIndexOf('/');
+        if (i > -1) {
+            Item item = jenkins.getItemByFullName(absolutePath.substring(0, i));
+            return item instanceof ItemGroup ? (ItemGroup) item : null;
+        } else {
+            return jenkins;
         }
     }
 
