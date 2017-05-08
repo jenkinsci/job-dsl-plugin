@@ -45,6 +45,18 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Support for the older versions of the [Parameterized Remote Trigger
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-162)
+  * Support for the [Build Flow Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Plugin) is deprecated,
+    see [Migration](Migration#migrating-to-162)
+  * Support for the [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin) is
+    deprecated, see [Migration](Migration#migrating-to-162)
+  * Support for the [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin) is
+    deprecated, see [Migration](Migration#migrating-to-162)
+  * Support for the [ArtifactDeployer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ArtifactDeployer+Plugin) is
+    deprecated, see [Migration](Migration#migrating-to-162)
+  * Support for the [Subversion Tagging Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Tagging+Plugin)
+    is deprecated, see [Migration](Migration#migrating-to-162)
+  * Support for the [Grails Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Grails+Plugin) is deprecated, see
+    [Migration](Migration#migrating-to-162)
   * Removed anything that has been deprecated in 1.53, see [Migration](Migration#migrating-to-153)
 * 1.61 (April 17 2017)
   * Enhanced support for the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin)

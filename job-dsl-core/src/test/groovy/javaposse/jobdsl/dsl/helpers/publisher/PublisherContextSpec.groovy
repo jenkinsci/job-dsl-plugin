@@ -3672,6 +3672,7 @@ class PublisherContextSpec extends Specification {
             markBuildUnstable[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call post build scripts with all options'() {
@@ -3696,6 +3697,7 @@ class PublisherContextSpec extends Specification {
             markBuildUnstable[0].value() == value
         }
         1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+        1 * jobManagement.logDeprecationWarning()
 
         where:
         value << [true, false]
@@ -3721,6 +3723,7 @@ class PublisherContextSpec extends Specification {
             executeOn[0].value() == 'BOTH'
         }
         1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call post build scripts with all options and matrix job'() {
@@ -3751,6 +3754,7 @@ class PublisherContextSpec extends Specification {
             executeOn[0].value() == mode
         }
         1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+        1 * jobManagement.logDeprecationWarning()
 
         where:
         mode << ['MATRIX', 'AXES', 'BOTH']
@@ -5216,6 +5220,7 @@ class PublisherContextSpec extends Specification {
             entries[0].value().empty
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call artifactDeployer with all options'() {
@@ -5274,6 +5279,7 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'slocCount with no options'() {
@@ -5333,6 +5339,7 @@ class PublisherContextSpec extends Specification {
             tagDeleteComment[0].value() == 'Delete old tag by svn-tag Jenkins plugin.'
         }
         1 * jobManagement.requireMinimumPluginVersion('svn-tag', '1.18')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'svnTag with all options'() {
@@ -5353,6 +5360,7 @@ class PublisherContextSpec extends Specification {
             tagDeleteComment[0].value() == 'delete comment'
         }
         1 * jobManagement.requireMinimumPluginVersion('svn-tag', '1.18')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call cucumberReports with no options'() {

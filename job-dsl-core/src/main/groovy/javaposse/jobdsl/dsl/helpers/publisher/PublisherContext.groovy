@@ -1323,6 +1323,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.31
      */
     @RequiresPlugin(id = 'postbuildscript', minimumVersion = '0.17')
+    @Deprecated
     void postBuildScripts(@DslContext(PostBuildScriptsContext) Closure closure) {
         PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement, item)
         ContextHelper.executeInContext(closure, context)
@@ -1568,6 +1569,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.39
      */
     @RequiresPlugin(id = 'artifactdeployer', minimumVersion = '0.33')
+    @Deprecated
     void artifactDeployer(@DslContext(ArtifactDeployerPublisherContext) Closure closure) {
         ArtifactDeployerPublisherContext context = new ArtifactDeployerPublisherContext()
         ContextHelper.executeInContext(closure, context)
@@ -1620,6 +1622,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.41
      */
     @RequiresPlugin(id = 'svn-tag', minimumVersion = '1.18')
+    @Deprecated
     void svnTag(@DslContext(SubversionTagContext) Closure closure) {
         SubversionTagContext context = new SubversionTagContext()
         ContextHelper.executeInContext(closure, context)

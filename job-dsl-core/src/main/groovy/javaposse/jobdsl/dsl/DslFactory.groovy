@@ -50,6 +50,7 @@ interface DslFactory extends ViewFactory {
      * @see #buildFlowJob(java.lang.String, groovy.lang.Closure)
      */
     @RequiresPlugin(id = 'build-flow-plugin', failIfMissing = true)
+    @Deprecated
     BuildFlowJob buildFlowJob(String name)
 
     /**
@@ -58,6 +59,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.31
      */
     @RequiresPlugin(id = 'build-flow-plugin', failIfMissing = true)
+    @Deprecated
     BuildFlowJob buildFlowJob(String name, @DslContext(BuildFlowJob) Closure closure)
 
     /**

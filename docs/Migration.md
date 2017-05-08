@@ -6,6 +6,42 @@ Support for versions older than 2.0 of the
 [Parameterized Remote Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin)
 is [[deprecated|Deprecation-Policy]] and will be removed.
 
+### Build Flow Plugin
+
+The [Build Flow Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Plugin) has been removed from the Update
+Center due to [Security Vulnerabilities](https://jenkins.io/security/advisory/2017-04-10/). As a consequence the DSL
+support is [[deprecated|Deprecation-Policy]] and will be removed.
+
+### Active Choices Plugin
+
+The [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin) has been removed from the
+Update Center due to [Security Vulnerabilities](https://jenkins.io/security/advisory/2017-04-10/). As a consequence the
+DSL support is [[deprecated|Deprecation-Policy]] and will be removed.
+
+### PostBuildScript Plugin
+
+The [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin) has been removed from
+the Update Center due to [Security Vulnerabilities](https://jenkins.io/security/advisory/2017-04-10/). As a consequence
+the DSL support is [[deprecated|Deprecation-Policy]] and will be removed.
+
+### ArtifactDeployer Plugin
+
+The [ArtifactDeployer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ArtifactDeployer+Plugin) has been removed from
+the Update Center due to [Security Vulnerabilities](https://jenkins.io/security/advisory/2017-04-10/). As a consequence
+the DSL support is [[deprecated|Deprecation-Policy]] and will be removed.
+
+### Subversion Tagging Plugin
+
+The [Subversion Tagging Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Tagging+Plugin) has been removed
+from the Update Center due to [Security Vulnerabilities](https://jenkins.io/security/advisory/2017-04-10/). As a
+consequence the DSL support is [[deprecated|Deprecation-Policy]] and will be removed.
+
+### Grails Plugin
+
+The [Grails Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Grails+Plugin) has been removed from the Update Center
+due to [Security Vulnerabilities](https://jenkins.io/security/advisory/2017-04-10/). As a consequence the DSL support is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.61
 
 ### Stash Notifier Plugin
