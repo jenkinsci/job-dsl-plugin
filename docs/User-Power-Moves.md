@@ -191,7 +191,8 @@ node {
            removedJobAction: 'DELETE',
            removedViewAction: 'DELETE',
            lookupStrategy: 'SEED_JOB',
-           additionalClasspath: ['libA.jar', 'libB.jar'].join('\n')
+           additionalClasspath: ['libA.jar', 'libB.jar'].join('\n'),
+           additionalParameters: [message: 'Hello from pipeline', credentials: credentialsExpr]
 }
 ```
 
@@ -209,7 +210,8 @@ node {
         removedJobAction: 'DELETE',
         removedViewAction: 'DELETE',
         lookupStrategy: 'SEED_JOB',
-        additionalClasspath: ['libA.jar', 'libB.jar'].join('\n')
+        additionalClasspath: ['libA.jar', 'libB.jar'].join('\n'),
+        additionalParameters: [message: 'Hello from pipeline', credentials: credentialsExpr]
     ])
 }
 ```
@@ -232,6 +234,9 @@ Options:
 * `additionalClasspath`: optional, newline separated list of additional classpath entries for Job DSL scripts, file
                          names must be relative to the workspace; this option will be ignored when script security for
                          Job DSL is enabled on the "Configure Global Security" page
+* `additionalParameters`: optional Map<String, Object> object which defines global variables accessible Job DSL scripts.
+                          The variables from the example are accessible as variables named `message` and `credentials`,
+                          respectively.
 * `sandbox`: optional, defaults to `false`, if `false` the DSL script needs to be approved by an administrator; set to
              `true` to run the DSL scripts in a sandbox with limited abilities (see [[Script Security]]); this option
               will be ignored when script security for Job DSL is disabled on the "Configure Global Security" page

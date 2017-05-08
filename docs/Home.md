@@ -45,6 +45,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Support for the older versions of the [Parameterized Remote Trigger
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-162)
+  * Allow passing custom parameters from pipeline to job-dsl, see [User-Power-Moves](User-Power-Moves#use-job-dsl-in-pipeline-scripts) ([JENKINS-44128](https://issues.jenkins-ci.org/browse/JENKINS-44128))
 * 1.61 (April 17 2017)
   * Enhanced support for the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin)
     ([JENKINS-42900](https://issues.jenkins-ci.org/browse/JENKINS-42900),
