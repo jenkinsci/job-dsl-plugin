@@ -3,8 +3,7 @@ package javaposse.jobdsl.plugin;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import jenkins.model.Jenkins;
-
-import java.net.URI;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * A JobLookupStrategy encapsulates where a seed job will look for existing jobs
@@ -48,7 +47,11 @@ public enum LookupStrategy {
      */
     public <T extends Item> T getItem(Item seedJob, String path, Class<T> type) {
         String fullName = path.startsWith("/") ? path : getContext(seedJob).getFullName() + "/" + path;
-        return Jenkins.getInstance().getItemByFullName(normalizePath(fullName), type);
+        String normalizePath = normalizePath(fullName);
+        if (normalizePath == null) {
+            return null;
+        }
+        return Jenkins.getInstance().getItemByFullName(normalizePath, type);
     }
 
     /**
@@ -94,6 +97,9 @@ public enum LookupStrategy {
     private static ItemGroup getItemGroup(String path) {
         Jenkins instance = Jenkins.getInstance();
         String normalizedPath = normalizePath(path);
+        if (normalizedPath == null) {
+            return null;
+        }
         if (normalizedPath.isEmpty() || normalizedPath.equals("/")) {
             return instance;
         }
@@ -102,6 +108,6 @@ public enum LookupStrategy {
     }
 
     private static String normalizePath(String path) {
-        return URI.create(path).normalize().getPath();
+        return FilenameUtils.normalize(path, true);
     }
 }
