@@ -1,5 +1,5 @@
 {
-    "version": "1.63",
+    "version": "1.62",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
