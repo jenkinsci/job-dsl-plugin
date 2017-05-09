@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.JobManagement
 
 class GitCloneOptionsContext extends AbstractContext {
     boolean shallow
+    boolean noTags
     String reference
     Integer timeout
     boolean honorRefspec
@@ -18,6 +19,15 @@ class GitCloneOptionsContext extends AbstractContext {
      */
     void shallow(boolean shallow = true) {
         this.shallow = shallow
+    }
+
+    /**
+     * Do not check out tags. Defaults to {@code false}.
+     *
+     * @since 1.64
+     */
+    void noTags(boolean noTags = true) {
+        this.noTags = noTags
     }
 
     /**
