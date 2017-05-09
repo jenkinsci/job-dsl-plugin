@@ -106,20 +106,23 @@ class LookupStrategySpec extends Specification {
         SEED_JOB       | '/folder/foo' | 'folder'
     }
 
-    def 'getParent not normalized'(LookupStrategy lookupStrategy, String path, String expectedFullName) {
+    @Unroll
+    def 'getParent not normalized for path #path and #strategy'(LookupStrategy strategy, String path, String expected) {
         when:
-        ItemGroup result = lookupStrategy.getParent(seedJob, path)
+        ItemGroup result = strategy.getParent(seedJob, path)
 
         then:
-        result?.fullName == expectedFullName
+        result?.fullName == expected
 
         where:
-        lookupStrategy | path             | expectedFullName
-        JENKINS_ROOT   | '../folder/job'  | null
-        SEED_JOB       | '../folder/job'  | 'folder'
-        JENKINS_ROOT   | '/folder/../job' | ''
-        SEED_JOB       | '/folder/../job' | ''
-        JENKINS_ROOT   | 'folder/../job'  | ''
-        SEED_JOB       | 'folder/../job'  | 'folder'
+        strategy     | path                          | expected
+        JENKINS_ROOT | '../folder/job'               | null
+        SEED_JOB     | '../folder/job'               | 'folder'
+        JENKINS_ROOT | '/folder/../job'              | ''
+        SEED_JOB     | '/folder/../job'              | ''
+        JENKINS_ROOT | 'folder/../job'               | ''
+        SEED_JOB     | 'folder/../job'               | 'folder'
+        JENKINS_ROOT | 'folder/with space/../../job' | ''
+        SEED_JOB     | 'folder/with space/../../job' | 'folder'
     }
 }

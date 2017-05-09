@@ -29,6 +29,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.63 (unreleased)
+  * Fixed problem with special characters in job, folder and view names
+    ([JENKINS-44140](https://issues.jenkins-ci.org/browse/JENKINS-44140))
 * 1.62 (May 09 2017)
   * Show enum values for generated DSL in embedded API viewer
     [#1020](https://github.com/jenkinsci/job-dsl-plugin/pull/1020)
