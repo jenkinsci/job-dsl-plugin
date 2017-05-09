@@ -2,6 +2,7 @@ package javaposse.jobdsl.plugin;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Multimap;
 import hudson.Extension;
 import hudson.Util;
 import hudson.XmlFile;
@@ -17,6 +18,7 @@ import jenkins.model.Jenkins;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Logger;
 
 import static com.google.common.collect.Collections2.filter;
@@ -40,8 +42,16 @@ public class MonitorTemplateJobs extends SaveableListener {
         String possibleTemplateName = project.getName();
 
         DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
-        Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(possibleTemplateName);
+        if (descriptor == null) {
+            LOGGER.warning("Unable to get DescriptorImpl");
+        }
 
+        Multimap<String,SeedReference> templateJobMap = (descriptor != null? descriptor.getTemplateJobMap(): null);
+        if (templateJobMap == null) {
+            LOGGER.warning("Descriptor returned no template job map.");
+        }
+
+        Collection<SeedReference> seedJobReferences = templateJobMap != null? templateJobMap.get(possibleTemplateName): Collections.<SeedReference>emptyList();
         if (seedJobReferences.isEmpty()) {
             return;
         }
