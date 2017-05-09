@@ -28,7 +28,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.62 (unreleased)
+* 1.62 (May 09 2017)
   * Show enum values for generated DSL in embedded API viewer
     [#1020](https://github.com/jenkinsci/job-dsl-plugin/pull/1020)
   * Added option to remove unreferenced config files
