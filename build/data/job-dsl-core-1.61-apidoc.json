@@ -1,5 +1,5 @@
 {
-    "version": "1.62",
+    "version": "1.61",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -3156,7 +3156,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.36",
                             "plugins": [
                                 {
@@ -3186,7 +3185,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.38",
                             "plugins": [
                                 {
@@ -3216,7 +3214,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.38",
                             "plugins": [
                                 {
@@ -13596,28 +13593,6 @@
                     ]
                 },
                 {
-                    "name": "overrideCredentials",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "credentialsIds",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.62",
-                            "plugins": [
-                                {
-                                    "id": "Parameterized-Remote-Trigger",
-                                    "minimumVersion": "2.0"
-                                }
-                            ],
-                            "html": "Specifies credentials for authentication with the remote Jenkins host.",
-                            "firstSentenceCommentText": "Specifies credentials for authentication with the remote Jenkins host."
-                        }
-                    ]
-                },
-                {
                     "name": "parameter",
                     "signatures": [
                         {
@@ -14305,7 +14280,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.39",
                             "plugins": [
                                 {
@@ -14753,7 +14727,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "plugins": [
                                 {
                                     "id": "grails"
@@ -14774,7 +14747,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "plugins": [
                                 {
                                     "id": "grails"
@@ -14802,7 +14774,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
                             "plugins": [
                                 {
                                     "id": "grails"
@@ -18561,7 +18532,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.39",
                             "plugins": [
                                 {
@@ -19753,7 +19723,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.31",
                             "plugins": [
                                 {
@@ -20360,7 +20329,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.41",
                             "plugins": [
                                 {
@@ -20994,7 +20962,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.39",
                             "plugins": [
                                 {
@@ -22164,7 +22131,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.31",
                             "plugins": [
                                 {
@@ -22771,7 +22737,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.41",
                             "plugins": [
                                 {
@@ -34095,7 +34060,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.39",
                             "plugins": [
                                 {
@@ -35284,7 +35248,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.31",
                             "plugins": [
                                 {
@@ -35891,7 +35854,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.41",
                             "plugins": [
                                 {
@@ -38697,7 +38659,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.39",
                             "plugins": [
                                 {
@@ -39145,7 +39106,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "plugins": [
                                 {
                                     "id": "grails"
@@ -39166,7 +39126,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "plugins": [
                                 {
                                     "id": "grails"
@@ -39194,7 +39153,6 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
                             "plugins": [
                                 {
                                     "id": "grails"
@@ -41007,22 +40965,6 @@
                     ]
                 },
                 {
-                    "name": "id",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "id",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.62",
-                            "html": "Specifies a unique ID for this branch source.",
-                            "firstSentenceCommentText": "Specifies a unique ID for this branch source."
-                        }
-                    ]
-                },
-                {
                     "name": "ignoreOnPushNotifications",
                     "signatures": [
                         {
@@ -41257,18 +41199,19 @@
                     ]
                 },
                 {
-                    "name": "id",
+                    "name": "ignoreOnPushNotifications",
                     "signatures": [
                         {
                             "parameters": [
                                 {
-                                    "name": "id",
-                                    "type": "String"
+                                    "name": "ignoreOnPushNotifications",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
                                 }
                             ],
-                            "availableSince": "1.62",
-                            "html": "Specifies a unique ID for this branch source.",
-                            "firstSentenceCommentText": "Specifies a unique ID for this branch source."
+                            "deprecated": true,
+                            "html": "If set, ignores push notifications. Defaults to <TT>false</TT>.",
+                            "firstSentenceCommentText": "If set, ignores push notifications. "
                         }
                     ]
                 },
@@ -43284,7 +43227,6 @@
                                     "type": "String"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.30",
                             "plugins": [
                                 {
@@ -43305,7 +43247,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.31",
                             "plugins": [
                                 {
