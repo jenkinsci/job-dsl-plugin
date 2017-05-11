@@ -128,7 +128,9 @@ class StepContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(gradleClosure, gradleContext)
 
         Node gradleNode = new NodeBuilder().'hudson.plugins.gradle.Gradle' {
-            description gradleContext.description
+            if (!jobManagement.isMinimumPluginVersionInstalled('gradle', '1.26')) {
+                description gradleContext.description
+            }
             switches gradleContext.switches.join(' ')
             tasks gradleContext.tasks.join(' ')
             rootBuildScriptDir gradleContext.rootBuildScriptDir

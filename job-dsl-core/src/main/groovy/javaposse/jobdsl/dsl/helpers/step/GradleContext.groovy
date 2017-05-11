@@ -46,6 +46,7 @@ class GradleContext extends AbstractContext {
     /**
      * Sets a description for the build step.
      */
+    @Deprecated
     void description(String description) {
         this.description = description
     }
