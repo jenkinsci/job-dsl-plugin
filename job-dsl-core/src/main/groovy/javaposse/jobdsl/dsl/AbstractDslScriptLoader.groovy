@@ -65,12 +65,8 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
             }
         } finally {
             groovyShellCache.values().each { GroovyShell groovyShell ->
-                if (groovyShell.classLoader instanceof Closeable) {
-                    ((Closeable) groovyShell.classLoader).close()
-                }
-                if (groovyShell.classLoader.parent instanceof Closeable) {
-                    ((Closeable) groovyShell.classLoader.parent).close()
-                }
+                groovyShell.classLoader.close()
+                groovyShell.classLoader.parent.close()
             }
         }
         generatedItems

@@ -285,8 +285,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             jenkinsJobManagement.setUnstableOnDeprecation(unstableOnDeprecation);
             JobManagement jobManagement = new InterruptibleJobManagement(jenkinsJobManagement);
 
-            ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env);
-            try {
+            try (ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env)) {
                 Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
                         getTargets(), isUsingScriptText(), getScriptText(), ignoreExisting, isIgnoreMissingFiles(), additionalClasspath
                 );
@@ -319,8 +318,6 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 run.addAction(new GeneratedViewsBuildAction(freshViews, getLookupStrategy()));
                 run.addAction(new GeneratedConfigFilesBuildAction(freshConfigFiles));
                 run.addAction(new GeneratedUserContentsBuildAction(freshUserContents));
-            } finally {
-                generator.close();
             }
         } catch (RuntimeException e) {
             if (!(e instanceof DslException) && !(e instanceof AccessDeniedException)) {
@@ -398,8 +395,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         Set<GeneratedJob> added = Sets.difference(freshJobs, generatedJobs);
         Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
         Set<GeneratedJob> unreferenced = Sets.difference(generatedJobs, freshJobs);
-        Set<GeneratedJob> removed = new HashSet<GeneratedJob>();
-        Set<GeneratedJob> disabled = new HashSet<GeneratedJob>();
+        Set<GeneratedJob> removed = new HashSet<>();
+        Set<GeneratedJob> disabled = new HashSet<>();
 
         logItems(listener, "Added items", added);
         logItems(listener, "Existing items", existing);
@@ -478,7 +475,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         Set<GeneratedView> added = Sets.difference(freshViews, generatedViews);
         Set<GeneratedView> existing = Sets.intersection(generatedViews, freshViews);
         Set<GeneratedView> unreferenced = Sets.difference(generatedViews, freshViews);
-        Set<GeneratedView> removed = new HashSet<GeneratedView>();
+        Set<GeneratedView> removed = new HashSet<>();
 
         logItems(listener, "Added views", added);
         logItems(listener, "Existing views", existing);
@@ -521,7 +518,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         if (removedConfigFilesAction == RemovedConfigFilesAction.DELETE && Jenkins.getInstance().getPluginManager().getPlugin("config-file-provider") != null) {
             GlobalConfigFiles globalConfigFiles = GlobalConfigFiles.get();
             for (GeneratedConfigFile unreferencedConfigFile : unreferenced) {
-                Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
+                Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
                 globalConfigFiles.remove(unreferencedConfigFile.getId());
             }
         }
@@ -555,7 +552,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 return input.getTemplateName();
             }
         });
-        return new LinkedHashSet<String>(Collections2.filter(templateNames, Predicates.notNull()));
+        return new LinkedHashSet<>(Collections2.filter(templateNames, Predicates.notNull()));
     }
 
     private static class SeedNamePredicate implements Predicate<SeedReference> {

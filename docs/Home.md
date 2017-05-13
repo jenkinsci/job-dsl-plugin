@@ -29,6 +29,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.64 (unreleased)
+  * Increased the minimum supported Java version to JDK 7
+  * Increased the minimum supported Jenkins version to 2.19
+  * Increased the minimum supported Groovy version to 2.4.7
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
     ([#1029](https://github.com/jenkinsci/job-dsl-plugin/pull/1029))
 * 1.63 (May 09 2017)

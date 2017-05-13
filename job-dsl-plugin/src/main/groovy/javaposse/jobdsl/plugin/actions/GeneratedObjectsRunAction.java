@@ -14,7 +14,7 @@ public abstract class GeneratedObjectsRunAction<T> implements RunAction2, Simple
     protected transient Run owner;
 
     GeneratedObjectsRunAction(Collection<T> modifiedObjects) {
-        this.modifiedObjects = new LinkedHashSet<T>(modifiedObjects);
+        this.modifiedObjects = new LinkedHashSet<>(modifiedObjects);
     }
 
     @Override
@@ -44,6 +44,6 @@ public abstract class GeneratedObjectsRunAction<T> implements RunAction2, Simple
 
     @SuppressWarnings("ConstantConditions") // modifiedObjects can be null when this is deserialized by XStream
     public Collection<T> getModifiedObjects() {
-        return modifiedObjects == null ? null : new TreeSet<T>(modifiedObjects);
+        return modifiedObjects == null ? null : new TreeSet<>(modifiedObjects);
     }
 }

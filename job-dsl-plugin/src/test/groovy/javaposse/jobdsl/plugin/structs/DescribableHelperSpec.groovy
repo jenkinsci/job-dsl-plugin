@@ -255,8 +255,8 @@ class DescribableHelperSpec extends Specification {
         models['dummy'].type == DummyTrigger
         models['foo'].type == FooTrigger
         models['bar'].type == FooTrigger
-        models['timerTrigger'].type == TimerTrigger
-        models['scmTrigger'].type == SCMTrigger
+        models['cron'].type == TimerTrigger
+        models['scm'].type == SCMTrigger
         models['integerTrigger'].type == IntegerTrigger
         models['someTrigger'].type == SomeTrigger
         models['periodicFolderTrigger'].type == PeriodicFolderTrigger

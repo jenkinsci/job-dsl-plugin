@@ -26,7 +26,7 @@ public class JenkinsDslScriptLoader extends AbstractDslScriptLoader<JenkinsJobPa
             for (Object o : jobParent.getReferencedConfigs()) {
                 Config config = (Config) o;
                 if (!(scriptRequest.getIgnoreExisting() && globalConfigFiles.getById(config.id) != null)) {
-                    Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
+                    Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
                     globalConfigFiles.save(config);
                 }
                 generatedItems.getConfigFiles().add(new GeneratedConfigFile(config.id, config.name));

@@ -81,8 +81,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private final FilePath workspace;
     private final Item project;
     private final LookupStrategy lookupStrategy;
-    private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments =
-            new HashMap<javaposse.jobdsl.dsl.Item, DslEnvironment>();
+    private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments = new HashMap<>();
     private boolean failOnMissingPlugin;
     private boolean unstableOnDeprecation;
 
@@ -187,7 +186,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     @Deprecated
     public String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
         validateNameArg(configFile.getName());
-        Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
+        Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
 
         Jenkins jenkins = Jenkins.getInstance();
 
@@ -221,7 +220,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     @Override
     public void createOrUpdateUserContent(UserContent userContent, boolean ignoreExisting) {
         // As in git-userContent-plugin:
-        Jenkins.getActiveInstance().checkPermission(Jenkins.ADMINISTER);
+        Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
         try {
             FilePath file = Jenkins.getInstance().getRootPath().child("userContent").child(userContent.getPath());
             if (!(file.exists() && ignoreExisting)) {
@@ -237,7 +236,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public Map<String, Object> getParameters() {
-        Map<String, Object> result = new HashMap<String, Object>(envVars);
+        Map<String, Object> result = new HashMap<>(envVars);
         if (project != null && !result.containsKey("SEED_JOB")) {
             result.put("SEED_JOB", project);
         }
