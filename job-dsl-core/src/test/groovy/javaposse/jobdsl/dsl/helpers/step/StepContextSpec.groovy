@@ -951,6 +951,79 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('groovy')
     }
 
+    def 'call systemGroovyCommand methods with sandbox script-security'() {
+        when:
+        context.systemGroovyCommand() {
+            script("println 'Hello World!'")
+            sandbox()
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        def systemGroovyNode = context.stepNodes[0]
+        systemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
+        systemGroovyNode.bindings.size() == 0
+
+        systemGroovyNode.source.size() == 1
+        def sourceNode = systemGroovyNode.source[0]
+        sourceNode.attribute('class') == 'hudson.plugins.groovy.StringSystemScriptSource'
+
+        sourceNode.script.size() == 1
+        def scriptSecurityNode = sourceNode.script[0]
+
+        scriptSecurityNode.script.size() == 1
+        scriptSecurityNode.script[0].value() == "println 'Hello World!'"
+
+        scriptSecurityNode.sandbox.size() == 1
+        scriptSecurityNode.sandbox[0].value() == true
+
+        scriptSecurityNode.classpath.size() == 0
+
+        1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('script-security', '1.24')
+
+        when:
+        context.systemGroovyCommand() {
+            script('acme.Acme.doSomething()')
+            binding('foo', 'bar')
+            binding('test', '0815')
+            classpath('/foo/acme.jar')
+            classpath('/foo/test.jar')
+        }
+
+        then:
+        context.stepNodes.size() == 2
+        def acmeSystemGroovyNode = context.stepNodes[1]
+        acmeSystemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
+        acmeSystemGroovyNode.bindings.size() == 1
+        acmeSystemGroovyNode.bindings[0].value() == 'foo=bar\ntest=0815'
+
+        acmeSystemGroovyNode.source.size() == 1
+        def acmeSourceNode = acmeSystemGroovyNode.source[0]
+        acmeSourceNode.attribute('class') == 'hudson.plugins.groovy.StringSystemScriptSource'
+
+        acmeSourceNode.script.size() == 1
+        def acmeScriptSecurityNode = acmeSourceNode.script[0]
+
+        acmeScriptSecurityNode.script.size() == 1
+        acmeScriptSecurityNode.script[0].value() == 'acme.Acme.doSomething()'
+
+        acmeScriptSecurityNode.sandbox.size() == 1
+        acmeScriptSecurityNode.sandbox[0].value() == false
+
+        acmeScriptSecurityNode.classpath.size() == 1
+        def classpathEntryNodes = acmeScriptSecurityNode.classpath[0].entry
+        classpathEntryNodes.size() == 2
+        classpathEntryNodes[0].url.size() == 1
+        classpathEntryNodes[0].url[0].value() == '/foo/acme.jar'
+        classpathEntryNodes[1].url.size() == 1
+        classpathEntryNodes[1].url[0].value() == '/foo/test.jar'
+
+        1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('script-security', '1.24')
+    }
+
+
     def 'call copyArtifacts selector variants'() {
         when:
         context.copyArtifacts('upstream') {
