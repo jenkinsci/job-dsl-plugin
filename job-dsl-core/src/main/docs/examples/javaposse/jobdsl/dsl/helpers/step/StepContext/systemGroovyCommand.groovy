@@ -5,3 +5,14 @@ job('example') {
         }
     }
 }
+
+job('example') {
+    steps {
+        systemGroovyCommand() {
+            script("println 'Hello World!'")
+            binding('computerName', 'ubuntu-04')
+            classpath('com.acme.example.jar')
+            sandbox()
+        }
+    }
+}
