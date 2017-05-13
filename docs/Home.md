@@ -43,6 +43,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [Migration](Migration#migrating-to-164)
   * Support for older versions of the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-164)
+  * Support for sandbox mode for System groovy scripts, for the
+    [Groovy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin)
+    ([JENKINS-44256](https://issues.jenkins-ci.org/browse/JENKINS-44256))
 * 1.63 (May 09 2017)
   * Fixed problem with special characters in job, folder and view names
     ([JENKINS-44140](https://issues.jenkins-ci.org/browse/JENKINS-44140))

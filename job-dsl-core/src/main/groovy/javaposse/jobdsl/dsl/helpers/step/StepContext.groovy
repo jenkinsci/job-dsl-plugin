@@ -9,6 +9,7 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
+import javaposse.jobdsl.dsl.RequiresPlugins
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
@@ -403,6 +404,56 @@ class StepContext extends AbstractExtensibleContext {
         systemGroovyNode.append(groovyScriptSource(commandOrFileName, isCommand))
 
         stepNodes << systemGroovyNode
+    }
+
+    /**
+     * Executes a system Groovy script.
+     * Allows configuration of sandbox script-security.
+     *
+     * @since 1.64
+     */
+    @RequiresPlugins([
+        @RequiresPlugin(id = 'groovy', minimumVersion = '2.0'),
+        @RequiresPlugin(id = 'script-security', minimumVersion = '1.24')
+    ])
+    void systemGroovyCommand(@DslContext(SystemGroovyCommandContext) Closure systemGroovyClosure = null) {
+        SystemGroovyCommandContext systemGroovyCommandContext = new SystemGroovyCommandContext()
+        ContextHelper.executeInContext(systemGroovyClosure, systemGroovyCommandContext)
+
+        Node systemGroovyNode = new NodeBuilder().'hudson.plugins.groovy.SystemGroovy' {
+            String bindingsValue = systemGroovyCommandContext.bindings.collect {
+                    key, value -> "${key}=${value}" }.join('\n')
+            if (bindingsValue != '') {
+                bindings bindingsValue
+            }
+        }
+        systemGroovyNode.append(systemGroovyScriptCommandSource(
+                systemGroovyCommandContext.script,
+                systemGroovyCommandContext.sandbox,
+                systemGroovyCommandContext.classpathEntries))
+
+        stepNodes << systemGroovyNode
+    }
+
+    /**
+     * Context for System groovy command (String) source with sandbox script-security.
+     */
+    protected systemGroovyScriptCommandSource(String command, boolean sandboxValue, List<String> classpathEntries) {
+        new NodeBuilder().source(class: 'hudson.plugins.groovy.StringSystemScriptSource') {
+            script {
+                script command
+                sandbox sandboxValue
+                if (classpathEntries.size() > 0) {
+                    classpath {
+                        classpathEntries.each { String urlEntry ->
+                            entry {
+                                url urlEntry
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
