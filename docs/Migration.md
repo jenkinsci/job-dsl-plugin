@@ -1,3 +1,11 @@
+## Migrating to 1.64
+
+### HTML Publisher Plugin
+
+Support for versions older than 1.13 of the
+[HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.62
 
 ### Parameterized Remote Trigger Plugin

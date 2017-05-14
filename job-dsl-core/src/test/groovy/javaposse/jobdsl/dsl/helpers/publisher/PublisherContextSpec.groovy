@@ -902,6 +902,7 @@ class PublisherContextSpec extends Specification {
         target.allowMissing[0].value() == false
         target.alwaysLinkToLastBuild[0].value() == false
         1 * jobManagement.requireMinimumPluginVersion('htmlpublisher', '1.5')
+        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.13')
     }
 
     def 'calling html publisher closure with all options'() {
@@ -929,6 +930,67 @@ class PublisherContextSpec extends Specification {
         target.allowMissing[0].value() == true
         target.alwaysLinkToLastBuild[0].value() == true
         1 * jobManagement.requireMinimumPluginVersion('htmlpublisher', '1.5')
+        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.13')
+    }
+
+    def 'calling minimal html publisher closure with plugin version 1.13'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.13') >> true
+
+        when:
+        context.publishHtml {
+            report('build/*') {
+            }
+        }
+
+        then:
+        Node publisherHtmlNode = context.publisherNodes[0]
+        publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
+        !publisherHtmlNode.reportTargets.isEmpty()
+        def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
+        target.children().size() == 7
+        target.reportName[0].value() == ''
+        target.reportDir[0].value() == 'build/*'
+        target.reportFiles[0].value() == 'index.html'
+        target.reportTitles[0].value() == ''
+        target.keepAll[0].value() == false
+        target.allowMissing[0].value() == false
+        target.alwaysLinkToLastBuild[0].value() == false
+        1 * jobManagement.requireMinimumPluginVersion('htmlpublisher', '1.5')
+        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.13')
+    }
+
+    def 'calling html publisher closure with all options with plugin version 1.13'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.13') >> true
+
+        when:
+        context.publishHtml {
+            report('build/*') {
+                reportName('foo')
+                reportFiles('test.html')
+                reportTitles('test')
+                allowMissing()
+                keepAll()
+                alwaysLinkToLastBuild()
+            }
+        }
+
+        then:
+        Node publisherHtmlNode = context.publisherNodes[0]
+        publisherHtmlNode.name() == 'htmlpublisher.HtmlPublisher'
+        !publisherHtmlNode.reportTargets.isEmpty()
+        def target = publisherHtmlNode.reportTargets[0].'htmlpublisher.HtmlPublisherTarget'[0]
+        target.children().size() == 7
+        target.reportName[0].value() == 'foo'
+        target.reportDir[0].value() == 'build/*'
+        target.reportFiles[0].value() == 'test.html'
+        target.reportTitles[0].value() == 'test'
+        target.keepAll[0].value() == true
+        target.allowMissing[0].value() == true
+        target.alwaysLinkToLastBuild[0].value() == true
+        1 * jobManagement.requireMinimumPluginVersion('htmlpublisher', '1.5')
+        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.13')
     }
 
     def 'calling html publisher with multiple reports'() {
@@ -955,6 +1017,7 @@ class PublisherContextSpec extends Specification {
         target2.reportDir[0].value() == 'test/*'
 
         1 * jobManagement.requireMinimumPluginVersion('htmlpublisher', '1.5')
+        1 * jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.13')
     }
 
     def 'call Jabber publish with minimal args'() {

@@ -34,6 +34,11 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Increased the minimum supported Groovy version to 2.4.7
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
     ([#1029](https://github.com/jenkinsci/job-dsl-plugin/pull/1029))
+  * Enhanced support for the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
+    ([#1028](https://github.com/jenkinsci/job-dsl-plugin/pull/1028))
+  * Support for older versions of the
+    [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin) is deprecated, see
+    [Migration](Migration#migrating-to-140)
 * 1.63 (May 09 2017)
   * Fixed problem with special characters in job, folder and view names
     ([JENKINS-44140](https://issues.jenkins-ci.org/browse/JENKINS-44140))

@@ -6,8 +6,9 @@ import javaposse.jobdsl.dsl.JobManagement
 class HtmlReportTargetContext extends AbstractContext {
     final String reportDir
 
-    String reportName = ''
+    String reportName
     String reportFiles = 'index.html'
+    String reportTitles
     boolean keepAll
     boolean allowMissing
     boolean alwaysLinkToLastBuild
@@ -29,6 +30,15 @@ class HtmlReportTargetContext extends AbstractContext {
      */
     void reportFiles(String reportFiles) {
         this.reportFiles = reportFiles
+    }
+
+    /**
+     * Sets the title for HTML files.
+     *
+     * @since 1.64
+     */
+    void reportTitles(String reportFiles) {
+        this.reportTitles = reportFiles
     }
 
     /**
