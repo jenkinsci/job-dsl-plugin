@@ -124,11 +124,15 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'gradle', minimumVersion = '1.23')
     void gradle(@DslContext(GradleContext) Closure gradleClosure) {
+        jobManagement.logPluginDeprecationWarning('gradle', '1.26')
+
         GradleContext gradleContext = new GradleContext(jobManagement)
         ContextHelper.executeInContext(gradleClosure, gradleContext)
 
         Node gradleNode = new NodeBuilder().'hudson.plugins.gradle.Gradle' {
-            description gradleContext.description
+            if (!jobManagement.isMinimumPluginVersionInstalled('gradle', '1.26')) {
+                description gradleContext.description
+            }
             switches gradleContext.switches.join(' ')
             tasks gradleContext.tasks.join(' ')
             rootBuildScriptDir gradleContext.rootBuildScriptDir

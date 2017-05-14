@@ -6,6 +6,12 @@ Support for versions older than 1.13 of the
 [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
+### Gradle Plugin
+
+Support for versions older than 1.26 of the
+[Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin) is [[deprecated|Deprecation-Policy]]
+and will be removed.
+
 ## Migrating to 1.62
 
 ### Parameterized Remote Trigger Plugin
