@@ -9,5 +9,9 @@ job('example-1') {
 job('example-2') {
     steps {
         shell(readFileFromWorkspace('build.sh'))
+        shell {
+            block('MESSAGE="Hello, World!"')
+            block('echo $MESSAGE')
+        }
     }
 }
