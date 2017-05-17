@@ -64,4 +64,15 @@ class GitBrowserContext extends AbstractContext {
             delegate.url(url)
         }
     }
+
+    /**
+     * Use Gogs as repository browser.
+     *
+     * @since 1.64
+     */
+    void gogs(String url) {
+        browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.GogsGit') {
+            delegate.url(url)
+        }
+    }
 }
