@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.Context
 class DeployArtifactsContext implements Context {
     String repositoryUrl
     String repositoryId
+    String releaseEnvVar
     boolean uniqueVersion = true
     boolean evenIfUnstable
 
@@ -24,6 +25,16 @@ class DeployArtifactsContext implements Context {
      */
     void repositoryId(String repositoryId) {
         this.repositoryId = repositoryId
+    }
+
+    /**
+     * If the given environment variable is set to "true" the deploy step is skipped. Useful when using m2 release
+     * plugin.
+     *
+     * @since 1.64
+     */
+    void releaseEnvVar(String releaseEnvVar) {
+        this.releaseEnvVar = releaseEnvVar
     }
 
     /**

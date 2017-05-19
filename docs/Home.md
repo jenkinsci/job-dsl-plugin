@@ -38,6 +38,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([#1028](https://github.com/jenkinsci/job-dsl-plugin/pull/1028))
   * Enhanced support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)
     ([JENKINS-44217](https://issues.jenkins-ci.org/browse/JENKINS-44217))
+  * Enhanced support for the [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
+    ([JENKINS-44357](https://issues.jenkins-ci.org/browse/JENKINS-44357))
   * Support for older versions of the
     [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-164)
