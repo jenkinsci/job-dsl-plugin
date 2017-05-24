@@ -14,7 +14,7 @@ class SectionsContext extends AbstractContext {
         super(jobManagement)
     }
 
-    /**
+    /*
      * Adds a generic section.
      */
     private void generic(String type, @DslContext(SectionContext) Closure sectionClosure) {
@@ -39,7 +39,9 @@ class SectionsContext extends AbstractContext {
     }
 
     /**
-     * Adds a text view section.
+     * Adds a job graphs section.
+     *
+     * @since 1.64
      */
     void jobGraphs(@DslContext(SectionContext) Closure sectionClosure) {
         generic('hudson.plugins.sectioned__view.JobGraphsSection', sectionClosure)
@@ -71,7 +73,9 @@ class SectionsContext extends AbstractContext {
     }
 
     /**
-     * Adds a text view section.
+     * Adds a test result section.
+     *
+     * @since 1.64
      */
     void testResult(@DslContext(SectionContext) Closure sectionClosure) {
         generic('hudson.plugins.sectioned__view.TestResultViewSection', sectionClosure)
@@ -79,6 +83,8 @@ class SectionsContext extends AbstractContext {
 
     /**
      * Adds a text view section.
+     *
+     * @since 1.64
      */
     void text(@DslContext(TextSectionContext) Closure textSectionClosure) {
         TextSectionContext context = new TextSectionContext(jobManagement)
@@ -105,6 +111,8 @@ class SectionsContext extends AbstractContext {
 
     /**
      * Adds a view listing section.
+     *
+     * @since 1.64
      */
     void viewListing(@DslContext(ViewListingSectionContext) Closure viewListingSectionClosure) {
         ViewListingSectionContext context = new ViewListingSectionContext(jobManagement)
