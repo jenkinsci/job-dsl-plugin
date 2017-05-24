@@ -15,6 +15,37 @@ class SectionsContext extends AbstractContext {
     }
 
     /**
+     * Adds a generic section.
+     */
+    private void generic(String type, @DslContext(SectionContext) Closure sectionClosure) {
+        SectionContext context = new SectionContext(jobManagement)
+        executeInContext(sectionClosure, context)
+
+        sectionNodes << new NodeBuilder()."$type" {
+            jobNames {
+                comparator(class: 'hudson.util.CaseInsensitiveComparator')
+                for (String job : context.jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
+                    string(job)
+                }
+            }
+            jobFilters(context.jobFiltersContext.filterNodes)
+            name(context.name)
+            if (context.jobsContext.regex) {
+                includeRegex(context.jobsContext.regex)
+            }
+            width(context.width)
+            alignment(context.alignment)
+        }
+    }
+
+    /**
+     * Adds a text view section.
+     */
+    void jobGraphs(@DslContext(SectionContext) Closure sectionClosure) {
+        generic('hudson.plugins.sectioned__view.JobGraphsSection', sectionClosure)
+    }
+
+    /**
      * Adds a list view section.
      */
     void listView(@DslContext(ListViewSectionContext) Closure listViewSectionClosure) {
@@ -36,6 +67,69 @@ class SectionsContext extends AbstractContext {
             width(context.width)
             alignment(context.alignment)
             columns(context.columnsContext.columnNodes)
+        }
+    }
+
+    /**
+     * Adds a text view section.
+     */
+    void testResult(@DslContext(SectionContext) Closure sectionClosure) {
+        generic('hudson.plugins.sectioned__view.TestResultViewSection', sectionClosure)
+    }
+
+    /**
+     * Adds a text view section.
+     */
+    void text(@DslContext(TextSectionContext) Closure textSectionClosure) {
+        TextSectionContext context = new TextSectionContext(jobManagement)
+        executeInContext(textSectionClosure, context)
+
+        sectionNodes << new NodeBuilder().'hudson.plugins.sectioned__view.TextSection' {
+            jobNames {
+                comparator(class: 'hudson.util.CaseInsensitiveComparator')
+                for (String job : context.jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
+                    string(job)
+                }
+            }
+            jobFilters(context.jobFiltersContext.filterNodes)
+            name(context.name)
+            if (context.jobsContext.regex) {
+                includeRegex(context.jobsContext.regex)
+            }
+            width(context.width)
+            alignment(context.alignment)
+            text(context.text)
+            style(context.style)
+        }
+    }
+
+    /**
+     * Adds a view listing section.
+     */
+    void viewListing(@DslContext(ViewListingSectionContext) Closure viewListingSectionClosure) {
+        ViewListingSectionContext context = new ViewListingSectionContext(jobManagement)
+        executeInContext(viewListingSectionClosure, context)
+
+        sectionNodes << new NodeBuilder().'hudson.plugins.sectioned__view.ViewListingSection' {
+            jobNames {
+                comparator(class: 'hudson.util.CaseInsensitiveComparator')
+                for (String job : context.jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
+                    string(job)
+                }
+            }
+            jobFilters(context.jobFiltersContext.filterNodes)
+            name(context.name)
+            if (context.jobsContext.regex) {
+                includeRegex(context.jobsContext.regex)
+            }
+            width(context.width)
+            alignment(context.alignment)
+            views {
+                for (String view : context.viewNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
+                    string(view)
+                }
+            }
+            columns(context.columns)
         }
     }
 }
