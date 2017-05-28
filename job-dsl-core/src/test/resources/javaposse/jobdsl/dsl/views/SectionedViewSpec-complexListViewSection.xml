@@ -1,0 +1,31 @@
+<hudson.plugins.sectioned__view.SectionedView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class='hudson.model.View$PropertyList'/>
+    <sections>
+        <hudson.plugins.sectioned__view.ListViewSection>
+            <jobNames>
+                <comparator class='hudson.util.CaseInsensitiveComparator'/>
+                <string>foo</string>
+            </jobNames>
+            <jobFilters>
+                <hudson.views.JobStatusFilter>
+                    <includeExcludeTypeString>includeMatched</includeExcludeTypeString>
+                    <unstable>true</unstable>
+                    <failed>false</failed>
+                    <aborted>false</aborted>
+                    <disabled>false</disabled>
+                    <stable>false</stable>
+                </hudson.views.JobStatusFilter>
+            </jobFilters>
+            <name>test</name>
+            <includeRegex>test-.*</includeRegex>
+            <width>HALF</width>
+            <alignment>LEFT</alignment>
+            <columns>
+                <hudson.views.StatusColumn/>
+                <hudson.views.JobColumn/>
+            </columns>
+        </hudson.plugins.sectioned__view.ListViewSection>
+    </sections>
+</hudson.plugins.sectioned__view.SectionedView>

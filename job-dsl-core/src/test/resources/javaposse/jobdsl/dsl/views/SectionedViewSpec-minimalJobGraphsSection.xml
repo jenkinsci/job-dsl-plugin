@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.sectioned__view.SectionedView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class='hudson.model.View$PropertyList'/>
+    <sections>
+        <hudson.plugins.sectioned__view.JobGraphsSection>
+            <jobNames>
+                <comparator class='hudson.util.CaseInsensitiveComparator'/>
+            </jobNames>
+            <jobFilters/>
+            <name>test</name>
+            <width>FULL</width>
+            <alignment>CENTER</alignment>
+        </hudson.plugins.sectioned__view.JobGraphsSection>
+    </sections>
+</hudson.plugins.sectioned__view.SectionedView>
