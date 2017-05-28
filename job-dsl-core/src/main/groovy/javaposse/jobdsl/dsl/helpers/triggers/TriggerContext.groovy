@@ -54,24 +54,40 @@ class TriggerContext extends ItemTriggerContext {
         GerritContext gerritContext = new GerritContext()
         ContextHelper.executeInContext(contextClosure, gerritContext)
 
+        String filePathNodeName = 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath'
+        String branchNodeName = 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch'
+        String gerritProjectNodeName = 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject'
+        String gerritTriggerNodeName = 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger'
+
         NodeBuilder nodeBuilder = new NodeBuilder()
-        Node gerritNode = nodeBuilder.'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger' {
+        Node gerritNode = nodeBuilder."$gerritTriggerNodeName" {
             spec ''
             if (gerritContext.projects) {
                 gerritProjects {
-                    gerritContext.projects.each { GerritSpec project, List<GerritSpec> brancheSpecs ->
-                        'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject' {
-                            compareType project.type
-                            pattern project.pattern
-                            branches {
-                                brancheSpecs.each { GerritSpec branch ->
-                                    'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch' {
-                                        compareType branch.type
-                                        pattern branch.pattern
+                    gerritContext.projects.each {
+                        GerritSpec project, List<GerritSpec> brancheSpecs, List<String> filePathsSpec ->
+                            "$gerritProjectNodeName" {
+                                compareType project.type
+                                pattern project.pattern
+                                branches {
+                                    brancheSpecs.each { GerritSpec branch ->
+                                        "$branchNodeName" {
+                                            compareType branch.type
+                                            pattern branch.pattern
+                                        }
+                                    }
+                                }
+                                if (filePathsSpec) {
+                                    filePaths {
+                                        filePathsSpec.each { GerritSpec path ->
+                                            "$filePathNodeName" {
+                                                compareType path.type
+                                                pattern path.pattern
+                                            }
+                                        }
                                     }
                                 }
                             }
-                        }
                     }
                 }
             }
@@ -143,8 +159,8 @@ class TriggerContext extends ItemTriggerContext {
     void upstream(String projects, String threshold = 'SUCCESS') {
         Preconditions.checkNotNullOrEmpty(projects, 'projects must be specified')
         Preconditions.checkArgument(
-                Threshold.THRESHOLD_COLOR_MAP.containsKey(threshold),
-                "threshold must be one of ${Threshold.THRESHOLD_COLOR_MAP.keySet().join(', ')}"
+            Threshold.THRESHOLD_COLOR_MAP.containsKey(threshold),
+            "threshold must be one of ${Threshold.THRESHOLD_COLOR_MAP.keySet().join(', ')}"
         )
 
         triggerNodes << new NodeBuilder().'jenkins.triggers.ReverseBuildTrigger' {

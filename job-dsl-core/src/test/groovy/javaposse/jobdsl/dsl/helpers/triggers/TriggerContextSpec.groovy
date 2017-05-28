@@ -89,7 +89,7 @@ class TriggerContextSpec extends Specification {
                 draftPublished()
             }
             project('reg_exp:myProject', ['ant:feature-branch', 'plain:origin/refs/mybranch']) // full access
-            project('test-project', '**') // simplified
+            project('test-project', '**', 'plain:project1/**') // simplified
             configure { node ->
                 node / gerritBuildSuccessfulVerifiedValue << '10'
             }
@@ -115,11 +115,17 @@ class TriggerContextSpec extends Specification {
                         compareType[0].value() == 'ANT'
                         pattern[0].value() == 'feature-branch'
                     }
+                    filePaths.size() == 0
                 }
                 with(children()[1]) {
                     compareType[0].value() == 'PLAIN'
                     pattern[0].value() == 'test-project'
                     branches[0].children().size() == 1
+                    with(filePaths[0].children()[0]) {
+                        name() == 'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath'
+                        compareType[0].value() == 'PLAIN'
+                        pattern[0].value() == 'project1/**'
+                    }
                 }
             }
         }
