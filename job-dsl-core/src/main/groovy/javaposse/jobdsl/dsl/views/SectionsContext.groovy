@@ -17,11 +17,8 @@ class SectionsContext extends AbstractContext {
     /*
      * Adds a generic section.
      */
-    private void generic(String type, @DslContext(SectionContext) Closure sectionClosure) {
-        SectionContext context = new SectionContext(jobManagement)
-        executeInContext(sectionClosure, context)
-
-        sectionNodes << new NodeBuilder()."$type" {
+    private Node generic(String type, SectionContext context) {
+        Node node = new NodeBuilder()."$type" {
             jobNames {
                 comparator(class: 'hudson.util.CaseInsensitiveComparator')
                 for (String job : context.jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
@@ -36,6 +33,18 @@ class SectionsContext extends AbstractContext {
             width(context.width)
             alignment(context.alignment)
         }
+        sectionNodes << node
+        node
+    }
+
+    /*
+     * Adds a generic section.
+     */
+    private Node generic(String type, @DslContext(SectionContext) Closure sectionClosure) {
+        SectionContext context = new SectionContext(jobManagement)
+        executeInContext(sectionClosure, context)
+
+        generic(type, context)
     }
 
     /**
@@ -54,22 +63,8 @@ class SectionsContext extends AbstractContext {
         ListViewSectionContext context = new ListViewSectionContext(jobManagement)
         executeInContext(listViewSectionClosure, context)
 
-        sectionNodes << new NodeBuilder().'hudson.plugins.sectioned__view.ListViewSection' {
-            jobNames {
-                comparator(class: 'hudson.util.CaseInsensitiveComparator')
-                for (String job : context.jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
-                    string(job)
-                }
-            }
-            jobFilters(context.jobFiltersContext.filterNodes)
-            name(context.name)
-            if (context.jobsContext.regex) {
-                includeRegex(context.jobsContext.regex)
-            }
-            width(context.width)
-            alignment(context.alignment)
-            columns(context.columnsContext.columnNodes)
-        }
+        Node node = generic('hudson.plugins.sectioned__view.ListViewSection', context)
+        node.appendNode('columns', context.columnsContext.columnNodes)
     }
 
     /**
@@ -90,23 +85,9 @@ class SectionsContext extends AbstractContext {
         TextSectionContext context = new TextSectionContext(jobManagement)
         executeInContext(textSectionClosure, context)
 
-        sectionNodes << new NodeBuilder().'hudson.plugins.sectioned__view.TextSection' {
-            jobNames {
-                comparator(class: 'hudson.util.CaseInsensitiveComparator')
-                for (String job : context.jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
-                    string(job)
-                }
-            }
-            jobFilters(context.jobFiltersContext.filterNodes)
-            name(context.name)
-            if (context.jobsContext.regex) {
-                includeRegex(context.jobsContext.regex)
-            }
-            width(context.width)
-            alignment(context.alignment)
-            text(context.text)
-            style(context.style)
-        }
+        Node node = generic('hudson.plugins.sectioned__view.TextSection', context)
+        node.appendNode('text', context.text ?: '')
+        node.appendNode('style', context.style)
     }
 
     /**
@@ -118,26 +99,13 @@ class SectionsContext extends AbstractContext {
         ViewListingSectionContext context = new ViewListingSectionContext(jobManagement)
         executeInContext(viewListingSectionClosure, context)
 
-        sectionNodes << new NodeBuilder().'hudson.plugins.sectioned__view.ViewListingSection' {
-            jobNames {
-                comparator(class: 'hudson.util.CaseInsensitiveComparator')
-                for (String job : context.jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
-                    string(job)
-                }
+        Node views = new NodeBuilder().'views' {
+            for (String view : context.viewNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
+                string(view)
             }
-            jobFilters(context.jobFiltersContext.filterNodes)
-            name(context.name)
-            if (context.jobsContext.regex) {
-                includeRegex(context.jobsContext.regex)
-            }
-            width(context.width)
-            alignment(context.alignment)
-            views {
-                for (String view : context.viewNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
-                    string(view)
-                }
-            }
-            columns(context.columns)
         }
+        Node node = generic('hudson.plugins.sectioned__view.ViewListingSection', context)
+        node.append(views)
+        node.appendNode('columns', context.columns)
     }
 }

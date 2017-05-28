@@ -35,7 +35,7 @@ class ViewListingSectionContext extends SectionContext {
      */
     void views(String... viewNames) {
         for (String viewName : viewNames) {
-            name(viewName)
+            view(viewName)
         }
     }
 }

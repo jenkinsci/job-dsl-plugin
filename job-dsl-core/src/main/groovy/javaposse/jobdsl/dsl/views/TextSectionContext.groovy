@@ -8,7 +8,7 @@ class TextSectionContext extends SectionContext {
     private static final List<String> VALID_STYLES = ['NONE', 'NOTE', 'INFO', 'WARNING', 'TIP']
 
     String style = 'NONE'
-    String text = ''
+    String text
 
     TextSectionContext(JobManagement jobManagement) {
         super(jobManagement)
