@@ -28,6 +28,7 @@ class MavenPublisherContextSpec extends Specification {
         context.deployArtifacts {
             repositoryUrl('foo')
             repositoryId('bar')
+            releaseEnvVar('var')
             uniqueVersion(false)
             evenIfUnstable()
         }
@@ -35,9 +36,10 @@ class MavenPublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.maven.RedeployPublisher'
-            children().size() == 4
+            children().size() == 5
             url[0].value() == 'foo'
             id[0].value() == 'bar'
+            releaseEnvVar[0].value() == 'var'
             uniqueVersion[0].value() == false
             evenIfUnstable[0].value() == true
         }

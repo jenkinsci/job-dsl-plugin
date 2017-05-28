@@ -24,6 +24,9 @@ class MavenPublisherContext extends PublisherContext {
             if (context.repositoryUrl) {
                 url(context.repositoryUrl)
             }
+            if (context.releaseEnvVar) {
+                releaseEnvVar(context.releaseEnvVar)
+            }
             uniqueVersion(context.uniqueVersion)
             evenIfUnstable(context.evenIfUnstable)
         }
