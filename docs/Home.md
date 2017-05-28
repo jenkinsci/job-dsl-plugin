@@ -34,6 +34,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Increased the minimum supported Groovy version to 2.4.7
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
     ([#1029](https://github.com/jenkinsci/job-dsl-plugin/pull/1029))
+  * Support for Gogs as browser for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+    ([JENKINS-44306](https://issues.jenkins-ci.org/browse/JENKINS-44306))
   * Enhanced support for the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
     ([#1028](https://github.com/jenkinsci/job-dsl-plugin/pull/1028))
   * Enhanced support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)
