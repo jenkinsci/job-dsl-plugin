@@ -92,7 +92,7 @@ Refer to the documentation of the
 [Script Security plugin](https://plugins.jenkins.io/script-security) and the
 [Authorize Project plugin](https://plugins.jenkins.io/authorize-project) for more details.
 
-Note that some operators in [[configure blocks|The Configure Block]] are not available when running in the restricted
+Note that some operators in [configure blocks](../../../wiki/The-Configure-Block) are not available when running in the restricted
 sandbox.
 
 
