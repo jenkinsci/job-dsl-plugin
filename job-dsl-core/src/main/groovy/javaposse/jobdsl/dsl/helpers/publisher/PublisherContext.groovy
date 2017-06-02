@@ -2004,6 +2004,26 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Creates a Github issue if the job fails and closes it when it succeeds
+     *
+     * @since 1.2
+     */
+    @RequiresPlugin(id = 'github-issues')
+    void githubIssue(@DslContext(GitHubIssueContext) Closure closure) {
+       GitHubIssueContext context = new GitHubIssueContext()
+       ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.githubissues.GitHubIssueNotifier' {
+            issueRepo(context.project ?: '')
+            issueTitle(context.title ?: '')
+            issueLabel(context.label ?: '')
+            issueBody(context.text ?: '')
+            issueAppend(context.append)
+            issueReopen(context.reopen)
+        }
+    }
+
     @SuppressWarnings('NoDef')
     private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
