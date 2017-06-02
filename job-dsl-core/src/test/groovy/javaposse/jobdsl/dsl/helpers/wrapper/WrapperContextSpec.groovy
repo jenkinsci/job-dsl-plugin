@@ -184,20 +184,21 @@ class WrapperContextSpec extends Specification {
     def 'elastic timeout configuration working'() {
         when:
         context.timeout {
-            elastic(200, 3, 15)
+            elastic(200, 3, 15, true)
         }
 
         then:
         with(context.wrapperNodes[0]) {
             children().size() == 2
-            strategy[0].children().size() == 3
+            strategy[0].children().size() == 4
             strategy[0].@class == 'hudson.plugins.build_timeout.impl.ElasticTimeOutStrategy'
             strategy[0].timeoutPercentage[0].value() == 200
             strategy[0].numberOfBuilds[0].value() == 3
             strategy[0].timeoutMinutesElasticDefault[0].value() == 15
+            strategy[0].failSafeTimeoutDuration[0].value() == true
             operationList[0].children().size() == 0
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.12')
+        1 * mockJobManagement.requireMinimumPluginVersion('build-timeout', '1.16')
     }
 
     def 'no activity timeout configuration working'() {
