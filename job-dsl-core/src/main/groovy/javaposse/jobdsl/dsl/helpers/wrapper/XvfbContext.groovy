@@ -11,6 +11,7 @@ class XvfbContext implements Context {
     boolean autoDisplayName = false
     String assignedLabels
     boolean parallelBuild = false
+    String additionalOptions
 
     /**
      * Changes the screen resolution and pixel depth. Default to {@code '1024x768x24'}.
@@ -66,5 +67,12 @@ class XvfbContext implements Context {
      */
     void parallelBuild(boolean parallelBuild = true) {
         this.parallelBuild = parallelBuild
+    }
+    
+     /**
+     * Additional options to be added with the options above to the Xvfb command line.
+     */
+    void additionalOptions(String additionalOptions) {
+        this.additionalOptions = additionalOptions
     }
 }
