@@ -1447,7 +1447,7 @@ class PublisherContext extends AbstractExtensibleContext {
             notifyBackToNormal(mattermostContext.notifyBackToNormal)
             notifyRepeatedFailure(mattermostContext.notifyRepeatedFailure)
             includeTestSummary(mattermostContext.includeTestSummary)
-            showCommitList(mattermostContext.showCommitList)
+            commitInfoChoice(mattermostContext.commitInfoChoice ?: 'NONE')
             includeCustomMessage(mattermostContext.customMessage as boolean)
             endpoint(mattermostContext.endpoint ?: '')
             room(mattermostContext.room ?: '')

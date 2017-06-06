@@ -5,7 +5,7 @@ job('example') {
             notifySuccess()
             notifyAborted()
             notifyBackToNormal()
-            showCommitList()
+            commitInfoChoice('NONE')
         }
     }
 }
@@ -19,7 +19,7 @@ job('example2') {
             notifySuccess()
             notifyAborted()
             notifyBackToNormal()
-            showCommitList()
+            commitInfoChoice('AUTHORS_AND_TITLES')
         }
     }
 }

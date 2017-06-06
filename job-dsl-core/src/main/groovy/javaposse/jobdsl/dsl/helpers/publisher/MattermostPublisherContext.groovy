@@ -7,6 +7,7 @@ class MattermostPublisherContext implements Context {
     String room
     String icon
     String customMessage
+    String commitInfoChoice
     boolean notifyBuildStart
     boolean notifySuccess
     boolean notifyAborted
@@ -16,7 +17,6 @@ class MattermostPublisherContext implements Context {
     boolean notifyBackToNormal
     boolean notifyRepeatedFailure
     boolean includeTestSummary
-    boolean showCommitList
 
     /**
      * Sends a notification when the build starts. Defaults to {@code false}.
@@ -82,10 +82,11 @@ class MattermostPublisherContext implements Context {
     }
 
     /**
-     * Include the commit list with titles and authors in the build message. Defaults to {@code false}.
+     * Select whether to show commit info in the build message.  Defaults to {@code 'NONE'}
+     * Possible values are {@code 'NONE'}, {@code 'AUTHORS'} and {@code 'AUTHORS_AND_TITLES'}.
      */
-    void showCommitList(boolean showCommitList = true) {
-        this.showCommitList = showCommitList
+    void commitInfoChoice(String commitInfoChoice = 'NONE') {
+        this.commitInfoChoice = commitInfoChoice
     }
 
     /**
