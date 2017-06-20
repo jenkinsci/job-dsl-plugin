@@ -16,8 +16,11 @@ final class GitParamContext implements Context {
     String type = 'TAG'
     String branch
     String tagFilter
+    String branchFilter
     String sortMode = 'NONE'
     String defaultValue
+    Boolean quickFilterEnabled
+    String useRepository
 
     /**
      * Sets a description for the parameter.
@@ -59,6 +62,29 @@ final class GitParamContext implements Context {
     void sortMode(String sortMode) {
         checkArgument(VALID_SORT_MODES.contains(sortMode), "sortMode must be one of ${VALID_SORT_MODES.join(', ')}")
         this.sortMode = sortMode
+    }
+
+    /**
+     * Regex used to filter displayed branches. If blank, the filter will default to ".*".
+     * Remote branches will be listed with the remote name first. E.g., "origin/master"
+     */
+    void branchFilter(String branchFilter) {
+        this.branchFilter = branchFilter
+    }
+    /**
+     * When this option is enabled will show a text field.
+     * Parameter is filtered on the fly.
+     */
+    void quickFilterEnabled(boolean quickFilterEnabled) {
+        this.quickFilterEnabled = quickFilterEnabled
+    }
+    /**
+     *If in the task is defined multiple repositories parameter specifies which the repository is taken into account.
+     * If the parameter is not defined, is taken first defined repository.
+     * The parameter is a regular expression which is compared with a URL repository.
+     */
+    void useRepository(String useRepository) {
+        this.useRepository = useRepository
     }
 
     /**
