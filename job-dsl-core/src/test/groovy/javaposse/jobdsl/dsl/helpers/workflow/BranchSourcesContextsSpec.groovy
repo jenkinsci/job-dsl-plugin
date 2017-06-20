@@ -92,79 +92,6 @@ class BranchSourcesContextsSpec extends Specification {
             name() == 'jenkins.branch.BranchSource'
             children().size() == 2
             with(source[0]) {
-                children().size() == 7
-                id[0].value() instanceof String
-                scanCredentialsId[0].value().empty
-                checkoutCredentialsId[0].value() == 'SAME'
-                repoOwner[0].value().empty
-                repository[0].value().empty
-                includes[0].value() == '*'
-                excludes[0].value().empty
-            }
-            with(strategy[0]) {
-                children().size() == 1
-                attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
-                properties[0].value().empty
-                properties[0].attribute('class') == 'empty-list'
-            }
-        }
-        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.6')
-        1 * jobManagement.logPluginDeprecationWarning('github-branch-source', '1.8')
-    }
-
-    def 'github with all options'() {
-        when:
-        context.github {
-            id('test')
-            apiUri('https://custom.url')
-            scanCredentialsId('scanCreds')
-            checkoutCredentialsId('checkoutCreds')
-            repoOwner('ownerName')
-            repository('repoName')
-            includes('lorem')
-            excludes('ipsum')
-        }
-
-        then:
-        context.branchSourceNodes.size() == 1
-        with(context.branchSourceNodes[0]) {
-            name() == 'jenkins.branch.BranchSource'
-            children().size() == 2
-            with(source[0]) {
-                children().size() == 8
-                id[0].value() == 'test'
-                apiUri[0].value() == 'https://custom.url'
-                scanCredentialsId[0].value() == 'scanCreds'
-                checkoutCredentialsId[0].value() == 'checkoutCreds'
-                repoOwner[0].value() == 'ownerName'
-                repository[0].value() == 'repoName'
-                includes[0].value() == 'lorem'
-                excludes[0].value() == 'ipsum'
-            }
-            with(strategy[0]) {
-                children().size() == 1
-                attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
-                properties[0].value().empty
-                properties[0].attribute('class') == 'empty-list'
-            }
-        }
-        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.6')
-        1 * jobManagement.logPluginDeprecationWarning('github-branch-source', '1.8')
-    }
-
-    def 'github with minimal options and plugin version >= 1.8'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('github-branch-source', '1.8') >> true
-
-        when:
-        context.github {}
-
-        then:
-        context.branchSourceNodes.size() == 1
-        with(context.branchSourceNodes[0]) {
-            name() == 'jenkins.branch.BranchSource'
-            children().size() == 2
-            with(source[0]) {
                 children().size() == 13
                 id[0].value() instanceof String
                 scanCredentialsId[0].value().empty
@@ -187,14 +114,10 @@ class BranchSourcesContextsSpec extends Specification {
                 properties[0].attribute('class') == 'empty-list'
             }
         }
-        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.6')
-        1 * jobManagement.logPluginDeprecationWarning('github-branch-source', '1.8')
+        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.8')
     }
 
-    def 'github with all options and plugin version >= 1.8'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('github-branch-source', '1.8') >> true
-
+    def 'github with all options'() {
         when:
         context.github {
             id('test')
@@ -242,8 +165,6 @@ class BranchSourcesContextsSpec extends Specification {
                 properties[0].attribute('class') == 'empty-list'
             }
         }
-        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.6')
-        6 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.8')
-        1 * jobManagement.logPluginDeprecationWarning('github-branch-source', '1.8')
+        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.8')
     }
 }

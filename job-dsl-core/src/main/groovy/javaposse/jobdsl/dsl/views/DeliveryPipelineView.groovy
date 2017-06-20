@@ -3,7 +3,6 @@ package javaposse.jobdsl.dsl.views
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NoDoc
-import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.View
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
@@ -109,7 +108,6 @@ class DeliveryPipelineView extends View {
      *
      * @since 1.48
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.6')
     void showTestResults(boolean value = true) {
         configure {
             it / methodMissing('showTestResults', value)
@@ -121,7 +119,6 @@ class DeliveryPipelineView extends View {
      *
      * @since 1.48
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.10')
     void useTheme(String value) {
         configure {
             it / methodMissing('theme', value)
@@ -133,7 +130,6 @@ class DeliveryPipelineView extends View {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.5')
     void showTotalBuildTime(boolean value = true) {
         configure {
             it / methodMissing('showTotalBuildTime', value)
@@ -145,7 +141,6 @@ class DeliveryPipelineView extends View {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.0')
     void allowRebuild(boolean value = true) {
         configure {
             it / methodMissing('allowRebuild', value)
@@ -157,7 +152,6 @@ class DeliveryPipelineView extends View {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.0')
     void allowPipelineStart(boolean value = true) {
         configure {
             it / methodMissing('allowPipelineStart', value)
@@ -169,7 +163,6 @@ class DeliveryPipelineView extends View {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.5')
     void showDescription(boolean value = true) {
         configure {
             it / methodMissing('showDescription', value)
@@ -183,7 +176,6 @@ class DeliveryPipelineView extends View {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.5')
     void showPromotions(boolean value = true) {
         configure {
             it / methodMissing('showPromotions', value)
@@ -195,7 +187,6 @@ class DeliveryPipelineView extends View {
      *
      * @since 1.48
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.9.10')
     void enablePaging(boolean value = true) {
         configure {
             it / methodMissing('pagingEnabled', value)

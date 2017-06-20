@@ -272,8 +272,7 @@ class NestedViewSpec extends Specification {
         nestedView instanceof DeliveryPipelineView
         view.node.views[0].children()[0].name() == 'se.diabol.jenkins.pipeline.DeliveryPipelineView'
         view.node.views[0].children()[0].description[0].text() == 'foo'
-        1 * jobManagement.requirePlugin('delivery-pipeline-plugin', true)
-        1 * jobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
+        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0', true)
     }
 
     def 'nested delivery pipeline view without closure'() {
@@ -287,8 +286,7 @@ class NestedViewSpec extends Specification {
         nestedView.name == 'test'
         nestedView instanceof DeliveryPipelineView
         view.node.views[0].children()[0].name() == 'se.diabol.jenkins.pipeline.DeliveryPipelineView'
-        1 * jobManagement.requirePlugin('delivery-pipeline-plugin', true)
-        1 * jobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
+        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0', true)
     }
 
     def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>

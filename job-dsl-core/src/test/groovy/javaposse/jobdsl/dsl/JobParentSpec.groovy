@@ -161,8 +161,7 @@ class JobParentSpec extends Specification {
         view instanceof DeliveryPipelineView
         parent.referencedViews.contains(view)
         view.node.description[0].text() == 'foo'
-        1 * jobManagement.requirePlugin('delivery-pipeline-plugin', true)
-        1 * jobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
+        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0', true)
     }
 
     def 'delivery pipeline view without closure'() {
@@ -173,8 +172,7 @@ class JobParentSpec extends Specification {
         view.name == 'test'
         view instanceof DeliveryPipelineView
         parent.referencedViews.contains(view)
-        1 * jobManagement.requirePlugin('delivery-pipeline-plugin', true)
-        1 * jobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
+        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0', true)
     }
 
     def 'should add categorized jobs view'() {

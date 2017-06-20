@@ -43,7 +43,6 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
      */
     @Override
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure = null) {
-        jobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
         processView(name, DeliveryPipelineView, closure)
     }
 

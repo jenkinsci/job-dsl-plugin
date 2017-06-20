@@ -69,10 +69,6 @@ class DeliveryPipelineViewSpec extends Specification {
 
         then:
         compareXML(allOptionsXml, view.xml).similar()
-        3 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.9.5')
-        2 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.9.0')
-        2 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.9.10')
-        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.9.6')
     }
 
     def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>

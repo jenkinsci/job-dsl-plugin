@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.workflow
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class GitHubBranchSourceContext extends AbstractContext {
     String id = UUID.randomUUID()
@@ -87,7 +86,6 @@ class GitHubBranchSourceContext extends AbstractContext {
      *
      * @since 1.54
      */
-    @RequiresPlugin(id = 'github-branch-source', minimumVersion = '1.8')
     void buildOriginBranch(boolean buildOriginBranch = true) {
         this.buildOriginBranch = buildOriginBranch
     }
@@ -97,7 +95,6 @@ class GitHubBranchSourceContext extends AbstractContext {
      *
      * @since 1.54
      */
-    @RequiresPlugin(id = 'github-branch-source', minimumVersion = '1.8')
     void buildOriginBranchWithPR(boolean buildOriginBranchWithPR = true) {
         this.buildOriginBranchWithPR = buildOriginBranchWithPR
     }
@@ -107,7 +104,6 @@ class GitHubBranchSourceContext extends AbstractContext {
      *
      * @since 1.54
      */
-    @RequiresPlugin(id = 'github-branch-source', minimumVersion = '1.8')
     void buildOriginPRMerge(boolean buildOriginPRMerge = true) {
         this.buildOriginPRMerge = buildOriginPRMerge
     }
@@ -117,7 +113,6 @@ class GitHubBranchSourceContext extends AbstractContext {
      *
      * @since 1.54
      */
-    @RequiresPlugin(id = 'github-branch-source', minimumVersion = '1.8')
     void buildOriginPRHead(boolean buildOriginPRHead = true) {
         this.buildOriginPRHead = buildOriginPRHead
     }
@@ -127,7 +122,6 @@ class GitHubBranchSourceContext extends AbstractContext {
      *
      * @since 1.54
      */
-    @RequiresPlugin(id = 'github-branch-source', minimumVersion = '1.8')
     void buildForkPRMerge(boolean buildForkPRMerge = true) {
         this.buildForkPRMerge = buildForkPRMerge
     }
@@ -137,7 +131,6 @@ class GitHubBranchSourceContext extends AbstractContext {
      *
      * @since 1.54
      */
-    @RequiresPlugin(id = 'github-branch-source', minimumVersion = '1.8')
     void buildForkPRHead(boolean buildForkPRHead = true) {
         this.buildForkPRHead = buildForkPRHead
     }
