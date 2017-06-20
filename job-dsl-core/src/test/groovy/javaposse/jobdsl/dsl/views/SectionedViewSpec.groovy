@@ -20,7 +20,19 @@ class SectionedViewSpec extends Specification {
         String xml = view.xml
 
         then:
-        compareXML(defaultXml, xml).similar()
+        compareXML(getXml('SectionedViewSpec-defaults.xml'), xml).similar()
+    }
+
+    def 'minimal job graphs section'() {
+        when:
+        view.sections {
+            jobGraphs {
+                name('test')
+            }
+        }
+
+        then:
+        compareXML(getXml('SectionedViewSpec-minimalJobGraphsSection.xml'), view.xml).similar()
     }
 
     def 'minimal list view section'() {
@@ -32,7 +44,7 @@ class SectionedViewSpec extends Specification {
         }
 
         then:
-        compareXML(minimalListViewSectionXml, view.xml).similar()
+        compareXML(getXml('SectionedViewSpec-minimalListViewSection.xml'), view.xml).similar()
     }
 
     def 'complex list view section'() {
@@ -59,65 +71,76 @@ class SectionedViewSpec extends Specification {
         }
 
         then:
-        compareXML(complexListViewSectionXml, view.xml).similar()
+        compareXML(getXml('SectionedViewSpec-complexListViewSection.xml'), view.xml).similar()
     }
 
-    def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
-<hudson.plugins.sectioned__view.SectionedView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class="hudson.model.View$PropertyList"/>
-    <sections/>
-</hudson.plugins.sectioned__view.SectionedView>'''
+    def 'minimal test result section'() {
+        when:
+        view.sections {
+            testResult {
+                name('test')
+            }
+        }
 
-    def minimalListViewSectionXml = '''<?xml version='1.0' encoding='UTF-8'?>
-<hudson.plugins.sectioned__view.SectionedView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class='hudson.model.View$PropertyList'></properties>
-    <sections>
-        <hudson.plugins.sectioned__view.ListViewSection>
-            <jobNames>
-                <comparator class='hudson.util.CaseInsensitiveComparator'></comparator>
-            </jobNames>
-            <jobFilters></jobFilters>
-            <name>test</name>
-            <width>FULL</width>
-            <alignment>CENTER</alignment>
-            <columns></columns>
-        </hudson.plugins.sectioned__view.ListViewSection>
-    </sections>
-</hudson.plugins.sectioned__view.SectionedView>'''
+        then:
+        compareXML(getXml('SectionedViewSpec-minimalTestResultSection.xml'), view.xml).similar()
+    }
 
-    def complexListViewSectionXml = ''' <hudson.plugins.sectioned__view.SectionedView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class='hudson.model.View$PropertyList'></properties>
-    <sections>
-        <hudson.plugins.sectioned__view.ListViewSection>
-            <jobNames>
-                <comparator class='hudson.util.CaseInsensitiveComparator'></comparator>
-                <string>foo</string>
-            </jobNames>
-            <jobFilters>
-                <hudson.views.JobStatusFilter>
-                    <includeExcludeTypeString>includeMatched</includeExcludeTypeString>
-                    <unstable>true</unstable>
-                    <failed>false</failed>
-                    <aborted>false</aborted>
-                    <disabled>false</disabled>
-                    <stable>false</stable>
-                </hudson.views.JobStatusFilter>
-            </jobFilters>
-            <name>test</name>
-            <includeRegex>test-.*</includeRegex>
-            <width>HALF</width>
-            <alignment>LEFT</alignment>
-            <columns>
-                <hudson.views.StatusColumn></hudson.views.StatusColumn>
-                <hudson.views.JobColumn></hudson.views.JobColumn>
-            </columns>
-        </hudson.plugins.sectioned__view.ListViewSection>
-    </sections>
-</hudson.plugins.sectioned__view.SectionedView>'''
+    def 'minimal text section'() {
+        when:
+        view.sections {
+            text {
+                name('test')
+            }
+        }
+
+        then:
+        compareXML(getXml('SectionedViewSpec-minimalTextSection.xml'), view.xml).similar()
+    }
+
+    def 'complex text section'() {
+        when:
+        view.sections {
+            text {
+                name('test')
+                style('INFO')
+                text('lorem ipsum')
+            }
+        }
+
+        then:
+        compareXML(getXml('SectionedViewSpec-complexTextSection.xml'), view.xml).similar()
+    }
+
+    def 'minimal view list section'() {
+        when:
+        view.sections {
+            viewListing {
+                name('test')
+            }
+        }
+
+        then:
+        compareXML(getXml('SectionedViewSpec-minimalViewListSection.xml'), view.xml).similar()
+    }
+
+    def 'complex view list section'() {
+        when:
+        view.sections {
+            viewListing {
+                name('test')
+                view('view-a')
+                view('view-b')
+                views('view-c', 'view-d')
+                columns(2)
+            }
+        }
+
+        then:
+        compareXML(getXml('SectionedViewSpec-complexViewListSection.xml'), view.xml).similar()
+    }
+
+    private static String getXml(String resourceName) {
+        SectionedViewSpec.getResourceAsStream(resourceName).getText('UTF-8')
+    }
 }

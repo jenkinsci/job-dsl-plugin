@@ -42,6 +42,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([JENKINS-44217](https://issues.jenkins-ci.org/browse/JENKINS-44217))
   * Enhanced support for the [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
     ([JENKINS-44357](https://issues.jenkins-ci.org/browse/JENKINS-44357))
+  * Enhanced support for [Sectioned View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sectioned+View+Plugin)
+    ([#1037](https://github.com/jenkinsci/job-dsl-plugin/pull/1037))
   * Support for older versions of the
     [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-164)
