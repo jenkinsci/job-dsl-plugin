@@ -60,13 +60,13 @@ interface ViewFactory extends Context {
      *
      * @see #deliveryPipelineView(java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin', failIfMissing = true)
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.10.0', failIfMissing = true)
     DeliveryPipelineView deliveryPipelineView(String name)
 
     /**
      * Creates or updates a view that renders pipelines based on upstream/downstream jobs.
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin', failIfMissing = true)
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.10.0', failIfMissing = true)
     DeliveryPipelineView deliveryPipelineView(String name, @DslContext(DeliveryPipelineView) Closure closure)
 
     /**

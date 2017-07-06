@@ -1115,28 +1115,6 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Uploads build artifacts to Amazon S3.
-     *
-     * @since 1.26
-     * @deprecated use the <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL">
-     *             Automatically Generated DSL</a> instead.
-     */
-    @RequiresPlugin(id = 's3', minimumVersion = '0.7')
-    @Deprecated
-    void s3(String profile, @DslContext(S3BucketPublisherContext) Closure s3PublisherClosure) {
-        checkNotNullOrEmpty(profile, 'profile must be specified')
-
-        S3BucketPublisherContext context = new S3BucketPublisherContext(jobManagement)
-        ContextHelper.executeInContext(s3PublisherClosure, context)
-
-        publisherNodes << new NodeBuilder().'hudson.plugins.s3.S3BucketPublisher' {
-            profileName(profile)
-            entries(context.entries)
-            userMetadata(context.metadata)
-        }
-    }
-
-    /**
      * Publishes FindBugs analysis results.
      *
      * @since 1.17

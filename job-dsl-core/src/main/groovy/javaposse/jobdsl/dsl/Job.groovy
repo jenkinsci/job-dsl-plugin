@@ -445,9 +445,8 @@ abstract class Job extends Item {
      *
      * @since 1.26
      */
-    @RequiresPlugin(id = 'delivery-pipeline-plugin')
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.10.0')
     void deliveryPipelineConfiguration(String stageName, String taskName = null) {
-        jobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
         if (stageName || taskName) {
             configure { Node project ->
                 project / 'properties' / 'se.diabol.jenkins.pipeline.PipelineProperty' {

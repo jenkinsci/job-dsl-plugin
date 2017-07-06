@@ -907,8 +907,7 @@ class JobSpec extends Specification {
             taskName[0].value() == 'integration-tests'
             stageName[0].value() == 'qa'
         }
-        1 * jobManagement.requirePlugin('delivery-pipeline-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
+        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0')
     }
 
     def 'delivery pipeline configuration with stage name'() {
@@ -922,8 +921,7 @@ class JobSpec extends Specification {
             children().size() == 1
             stageName[0].value() == 'qa'
         }
-        1 * jobManagement.requirePlugin('delivery-pipeline-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
+        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0')
     }
 
     def 'delivery pipeline configuration with task name'() {
@@ -937,8 +935,7 @@ class JobSpec extends Specification {
             children().size() == 1
             taskName[0].value() == 'integration-tests'
         }
-        1 * jobManagement.requirePlugin('delivery-pipeline-plugin')
-        1 * jobManagement.logPluginDeprecationWarning('delivery-pipeline-plugin', '0.10.0')
+        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0')
     }
 
     def 'set notification with default properties'() {
