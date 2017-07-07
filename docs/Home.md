@@ -28,6 +28,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
+* 1.65 (unreleased)
 * 1.64 (July 07 2017)
   * Increased the minimum supported Java version to JDK 7
   * Increased the minimum supported Jenkins version to 2.19
