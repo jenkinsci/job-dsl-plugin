@@ -59,7 +59,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == null
         requests[0].body == SCRIPT
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
@@ -77,7 +76,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == null
         requests[0].body == SCRIPT
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
@@ -95,7 +93,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == null
         requests[0].body == SCRIPT
         requests[0].urlRoots.length == 2
         requests[0].urlRoots[0].toString() == 'workspace:/'
@@ -114,7 +111,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == null
         requests[0].body == SCRIPT
         requests[0].urlRoots.length == 2
         requests[0].urlRoots[0].toString() == 'workspace:/'
@@ -135,7 +131,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == null
         requests[0].body == SCRIPT
         requests[0].urlRoots.length == 3
         requests[0].urlRoots[0].toString() == 'workspace:/'
@@ -155,7 +150,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == null
         requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
@@ -173,7 +167,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == null
         requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
@@ -191,7 +184,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == null
         requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
@@ -211,13 +203,11 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 2
-        requests[0].location == null
         requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
         !requests[0].ignoreExisting
         requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
-        requests[1].location == null
         requests[1].body == SCRIPT_B
         requests[1].urlRoots.length == 1
         requests[1].urlRoots[0].toString() == 'workspace:/'
@@ -235,13 +225,11 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 2
-        requests[0].location == null
         requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 1
         requests[0].urlRoots[0].toString() == 'workspace:/'
         !requests[0].ignoreExisting
         requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
-        requests[1].location == null
         requests[1].body == SCRIPT_B
         requests[1].urlRoots.length == 1
         requests[1].urlRoots[0].toString() == 'workspace:/'
@@ -261,7 +249,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 2
-        requests[0].location == null
         requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 3
         requests[0].urlRoots[0].toString() == 'workspace:/'
@@ -269,7 +256,6 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].urlRoots[2] == new URL(build.workspace.toURI().toURL(), 'output/')
         !requests[0].ignoreExisting
         requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
-        requests[1].location == null
         requests[1].body == SCRIPT_B
         requests[1].urlRoots.length == 3
         requests[1].urlRoots[0].toString() == 'workspace:/'
@@ -291,7 +277,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == null
         requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 3
         requests[0].urlRoots[0].toString() == 'workspace:/'
@@ -313,7 +298,6 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.size() == 1
-        requests[0].location == null
         requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 3
         requests[0].urlRoots[0].toString() == 'workspace:/'

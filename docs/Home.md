@@ -52,6 +52,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Support for older versions of the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-164)
   * Removed anything that has been deprecated in 1.54, see [Migration](Migration#migrating-to-154)
+  * Removed anything that has been deprecated in 1.55, see [Migration](Migration#migrating-to-155)
+  * Removed anything that has been deprecated in 1.56, see [Migration](Migration#migrating-to-156)
 * 1.63 (May 09 2017)
   * Fixed problem with special characters in job, folder and view names
     ([JENKINS-44140](https://issues.jenkins-ci.org/browse/JENKINS-44140))

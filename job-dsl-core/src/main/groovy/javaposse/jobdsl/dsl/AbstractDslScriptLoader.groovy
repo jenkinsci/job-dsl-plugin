@@ -83,7 +83,7 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
 
     protected S runScriptEngine(ScriptRequest scriptRequest, GroovyShell groovyShell) {
         try {
-            if (scriptRequest.scriptPath || scriptRequest.location) {
+            if (scriptRequest.scriptPath) {
                 logger.println("Processing DSL script ${scriptRequest.scriptName}")
                 checkValidScriptName(scriptRequest)
                 checkCollidingScriptName(scriptRequest, groovyShell.classLoader, logger)
@@ -117,11 +117,7 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
     }
 
     protected GroovyCodeSource createGroovyCodeSource(ScriptRequest scriptRequest) {
-        if (scriptRequest.body != null) {
-            new GroovyCodeSource(scriptRequest.body, scriptRequest.scriptName ?: 'script', DEFAULT_CODE_BASE)
-        } else {
-            new GroovyCodeSource(new URL(scriptRequest.urlRoots[0], scriptRequest.location))
-        }
+        new GroovyCodeSource(scriptRequest.body, scriptRequest.scriptName ?: 'script', DEFAULT_CODE_BASE)
     }
 
     protected void runScript(Script script) {

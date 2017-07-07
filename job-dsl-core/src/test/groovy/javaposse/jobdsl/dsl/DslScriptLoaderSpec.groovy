@@ -43,19 +43,6 @@ class DslScriptLoaderSpec extends Specification {
         noExceptionThrown()
     }
 
-    def 'run engine with location'() {
-        setup:
-        ScriptRequest request = new ScriptRequest('simple.dsl', null, resourcesDir, false)
-
-        when:
-        def jobs = dslScriptLoader.runScripts([request]).jobs
-
-        then:
-        jobs != null
-        jobs.size() == 1
-        jobs.iterator().next().jobName == 'test'
-    }
-
     def 'run engine'() {
         setup:
         ScriptRequest request = new ScriptRequest(loadScript('simple.dsl'), resourcesDir, false, 'simple.dsl')
