@@ -38,15 +38,15 @@ class ThrottleConcurrentBuildsContext extends AbstractContext {
     }
 
     /**
-     * Sets the maximum number of concurrent builds of this project (or category) to be allowed to run at any one time,
-     * across all nodes.
+     * Sets the maximum number of concurrent builds of this project (or category) to be allowed to run per node.
      */
     void maxPerNode(int maxPerNode) {
         this.maxConcurrentPerNode = maxPerNode
     }
 
     /**
-     * Sets the maximum number of concurrent builds of this project (or category) to be allowed to run per node.
+     * Sets the maximum number of concurrent builds of this project (or category) to be allowed to run at any one time,
+     * across all nodes.
      */
     void maxTotal(int maxTotal) {
         this.maxConcurrentTotal = maxTotal
