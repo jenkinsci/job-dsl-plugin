@@ -1,7 +1,9 @@
 package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext
 import javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class OrganizationFolderJobSpec extends Specification {
@@ -17,8 +19,13 @@ class OrganizationFolderJobSpec extends Specification {
             orphanedItemStrategy[0].attribute('class') ==
                     'com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy'
             projectFactories.size() == 1
-            projectFactories[0].'org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectFactory'
-                    .size() == 1
+            with(projectFactories[0]) {
+                it.'org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectFactory'.size() == 1
+                with(it.'org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectFactory'[0]) {
+                    children().size() == 1
+                    scriptPath[0].text() == 'Jenkinsfile'
+                }
+            }
             navigators.size() == 1
             navigators[0].children().size() == 0
             triggers.size() == 1
@@ -128,6 +135,56 @@ class OrganizationFolderJobSpec extends Specification {
                 with(it.'org.example.ScmNavigator2') {
                     size() == 3
                 }
+            }
+        }
+    }
+
+    def 'can add additional projectFactories'() {
+        setup:
+        jobManagement.callExtension('factory1', job, MultiBranchProjectFactoryContext, []) >>
+            new Node(null, 'org.example.MultiBranchProjectFactory1')
+        jobManagement.callExtension('factory2', job, MultiBranchProjectFactoryContext, []) >>
+            new Node(null, 'org.example.MultiBranchProjectFactory2')
+
+        when:
+        job.projectFactories {
+            factory1()
+            factory2()
+            factory1()
+            factory2()
+            factory2()
+        }
+
+        then:
+        with(job.node) {
+            projectFactories.size() == 1
+            with(projectFactories[0]) {
+                children().size() == 6
+                with(it.'org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectFactory') {
+                    size() == 1
+                }
+                with(it.'org.example.MultiBranchProjectFactory1') {
+                    size() == 2
+                }
+                with(it.'org.example.MultiBranchProjectFactory2') {
+                    size() == 3
+                }
+            }
+        }
+    }
+
+    @Ignore('not supported yet')
+    def 'can clear default projectFactories'() {
+        when:
+        job.projectFactories {
+            projectFactoryNodes.clear()
+        }
+
+        then:
+        with(job.node) {
+            projectFactories.size() == 1
+            with(projectFactories[0]) {
+                children().size() == 0
             }
         }
     }

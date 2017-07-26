@@ -25,6 +25,8 @@
     <triggers/>
     <navigators/>
     <projectFactories>
-        <org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectFactory/>
+        <org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectFactory>
+            <scriptPath>Jenkinsfile</scriptPath>
+        </org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectFactory>
     </projectFactories>
 </jenkins.branch.OrganizationFolder>
