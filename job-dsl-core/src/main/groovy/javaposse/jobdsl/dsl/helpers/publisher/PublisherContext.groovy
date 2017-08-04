@@ -1983,7 +1983,7 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     @SuppressWarnings('NoDef')
-    private static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
+    protected static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
             healthy(context.healthy ?: '')
             unHealthy(context.unHealthy ?: '')
@@ -2006,12 +2006,13 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     @SuppressWarnings('NoDef')
-    private static addStaticAnalysisPattern(def nodeBuilder, String pattern) {
+    protected static addStaticAnalysisPattern(def nodeBuilder, String pattern) {
         nodeBuilder.pattern(pattern)
     }
 
     @SuppressWarnings('NoDef')
-    private static addStaticAnalysisContextAndPattern(def nodeBuilder, StaticAnalysisContext context, String pattern) {
+    protected static addStaticAnalysisContextAndPattern(
+            def nodeBuilder, StaticAnalysisContext context, String pattern) {
         addStaticAnalysisContext(nodeBuilder, context)
         addStaticAnalysisPattern(nodeBuilder, pattern)
     }
