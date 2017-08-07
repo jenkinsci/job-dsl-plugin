@@ -194,6 +194,43 @@ class DeliveryPipelineView extends View {
     }
 
     /**
+     * Show analysis results from
+     * <a href="https://wiki.jenkins.io/display/JENKINS/Analysis+Collector+Plugin">Analysis Collector Plugin</a>.
+     * Defaults to {@code false}.
+     *
+     * @since 1.65
+     */
+    void showStaticAnalysisResults(boolean value = true) {
+        configure {
+            it / methodMissing('showStaticAnalysisResults', value)
+        }
+    }
+
+    /**
+     * Use relative links for jobs in pipeline view.
+     * Defaults to {@code false}.
+     *
+     * @since 1.65
+     */
+    void useRelativeLinks(boolean value = true) {
+        configure {
+            it / methodMissing('linkRelative', value)
+        }
+    }
+
+    /**
+     * Link jobs in pipeline view directly to the console log.
+     * Defaults to {@code false}.
+     *
+     * @since 1.65
+     */
+    void linkToConsoleLog(boolean value = true) {
+        configure {
+            it / methodMissing('linkToConsoleLog', value)
+        }
+    }
+
+    /**
      * Defines pipelines by either specifying names and start jobs or by regular expressions. Both variants can be
      * called multiple times to add different pipelines to the view.
      */

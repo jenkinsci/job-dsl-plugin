@@ -58,7 +58,10 @@ class DeliveryPipelineViewSpec extends Specification {
             showDescription()
             showPromotions()
             enablePaging()
-            showTestResults(true)
+            showTestResults()
+            showStaticAnalysisResults()
+            useRelativeLinks()
+            linkToConsoleLog()
             useTheme('foo')
 
             pipelines {
@@ -121,6 +124,9 @@ class DeliveryPipelineViewSpec extends Specification {
     <showPromotions>true</showPromotions>
     <pagingEnabled>true</pagingEnabled>
     <showTestResults>true</showTestResults>
+    <showStaticAnalysisResults>true</showStaticAnalysisResults>
+    <linkRelative>true</linkRelative>
+    <linkToConsoleLog>true</linkToConsoleLog>
     <theme>foo</theme>
     <componentSpecs>
         <se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>

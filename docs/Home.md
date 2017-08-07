@@ -29,6 +29,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.65 (unreleased)
+  * Enhanced support for the
+    [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
 * 1.64 (July 07 2017)
   * Increased the minimum supported Java version to JDK 7
   * Increased the minimum supported Jenkins version to 2.19
