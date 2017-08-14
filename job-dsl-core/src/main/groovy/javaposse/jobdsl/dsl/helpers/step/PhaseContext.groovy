@@ -35,6 +35,10 @@ class PhaseContext extends AbstractContext {
 
     /**
      * Defines how to decide the status of the whole MultiJob phase.
+     * 
+     * {@code continuationCondition} must be one of {@code 'SUCCESSFUL'}, {@code 'UNSTABLE'}, {@code 'COMPLETED'} or
+     * {@code 'FAILURE'}. When version 1.16 or later of the MultiJob plugin is installed, {@code continuationCondition}
+     * can also be set to {@code 'ALWAYS'}.
      */
     void continuationCondition(String continuationCondition) {
         this.continuationCondition = continuationCondition
