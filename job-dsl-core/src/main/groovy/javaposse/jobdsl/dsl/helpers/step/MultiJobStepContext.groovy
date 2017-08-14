@@ -31,10 +31,6 @@ class MultiJobStepContext extends StepContext {
 
     /**
      * Adds a MultiJob phase.
-     *
-     * {@code continuationCondition} must be one of {@code 'SUCCESSFUL'}, {@code 'UNSTABLE'}, {@code 'COMPLETED'} or
-     * {@code 'FAILURE'}. When version 1.16 or later of the MultiJob plugin is installed, {@code continuationCondition}
-     * can also be set to {@code 'ALWAYS'}.
      */
     void phase(String name, String continuationCondition, @DslContext(PhaseContext) Closure phaseClosure) {
         PhaseContext phaseContext = new PhaseContext(jobManagement, item, name, continuationCondition)
