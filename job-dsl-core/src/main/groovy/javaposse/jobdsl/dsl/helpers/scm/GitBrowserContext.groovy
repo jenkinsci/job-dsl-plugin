@@ -75,4 +75,15 @@ class GitBrowserContext extends AbstractContext {
             delegate.url(url)
         }
     }
+
+    /**
+     * Use BitbucketWeb as repository browser.
+     *
+     * @since 1.65
+     */
+    void bitbucketWeb(String url) {
+        browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.BitbucketWeb') {
+            delegate.url(url)
+        }
+    }
 }
