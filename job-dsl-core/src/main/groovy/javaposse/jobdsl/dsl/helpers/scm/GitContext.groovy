@@ -13,7 +13,7 @@ class GitContext extends AbstractContext {
     List<Node> remoteConfigs = []
     List<String> branches = []
     Closure configureBlock
-    final GitBrowserContext gitBrowserContext = new GitBrowserContext(jobManagement)
+    final GitBrowserContext gitBrowserContext = new GitBrowserContext(jobManagement, item)
     GitExtensionContext extensionContext = new GitExtensionContext(jobManagement, item)
 
     GitContext(JobManagement jobManagement, Item item) {

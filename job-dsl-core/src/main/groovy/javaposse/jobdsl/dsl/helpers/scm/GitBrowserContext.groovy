@@ -1,13 +1,22 @@
 package javaposse.jobdsl.dsl.helpers.scm
 
-import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 
-class GitBrowserContext extends AbstractContext {
+@ContextType('hudson.scm.RepositoryBrowser')
+class GitBrowserContext extends AbstractExtensibleContext {
     Node browser
 
-    protected GitBrowserContext(JobManagement jobManagement) {
-        super(jobManagement)
+    protected GitBrowserContext(JobManagement jobManagement, Item item) {
+        super(jobManagement, item)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        browser = ContextHelper.toNamedNode('browser', node)
     }
 
     /**
