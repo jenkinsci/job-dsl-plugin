@@ -44,4 +44,13 @@ class MavenPublisherContextSpec extends Specification {
             evenIfUnstable[0].value() == true
         }
     }
+
+    def 'call publishers which use addStaticAnalysis*'() {
+        when:
+        context.tasks('**/*.java', '', 'FIXME, XXX', 'TODO', '', true)
+        context.warnings(['Maven', 'Java Compiler (javac)'])
+
+        then:
+        noExceptionThrown()
+    }
 }
