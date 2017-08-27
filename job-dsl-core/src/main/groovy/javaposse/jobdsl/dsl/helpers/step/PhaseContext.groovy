@@ -9,6 +9,9 @@ import javaposse.jobdsl.dsl.Preconditions
 
 class PhaseContext extends AbstractContext {
     private static final List<String> VALID_EXECUTION_TYPES = ['PARALLEL', 'SEQUENTIALLY']
+    private static final List<String> VALID_CONTINUATION_CONDITIONS = [
+            'SUCCESSFUL', 'UNSTABLE', 'COMPLETED', 'FAILURE', 'ALWAYS'
+    ]
 
     protected final Item item
 
@@ -22,7 +25,7 @@ class PhaseContext extends AbstractContext {
         super(jobManagement)
         this.item = item
         this.phaseName = phaseName
-        this.continuationCondition = continuationCondition
+        this.continuationCondition(continuationCondition)
         this.executionType = executionType
     }
 
@@ -35,8 +38,15 @@ class PhaseContext extends AbstractContext {
 
     /**
      * Defines how to decide the status of the whole MultiJob phase.
+     *
+     * {@code continuationCondition} must be one of {@code 'SUCCESSFUL'}, {@code 'UNSTABLE'}, {@code 'COMPLETED'},
+     * {@code 'FAILURE'} or {@code 'ALWAYS'}.
      */
     void continuationCondition(String continuationCondition) {
+        Preconditions.checkArgument(
+                VALID_CONTINUATION_CONDITIONS.contains(continuationCondition),
+                "Continuation Condition needs to be one of these values: ${VALID_CONTINUATION_CONDITIONS.join(', ')}"
+        )
         this.continuationCondition = continuationCondition
     }
 
