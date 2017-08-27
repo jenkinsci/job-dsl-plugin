@@ -3,6 +3,7 @@ package javaposse.jobdsl.dsl.views
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NoDoc
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.View
 
 import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
@@ -190,6 +191,44 @@ class DeliveryPipelineView extends View {
     void enablePaging(boolean value = true) {
         configure {
             it / methodMissing('pagingEnabled', value)
+        }
+    }
+
+    /**
+     * Show analysis results from
+     * <a href="https://wiki.jenkins.io/display/JENKINS/Analysis+Collector+Plugin">Analysis Collector Plugin</a>.
+     * Defaults to {@code false}.
+     *
+     * @since 1.65
+     */
+    void showStaticAnalysisResults(boolean value = true) {
+        configure {
+            it / methodMissing('showStaticAnalysisResults', value)
+        }
+    }
+
+    /**
+     * Use relative links for jobs in pipeline view.
+     * Defaults to {@code false}.
+     *
+     * @since 1.65
+     */
+    void useRelativeLinks(boolean value = true) {
+        configure {
+            it / methodMissing('linkRelative', value)
+        }
+    }
+
+    /**
+     * Link jobs in pipeline view directly to the console log.
+     * Defaults to {@code false}.
+     *
+     * @since 1.65
+     */
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.10.3')
+    void linkToConsoleLog(boolean value = true) {
+        configure {
+            it / methodMissing('linkToConsoleLog', value)
         }
     }
 
