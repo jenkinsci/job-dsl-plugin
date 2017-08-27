@@ -241,6 +241,13 @@ class BuildParametersContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Defines a simple text parameter, where users can enter a masked password string value.
+     */
+    void passwordParam(String parameterName, String defaultValue = null, String description = null) {
+        simpleParam('hudson.model.PasswordParameterDefinition', parameterName, defaultValue, description)
+    }
+
+    /**
      * Defines a simple text parameter, where users can enter a multi-line string value.
      */
     void textParam(String parameterName, String defaultValue = null, String description = null) {
