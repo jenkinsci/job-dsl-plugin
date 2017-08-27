@@ -36,6 +36,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([#1049](https://github.com/jenkinsci/job-dsl-plugin/pull/1049))
   * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
     ([#1050](https://github.com/jenkinsci/job-dsl-plugin/pull/1050))
+  * Fixed documentation for the
+    [Throttle Concurrent Builds Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Throttle+Concurrent+Builds+Plugin)
+    ([#1042](https://github.com/jenkinsci/job-dsl-plugin/pull/1042))
   * Fixed problem with static analysis plugins
     ([JENKINS-46042](https://issues.jenkins-ci.org/browse/JENKINS-46042))
 * 1.64 (July 07 2017)
