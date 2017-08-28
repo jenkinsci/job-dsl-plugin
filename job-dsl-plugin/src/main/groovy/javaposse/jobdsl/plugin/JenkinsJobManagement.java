@@ -90,7 +90,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         this(outputLogger, envVars, null, new FilePath(workspace.getAbsoluteFile()), LookupStrategy.JENKINS_ROOT);
     }
 
-    void setFailOnMissingPlugin(boolean failOnMissingPlugin) {
+    @SuppressWarnings("WeakerAccess") // JENKINS-45921
+    public void setFailOnMissingPlugin(boolean failOnMissingPlugin) {
         this.failOnMissingPlugin = failOnMissingPlugin;
     }
 
