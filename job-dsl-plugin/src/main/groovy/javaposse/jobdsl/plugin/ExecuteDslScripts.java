@@ -12,6 +12,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
@@ -362,7 +363,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
-            AbstractProject templateProject = getLookupStrategy().getItem(seedJob, templateName, AbstractProject.class);
+            AbstractItem templateProject = getLookupStrategy().getItem(seedJob, templateName, AbstractItem.class);
             final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {

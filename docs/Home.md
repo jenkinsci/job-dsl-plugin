@@ -43,6 +43,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([#1042](https://github.com/jenkinsci/job-dsl-plugin/pull/1042))
   * Fixed problem with static analysis plugins
     ([JENKINS-46042](https://issues.jenkins-ci.org/browse/JENKINS-46042))
+  * Fixed problem with `using` in Pipeline jobs
+    ([JENKINS-45812](https://issues.jenkins-ci.org/browse/JENKINS-45812))
 * 1.64 (July 07 2017)
   * Increased the minimum supported Java version to JDK 7
   * Increased the minimum supported Jenkins version to 2.19
