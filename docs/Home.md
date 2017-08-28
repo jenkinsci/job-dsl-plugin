@@ -41,6 +41,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Fixed documentation for the
     [Throttle Concurrent Builds Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Throttle+Concurrent+Builds+Plugin)
     ([#1042](https://github.com/jenkinsci/job-dsl-plugin/pull/1042))
+  * Changed visibility of a method in `JenkinsJobManagement`
+    ([JENKINS-45921](https://issues.jenkins-ci.org/browse/JENKINS-45921))
   * Fixed problem with static analysis plugins
     ([JENKINS-46042](https://issues.jenkins-ci.org/browse/JENKINS-46042))
   * Fixed problem with `using` in Pipeline jobs
