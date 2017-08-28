@@ -86,9 +86,8 @@ class WrapperContextSpec extends Specification {
             ruby__build__revision[0].'@pluginid' == 'rbenv'
             ruby__build__revision[0].'@ruby-class' == 'String'
         }
-        1 * mockJobManagement.requirePlugin('rbenv')
+        1 * mockJobManagement.requireMinimumPluginVersion('rbenv', '0.0.17')
         1 * mockJobManagement.requireMinimumPluginVersion('ruby-runtime', '0.12')
-        1 * mockJobManagement.logPluginDeprecationWarning('rbenv', '0.0.17')
     }
 
     def 'add rbenv-controlled override defaults'() {
@@ -115,9 +114,8 @@ class WrapperContextSpec extends Specification {
             ruby__build__repository[0].value() == 'foobar'
             ruby__build__revision[0].value() == '1.0'
         }
-        1 * mockJobManagement.requirePlugin('rbenv')
+        1 * mockJobManagement.requireMinimumPluginVersion('rbenv', '0.0.17')
         1 * mockJobManagement.requireMinimumPluginVersion('ruby-runtime', '0.12')
-        1 * mockJobManagement.logPluginDeprecationWarning('rbenv', '0.0.17')
     }
 
     def 'add rvm-controlled ruby version'() {
