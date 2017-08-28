@@ -18,9 +18,7 @@ class ExampleValidationSpec extends Specification {
         jobManagement.parameters >> [:]
         jobManagement.outputStream >> System.out
         jobManagement.readFileInWorkspace(_) >> 'test'
-        jobManagement.createOrUpdateConfigFile(*_) >> 'id'
         jobManagement.getConfig(_) >> '<project/>'
-        jobManagement.getConfigFileId(*_) >> 'id'
         jobManagement.getVSphereCloudHash(_) >> 1234
         jobManagement.getPermissions(_) >> [
                 'hudson.model.Item.Create', 'hudson.model.Item.Discover',

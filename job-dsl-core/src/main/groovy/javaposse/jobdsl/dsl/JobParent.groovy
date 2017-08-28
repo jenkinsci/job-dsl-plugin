@@ -28,8 +28,6 @@ abstract class JobParent extends Script implements DslFactory {
     JobManagement jm
     Set<Item> referencedJobs = new LinkedHashSet<>()
     Set<View> referencedViews = new LinkedHashSet<>()
-    @Deprecated
-    Set<ConfigFile> referencedConfigFiles = new LinkedHashSet<>()
     Set<UserContent> referencedUserContents = new LinkedHashSet<>()
     List<String> queueToBuild = []
 
@@ -208,53 +206,6 @@ abstract class JobParent extends Script implements DslFactory {
     @Override
     Folder folder(String name, @DslContext(Folder) Closure closure = null) {
         processItem(name, Folder, closure)
-    }
-
-    /**
-     * @since 1.30
-     */
-    @Deprecated
-    ConfigFile customConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
-        processConfigFile(name, ConfigFileType.Custom, closure)
-    }
-
-    /**
-     * @since 1.30
-     */
-    @Deprecated
-    MavenSettingsConfigFile mavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
-        processConfigFile(name, ConfigFileType.MavenSettings, MavenSettingsConfigFile, closure)
-    }
-
-    /**
-     * @since 1.39
-     */
-    @Deprecated
-    MavenSettingsConfigFile globalMavenSettingsConfigFile(String name, @DslContext(ConfigFile) Closure closure = null) {
-        processConfigFile(name, ConfigFileType.GlobalMavenSettings, MavenSettingsConfigFile, closure)
-    }
-
-    /**
-     * @since 1.40
-     */
-    @Deprecated
-    ParametrizedConfigFile managedScriptConfigFile(String name,
-                                                   @DslContext(ParametrizedConfigFile) Closure closure = null) {
-        processConfigFile(name, ConfigFileType.ManagedScript, ParametrizedConfigFile, closure)
-    }
-
-    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
-    protected <T extends ConfigFile> T processConfigFile(String name, ConfigFileType configFileType,
-                                                         Class<T> type = ConfigFile, Closure closure) {
-        checkNotNullOrEmpty(name, 'name must be specified')
-
-        T configFile = type.newInstance(configFileType, jm)
-        configFile.name = name
-        if (closure) {
-            configFile.with(closure)
-        }
-        referencedConfigFiles << configFile
-        configFile
     }
 
     @Override

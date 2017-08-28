@@ -333,18 +333,6 @@ folder('folder-b') {
         noExceptionThrown()
     }
 
-    def 'generate config files'() {
-        setup:
-        ScriptRequest request = new ScriptRequest(loadScript('configfiles.dsl'), resourcesDir, false, 'configfiles.dsl')
-
-        when:
-        List<GeneratedConfigFile> files = dslScriptLoader.runScripts([request]).configFiles.toList()
-
-        then:
-        files.size() == 1
-        files[0].name == 'foo'
-    }
-
     def 'generate user contents'() {
         setup:
         ScriptRequest request = new ScriptRequest(loadScript('userContent.dsl'), resourcesDir, false, 'userContent.dsl')

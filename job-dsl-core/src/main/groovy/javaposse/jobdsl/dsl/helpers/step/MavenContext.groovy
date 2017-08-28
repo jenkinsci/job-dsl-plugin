@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.AbstractContext
-import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresCore
 import javaposse.jobdsl.dsl.RequiresPlugin
@@ -78,10 +77,8 @@ class MavenContext extends AbstractContext {
      * @since 1.25
      */
     @RequiresPlugin(id = 'config-file-provider')
-    void providedSettings(String settingsIdOrName) {
-        String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsIdOrName)
-
-        this.providedSettingsId = settingsId ?: settingsIdOrName
+    void providedSettings(String settingsId) {
+        this.providedSettingsId = settingsId
     }
 
     /**
@@ -90,10 +87,8 @@ class MavenContext extends AbstractContext {
      * @since 1.39
      */
     @RequiresPlugin(id = 'config-file-provider')
-    void providedGlobalSettings(String settingsIdOrName) {
-        String settingsId = jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsIdOrName)
-
-        this.providedGlobalSettingsId = settingsId ?: settingsIdOrName
+    void providedGlobalSettings(String settingsId) {
+        this.providedGlobalSettingsId = settingsId
     }
 
     /**

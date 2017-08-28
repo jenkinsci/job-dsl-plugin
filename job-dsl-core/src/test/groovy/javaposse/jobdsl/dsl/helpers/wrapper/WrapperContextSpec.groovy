@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
-import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -897,15 +896,13 @@ class WrapperContextSpec extends Specification {
 
     def 'call configFile closure'() {
         setup:
-        String configName = 'myCustomConfig'
         String configId = 'CustomConfig1417476679249'
         String configTarget = 'myTargetLocation'
         String configVariable = '$CONFIG_FILE_LOCATION'
-        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName) >> configId
 
         when:
         context.configFiles {
-            file(configName) {
+            file(configId) {
                 targetLocation configTarget
                 variable configVariable
             }
@@ -928,13 +925,11 @@ class WrapperContextSpec extends Specification {
 
     def 'call configFile'() {
         setup:
-        String configName = 'myCustomConfig'
         String configId = 'CustomConfig1417476679249'
-        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName) >> configId
 
         when:
         context.configFiles {
-            file(configName)
+            file(configId)
         }
 
         then:
@@ -954,25 +949,17 @@ class WrapperContextSpec extends Specification {
 
     def 'call configFile with all file types'() {
         setup:
-        String configName1 = 'myCustomConfig'
         String configId1 = 'CustomConfig1417476679249'
-        String configName2 = 'myOtherConfig'
         String configId2 = 'CustomConfig1417476679250'
-        String configName3 = 'myMavenSetttings'
         String configId3 = 'CustomConfig1417476679251'
-        String configName4 = 'myGlobalMavenSetttings'
         String configId4 = 'CustomConfig1417476679252'
-        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName1) >> configId1
-        mockJobManagement.getConfigFileId(ConfigFileType.Custom, configName2) >> configId2
-        mockJobManagement.getConfigFileId(ConfigFileType.MavenSettings, configName3) >> configId3
-        mockJobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, configName4) >> configId4
 
         when:
         context.configFiles {
-            file(configName1)
-            custom(configName2)
-            mavenSettings(configName3)
-            globalMavenSettings(configName4)
+            file(configId1)
+            custom(configId2)
+            mavenSettings(configId3)
+            globalMavenSettings(configId4)
         }
 
         then:

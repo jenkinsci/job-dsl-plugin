@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.step
 
 import groovy.transform.PackageScope
-import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
@@ -1062,14 +1061,12 @@ class StepContext extends AbstractExtensibleContext {
      * @since 1.40
      */
     @RequiresPlugin(id = 'managed-scripts', minimumVersion = '1.2.1')
-    void managedScript(String scriptIdOrName, @DslContext(ManagedScriptContext) Closure closure = null) {
-        String scriptId = jobManagement.getConfigFileId(ConfigFileType.ManagedScript, scriptIdOrName)
-
+    void managedScript(String scriptId, @DslContext(ManagedScriptContext) Closure closure = null) {
         ManagedScriptContext context = new ManagedScriptContext()
         ContextHelper.executeInContext(closure, context)
 
         stepNodes << new NodeBuilder().'org.jenkinsci.plugins.managedscripts.ScriptBuildStep' {
-            buildStepId(scriptId ?: scriptIdOrName)
+            buildStepId(scriptId)
             buildStepArgs {
                 context.arguments.each {
                     string(it)

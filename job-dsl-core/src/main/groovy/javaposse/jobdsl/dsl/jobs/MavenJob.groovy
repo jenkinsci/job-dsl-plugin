@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.jobs
 
-import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Job
@@ -306,12 +305,10 @@ class MavenJob extends Job {
      * @since 1.25
      */
     @RequiresPlugin(id = 'config-file-provider')
-    void providedSettings(String settingsIdOrName) {
-        String settingsId = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsIdOrName)
-
+    void providedSettings(String settingsId) {
         configure { Node project ->
             project / settings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider') {
-                settingsConfigId(settingsId ?: settingsIdOrName)
+                settingsConfigId(settingsId)
             }
         }
     }
@@ -322,12 +319,10 @@ class MavenJob extends Job {
      * @since 1.39
      */
     @RequiresPlugin(id = 'config-file-provider')
-    void providedGlobalSettings(String settingsIdOrName) {
-        String settingsId = jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsIdOrName)
-
+    void providedGlobalSettings(String settingsId) {
         configure { Node project ->
             project / globalSettings(class: 'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider') {
-                settingsConfigId(settingsId ?: settingsIdOrName)
+                settingsConfigId(settingsId)
             }
         }
     }

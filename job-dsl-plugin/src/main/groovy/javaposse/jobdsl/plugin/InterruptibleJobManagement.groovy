@@ -1,8 +1,6 @@
 package javaposse.jobdsl.plugin
 
 import groovy.transform.ThreadInterrupt
-import javaposse.jobdsl.dsl.ConfigFile
-import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobConfigurationNotFoundException
@@ -41,11 +39,6 @@ class InterruptibleJobManagement implements JobManagement {
     void createOrUpdateView(String viewName, String config, boolean ignoreExisting) throws NameNotProvidedException,
             ConfigurationMissingException {
         delegate.createOrUpdateView(viewName, config, ignoreExisting)
-    }
-
-    @Override
-    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
-        delegate.createOrUpdateConfigFile(configFile, ignoreExisting)
     }
 
     @Override
@@ -146,11 +139,6 @@ class InterruptibleJobManagement implements JobManagement {
     @Override
     Integer getVSphereCloudHash(String name) {
         delegate.getVSphereCloudHash(name)
-    }
-
-    @Override
-    String getConfigFileId(ConfigFileType type, String name) {
-        delegate.getConfigFileId(type, name)
     }
 
     @Override

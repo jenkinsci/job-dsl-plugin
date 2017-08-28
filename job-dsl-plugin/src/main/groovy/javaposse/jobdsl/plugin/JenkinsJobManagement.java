@@ -25,8 +25,6 @@ import hudson.model.ViewGroup;
 import hudson.slaves.Cloud;
 import hudson.util.VersionNumber;
 import javaposse.jobdsl.dsl.AbstractJobManagement;
-import javaposse.jobdsl.dsl.ConfigFile;
-import javaposse.jobdsl.dsl.ConfigFileType;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.DslScriptException;
 import javaposse.jobdsl.dsl.ExtensibleContext;
@@ -40,9 +38,6 @@ import jenkins.model.ModifiableTopLevelItemGroup;
 import org.apache.commons.io.FilenameUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.jenkinsci.lib.configprovider.ConfigProvider;
-import org.jenkinsci.lib.configprovider.model.Config;
-import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
 import org.jenkinsci.plugins.vSphereCloud;
 
 import javax.xml.transform.Source;
@@ -65,10 +60,6 @@ import java.util.logging.Logger;
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static java.lang.String.format;
-import static java.util.UUID.randomUUID;
-import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.createNewConfig;
-import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfig;
-import static javaposse.jobdsl.plugin.ConfigFileProviderHelper.findConfigProvider;
 
 /**
  * Manages Jenkins jobs, providing facilities to retrieve and create / update.
@@ -182,42 +173,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
-    @Override
-    @Deprecated
-    public String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
-        validateNameArg(configFile.getName());
-        Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
-
-        Jenkins jenkins = Jenkins.getInstance();
-
-        if (jenkins.getPlugin("config-file-provider") == null) {
-            throw new DslException(Messages.CreateOrUpdateConfigFile_PluginNotInstalled());
-        }
-
-        ConfigProvider configProvider = findConfigProvider(configFile.getType());
-        if (configProvider == null) {
-            throw new DslException(
-                    format(Messages.CreateOrUpdateConfigFile_ConfigProviderNotFound(), configFile.getClass())
-            );
-        }
-
-        Config config = findConfig(configProvider, configFile.getName());
-        if (config != null && ignoreExisting) {
-            return config.id;
-        }
-
-        config = createNewConfig(config == null ? randomUUID().toString() : config.id, configFile);
-        if (config == null) {
-            throw new DslException(
-                    format(Messages.CreateOrUpdateConfigFile_UnknownConfigFileType(), configFile.getClass())
-            );
-        }
-
-        jenkins.getExtensionList(GlobalConfigFiles.class).get(GlobalConfigFiles.class).save(config);
-        return config.id;
-    }
-
-    @Override
+  @Override
     public void createOrUpdateUserContent(UserContent userContent, boolean ignoreExisting) {
         // As in git-userContent-plugin:
         Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
@@ -374,25 +330,6 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             for (Cloud cloud : jenkins.clouds) {
                 if (cloud instanceof vSphereCloud && ((vSphereCloud) cloud).getVsDescription().equals(name)) {
                     return ((vSphereCloud) cloud).getHash();
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
-    @Deprecated
-    public String getConfigFileId(ConfigFileType type, String name) {
-        Jenkins jenkins = Jenkins.getInstance();
-        if (jenkins.getPlugin("config-file-provider") != null) {
-            ConfigProvider configProvider = findConfigProvider(type);
-            if (configProvider != null) {
-                Config config = findConfig(configProvider, name);
-                if (config != null) {
-                    if (!config.id.equals(name)) {
-                        logDeprecationWarning("finding managed config files by name");
-                    }
-                    return config.id;
                 }
             }
         }

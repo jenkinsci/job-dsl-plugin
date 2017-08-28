@@ -46,17 +46,6 @@ interface JobManagement {
             throws NameNotProvidedException, ConfigurationMissingException
 
     /**
-     * Creates or updates the managed config file.
-     *
-     * @param configFile the config file to create or update
-     * @param ignoreExisting do not update existing config files
-     * @return the id of the created or updated config file
-     * @since 1.25
-     */
-    @Deprecated
-    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting)
-
-    /**
      * Uploads the given <a href="https://wiki.jenkins-ci.org/display/JENKINS/User+Content">user content</a>.
      *
      * @param userContent the user content to be uploaded
@@ -217,18 +206,6 @@ interface JobManagement {
      * @since 1.25
      */
     Integer getVSphereCloudHash(String name)
-
-    /**
-     * Return the id of the config file with the given type and name.
-     *
-     * @param type type of the config file
-     * @param name name of the config file
-     * @return the config ID of the config file or <code>null</code> if no config file with the given type and name can
-     *         be found
-     * @since 1.25
-     */
-    @Deprecated
-    String getConfigFileId(ConfigFileType type, String name)
 
     /**
      * Return all applicable permissions for the given authorization matrix property.

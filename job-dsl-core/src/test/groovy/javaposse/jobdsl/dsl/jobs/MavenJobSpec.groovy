@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.jobs
 
-import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
@@ -244,12 +243,10 @@ class MavenJobSpec extends Specification {
 
     def 'call maven method with provided settings name'() {
         setup:
-        String settingsName = 'maven-proxy'
         String settingsId = '123123415'
-        jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName) >> settingsId
 
         when:
-        job.providedSettings(settingsName)
+        job.providedSettings(settingsId)
 
         then:
         job.node.settings.size() == 1
@@ -278,12 +275,10 @@ class MavenJobSpec extends Specification {
 
     def 'call maven method with provided global settings name'() {
         setup:
-        String settingsName = 'maven-proxy'
         String settingsId = '123123415'
-        jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, settingsName) >> settingsId
 
         when:
-        job.providedGlobalSettings(settingsName)
+        job.providedGlobalSettings(settingsId)
 
         then:
         job.node.globalSettings.size() == 1

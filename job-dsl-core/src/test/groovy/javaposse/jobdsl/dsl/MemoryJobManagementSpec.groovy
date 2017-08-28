@@ -98,34 +98,6 @@ class MemoryJobManagementSpec extends Specification {
         jobManagement.savedViews['foo'] == 'bar'
     }
 
-    def 'createOrUpdateConfigFile complains about missing name'(String name) {
-        setup:
-        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom, jobManagement)
-        configFile.name = name
-
-        when:
-        jobManagement.createOrUpdateConfigFile(configFile, false)
-
-        then:
-        thrown(NameNotProvidedException)
-
-        where:
-        name << [null, '']
-    }
-
-    def 'createOrUpdateConfigFile stores config file and returns ID'() {
-        setup:
-        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom, jobManagement)
-        configFile.name = 'foo'
-
-        when:
-        String id = jobManagement.createOrUpdateConfigFile(configFile, false)
-
-        then:
-        id == 'acbd18db4cc2f85cedef654fccc4a4d8'
-        jobManagement.savedConfigFiles.contains(configFile)
-    }
-
     def 'queueJob schedules job'() {
         when:
         jobManagement.queueJob('foo')
@@ -188,27 +160,6 @@ class MemoryJobManagementSpec extends Specification {
 
         then:
         id == null
-    }
-
-    def 'getConfigFileId returns null when config file not found'() {
-        when:
-        String id = jobManagement.getConfigFileId(ConfigFileType.Custom, 'foo')
-
-        then:
-        id == null
-    }
-
-    def 'getConfigFileId returns id when config file exists'() {
-        setup:
-        ConfigFile configFile = new ConfigFile(ConfigFileType.Custom, jobManagement)
-        configFile.name = 'foo'
-        jobManagement.savedConfigFiles << configFile
-
-        when:
-        String id = jobManagement.getConfigFileId(ConfigFileType.Custom, 'foo')
-
-        then:
-        id == 'acbd18db4cc2f85cedef654fccc4a4d8'
     }
 
     def 'outputStream'() {

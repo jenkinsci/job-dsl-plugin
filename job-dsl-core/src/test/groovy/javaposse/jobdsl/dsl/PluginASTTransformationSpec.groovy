@@ -56,10 +56,10 @@ class PluginASTTransformationSpec extends Specification {
         jobParent.jm = jobManagement
 
         when:
-        jobParent.managedScriptConfigFile('test')
+        jobParent.ivyJob('test')
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1', true)
+        1 * jobManagement.requireMinimumPluginVersion('ivy', '1.23', true)
     }
 
     def 'require plugins'() {

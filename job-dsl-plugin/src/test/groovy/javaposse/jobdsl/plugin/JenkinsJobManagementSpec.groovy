@@ -3,7 +3,6 @@ package javaposse.jobdsl.plugin
 import com.cloudbees.hudson.plugins.folder.Folder
 import com.google.common.io.Resources
 import hudson.FilePath
-import hudson.LocalPluginManager
 import hudson.model.AbstractBuild
 import hudson.model.AllView
 import hudson.model.Cause
@@ -17,8 +16,6 @@ import hudson.model.View
 import hudson.model.listeners.SaveableListener
 import hudson.tasks.ArtifactArchiver
 import hudson.tasks.Fingerprinter
-import javaposse.jobdsl.dsl.ConfigFile
-import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ConfigurationMissingException
 import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.DslScriptException
@@ -35,7 +32,6 @@ import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
-import org.jvnet.hudson.test.recipes.WithPluginManager
 import spock.lang.Specification
 
 import static com.google.common.base.Charsets.UTF_8
@@ -618,39 +614,6 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         result == 'hello'
-    }
-
-    def 'get config file id without config files provider plugin'() {
-        when:
-        String id = jobManagement.getConfigFileId(ConfigFileType.MavenSettings, 'test')
-
-        then:
-        id == null
-    }
-
-    @WithPluginManager(LocalPluginManager)
-    def 'create config file without config files provider plugin'() {
-        setup:
-        ConfigFile configFile = Mock(ConfigFile)
-        configFile.name >> 'foo'
-
-        when:
-        jobManagement.createOrUpdateConfigFile(configFile, false)
-
-        then:
-        thrown(DslException)
-    }
-
-    @WithoutJenkins
-    def 'create config file without name'() {
-        setup:
-        ConfigFile configFile = Mock(ConfigFile)
-
-        when:
-        jobManagement.createOrUpdateConfigFile(configFile, false)
-
-        then:
-        thrown(NameNotProvidedException)
     }
 
     def 'create view'() {
