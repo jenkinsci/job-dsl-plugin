@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl.helpers.step
 
-import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -663,17 +662,13 @@ class StepContextSpec extends Specification {
 
     def 'call maven method with provided settings names'() {
         setup:
-        String settingsName = 'maven-proxy'
         String settingsId = '123123415'
-        String globalSettingsName = 'maven-global'
         String globalSettingsId = '123123416'
-        jobManagement.getConfigFileId(ConfigFileType.MavenSettings, settingsName) >> settingsId
-        jobManagement.getConfigFileId(ConfigFileType.GlobalMavenSettings, globalSettingsName) >> globalSettingsId
 
         when:
         context.maven {
-            providedSettings(settingsName)
-            providedGlobalSettings(globalSettingsName)
+            providedSettings(settingsId)
+            providedGlobalSettings(globalSettingsId)
         }
 
         then:
@@ -3509,9 +3504,6 @@ class StepContextSpec extends Specification {
     }
 
     def 'call managedScript with minimal options'() {
-        setup:
-        jobManagement.getConfigFileId(ConfigFileType.ManagedScript, 'foo') >> '0815'
-
         when:
         context.managedScript('foo')
 
@@ -3520,7 +3512,7 @@ class StepContextSpec extends Specification {
         with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.managedscripts.ScriptBuildStep'
             children().size() == 3
-            buildStepId[0].value() == '0815'
+            buildStepId[0].value() == 'foo'
             buildStepArgs[0].value().empty
             tokenized[0].value() == false
         }
@@ -3528,9 +3520,6 @@ class StepContextSpec extends Specification {
     }
 
     def 'call managedScript with all options'() {
-        setup:
-        jobManagement.getConfigFileId(ConfigFileType.ManagedScript, 'foo') >> '0815'
-
         when:
         context.managedScript('foo') {
             arguments('foo')
@@ -3543,7 +3532,7 @@ class StepContextSpec extends Specification {
         with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.managedscripts.ScriptBuildStep'
             children().size() == 3
-            buildStepId[0].value() == '0815'
+            buildStepId[0].value() == 'foo'
             with(buildStepArgs[0]) {
                 children().size() == 3
                 string[0].value() == 'foo'

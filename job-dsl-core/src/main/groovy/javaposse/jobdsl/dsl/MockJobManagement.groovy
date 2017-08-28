@@ -31,12 +31,6 @@ abstract class MockJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    @Deprecated
-    String createOrUpdateConfigFile(ConfigFile configFile, boolean ignoreExisting) {
-        throw new UnsupportedOperationException()
-    }
-
-    @Override
     void renameJobMatching(String previousNames, String destination) throws IOException {
     }
 
@@ -78,12 +72,6 @@ abstract class MockJobManagement extends AbstractJobManagement {
 
     @Override
     Integer getVSphereCloudHash(String name) {
-        null
-    }
-
-    @Override
-    @Deprecated
-    String getConfigFileId(ConfigFileType type, String name) {
         null
     }
 

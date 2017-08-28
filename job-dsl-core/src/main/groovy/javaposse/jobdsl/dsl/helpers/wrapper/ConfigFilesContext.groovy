@@ -1,7 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.wrapper
 
 import javaposse.jobdsl.dsl.AbstractContext
-import javaposse.jobdsl.dsl.ConfigFileType
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
@@ -18,8 +17,8 @@ class ConfigFilesContext extends AbstractContext {
      *
      * @see #custom(java.lang.String, groovy.lang.Closure)
      */
-    void file(String fileIdOrName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
-        custom(fileIdOrName, configFileClosure)
+    void file(String fileId, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
+        custom(fileId, configFileClosure)
     }
 
     /**
@@ -27,8 +26,8 @@ class ConfigFilesContext extends AbstractContext {
      *
      * @since 1.35
      */
-    void custom(String fileIdOrName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
-        configFile(fileIdOrName, ConfigFileType.Custom, configFileClosure)
+    void custom(String fileId, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
+        configFile(fileId, configFileClosure)
     }
 
     /**
@@ -36,8 +35,8 @@ class ConfigFilesContext extends AbstractContext {
      *
      * @since 1.35
      */
-    void mavenSettings(String fileIdOrName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
-        configFile(fileIdOrName, ConfigFileType.MavenSettings, configFileClosure)
+    void mavenSettings(String fileId, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
+        configFile(fileId, configFileClosure)
     }
 
     /**
@@ -45,14 +44,12 @@ class ConfigFilesContext extends AbstractContext {
      *
      * @since 1.39
      */
-    void globalMavenSettings(String fileIdOrName, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
-        configFile(fileIdOrName, ConfigFileType.GlobalMavenSettings, configFileClosure)
+    void globalMavenSettings(String fileId, @DslContext(ConfigFileContext) Closure configFileClosure = null) {
+        configFile(fileId, configFileClosure)
     }
 
-    private void configFile(String fileIdOrName, ConfigFileType type, Closure configFileClosure) {
-        String configFileId = jobManagement.getConfigFileId(type, fileIdOrName)
-
-        ConfigFileContext configFileContext = new ConfigFileContext(configFileId ?: fileIdOrName)
+    private void configFile(String fileId, Closure configFileClosure) {
+        ConfigFileContext configFileContext = new ConfigFileContext(fileId)
         ContextHelper.executeInContext(configFileClosure, configFileContext)
 
         configFiles << configFileContext

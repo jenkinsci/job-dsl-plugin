@@ -128,14 +128,6 @@ class FileJobManagementSpec extends Specification {
         new File(tempFolder, 'foo/bar.xml').text == 'baz'
     }
 
-    def 'createOrUpdateConfigFile is not supported'() {
-        when:
-        jobManagement.createOrUpdateConfigFile(Mock(ConfigFile), false)
-
-        then:
-        thrown(UnsupportedOperationException)
-    }
-
     def 'readFileInWorkspace returns file content'() {
         setup:
         new File(jobManagement.root, 'foo').write('bar')
@@ -187,14 +179,6 @@ class FileJobManagementSpec extends Specification {
     def 'getVSphereCloudHash returns null'() {
         when:
         String id = jobManagement.getVSphereCloudHash('foo')
-
-        then:
-        id == null
-    }
-
-    def 'getConfigFileId returns null when config file not found'() {
-        when:
-        String id = jobManagement.getConfigFileId(ConfigFileType.Custom, 'foo')
 
         then:
         id == null

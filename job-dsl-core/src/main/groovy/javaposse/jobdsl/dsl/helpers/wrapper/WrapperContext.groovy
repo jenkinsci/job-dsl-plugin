@@ -53,12 +53,10 @@ class WrapperContext extends AbstractExtensibleContext {
      * @since 1.27
      */
     @RequiresPlugins([
-            @RequiresPlugin(id = 'rbenv'),
+            @RequiresPlugin(id = 'rbenv', minimumVersion = '0.0.17'),
             @RequiresPlugin(id = 'ruby-runtime', minimumVersion = '0.12')
     ])
     void rbenv(String rubyVersion, @DslContext(RbenvContext) Closure rbenvClosure = null) {
-        jobManagement.logPluginDeprecationWarning('rbenv', '0.0.17')
-
         RbenvContext rbenvContext = new RbenvContext()
         ContextHelper.executeInContext(rbenvClosure, rbenvContext)
 

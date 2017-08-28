@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
@@ -135,7 +134,6 @@ class GitLabTriggerContext extends AbstractContext {
      *
      * @since 1.58
      */
-    @RequiresPlugin(id = 'gitlab-plugin', minimumVersion = '1.2.4')
     void commentTrigger(String commentTrigger) {
         this.noteRegex = commentTrigger
     }
@@ -145,7 +143,6 @@ class GitLabTriggerContext extends AbstractContext {
      *
      * @since 1.58
      */
-    @RequiresPlugin(id = 'gitlab-plugin', minimumVersion = '1.2.4')
     void skipWorkInProgressMergeRequest(boolean skipWorkInProgressMergeRequest = true) {
         this.skipWorkInProgressMergeRequest = skipWorkInProgressMergeRequest
     }

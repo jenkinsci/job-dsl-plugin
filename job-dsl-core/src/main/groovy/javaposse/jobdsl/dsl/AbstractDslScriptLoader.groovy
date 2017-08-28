@@ -162,9 +162,6 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
      * @since 1.58
      */
     protected void extractGeneratedItems(G generatedItems, S jobParent, ScriptRequest scriptRequest) {
-        generatedItems.configFiles.addAll(
-                extractGeneratedConfigFiles(jobParent.referencedConfigFiles, scriptRequest.ignoreExisting)
-        )
         generatedItems.jobs.addAll(
                 extractGeneratedJobs(jobParent.referencedJobs, scriptRequest.ignoreExisting)
         )
@@ -202,17 +199,6 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
             generatedViews << new GeneratedView(view.name)
         }
         generatedViews
-    }
-
-    protected Set<GeneratedConfigFile> extractGeneratedConfigFiles(Set<ConfigFile> referencedConfigFiles,
-                                                                   boolean ignoreExisting) {
-        Set<GeneratedConfigFile> generatedConfigFiles = new LinkedHashSet<GeneratedConfigFile>()
-        referencedConfigFiles.each { ConfigFile configFile ->
-            LOGGER.log(Level.FINE, "Saving config file ${configFile.name}")
-            String id = jobManagement.createOrUpdateConfigFile(configFile, ignoreExisting)
-            generatedConfigFiles << new GeneratedConfigFile(id, configFile.name)
-        }
-        generatedConfigFiles
     }
 
     protected Set<GeneratedUserContent> extractGeneratedUserContents(Set<UserContent> referencedUserContents,

@@ -45,6 +45,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([JENKINS-46042](https://issues.jenkins-ci.org/browse/JENKINS-46042))
   * Fixed problem with `using` in Pipeline jobs
     ([JENKINS-45812](https://issues.jenkins-ci.org/browse/JENKINS-45812))
+  * Removed anything that has been deprecated in 1.57, see [Migration](Migration#migrating-to-157)
+  * Removed anything that has been deprecated in 1.58, see [Migration](Migration#migrating-to-158)
 * 1.64 (July 07 2017)
   * Increased the minimum supported Java version to JDK 7
   * Increased the minimum supported Jenkins version to 2.19
