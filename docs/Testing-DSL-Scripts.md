@@ -37,6 +37,12 @@ when running the DSL scripts, e.g. for testing [[extensions|Extending the DSL]] 
 
     configurations {
         testPlugins {}
+
+        // see JENKINS-45512
+        testCompile {
+            exclude group: 'xalan'
+            exclude group: 'xerces'
+        }
     }
 
     dependencies {
