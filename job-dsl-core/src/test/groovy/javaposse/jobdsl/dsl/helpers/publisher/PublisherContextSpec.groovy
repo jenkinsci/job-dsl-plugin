@@ -6192,4 +6192,17 @@ class PublisherContextSpec extends Specification {
 
         1 * jobManagement.requireMinimumPluginVersion('log-parser', '2.0')
     }
+
+    def 'call slackNotifier with no options' () {
+        when:
+        context.slackNotifier()
+        then:
+        context.publisherNodes != null
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'jenkins.plugins.slack.SlackNotifier'
+            children().size == 18
+        }
+        1 * jobManagement.requireMinimumPluginVersion('slack', '2.2')
+    }
 }

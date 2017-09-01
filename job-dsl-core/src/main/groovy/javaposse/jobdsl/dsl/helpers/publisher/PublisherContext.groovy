@@ -1982,6 +1982,36 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    @RequiresPlugin(id = 'slack', minimumVersion = '2.2')
+    void slackNotifier(@DslContext(SlackNotifierContext) Closure closure) {
+        SlackNotifierContext context = new SlackNotifierContext()
+        ContextHelper.executeInContext(closure, context)
+
+        publisherNodes << new NodeBuilder().'jenkins.plugins.slack.SlackNotifier' {
+            authToken(context.authToken)
+            if (context.authTokenCredentialId) {
+                authTokenCredentialId(context.authTokenCredentialId)
+            }
+            botUser(context.botUser)
+            commitInfoChoice(context.commitInfoChoice)
+            customMessage(context.customMessage)
+            includeCustomMessage(context.includeCustomMessage)
+            includeTestSummary(context.includeTestSummary)
+            notifyAborted(context.notifyAborted)
+            notifyBackToNormal(context.notifyBackToNormal)
+            notifyFailure(context.notifyFailure)
+            notifyNotBuilt(context.notifyNotBuilt)
+            notifyRegression(context.notifyRegression)
+            notifyRepeatedFailure(context.notifyRepeatedFailure)
+            notifySuccess(context.notifySuccess)
+            notifyUnstable(context.notifyUnstable)
+            room(context.room)
+            sendAs(context.sendAs)
+            startNotification(context.startNotification)
+            teamDomain(context.teamDomain)
+        }
+    }
+
     @SuppressWarnings('NoDef')
     protected static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
