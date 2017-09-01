@@ -768,6 +768,21 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('next-executions', '1.0.12')
     }
 
+    def 'all statuses column'() {
+        when:
+        view.columns {
+            allStatusesColumn()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'com.robestone.hudson.compactcolumns.AllStatusesColumn'
+        root.columns[0].value()[0].value().size() == 4
+        1 * jobManagement.requireMinimumPluginVersion('compact-columns', '1.10')
+    }
+
     protected String getDefaultXml() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
