@@ -57,6 +57,21 @@ class DashboardPortletContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Adds an Image portlet.
+     *
+     */
+    void image(@DslContext(ImageContext) Closure closure = null) {
+        ImageContext context = new ImageContext()
+        ContextHelper.executeInContext(closure, context)
+
+        portletNodes << new NodeBuilder().'hudson.plugins.view.dashboard.core.ImagePortlet' {
+            id(generatePortletId())
+            name(context.displayName ?: '')
+            url(context.url ?: '')
+        }
+    }
+
+    /**
      * Add a jenkins jobs list.
      *
      * @since 1.46
