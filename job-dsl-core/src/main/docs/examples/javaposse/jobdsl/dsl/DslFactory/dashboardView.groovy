@@ -11,6 +11,10 @@ dashboardView('example') {
         jenkinsJobsList {
             displayName('acme jobs')
         }
+        image {
+            displayName('example image')
+            url('https://example.com/example.png')
+        }
     }
     leftPortlets {
         testStatisticsChart()
