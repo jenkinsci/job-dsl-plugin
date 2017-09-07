@@ -28,6 +28,7 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
+* 1.66 (unreleased)
 * 1.65 (September 07 2017)
   * Enhanced support for the [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
     ([JENKINS-46463](https://issues.jenkins-ci.org/browse/JENKINS-46463))
