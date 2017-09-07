@@ -11,6 +11,7 @@ class CpsScmContext extends AbstractContext {
     protected final Item item
 
     String scriptPath = 'JenkinsFile'
+    Boolean lightweight = false
     ScmContext scmContext = new ScmContext(jobManagement, item)
 
     CpsScmContext(JobManagement jobManagement, Item item) {
@@ -31,5 +32,19 @@ class CpsScmContext extends AbstractContext {
      */
     void scriptPath(String scriptPath) {
         this.scriptPath = scriptPath
+    }
+
+    /**
+     * If selected, try to obtain the Pipeline script contents directly from the SCM without performing a full checkout.
+     * The advantage of this mode is its efficiency; however,
+     * you will not get any changelogs or polling based on the SCM.
+     * (If you use checkout scm during the build, this will populate the changelog and initialize polling.)
+     * Also build parameters will not be substituted into SCM configuration in this mode.
+     * Only selected SCM plugins support this mode.
+     * Defaults to
+     * {@code false}.
+     */
+    void lightweight(Boolean lightweight) {
+        this.lightweight = lightweight
     }
 }

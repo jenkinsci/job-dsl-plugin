@@ -64,10 +64,11 @@ class WorkflowJobSpec extends Specification {
         then:
         with(job.node.definition[0]) {
             attribute('class') == 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition'
-            children().size() == 2
+            children().size() == 3
             scm[0].attribute('class') == 'hudson.plugins.git.GitSCM'
             scm[0].children().size() == 6
             scriptPath[0].value() == 'JenkinsFile'
+            lightweight[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
     }
@@ -80,16 +81,18 @@ class WorkflowJobSpec extends Specification {
                     git('https://github.com/jenkinsci/job-dsl-plugin.git')
                 }
                 scriptPath('.jenkins/Jenkinsfile')
+                lightweight(true)
             }
         }
 
         then:
         with(job.node.definition[0]) {
             attribute('class') == 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition'
-            children().size() == 2
+            children().size() == 3
             scm[0].attribute('class') == 'hudson.plugins.git.GitSCM'
             scm[0].children().size() == 6
             scriptPath[0].value() == '.jenkins/Jenkinsfile'
+            lightweight[0].value() == true
         }
         1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
     }
