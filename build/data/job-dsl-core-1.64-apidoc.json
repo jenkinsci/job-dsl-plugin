@@ -1,5 +1,5 @@
 {
-    "version": "1.65",
+    "version": "1.64",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -12325,7 +12325,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "settingsId",
+                                    "name": "settingsIdOrName",
                                     "type": "String"
                                 }
                             ],
@@ -12346,7 +12346,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "settingsId",
+                                    "name": "settingsIdOrName",
                                     "type": "String"
                                 }
                             ],
@@ -14713,7 +14713,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "scriptId",
+                                    "name": "scriptIdOrName",
                                     "type": "String"
                                 },
                                 {
@@ -22464,8 +22464,8 @@
                                     "type": "int"
                                 }
                             ],
-                            "html": "Sets the maximum number of concurrent builds of this project (or category) to be allowed to run per node.",
-                            "firstSentenceCommentText": "Sets the maximum number of concurrent builds of this project (or category) to be allowed to run per node."
+                            "html": "Sets the maximum number of concurrent builds of this project (or category) to be allowed to run at any one time,\r\n across all nodes.",
+                            "firstSentenceCommentText": "Sets the maximum number of concurrent builds of this project (or category) to be allowed to run at any one time,\r\n across all nodes."
                         }
                     ]
                 },
@@ -22479,8 +22479,8 @@
                                     "type": "int"
                                 }
                             ],
-                            "html": "Sets the maximum number of concurrent builds of this project (or category) to be allowed to run at any one time,\r\n across all nodes.",
-                            "firstSentenceCommentText": "Sets the maximum number of concurrent builds of this project (or category) to be allowed to run at any one time,\r\n across all nodes."
+                            "html": "Sets the maximum number of concurrent builds of this project (or category) to be allowed to run per node.",
+                            "firstSentenceCommentText": "Sets the maximum number of concurrent builds of this project (or category) to be allowed to run per node."
                         }
                     ]
                 },
@@ -22938,6 +22938,12 @@
                                 }
                             ],
                             "availableSince": "1.58",
+                            "plugins": [
+                                {
+                                    "id": "gitlab-plugin",
+                                    "minimumVersion": "1.2.4"
+                                }
+                            ],
                             "html": "When filled, commenting this phrase in the merge request will trigger a build.",
                             "firstSentenceCommentText": "When filled, commenting this phrase in the merge request will trigger a build."
                         }
@@ -23016,6 +23022,12 @@
                                 }
                             ],
                             "availableSince": "1.58",
+                            "plugins": [
+                                {
+                                    "id": "gitlab-plugin",
+                                    "minimumVersion": "1.2.4"
+                                }
+                            ],
                             "html": "If set, ignores work in progress pull requests.",
                             "firstSentenceCommentText": "If set, ignores work in progress pull requests."
                         }
@@ -23421,7 +23433,7 @@
                             "plugins": [
                                 {
                                     "id": "gitlab-plugin",
-                                    "minimumVersion": "1.4.0"
+                                    "minimumVersion": "1.2.0"
                                 }
                             ],
                             "html": "Trigger that runs jobs on push notifications from GitLab.",
@@ -23779,7 +23791,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "fileId",
+                                    "name": "fileIdOrName",
                                     "type": "String"
                                 },
                                 {
@@ -23801,7 +23813,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "fileId",
+                                    "name": "fileIdOrName",
                                     "type": "String"
                                 },
                                 {
@@ -23822,7 +23834,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "fileId",
+                                    "name": "fileIdOrName",
                                     "type": "String"
                                 },
                                 {
@@ -23844,7 +23856,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "fileId",
+                                    "name": "fileIdOrName",
                                     "type": "String"
                                 },
                                 {
@@ -25832,8 +25844,7 @@
                             "availableSince": "1.27",
                             "plugins": [
                                 {
-                                    "id": "rbenv",
-                                    "minimumVersion": "0.0.17"
+                                    "id": "rbenv"
                                 },
                                 {
                                     "id": "ruby-runtime",
@@ -28542,6 +28553,41 @@
                 
             ]
         },
+        "javaposse.jobdsl.dsl.ConfigFile": {
+            "type": "javaposse.jobdsl.dsl.ConfigFile",
+            "methods": [
+                {
+                    "name": "comment",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "comment",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets a comment for the config file.",
+                            "firstSentenceCommentText": "Sets a comment for the config file."
+                        }
+                    ]
+                },
+                {
+                    "name": "content",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "content",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the content for the config file. Use <a href='../../..//javaposse/jobdsl/dsl/DslFactory.html#readFileFromWorkspace(java.lang.String)' title='DslFactory.readFileFromWorkspace'>DslFactory.readFileFromWorkspace</a> to read the\r\n content from a file.",
+                            "firstSentenceCommentText": "Sets the content for the config file. "
+                        }
+                    ]
+                }
+            ]
+        },
         "javaposse.jobdsl.dsl.views.portlets.BuildStatisticsContext": {
             "type": "javaposse.jobdsl.dsl.views.portlets.BuildStatisticsContext",
             "methods": [
@@ -29335,29 +29381,6 @@
                     ]
                 },
                 {
-                    "name": "linkToConsoleLog",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "value",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.65",
-                            "plugins": [
-                                {
-                                    "id": "delivery-pipeline-plugin",
-                                    "minimumVersion": "0.10.3"
-                                }
-                            ],
-                            "html": "Link jobs in pipeline view directly to the console log.\r\n Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "Link jobs in pipeline view directly to the console log.\r\n "
-                        }
-                    ]
-                },
-                {
                     "name": "pipelineInstances",
                     "signatures": [
                         {
@@ -29478,23 +29501,6 @@
                     "examples": "deliveryPipelineView('example') {\r\n    showPromotions()\r\n}"
                 },
                 {
-                    "name": "showStaticAnalysisResults",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "value",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.65",
-                            "html": "Show analysis results from\r\n <a href=\"https://wiki.jenkins.io/display/JENKINS/Analysis+Collector+Plugin\">Analysis Collector Plugin</a>.\r\n Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "Show analysis results from\r\n Analysis Collector Plugin.\r\n "
-                        }
-                    ]
-                },
-                {
                     "name": "showTestResults",
                     "signatures": [
                         {
@@ -29566,23 +29572,6 @@
                         }
                     ],
                     "examples": "deliveryPipelineView('example') {\r\n    updateInterval(60)\r\n}"
-                },
-                {
-                    "name": "useRelativeLinks",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "value",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.65",
-                            "html": "Use relative links for jobs in pipeline view.\r\n Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "Use relative links for jobs in pipeline view.\r\n "
-                        }
-                    ]
                 },
                 {
                     "name": "useTheme",
@@ -31531,6 +31520,56 @@
                         }
                     ],
                     "examples": "listView('project-A') {\r\n    statusFilter(StatusFilter.ENABLED)\r\n}"
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.ParametrizedConfigFile": {
+            "type": "javaposse.jobdsl.dsl.ParametrizedConfigFile",
+            "methods": [
+                {
+                    "name": "arguments",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "arguments",
+                                    "type": "String..."
+                                }
+                            ],
+                            "html": "Defines the arguments that can be passed to the script. Can be called multiple times to add more arguments.",
+                            "firstSentenceCommentText": "Defines the arguments that can be passed to the script. "
+                        }
+                    ]
+                },
+                {
+                    "name": "comment",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "comment",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets a comment for the config file.",
+                            "firstSentenceCommentText": "Sets a comment for the config file."
+                        }
+                    ]
+                },
+                {
+                    "name": "content",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "content",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the content for the config file. Use <a href='../../..//javaposse/jobdsl/dsl/DslFactory.html#readFileFromWorkspace(java.lang.String)' title='DslFactory.readFileFromWorkspace'>DslFactory.readFileFromWorkspace</a> to read the\r\n content from a file.",
+                            "firstSentenceCommentText": "Sets the content for the config file. "
+                        }
+                    ]
                 }
             ]
         },
@@ -35241,7 +35280,7 @@
                             "plugins": [
                                 {
                                     "id": "gitlab-plugin",
-                                    "minimumVersion": "1.4.0"
+                                    "minimumVersion": "1.2.0"
                                 }
                             ],
                             "html": "Trigger that runs jobs on push notifications from GitLab.",
@@ -36017,8 +36056,7 @@
                             "availableSince": "1.27",
                             "plugins": [
                                 {
-                                    "id": "rbenv",
-                                    "minimumVersion": "0.0.17"
+                                    "id": "rbenv"
                                 },
                                 {
                                     "id": "ruby-runtime",
@@ -37035,7 +37073,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "settingsId",
+                                    "name": "settingsIdOrName",
                                     "type": "String"
                                 }
                             ],
@@ -37057,7 +37095,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "settingsId",
+                                    "name": "settingsIdOrName",
                                     "type": "String"
                                 }
                             ],
@@ -37429,7 +37467,7 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Defines how to decide the status of the whole MultiJob phase.\r\n\r\n <CODE>continuationCondition</CODE> must be one of <CODE>'SUCCESSFUL'</CODE>, <CODE>'UNSTABLE'</CODE>, <CODE>'COMPLETED'</CODE>,\r\n <CODE>'FAILURE'</CODE> or <CODE>'ALWAYS'</CODE>.",
+                            "html": "Defines how to decide the status of the whole MultiJob phase.",
                             "firstSentenceCommentText": "Defines how to decide the status of the whole MultiJob phase."
                         }
                     ]
@@ -38275,7 +38313,7 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "scriptId",
+                                    "name": "scriptIdOrName",
                                     "type": "String"
                                 },
                                 {
@@ -38457,7 +38495,7 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "html": "Adds a MultiJob phase.\r\n\r\n <CODE>continuationCondition</CODE> must be one of <CODE>'SUCCESSFUL'</CODE>, <CODE>'UNSTABLE'</CODE>, <CODE>'COMPLETED'</CODE>,\r\n <CODE>'FAILURE'</CODE> or <CODE>'ALWAYS'</CODE>.",
+                            "html": "Adds a MultiJob phase.\r\n\r\n <CODE>continuationCondition</CODE> must be one of <CODE>'SUCCESSFUL'</CODE>, <CODE>'UNSTABLE'</CODE>, <CODE>'COMPLETED'</CODE> or\r\n <CODE>'FAILURE'</CODE>. When version 1.16 or later of the MultiJob plugin is installed, <CODE>continuationCondition</CODE>\r\n can also be set to <CODE>'ALWAYS'</CODE>.",
                             "firstSentenceCommentText": "Adds a MultiJob phase.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.step.PhaseContext"
                         }
@@ -42635,6 +42673,55 @@
                     ]
                 },
                 {
+                    "name": "customConfigFile",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "availableSince": "1.30",
+                            "plugins": [
+                                {
+                                    "id": "config-file-provider"
+                                }
+                            ],
+                            "html": "Creates a managed custom file.",
+                            "firstSentenceCommentText": "Creates a managed custom file."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "availableSince": "1.31",
+                            "plugins": [
+                                {
+                                    "id": "config-file-provider"
+                                }
+                            ],
+                            "html": "Creates a managed custom file.",
+                            "firstSentenceCommentText": "Creates a managed custom file.",
+                            "contextClass": "javaposse.jobdsl.dsl.ConfigFile"
+                        }
+                    ],
+                    "examples": "// creates a custom config file from a file named acme/settings.json in the seed job's workspace\r\ncustomConfigFile('acme-settings') {\r\n    comment('Settings for ACME tools')\r\n    content(readFileFromWorkspace('acme/settings.json'))\r\n}"
+                },
+                {
                     "name": "dashboardView",
                     "signatures": [
                         {
@@ -42801,6 +42888,55 @@
                     "examples": "freeStyleJob('example') {\r\n    logRotator(-1, 10)\r\n    jdk('Java 6')\r\n    scm {\r\n        github('jenkinsci/job-dsl-plugin', 'master')\r\n    }\r\n    triggers {\r\n        githubPush()\r\n    }\r\n    steps {\r\n        gradle('clean build')\r\n    }\r\n    publishers {\r\n        archiveArtifacts('job-dsl-plugin/build/libs/job-dsl.hpi')\r\n    }\r\n}"
                 },
                 {
+                    "name": "globalMavenSettingsConfigFile",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "availableSince": "1.39",
+                            "plugins": [
+                                {
+                                    "id": "config-file-provider"
+                                }
+                            ],
+                            "html": "Creates a managed global Maven settings file.",
+                            "firstSentenceCommentText": "Creates a managed global Maven settings file."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "availableSince": "1.39",
+                            "plugins": [
+                                {
+                                    "id": "config-file-provider"
+                                }
+                            ],
+                            "html": "Creates a managed global Maven settings file.",
+                            "firstSentenceCommentText": "Creates a managed global Maven settings file.",
+                            "contextClass": "javaposse.jobdsl.dsl.ConfigFile"
+                        }
+                    ],
+                    "examples": "// creates a global Maven settings file from a file named maven/settings.xml in the seed job's workspace\r\nglobalMavenSettingsConfigFile('company-settings') {\r\n    comment('Company Maven Settings')\r\n    content(readFileFromWorkspace('maven/settings.xml'))\r\n    replaceAll()\r\n    serverCredentials('company', 'company-maven-repository-credentials')\r\n}"
+                },
+                {
                     "name": "ivyJob",
                     "signatures": [
                         {
@@ -42910,6 +43046,57 @@
                     "examples": "listView('project-A') {\r\n    description('All unstable jobs for project A')\r\n    filterBuildQueue()\r\n    filterExecutors()\r\n    jobs {\r\n        name('release-projectA')\r\n        regex(/project-A-.+/)\r\n    }\r\n    jobFilters {\r\n        status {\r\n            status(Status.UNSTABLE)\r\n        }\r\n    }\r\n    columns {\r\n        status()\r\n        weather()\r\n        name()\r\n        lastSuccess()\r\n        lastFailure()\r\n        lastDuration()\r\n        buildButton()\r\n    }\r\n}"
                 },
                 {
+                    "name": "managedScriptConfigFile",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "availableSince": "1.40",
+                            "plugins": [
+                                {
+                                    "id": "managed-scripts",
+                                    "minimumVersion": "1.2.1"
+                                }
+                            ],
+                            "html": "Creates a managed script file.",
+                            "firstSentenceCommentText": "Creates a managed script file."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "availableSince": "1.40",
+                            "plugins": [
+                                {
+                                    "id": "managed-scripts",
+                                    "minimumVersion": "1.2.1"
+                                }
+                            ],
+                            "html": "Creates a managed script file.",
+                            "firstSentenceCommentText": "Creates a managed script file.",
+                            "contextClass": "javaposse.jobdsl.dsl.ParametrizedConfigFile"
+                        }
+                    ],
+                    "examples": "managedScriptConfigFile('example') {\r\n    content('echo Hello $1')\r\n    arguments('NAME')\r\n}"
+                },
+                {
                     "name": "matrixJob",
                     "signatures": [
                         {
@@ -42996,6 +43183,55 @@
                         }
                     ],
                     "examples": "mavenJob('example') {\r\n    logRotator(-1, 10)\r\n    jdk('Java 7')\r\n    scm {\r\n        github('jenkinsci/jenkins', 'master')\r\n    }\r\n    triggers {\r\n        githubPush()\r\n    }\r\n    goals('clean verify')\r\n}"
+                },
+                {
+                    "name": "mavenSettingsConfigFile",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "availableSince": "1.30",
+                            "plugins": [
+                                {
+                                    "id": "config-file-provider"
+                                }
+                            ],
+                            "html": "Creates a managed Maven settings file.",
+                            "firstSentenceCommentText": "Creates a managed Maven settings file."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "deprecatedHtml": "use {@link #configFiles(groovy.lang.Closure)} instead",
+                            "availableSince": "1.31",
+                            "plugins": [
+                                {
+                                    "id": "config-file-provider"
+                                }
+                            ],
+                            "html": "Creates a managed Maven settings file.",
+                            "firstSentenceCommentText": "Creates a managed Maven settings file.",
+                            "contextClass": "javaposse.jobdsl.dsl.ConfigFile"
+                        }
+                    ],
+                    "examples": "// creates a Maven settings file from a file named maven/settings.xml in the seed job's workspace\r\nmavenSettingsConfigFile('company-settings') {\r\n    comment('Company Maven Settings')\r\n    content(readFileFromWorkspace('maven/settings.xml'))\r\n    replaceAll()\r\n    serverCredentials('company', 'company-maven-repository-credentials')\r\n}"
                 },
                 {
                     "name": "multiJob",
