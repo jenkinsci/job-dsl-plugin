@@ -17,8 +17,6 @@ class OrganizationFolderJob extends ComputedFolder {
 
     /**
      * Sets the organizations in this folder.
-     *
-     * @since 1.58
      */
     void organizations(@DslContext(ScmNavigatorsContext) Closure closure) {
         ScmNavigatorsContext context = new ScmNavigatorsContext(jobManagement, this)
@@ -44,6 +42,7 @@ class OrganizationFolderJob extends ComputedFolder {
 
         configure { Node project ->
             Node factories = project / projectFactories
+            factories.children().clear()
             context.projectFactoryNodes.each {
                 factories << it
             }
