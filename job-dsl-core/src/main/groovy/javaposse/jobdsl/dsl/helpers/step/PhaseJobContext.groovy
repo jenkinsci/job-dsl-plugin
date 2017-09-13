@@ -72,7 +72,7 @@ class PhaseJobContext extends AbstractContext {
     /**
      * Kills the phase when a condition is met.
      *
-     * Must be one of {@code 'FAILURE'} (default), {@code 'NEVER'} or [@code 'UNSTABLE'}.
+     * Must be one of {@code 'FAILURE'} (default), {@code 'NEVER'} or {@code 'UNSTABLE'}.
      * @since 1.25
      */
     void killPhaseCondition(String killPhaseCondition) {
