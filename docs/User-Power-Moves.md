@@ -173,7 +173,9 @@ But note, this will only work if the BuildFlow project type uses the same sub-el
 
 # Use DSL scripts in a Gradle project
 
-Gradle provides a way to build and test your scripts and supporting classes. See [job-dsl-gradle-example](https://github.com/sheehan/job-dsl-gradle-example) for an example.
+Gradle provides a way to build and test your scripts and supporting classes. See
+[Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example) or
+[Job DSL Sample](https://github.com/unguiculus/job-dsl-sample) for an example.
 
 # Use Job DSL in Pipeline scripts
 

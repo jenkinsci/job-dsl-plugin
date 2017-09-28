@@ -21,9 +21,9 @@ Not all of the 1000+ Jenkins plugins are supported by the built-in DSL. If the
 
 If you want to get fancy you'll want to read up on [[configure block|The Configure Block]], which gives you direct access to the `config.xml`.
 
-Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) to see how to
-organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and
-[[IDE Support]].
+Have a look at [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) or
+[Job DSL Sample](https://github.com/unguiculus/job-dsl-sample) to see how to organize a SCM repository for Job DSL
+scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Support]].
 
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
