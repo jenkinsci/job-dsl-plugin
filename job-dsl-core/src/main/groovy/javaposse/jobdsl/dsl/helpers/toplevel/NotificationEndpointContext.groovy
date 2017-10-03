@@ -6,7 +6,7 @@ import javaposse.jobdsl.dsl.JobManagement
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class NotificationEndpointContext extends AbstractContext {
-    private static final List<String> EVENTS = ['all', 'started', 'completed', 'finalized']
+    private static final List<String> EVENTS = ['all', 'queued', 'started', 'completed', 'finalized', 'failed']
 
     String event = 'all'
     int timeout = 30000
@@ -19,7 +19,9 @@ class NotificationEndpointContext extends AbstractContext {
     /**
      * Sets the job lifecycle event triggering notification. Defaults to {@code 'all'}.
      *
-     * Possible values are {@code 'all'}, {@code 'started'}, {@code 'completed'} and {@code 'finalized'}.
+     * Possible values are {@code 'all'}, {@code 'queued'}, {@code 'started'},
+     * {@code 'completed'}, {@code 'finalized'} and {@code 'failed'}.
+     *
      */
     void event(String event) {
         checkArgument(EVENTS.contains(event), "event must be one of ${EVENTS.join(', ')}")
