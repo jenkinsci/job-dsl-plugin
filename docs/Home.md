@@ -28,7 +28,8 @@ organize a SCM repository for Job DSL scripts, including [[tests for DSL scripts
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.65 (unreleased)
+* 1.66 (unreleased)
+* 1.65 (September 07 2017)
   * Enhanced support for the [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
     ([JENKINS-46463](https://issues.jenkins-ci.org/browse/JENKINS-46463))
   * Enhanced support for the
@@ -41,8 +42,12 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Fixed documentation for the
     [Throttle Concurrent Builds Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Throttle+Concurrent+Builds+Plugin)
     ([#1042](https://github.com/jenkinsci/job-dsl-plugin/pull/1042))
+  * Updated documentation to avoid undesired libraries on the test classpath
+    ([JENKINS-45512](https://issues.jenkins-ci.org/browse/JENKINS-45512))
   * Changed visibility of a method in `JenkinsJobManagement`
     ([JENKINS-45921](https://issues.jenkins-ci.org/browse/JENKINS-45921))
+  * Provide better error message when job name ends with slash
+    ([JENKINS-44158](https://issues.jenkins-ci.org/browse/JENKINS-44158))
   * Fixed problem with static analysis plugins
     ([JENKINS-46042](https://issues.jenkins-ci.org/browse/JENKINS-46042))
   * Fixed problem with `using` in Pipeline jobs

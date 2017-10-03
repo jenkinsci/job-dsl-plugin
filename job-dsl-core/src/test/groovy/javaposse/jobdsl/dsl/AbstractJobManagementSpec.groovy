@@ -104,6 +104,19 @@ class AbstractJobManagementSpec extends Specification {
         buffer.toString().trim() == 'Warning: (DSL script, line 12) foo is deprecated'
     }
 
+    def 'JENKINS-44158 name may not end with trailing slash'() {
+        setup:
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream()
+        AbstractJobManagement jobManagement = new TestJobManagement(new PrintStream(buffer))
+
+        when:
+        jobManagement.validateNameArg('foo/')
+
+        then:
+        Exception e = thrown(DslException)
+        e.message == 'name must not contain trailing slash: foo/'
+    }
+
     static class TestJobManagement extends MockJobManagement {
         TestJobManagement() {
             super()

@@ -57,6 +57,9 @@ abstract class AbstractJobManagement implements JobManagement {
         if (name == null || name.empty) {
             throw new NameNotProvidedException()
         }
+        if (name.endsWith('/')) {
+            throw new DslException("name must not contain trailing slash: ${name}")
+        }
     }
 
     /**
