@@ -20,3 +20,13 @@ job('example-3') {
         blocksInheritance()
     }
 }
+
+// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill
+job('example-4') {
+    authorization {
+        permissionList('jill', [
+            'hudson.model.Item.Create',
+            'hudson.model.Item.Discover'
+        ])
+    }
+}

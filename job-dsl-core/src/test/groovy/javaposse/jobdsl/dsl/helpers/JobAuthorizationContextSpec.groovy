@@ -47,4 +47,24 @@ class JobAuthorizationContextSpec extends Specification {
         context.permissions.contains('hudson.model.Item.Read:jill')
         context.permissions.contains('hudson.model.Run.Update:jill')
     }
+
+    def 'call permissionList method'() {
+        setup:
+        jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [
+                'hudson.model.Item.Configure',
+                'hudson.model.Item.Read',
+                'hudson.model.Run.Update'
+        ]
+
+        when:
+        context.permissionList('jill', [
+          'hudson.model.Item.Configure',
+          'hudson.model.Item.Read'
+        ])
+
+        then:
+        context.permissions.size() == 2
+        context.permissions.contains('hudson.model.Item.Configure:jill')
+        context.permissions.contains('hudson.model.Item.Read:jill')
+    }
 }
