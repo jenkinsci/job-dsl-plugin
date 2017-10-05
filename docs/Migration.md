@@ -6,6 +6,54 @@ Support for versions older than 1.12 of the
 [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
 
+### Cucumber Reports Plugin
+
+Support for the [Cucumber Reports Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cucumber+Reports+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed. Use the syntax provided by the [[Automatically Generated DSL]]
+instead.
+
+DSL prior to 1.66
+```
+job('example') {
+    publishers {
+        cucumberReports {
+            jsonReportPath('files.json')
+            pluginUrlPath('url')
+            fileIncludePattern('included')
+            fileExcludePattern('excluded')
+            failOnSkipSteps()
+            failOnPendingSteps()
+            failOnUndefinedSteps()
+            failOnMissingSteps()
+            turnOffFlashCharts()
+            ignoreFailedTests()
+            parallelTesting()
+        }
+    }
+}
+```
+
+DSL since 1.66
+```
+job('example') {
+    publishers {
+        cucumber {
+            jsonReportDirectory('build/reports')
+            fileIncludePattern('included')
+            fileExcludePattern('excluded')
+            parallelTesting(false)
+            failedFeaturesNumber(12)
+            failedScenariosNumber(20)
+            failedStepsNumber(5)
+            pendingStepsNumber(3)
+            skippedStepsNumber(0)
+            trendsLimit(7)
+            undefinedStepsNumber(8)
+        }
+    }
+}
+```
+
 ## Migrating to 1.64
 
 ### HTML Publisher Plugin
