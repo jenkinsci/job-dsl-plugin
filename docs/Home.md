@@ -40,6 +40,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Support for the older versions of the
     [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-166)
+  * Removed anything that has been deprecated in 1.59, see [Migration](Migration#migrating-to-159)
 * 1.65 (September 07 2017)
   * Enhanced support for the [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
     ([JENKINS-46463](https://issues.jenkins-ci.org/browse/JENKINS-46463))
