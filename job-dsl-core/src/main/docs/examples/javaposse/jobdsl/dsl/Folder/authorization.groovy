@@ -18,3 +18,13 @@ folder('example-3') {
         permissionAll('anonymous')
     }
 }
+
+// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill
+folder('example-4') {
+    authorization {
+        permissions('jill', [
+            'hudson.model.Item.Create',
+            'hudson.model.Item.Discover'
+        ])
+    }
+}

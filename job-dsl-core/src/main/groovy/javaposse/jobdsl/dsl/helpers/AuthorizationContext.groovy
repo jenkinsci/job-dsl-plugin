@@ -52,6 +52,17 @@ class AuthorizationContext extends AbstractContext {
         addPermission(permission, user)
     }
 
+    /**
+     * Adds a set of permissions for a user.
+     *
+     * @since 1.66
+     */
+    void permissions(String user, Iterable<String> permissionsList) {
+        permissionsList.each {
+            this.permission(it, user)
+        }
+    }
+
     protected void addPermission(String permission, String user) {
         permissions << "${permission}:${user}".toString()
     }
