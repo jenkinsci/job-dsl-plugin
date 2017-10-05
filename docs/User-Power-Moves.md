@@ -1,15 +1,13 @@
 When you get a little bit expert in your usage of the Job DSL and Plugin, you might want to try the following Power Moves:
 
 # Run a DSL Script locally
-Before you push a new DSL script to jenkins, it's helpful to run it locally and eyeball the resulting XML. To do this follow these steps:
+Before you push a new DSL script to Jenkins, it's helpful to run it locally and eyeball the resulting XML. To do this follow these steps:
 
-1. git clone https://github.com/jenkinsci/job-dsl-plugin.git
-1. cd job-dsl-plugin
-1. ./gradlew :job-dsl-core:oneJar
-1. DSL_JAR=$(find job-dsl-core -name '*standalone.jar'|tail -1)
-1. java -jar $DSL_JAR sample.dsl.groovy
+    curl -O https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/job-dsl-core/@version@/job-dsl-core-@version@-standalone.jar
+    java -jar job-dsl-core-@version@-standalone.jar sample.dsl.groovy
 
-If you already have the source code checked out then you can ignore step 1.
+Replace the version number with the version of Job DSL that's installed in Jenkins to get comparable results. If you
+already have downloaded the JAR then you can ignore step 1.
 
 What's going on here is that there's a static main method that can run the DSL, you just have to give it a filename. It'll output all the jobs' XML to the current directory. Likewise, if you use "using" (the templates-like feature) it'll look in the current directory for a file with the name of the job appended with ".xml" at the end of it.
 
@@ -17,7 +15,7 @@ By default the current directory is added to the classpath to be able to import 
 scripts, the classpath differs compared to running in Jenkins where the DSL script's directory is added to the
 classpath. Add the `-j` command line option to use the same behavior as when running in Jenkins:
 
-    java -jar $DSL_JAR -j sample.dsl.groovy
+    java -jar job-dsl-core-@version@-standalone.jar -j sample.dsl.groovy
 
 # Generate a Job config.xml without having to fire up Jenkins
 1. Add some job dsl content to a file, say job.dsl
