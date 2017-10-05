@@ -133,8 +133,8 @@ The test will then run each script file to check the script for problems.
 To run the tests, execute `gradle test` from the command line in the directory containing the `build.gradle` file. It
 will generate a test report in `build/reports/test/index.html`.
 
-Have a look at the [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) for a complex
-example.
+Have a look at [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-dsl-gradle-example) and
+[Job DSL Sample](https://github.com/unguiculus/job-dsl-sample) for examples which could be used as a starting point.
 
 The Gradle build script can be combined with the one shown in [[IDE Support]] to enable IDE features like syntax
 highlighting for Job DSL scripts.

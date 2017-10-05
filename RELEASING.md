@@ -24,5 +24,6 @@ password=IHeartJenkins
 * Close all resolved issues in [JIRA](https://issues.jenkins-ci.org/secure/Dashboard.jspa?selectPageId=15341)
 * Open a pull request to update the [Job DSL Playground](https://github.com/sheehan/job-dsl-playground) 
 * Open a pull request to update the [Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example)
+* Open a pull request to update the [Job DSL Sample](https://github.com/unguiculus/job-dsl-sample)
 * Wait up to twelve hours for it show up in the Update Center
 * Follow the @jenkins_release twitter account and retweet the release!

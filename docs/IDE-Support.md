@@ -50,6 +50,7 @@ installation.
 
 In this example, the GroovyDSL script from above must be stored in `src/main/resources/idea.gdsl`.
 
-For a complete example, have a look at the [Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example).
+For a complete example, have a look at [Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example) or
+[Job DSL Sample](https://github.com/unguiculus/job-dsl-sample).
 
 IDE Support is currently not available for the [[Automatically Generated DSL]] or [[The Configure Block]].
