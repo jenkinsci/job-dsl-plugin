@@ -1,9 +1,12 @@
 package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.ContextType
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
+import javaposse.jobdsl.dsl.helpers.view.AllStatusesColumnContext
 
 @ContextType('hudson.views.ListViewColumn')
 class ColumnsContext extends AbstractExtensibleContext {
@@ -286,5 +289,18 @@ class ColumnsContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.4')
     void scmType() {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.SCMTypeColumn')
+    }
+
+    @RequiresPlugin(id = 'compact-columns', minimumVersion = '1.10')
+    void allStatusesColumn(@DslContext(AllStatusesColumnContext) Closure closure) {
+        AllStatusesColumnContext context = new AllStatusesColumnContext()
+        ContextHelper.executeInContext(closure, context)
+
+        columnNodes << new NodeBuilder().'com.robestone.hudson.compactcolumns.AllStatusesColumn' {
+            colorblindHint(context.colorblindHint)
+            timeAgoTypeString(context.timeAgoTypeString)
+            onlyShowLastStatus(context.onlyShowLastStatus)
+            hideDays(context.hideDays)
+        }
     }
 }
