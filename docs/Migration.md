@@ -1,3 +1,11 @@
+## Migrating to 1.66
+
+### Notification
+
+Support for versions older than 1.12 of the
+[Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.64
 
 ### HTML Publisher Plugin

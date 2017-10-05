@@ -956,6 +956,7 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].loglines[0].value() == 0
         }
         1 * jobManagement.requireMinimumPluginVersion('notification', '1.8')
+        1 * jobManagement.logPluginDeprecationWarning('notification', '1.12')
     }
 
     def 'set notification with all required properties'() {
@@ -976,6 +977,7 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].loglines[0].value() == 0
         }
         1 * jobManagement.requireMinimumPluginVersion('notification', '1.8')
+        1 * jobManagement.logPluginDeprecationWarning('notification', '1.12')
     }
 
     def 'set notification with invalid parameters'(String url, String protocol, String format, String event) {
@@ -1025,6 +1027,7 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].loglines[0].value() == 0
         }
         1 * jobManagement.requireMinimumPluginVersion('notification', '1.8')
+        1 * jobManagement.logPluginDeprecationWarning('notification', '1.12')
     }
 
     def 'set notification with all required properties and using a closure'() {
@@ -1049,6 +1052,7 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[0].loglines[0].value() == 10
         }
         1 * jobManagement.requireMinimumPluginVersion('notification', '1.8')
+        1 * jobManagement.logPluginDeprecationWarning('notification', '1.12')
     }
 
     def 'set notification with multiple endpoints'() {
@@ -1079,5 +1083,6 @@ class JobSpec extends Specification {
             endpoints.'com.tikal.hudson.plugins.notification.Endpoint'[1].loglines[0].value() == 0
         }
         1 * jobManagement.requireMinimumPluginVersion('notification', '1.8')
+        1 * jobManagement.logPluginDeprecationWarning('notification', '1.12')
     }
 }
