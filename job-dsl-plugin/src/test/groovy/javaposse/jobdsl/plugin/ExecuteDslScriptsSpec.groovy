@@ -311,6 +311,20 @@ class ExecuteDslScriptsSpec extends Specification {
         jenkinsRule.instance.getItem('test-job') instanceof FreeStyleProject
     }
 
+    def 'non-normalized path (JENKINS-46932)'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(targets: './jobs.groovy'))
+        jenkinsRule.instance.getWorkspaceFor(job).child('jobs.groovy').write(SCRIPT, UTF_8)
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        jenkinsRule.instance.getItem('test-job') instanceof FreeStyleProject
+    }
+
     def scheduleBuildOnSlaveUsingScriptLocation() {
         setup:
         DumbSlave slave = jenkinsRule.createSlave('Node1', 'label1', null)
