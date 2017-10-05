@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext
 import javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext
 import spock.lang.Specification
 
@@ -126,6 +127,37 @@ class OrganizationFolderJobSpec extends Specification {
                     size() == 2
                 }
                 with(it.'org.example.ScmNavigator2') {
+                    size() == 3
+                }
+            }
+        }
+    }
+
+    def 'can set the projectFactories'() {
+        setup:
+        jobManagement.callExtension('factory1', job, MultiBranchProjectFactoryContext, []) >>
+            new Node(null, 'org.example.MultiBranchProjectFactory1')
+        jobManagement.callExtension('factory2', job, MultiBranchProjectFactoryContext, []) >>
+            new Node(null, 'org.example.MultiBranchProjectFactory2')
+
+        when:
+        job.projectFactories {
+            factory1()
+            factory2()
+            factory1()
+            factory2()
+            factory2()
+        }
+
+        then:
+        with(job.node) {
+            projectFactories.size() == 1
+            with(projectFactories[0]) {
+                children().size() == 5
+                with(it.'org.example.MultiBranchProjectFactory1') {
+                    size() == 2
+                }
+                with(it.'org.example.MultiBranchProjectFactory2') {
                     size() == 3
                 }
             }

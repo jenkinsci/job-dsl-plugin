@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.ComputedFolder
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext
 import javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext
 
 /**
@@ -25,6 +26,24 @@ class OrganizationFolderJob extends ComputedFolder {
             Node navigators = project / navigators
             context.scmNavigatorNodes.each {
                 navigators << it
+            }
+        }
+    }
+
+    /**
+     * Sets the project factories for this folder.
+     *
+     * @since 1.66
+     */
+    void projectFactories(@DslContext(MultiBranchProjectFactoryContext) Closure closure) {
+        MultiBranchProjectFactoryContext context = new MultiBranchProjectFactoryContext(jobManagement, this)
+        ContextHelper.executeInContext(closure, context)
+
+        configure { Node project ->
+            Node factories = project / projectFactories
+            factories.children().clear()
+            context.projectFactoryNodes.each {
+                factories << it
             }
         }
     }

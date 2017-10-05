@@ -34,6 +34,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for
     [Matrix Authorization Strategy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Authorization+Strategy+Plugin)
     ([#1066](https://github.com/jenkinsci/job-dsl-plugin/pull/1066))
+  * Enhanced support for the
+    [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
+    ([#1043](https://github.com/jenkinsci/job-dsl-plugin/pull/1043))
   * Support for the older versions of the
     [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-166)
