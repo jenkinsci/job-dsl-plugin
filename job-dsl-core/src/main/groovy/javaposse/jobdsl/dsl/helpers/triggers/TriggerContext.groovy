@@ -172,6 +172,18 @@ class TriggerContext extends ItemTriggerContext {
     }
 
     /**
+     * Trigger that runs jobs on push notifications from Perforce.
+     *
+     * @since 1.66
+     */
+    @RequiresPlugin(id = 'p4', minimumVersion = '1.7.5')
+    void p4Trigger() {
+        triggerNodes << new NodeBuilder().'org.jenkinsci.plugins.p4.trigger.P4Trigger' {
+            spec()
+        }
+    }
+
+    /**
      * Trigger that runs jobs on push notifications from GitLab.
      *
      * @since 1.42
