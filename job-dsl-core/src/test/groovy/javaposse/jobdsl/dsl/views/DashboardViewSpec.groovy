@@ -97,6 +97,41 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
         }
     }
 
+    def 'test image with no options'() {
+        when:
+        view.topPortlets {
+            image()
+        }
+
+        then:
+        with(view.node.topPortlets[0].children()[0]) {
+            name() == 'hudson.plugins.view.dashboard.core.ImagePortlet'
+            children().size() == 3
+            id[0].value() ==~ /dashboard_portlet_\d+/
+            name[0].value() == 'Image Portlet'
+            url[0].value() == ''
+        }
+    }
+
+    def 'test image with all options'() {
+        when:
+        view.topPortlets {
+            image {
+                displayName('bar')
+                url('one')
+            }
+        }
+
+        then:
+        with(view.node.topPortlets[0].children()[0]) {
+            name() == 'hudson.plugins.view.dashboard.core.ImagePortlet'
+            children().size() == 3
+            id[0].value() ==~ /dashboard_portlet_\d+/
+            name[0].value() == 'bar'
+            url[0].value() == 'one'
+        }
+    }
+
     def 'test jenkins jobs list with no options'() {
         when:
         view.topPortlets {
