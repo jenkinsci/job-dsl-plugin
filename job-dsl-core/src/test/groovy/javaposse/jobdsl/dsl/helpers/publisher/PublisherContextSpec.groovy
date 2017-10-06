@@ -5303,6 +5303,7 @@ class PublisherContextSpec extends Specification {
             parallelTesting[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6.0')
+        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call cucumberReports with all options'() {
@@ -5339,6 +5340,7 @@ class PublisherContextSpec extends Specification {
             parallelTesting[0].value() == value
         }
         1 * jobManagement.requireMinimumPluginVersion('cucumber-reports', '0.6.0')
+        1 * jobManagement.logDeprecationWarning()
 
         where:
         value << [true, false]

@@ -40,6 +40,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Support for the older versions of the
     [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-166)
+  * Support for the [Cucumber Reports Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cucumber+Reports+Plugin) is
+    deprecated, see [Migration](Migration#migrating-to-166)
 * 1.65 (September 07 2017)
   * Enhanced support for the [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
     ([JENKINS-46463](https://issues.jenkins-ci.org/browse/JENKINS-46463))

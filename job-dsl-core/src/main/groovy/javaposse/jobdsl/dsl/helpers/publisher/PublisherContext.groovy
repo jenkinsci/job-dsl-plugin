@@ -1622,6 +1622,7 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.41
      */
+    @Deprecated
     @RequiresPlugin(id = 'cucumber-reports', minimumVersion = '0.6.0')
     void cucumberReports(@DslContext(CucumberReportsContext) Closure closure) {
         CucumberReportsContext context = new CucumberReportsContext()
