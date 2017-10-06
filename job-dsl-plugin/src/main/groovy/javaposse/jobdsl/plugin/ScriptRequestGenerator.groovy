@@ -5,6 +5,7 @@ import hudson.EnvVars
 import hudson.FilePath
 import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.ScriptRequest
+import org.apache.commons.io.FilenameUtils
 
 class ScriptRequestGenerator implements Closeable {
     final FilePath workspace
@@ -39,7 +40,9 @@ class ScriptRequestGenerator implements Closeable {
             scriptRequests.add(request)
         } else {
             targets.split('\n').each { String target ->
-                FilePath[] filePaths = workspace.list(env.expand(target))
+                String expandedTarget = env.expand(target)
+                String normalizedPath = FilenameUtils.normalize(expandedTarget, true)
+                FilePath[] filePaths = workspace.list(normalizedPath)
                 if (filePaths.length == 0 && !ignoreMissingFiles) {
                     throw new DslException("no Job DSL script(s) found at ${target}")
                 }
