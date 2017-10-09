@@ -37,6 +37,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the
     [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
     ([#1043](https://github.com/jenkinsci/job-dsl-plugin/pull/1043))
+  * Allow passing custom parameters from Pipeline script
+    ([JENKINS-44128](https://issues.jenkins-ci.org/browse/JENKINS-44128))
   * Fixed problem with redundant paths
     ([JENKINS-46932](https://issues.jenkins-ci.org/browse/JENKINS-46932))
   * Support for the older versions of the

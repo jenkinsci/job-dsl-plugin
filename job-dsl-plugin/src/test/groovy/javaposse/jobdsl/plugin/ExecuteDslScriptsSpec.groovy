@@ -269,6 +269,28 @@ class ExecuteDslScriptsSpec extends Specification {
         executeDslScripts.additionalClasspath == null
     }
 
+    @WithoutJenkins
+    def 'additional parameters'() {
+        setup:
+        Map<String, Object> params = [:]
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.additionalParameters == null
+
+        when:
+        executeDslScripts.additionalParameters = params
+
+        then:
+        executeDslScripts.additionalParameters == params
+
+        when:
+        executeDslScripts.additionalParameters = null
+
+        then:
+        executeDslScripts.additionalParameters == null
+    }
+
     def scheduleBuildOnMasterUsingScriptText() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
@@ -1593,6 +1615,21 @@ class ExecuteDslScriptsSpec extends Specification {
         GlobalConfigFiles.get().getById('two').name == 'Config 2'
         GlobalConfigFiles.get().getById('two').comment == 'foo'
         GlobalConfigFiles.get().getById('two').content == 'bar'
+    }
+
+    def 'execute with additional parameters'() {
+        setup:
+        String value = 'Hello World!'
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        ExecuteDslScripts scripts = new ExecuteDslScripts(scriptText: 'println FOO', additionalParameters: [FOO: value])
+        job.buildersList.add(scripts)
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        freeStyleBuild.getLog(100).contains(value)
     }
 
     private static final String SCRIPT = """job('test-job') {
