@@ -320,6 +320,40 @@ class BuildPipelineViewSpec extends Specification {
         jobManagement.requireMinimumPluginVersion('build-pipeline-plugin', '1.4.3')
     }
 
+    def 'columnHeaders'() {
+        setup:
+        jobManagement.callExtension('foo', null, BuildPipelineHeadersContext, []) >>
+                new Node(null, 'org.example.Foo')
+
+        when:
+        view.columnHeaders {
+            foo()
+        }
+
+        then:
+        Node root = view.node
+        root.columnHeaders.size() == 1
+        root.columnHeaders[0].attribute('class') == 'org.example.Foo'
+        root.columnHeaders[0].children().size() == 0
+    }
+
+    def 'rowHeaders'() {
+        setup:
+        jobManagement.callExtension('foo', null, BuildPipelineHeadersContext, []) >>
+                new Node(null, 'org.example.Foo')
+
+        when:
+        view.rowHeaders {
+            foo()
+        }
+
+        then:
+        Node root = view.node
+        root.rowHeaders.size() == 1
+        root.rowHeaders[0].attribute('class') == 'org.example.Foo'
+        root.rowHeaders[0].children().size() == 0
+    }
+
     def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
 <au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView>
     <filterExecutors>false</filterExecutors>
