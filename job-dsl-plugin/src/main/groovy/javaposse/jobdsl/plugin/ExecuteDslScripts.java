@@ -54,6 +54,7 @@ import javax.annotation.Nonnull;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -106,6 +107,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     private LookupStrategy lookupStrategy = LookupStrategy.JENKINS_ROOT;
 
     private String additionalClasspath;
+
+    private Map<String, Object> additionalParameters;
 
     @DataBoundConstructor
     public ExecuteDslScripts() {
@@ -255,6 +258,15 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.additionalClasspath = fixEmptyAndTrim(additionalClasspath);
     }
 
+    public Map<String, Object> getAdditionalParameters() {
+        return additionalParameters;
+    }
+
+    @DataBoundSetter
+    public void setAdditionalParameters(Map<String, Object> additionalParameters) {
+        this.additionalParameters = additionalParameters;
+    }
+
     void configure(Item ancestor) {
         if (!sandbox && isUsingScriptText() && ((DescriptorImpl) getDescriptor()).isSecurityEnabled()) {
             ScriptApproval.get().configuring(scriptText, GroovyLanguage.get(), ApprovalContext.create().withCurrentUser().withItem(ancestor));
@@ -279,8 +291,14 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 env.putAll(((AbstractBuild<?, ?>) run).getBuildVariables());
             }
 
+            Map<String, Object> binding = new HashMap<>();
+            binding.putAll(env);
+            if (additionalParameters != null) {
+                binding.putAll(additionalParameters);
+            }
+
             JenkinsJobManagement jenkinsJobManagement = new JenkinsJobManagement(
-                    listener.getLogger(), env, run, workspace, getLookupStrategy()
+                    listener.getLogger(), binding, run, workspace, getLookupStrategy()
             );
             jenkinsJobManagement.setFailOnMissingPlugin(failOnMissingPlugin);
             jenkinsJobManagement.setUnstableOnDeprecation(unstableOnDeprecation);
