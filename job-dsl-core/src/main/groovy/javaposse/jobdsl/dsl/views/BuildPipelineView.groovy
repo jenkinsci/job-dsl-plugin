@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.views
 
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.View
@@ -128,6 +130,44 @@ class BuildPipelineView extends View {
     void showPipelineDefinitionHeader(boolean showPipelineDefinitionHeader = true) {
         configure {
             it / methodMissing('showPipelineDefinitionHeader', showPipelineDefinitionHeader)
+        }
+    }
+
+    /**
+     * Selects the type of column headers to use.
+     *
+     * @since 1.66
+     */
+    @RequiresPlugin(id = 'build-pipeline-plugin', minimumVersion = '1.5.5')
+    void columnHeaders(@DslContext(BuildPipelineHeadersContext) Closure closure) {
+        BuildPipelineHeadersContext context = new BuildPipelineHeadersContext(jobManagement)
+        ContextHelper.executeInContext(closure, context)
+
+        configure { Node node ->
+            Node headers = node / columnHeaders
+            if (headers) {
+                node.remove(headers)
+            }
+            node.append(ContextHelper.toNamedNode('columnHeaders', context.headersNode))
+        }
+    }
+
+    /**
+     * Selects the type of row headers to use.
+     *
+     * @since 1.66
+     */
+    @RequiresPlugin(id = 'build-pipeline-plugin', minimumVersion = '1.5.5')
+    void rowHeaders(@DslContext(BuildPipelineHeadersContext) Closure closure) {
+        BuildPipelineHeadersContext context = new BuildPipelineHeadersContext(jobManagement)
+        ContextHelper.executeInContext(closure, context)
+
+        configure { Node node ->
+            Node headers = node / rowHeaders
+            if (headers) {
+                node.remove(headers)
+            }
+            node.append(ContextHelper.toNamedNode('rowHeaders', context.headersNode))
         }
     }
 
