@@ -945,6 +945,7 @@ class PublisherContext extends AbstractExtensibleContext {
             pushOnlyIfSuccess(context.pushOnlyIfSuccess)
             forcePush(context.forcePush)
             tagsToPush(context.tags)
+            notesToPush(context.notes)
             branchesToPush(context.branches)
         }
     }

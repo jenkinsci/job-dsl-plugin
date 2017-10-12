@@ -2575,7 +2575,7 @@ class PublisherContextSpec extends Specification {
         then:
         context.publisherNodes.size() == 1
         context.publisherNodes[0].name() == 'hudson.plugins.git.GitPublisher'
-        context.publisherNodes[0].children().size() == 6
+        context.publisherNodes[0].children().size() == 7
         context.publisherNodes[0].configVersion[0].value() == 2
         context.publisherNodes[0].pushMerge[0].value() == false
         context.publisherNodes[0].pushOnlyIfSuccess[0].value() == false
@@ -2593,6 +2593,10 @@ class PublisherContextSpec extends Specification {
                 message('test tag')
                 create()
                 update()
+            }
+            note('origin', 'test') {
+                namespace('test')
+                replace()
             }
             branch('origin', 'master')
         }
@@ -2613,6 +2617,14 @@ class PublisherContextSpec extends Specification {
                 tagMessage[0].value() == 'test tag'
                 createTag[0].value() == true
                 updateTag[0].value() == true
+            }
+            notesToPush.size() == 1
+            notesToPush[0].'hudson.plugins.git.GitPublisher_-NoteToPush'.size() == 1
+            with(notesToPush[0].'hudson.plugins.git.GitPublisher_-NoteToPush'[0]) {
+                targetRepoName[0].value() == 'origin'
+                noteNamespace[0].value() == 'test'
+                noteMsg[0].value() == 'test'
+                noteReplace[0].value() == true
             }
             branchesToPush.size() == 1
             branchesToPush[0].'hudson.plugins.git.GitPublisher_-BranchToPush'.size() == 1
@@ -2681,6 +2693,96 @@ class PublisherContextSpec extends Specification {
         when:
         context.git {
             tag('origin', '')
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'call git with minimal note options'() {
+        when:
+        context.git {
+            note('origin', 'test')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.git.GitPublisher'
+            configVersion[0].value() == 2
+            pushMerge[0].value() == false
+            pushOnlyIfSuccess[0].value() == false
+            forcePush[0].value() == false
+            notesToPush.size() == 1
+            notesToPush[0].'hudson.plugins.git.GitPublisher_-NoteToPush'.size() == 1
+            with(notesToPush[0].'hudson.plugins.git.GitPublisher_-NoteToPush'[0]) {
+                targetRepoName[0].value() == 'origin'
+                noteMsg[0].value() == 'test'
+                noteNamespace[0].value() == 'master'
+                noteReplace[0].value() == false
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.5.3')
+    }
+
+    def 'call git with note replace'() {
+        when:
+            context.git {
+            note('origin', 'test') {
+                replace()
+            }
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.git.GitPublisher'
+            configVersion[0].value() == 2
+            pushMerge[0].value() == false
+            pushOnlyIfSuccess[0].value() == false
+            forcePush[0].value() == false
+            notesToPush.size() == 1
+            notesToPush[0].'hudson.plugins.git.GitPublisher_-NoteToPush'.size() == 1
+            with(notesToPush[0].'hudson.plugins.git.GitPublisher_-NoteToPush'[0]) {
+                targetRepoName[0].value() == 'origin'
+                noteMsg[0].value() == 'test'
+                noteNamespace[0].value() == 'master'
+                noteReplace[0].value() == true
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('git', '2.5.3')
+    }
+
+    def 'call git without note targetRepoName'() {
+        when:
+        context.git {
+            note(null, 'test')
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        when:
+        context.git {
+            note('', 'test')
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'call git without note message'() {
+        when:
+        context.git {
+            note('origin', null)
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        when:
+        context.git {
+            note('origin', '')
         }
 
         then:

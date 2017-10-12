@@ -12,6 +12,7 @@ class GitPublisherContext extends AbstractContext {
     boolean pushMerge
     boolean forcePush
     List<Node> tags = []
+    List<Node> notes = []
     List<Node> branches = []
 
     GitPublisherContext(JobManagement jobManagement) {
@@ -57,6 +58,24 @@ class GitPublisherContext extends AbstractContext {
             tagMessage(context.message ?: '')
             createTag(context.create)
             updateTag(context.update)
+        }
+    }
+
+    /**
+     * Adds a note to push to a remote repository. Can be called multiple times to push more notes.
+     */
+    void note(String targetRepo, String message, @DslContext(NoteToPushContext) Closure closure = null) {
+        checkNotNullOrEmpty(targetRepo, 'targetRepo must be specified')
+        checkNotNullOrEmpty(message, 'message must be specified')
+
+        NoteToPushContext context = new NoteToPushContext()
+        ContextHelper.executeInContext(closure, context)
+
+        notes << NodeBuilder.newInstance().'hudson.plugins.git.GitPublisher_-NoteToPush' {
+            targetRepoName(targetRepo)
+            noteMsg(message)
+            noteNamespace(context.namespace ?: 'master')
+            noteReplace(context.replace)
         }
     }
 
