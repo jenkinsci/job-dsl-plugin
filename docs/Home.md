@@ -28,7 +28,7 @@ scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Suppo
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.66 (unreleased)
+* 1.66 (October 14 2017)
   * Enhanced support for the [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin)
     ([#1067](https://github.com/jenkinsci/job-dsl-plugin/pull/1067))
   * Enhanced support for
