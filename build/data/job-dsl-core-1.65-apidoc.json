@@ -1,5 +1,5 @@
 {
-    "version": "1.66",
+    "version": "1.65",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -71,12 +71,6 @@
                         }
                     ],
                     "examples": "// add all permissions for user joe\r\njob('example') {\r\n    authorization {\r\n        permissionAll('joe')\r\n    }\r\n}"
-                },
-                {
-                    "name": "permissions",
-                    "signatures": [
-                        
-                    ]
                 }
             ]
         },
@@ -2264,7 +2258,7 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets the job lifecycle event triggering notification. Defaults to <CODE>'all'</CODE>.\r\n\r\n Possible values are <CODE>'all'</CODE>, <CODE>'queued'</CODE>, <CODE>'started'</CODE>,\r\n <CODE>'completed'</CODE>, <CODE>'finalized'</CODE> and <CODE>'failed'</CODE>.",
+                            "html": "Sets the job lifecycle event triggering notification. Defaults to <CODE>'all'</CODE>.\r\n\r\n Possible values are <CODE>'all'</CODE>, <CODE>'started'</CODE>, <CODE>'completed'</CODE> and <CODE>'finalized'</CODE>.",
                             "firstSentenceCommentText": "Sets the job lifecycle event triggering notification. "
                         }
                     ]
@@ -8572,42 +8566,6 @@
                 }
             ]
         },
-        "javaposse.jobdsl.dsl.helpers.publisher.NoteToPushContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.publisher.NoteToPushContext",
-            "methods": [
-                {
-                    "name": "namespace",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "namespace",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "If set, sets the namespace of the note.",
-                            "firstSentenceCommentText": "If set, sets the namespace of the note."
-                        }
-                    ]
-                },
-                {
-                    "name": "replace",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "replace",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "If set, replaces an existing note. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "If set, replaces an existing note. "
-                        }
-                    ]
-                }
-            ]
-        },
         "javaposse.jobdsl.dsl.helpers.publisher.TagToPushContext": {
             "type": "javaposse.jobdsl.dsl.helpers.publisher.TagToPushContext",
             "methods": [
@@ -8696,32 +8654,6 @@
                             "availableSince": "1.27",
                             "html": "Adds the force option to <CODE>git push</CODE>.",
                             "firstSentenceCommentText": "Adds the force option to git push."
-                        }
-                    ]
-                },
-                {
-                    "name": "note",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "targetRepo",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "message",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure",
-                                    "defaultValue": "null"
-                                }
-                            ],
-                            "availableSince": "1.66",
-                            "html": "Adds a note to push to a remote repository. Can be called multiple times to push more notes.",
-                            "firstSentenceCommentText": "Adds a note to push to a remote repository. ",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.NoteToPushContext"
                         }
                     ]
                 },
@@ -9379,6 +9311,231 @@
                             ],
                             "html": "If set, records changelog to note. Defaults to <CODE>false</CODE>.",
                             "firstSentenceCommentText": "If set, records changelog to note. "
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.helpers.publisher.MattermostPublisherContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.publisher.MattermostPublisherContext",
+            "methods": [
+                {
+                    "name": "customMessage",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "customMessage",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Configures custom message that will be included with the notifications displayed.",
+                            "firstSentenceCommentText": "Configures custom message that will be included with the notifications displayed."
+                        }
+                    ]
+                },
+                {
+                    "name": "endpoint",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "endpoint",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Configures your Mattermost incoming webhook URL.",
+                            "firstSentenceCommentText": "Configures your Mattermost incoming webhook URL."
+                        }
+                    ]
+                },
+                {
+                    "name": "icon",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "icon",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Configures the URL to use as avatar for the message.",
+                            "firstSentenceCommentText": "Configures the URL to use as avatar for the message."
+                        }
+                    ]
+                },
+                {
+                    "name": "includeTestSummary",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "includeTestSummary",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Include the test summary in the build message. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Include the test summary in the build message. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyAborted",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyAborted",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is aborted. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is aborted. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyBackToNormal",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyBackToNormal",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is back to normal. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is back to normal. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyBuildStart",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyBuildStart",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build starts. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Sends a notification when the build starts. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyFailure",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyFailure",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is failed. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is failed. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyNotBuilt",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyNotBuilt",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is not build. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is not build. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyRepeatedFailure",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyRepeatedFailure",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build repeats to fail. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Sends a notification when the build repeats to fail. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifySuccess",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifySuccess",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is successful. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is successful. "
+                        }
+                    ]
+                },
+                {
+                    "name": "notifyUnstable",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "notifyUnstable",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Sends a notification when the build is unstable. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Sends a notification when the build is unstable. "
+                        }
+                    ]
+                },
+                {
+                    "name": "room",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "room",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Configures the channel names to which notifications should be sent.",
+                            "firstSentenceCommentText": "Configures the channel names to which notifications should be sent."
+                        }
+                    ]
+                },
+                {
+                    "name": "showCommitList",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "showCommitList",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Include the commit list with titles and authors in the build message. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Include the commit list with titles and authors in the build message. "
                         }
                     ]
                 }
@@ -18302,7 +18459,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.41",
                             "plugins": [
                                 {
@@ -18972,6 +19128,34 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        mantis {\r\n            keepNotePrivate()\r\n            recordChangelogToNote()\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "mattermost",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "mattermostClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use the \r\nAutomatically Generated DSL instead",
+                            "deprecatedHtml": "use the <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">\r\nAutomatically Generated DSL</a> instead",
+                            "availableSince": "1.44",
+                            "plugins": [
+                                {
+                                    "id": "mattermost",
+                                    "minimumVersion": "1.5.0"
+                                }
+                            ],
+                            "html": "Sends notifications to Mattermost.",
+                            "firstSentenceCommentText": "Sends notifications to Mattermost.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.MattermostPublisherContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        mattermost {\r\n            room('foobar team')\r\n            notifySuccess()\r\n            notifyAborted()\r\n            notifyBackToNormal()\r\n            showCommitList()\r\n        }\r\n    }\r\n}\r\n\r\njob('example2') {\r\n    publishers {\r\n        mattermost {\r\n            endpoint('https://mattermost.my-company.de/hooks/um9hcztr1jfnzgph6397pcoeur')\r\n            icon('http://jenkins.my-company.de/static/3d886fd0/images/foobar.png')\r\n            room('foobar team')\r\n            notifySuccess()\r\n            notifyAborted()\r\n            notifyBackToNormal()\r\n            showCommitList()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "mavenDeploymentLinker",
@@ -20661,7 +20845,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.41",
                             "plugins": [
                                 {
@@ -21309,6 +21492,34 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        mantis {\r\n            keepNotePrivate()\r\n            recordChangelogToNote()\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "mattermost",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "mattermostClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use the \r\nAutomatically Generated DSL instead",
+                            "deprecatedHtml": "use the <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">\r\nAutomatically Generated DSL</a> instead",
+                            "availableSince": "1.44",
+                            "plugins": [
+                                {
+                                    "id": "mattermost",
+                                    "minimumVersion": "1.5.0"
+                                }
+                            ],
+                            "html": "Sends notifications to Mattermost.",
+                            "firstSentenceCommentText": "Sends notifications to Mattermost.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.MattermostPublisherContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        mattermost {\r\n            room('foobar team')\r\n            notifySuccess()\r\n            notifyAborted()\r\n            notifyBackToNormal()\r\n            showCommitList()\r\n        }\r\n    }\r\n}\r\n\r\njob('example2') {\r\n    publishers {\r\n        mattermost {\r\n            endpoint('https://mattermost.my-company.de/hooks/um9hcztr1jfnzgph6397pcoeur')\r\n            icon('http://jenkins.my-company.de/static/3d886fd0/images/foobar.png')\r\n            room('foobar team')\r\n            notifySuccess()\r\n            notifyAborted()\r\n            notifyBackToNormal()\r\n            showCommitList()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "mavenDeploymentLinker",
@@ -25934,7 +26145,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.JobAuthorizationContext"
                         }
                     ],
-                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\njob('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}"
                 },
                 {
                     "name": "batchTask",
@@ -27341,12 +27552,6 @@
                 }
             ]
         },
-        "javaposse.jobdsl.dsl.views.BuildPipelineHeadersContext": {
-            "type": "javaposse.jobdsl.dsl.views.BuildPipelineHeadersContext",
-            "methods": [
-                
-            ]
-        },
         "javaposse.jobdsl.dsl.views.BuildPipelineView": {
             "type": "javaposse.jobdsl.dsl.views.BuildPipelineView",
             "methods": [
@@ -27366,29 +27571,6 @@
                         }
                     ],
                     "examples": "buildPipelineView('example') {\r\n    alwaysAllowManualTrigger()\r\n}"
-                },
-                {
-                    "name": "columnHeaders",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.66",
-                            "plugins": [
-                                {
-                                    "id": "build-pipeline-plugin",
-                                    "minimumVersion": "1.5.5"
-                                }
-                            ],
-                            "html": "Selects the type of column headers to use.",
-                            "firstSentenceCommentText": "Selects the type of column headers to use.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.BuildPipelineHeadersContext"
-                        }
-                    ]
                 },
                 {
                     "name": "configure",
@@ -27524,29 +27706,6 @@
                         }
                     ],
                     "examples": "buildPipelineView('example') {\r\n    refreshFrequency(60)\r\n}"
-                },
-                {
-                    "name": "rowHeaders",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.66",
-                            "plugins": [
-                                {
-                                    "id": "build-pipeline-plugin",
-                                    "minimumVersion": "1.5.5"
-                                }
-                            ],
-                            "html": "Selects the type of row headers to use.",
-                            "firstSentenceCommentText": "Selects the type of row headers to use.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.BuildPipelineHeadersContext"
-                        }
-                    ]
                 },
                 {
                     "name": "selectedJob",
@@ -29489,12 +29648,6 @@
                             "firstSentenceCommentText": "Adds all available permissions for the user."
                         }
                     ]
-                },
-                {
-                    "name": "permissions",
-                    "signatures": [
-                        
-                    ]
                 }
             ]
         },
@@ -29523,7 +29676,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.AuthorizationContext"
                         }
                     ],
-                    "examples": "// gives permission for the special authenticated group to create jobs in the folder\r\nfolder('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Create:authenticated')\r\n    }\r\n}\r\n\r\n// gives discover permission for the special anonymous user\r\nfolder('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Discover', 'anonymous')\r\n    }\r\n}\r\n\r\n// gives all permissions to the special anonymous user\r\nfolder('example-3') {\r\n    authorization {\r\n        permissionAll('anonymous')\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\nfolder('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    "examples": "// gives permission for the special authenticated group to create jobs in the folder\r\nfolder('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Create:authenticated')\r\n    }\r\n}\r\n\r\n// gives discover permission for the special anonymous user\r\nfolder('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Discover', 'anonymous')\r\n    }\r\n}\r\n\r\n// gives all permissions to the special anonymous user\r\nfolder('example-3') {\r\n    authorization {\r\n        permissionAll('anonymous')\r\n    }\r\n}"
                 },
                 {
                     "name": "configure",
@@ -29649,7 +29802,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.JobAuthorizationContext"
                         }
                     ],
-                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\njob('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}"
                 },
                 {
                     "name": "batchTask",
@@ -30406,7 +30559,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.JobAuthorizationContext"
                         }
                     ],
-                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\njob('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}"
                 },
                 {
                     "name": "batchTask",
@@ -31536,7 +31689,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.JobAuthorizationContext"
                         }
                     ],
-                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\njob('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}"
                 },
                 {
                     "name": "axes",
@@ -33318,7 +33471,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.41",
                             "plugins": [
                                 {
@@ -33985,6 +34137,34 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        mantis {\r\n            keepNotePrivate()\r\n            recordChangelogToNote()\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "mattermost",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "mattermostClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "deprecatedText": "use the \r\nAutomatically Generated DSL instead",
+                            "deprecatedHtml": "use the <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Automatically-Generated-DSL\">\r\nAutomatically Generated DSL</a> instead",
+                            "availableSince": "1.44",
+                            "plugins": [
+                                {
+                                    "id": "mattermost",
+                                    "minimumVersion": "1.5.0"
+                                }
+                            ],
+                            "html": "Sends notifications to Mattermost.",
+                            "firstSentenceCommentText": "Sends notifications to Mattermost.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.MattermostPublisherContext"
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        mattermost {\r\n            room('foobar team')\r\n            notifySuccess()\r\n            notifyAborted()\r\n            notifyBackToNormal()\r\n            showCommitList()\r\n        }\r\n    }\r\n}\r\n\r\njob('example2') {\r\n    publishers {\r\n        mattermost {\r\n            endpoint('https://mattermost.my-company.de/hooks/um9hcztr1jfnzgph6397pcoeur')\r\n            icon('http://jenkins.my-company.de/static/3d886fd0/images/foobar.png')\r\n            room('foobar team')\r\n            notifySuccess()\r\n            notifyAborted()\r\n            notifyBackToNormal()\r\n            showCommitList()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "mavenDeploymentLinker",
@@ -36149,7 +36329,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.JobAuthorizationContext"
                         }
                     ],
-                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\njob('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}"
                 },
                 {
                     "name": "batchTask",
@@ -37206,7 +37386,7 @@
                                 }
                             ],
                             "availableSince": "1.25",
-                            "html": "Kills the phase when a condition is met.\r\n\r\n Must be one of <CODE>'FAILURE'</CODE> (default), <CODE>'NEVER'</CODE> or <CODE>'UNSTABLE'</CODE>.",
+                            "html": "Kills the phase when a condition is met.\r\n\r\n Must be one of <CODE>'FAILURE'</CODE> (default), <CODE>'NEVER'</CODE> or [",
                             "firstSentenceCommentText": "Kills the phase when a condition is met."
                         }
                     ]
@@ -38942,7 +39122,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.JobAuthorizationContext"
                         }
                     ],
-                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\njob('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}"
                 },
                 {
                     "name": "batchTask",
@@ -40199,7 +40379,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.AuthorizationContext"
                         }
                     ],
-                    "examples": "// gives permission for the special authenticated group to create jobs in the folder\r\nfolder('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Create:authenticated')\r\n    }\r\n}\r\n\r\n// gives discover permission for the special anonymous user\r\nfolder('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Discover', 'anonymous')\r\n    }\r\n}\r\n\r\n// gives all permissions to the special anonymous user\r\nfolder('example-3') {\r\n    authorization {\r\n        permissionAll('anonymous')\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\nfolder('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    "examples": "// gives permission for the special authenticated group to create jobs in the folder\r\nfolder('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Create:authenticated')\r\n    }\r\n}\r\n\r\n// gives discover permission for the special anonymous user\r\nfolder('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Discover', 'anonymous')\r\n    }\r\n}\r\n\r\n// gives all permissions to the special anonymous user\r\nfolder('example-3') {\r\n    authorization {\r\n        permissionAll('anonymous')\r\n    }\r\n}"
                 },
                 {
                     "name": "branchSources",
@@ -41242,12 +41422,6 @@
                 
             ]
         },
-        "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext",
-            "methods": [
-                
-            ]
-        },
         "javaposse.jobdsl.dsl.jobs.OrganizationFolderJob": {
             "type": "javaposse.jobdsl.dsl.jobs.OrganizationFolderJob",
             "methods": [
@@ -41267,7 +41441,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.AuthorizationContext"
                         }
                     ],
-                    "examples": "// gives permission for the special authenticated group to create jobs in the folder\r\nfolder('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Create:authenticated')\r\n    }\r\n}\r\n\r\n// gives discover permission for the special anonymous user\r\nfolder('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Discover', 'anonymous')\r\n    }\r\n}\r\n\r\n// gives all permissions to the special anonymous user\r\nfolder('example-3') {\r\n    authorization {\r\n        permissionAll('anonymous')\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\nfolder('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    "examples": "// gives permission for the special authenticated group to create jobs in the folder\r\nfolder('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Create:authenticated')\r\n    }\r\n}\r\n\r\n// gives discover permission for the special anonymous user\r\nfolder('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Discover', 'anonymous')\r\n    }\r\n}\r\n\r\n// gives all permissions to the special anonymous user\r\nfolder('example-3') {\r\n    authorization {\r\n        permissionAll('anonymous')\r\n    }\r\n}"
                 },
                 {
                     "name": "configure",
@@ -41362,23 +41536,6 @@
                             "availableSince": "1.36",
                             "html": "Changes the initial view to show when the folder contains multiple views. Defaults to the <CODE>'All'</CODE> view.",
                             "firstSentenceCommentText": "Changes the initial view to show when the folder contains multiple views. "
-                        }
-                    ]
-                },
-                {
-                    "name": "projectFactories",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.66",
-                            "html": "Sets the project factories for this folder.",
-                            "firstSentenceCommentText": "Sets the project factories for this folder.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext"
                         }
                     ]
                 },
@@ -41577,7 +41734,7 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.JobAuthorizationContext"
                         }
                     ],
-                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\njob('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}"
                 },
                 {
                     "name": "batchTask",
