@@ -39,6 +39,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([#1043](https://github.com/jenkinsci/job-dsl-plugin/pull/1043))
   * Enhanced support for the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin)
     ([JENKINS-46332](https://issues.jenkins-ci.org/browse/JENKINS-46332))
+  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+    ([#1074](https://github.com/jenkinsci/job-dsl-plugin/pull/1074))
   * Allow passing custom parameters from Pipeline script
     ([JENKINS-44128](https://issues.jenkins-ci.org/browse/JENKINS-44128))
   * Fixed problem with redundant paths

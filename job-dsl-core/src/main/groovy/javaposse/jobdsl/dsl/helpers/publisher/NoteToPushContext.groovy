@@ -3,16 +3,8 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.Context
 
 class NoteToPushContext implements Context {
-    String message
     String namespace
     boolean replace
-
-    /**
-     * Sets the content of the note.
-     */
-    void message(String message) {
-        this.message = message
-    }
 
     /**
      * If set, sets the namespace of the note.

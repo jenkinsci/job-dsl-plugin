@@ -63,6 +63,8 @@ class GitPublisherContext extends AbstractContext {
 
     /**
      * Adds a note to push to a remote repository. Can be called multiple times to push more notes.
+     *
+     * @since 1.66
      */
     void note(String targetRepo, String message, @DslContext(NoteToPushContext) Closure closure = null) {
         checkNotNullOrEmpty(targetRepo, 'targetRepo must be specified')
