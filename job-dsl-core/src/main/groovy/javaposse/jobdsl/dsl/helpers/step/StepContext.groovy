@@ -359,6 +359,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     protected groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
+        jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+
         GroovyContext groovyContext = new GroovyContext()
         ContextHelper.executeInContext(groovyClosure, groovyContext)
 
@@ -380,6 +382,8 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'groovy')
     void systemGroovyCommand(String command, @DslContext(SystemGroovyCommandContext) Closure closure = null) {
+        jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+
         SystemGroovyCommandContext systemGroovyContext = new SystemGroovyCommandContext(jobManagement)
         ContextHelper.executeInContext(closure, systemGroovyContext)
 
@@ -417,6 +421,8 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'groovy')
     void systemGroovyScriptFile(String fileName, @DslContext(SystemGroovyContext) Closure systemGroovyClosure = null) {
+        jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+
         SystemGroovyContext systemGroovyContext = new SystemGroovyContext()
         ContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
 

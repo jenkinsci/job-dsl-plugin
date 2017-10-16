@@ -780,6 +780,7 @@ class StepContextSpec extends Specification {
         scriptSourceNode.command.size() == 1
         scriptSourceNode.command[0].value() == "println 'Hello World!'"
         1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
 
         when:
         context.groovyCommand('acme.Acme.doSomething()', 'Groovy 2.0') {
@@ -817,6 +818,7 @@ class StepContextSpec extends Specification {
         acmeScriptSourceNode.command.size() == 1
         acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
         1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
     }
 
     def 'call groovyScriptFile methods'() {
@@ -845,6 +847,7 @@ class StepContextSpec extends Specification {
         scriptSourceNode.scriptFile.size() == 1
         scriptSourceNode.scriptFile[0].value() == 'scripts/hello.groovy'
         1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
 
         when:
         context.groovyScriptFile('acme.groovy', 'Groovy 2.0') {
@@ -894,6 +897,7 @@ class StepContextSpec extends Specification {
         groovy21Node.groovyName.size() == 1
         groovy21Node.groovyName[0].value() == 'Groovy 2.1'
         1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
     }
 
     def 'call systemGroovyCommand methods'() {
@@ -914,6 +918,7 @@ class StepContextSpec extends Specification {
         scriptSourceNode.command.size() == 1
         scriptSourceNode.command[0].value() == "println 'Hello World!'"
         1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
 
         when:
         context.systemGroovyCommand('acme.Acme.doSomething()') {
@@ -937,6 +942,7 @@ class StepContextSpec extends Specification {
         acmeScriptSourceNode.command.size() == 1
         acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
         1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
     }
 
     def 'call systemGroovyScriptFile methods'() {
@@ -957,6 +963,7 @@ class StepContextSpec extends Specification {
         scriptSourceNode.scriptFile.size() == 1
         scriptSourceNode.scriptFile[0].value() == 'scripts/hello.groovy'
         1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
 
         when:
         context.systemGroovyScriptFile('acme.groovy') {
@@ -980,6 +987,7 @@ class StepContextSpec extends Specification {
         acmeScriptSourceNode.scriptFile.size() == 1
         acmeScriptSourceNode.scriptFile[0].value() == 'acme.groovy'
         1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
     }
 
     def 'call systemGroovyCommand methods with plugin version 2.0'() {
@@ -1006,6 +1014,7 @@ class StepContextSpec extends Specification {
             }
         }
         1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
 
         when:
         context.systemGroovyCommand('acme.Acme.doSomething()') {
@@ -1037,6 +1046,7 @@ class StepContextSpec extends Specification {
         }
         1 * jobManagement.requirePlugin('groovy')
         1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
     }
 
     def 'call systemGroovyCommand with invalid classpath and plugin version 2.0'() {
@@ -1073,6 +1083,7 @@ class StepContextSpec extends Specification {
             }
         }
         1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
 
         when:
         context.systemGroovyScriptFile('acme.groovy') {
@@ -1096,6 +1107,7 @@ class StepContextSpec extends Specification {
             }
         }
         1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
     }
 
     def 'call copyArtifacts selector variants'() {
