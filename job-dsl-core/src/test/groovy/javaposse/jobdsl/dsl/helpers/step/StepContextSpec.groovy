@@ -982,6 +982,122 @@ class StepContextSpec extends Specification {
         1 * jobManagement.requirePlugin('groovy')
     }
 
+    def 'call systemGroovyCommand methods with plugin version 2.0'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0') >> true
+
+        when:
+        context.systemGroovyCommand("println 'Hello World!'")
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.groovy.SystemGroovy'
+            children().size() == 2
+            bindings[0].value() == ''
+            source.size() == 1
+            with(source[0]) {
+                attribute('class') == 'hudson.plugins.groovy.StringSystemScriptSource'
+                children().size() == 1
+                script[0].children().size() == 3
+                script[0].script[0].value() == "println 'Hello World!'"
+                script[0].sandbox[0].value() == false
+                script[0].classpath[0].children().size() == 0
+            }
+        }
+        1 * jobManagement.requirePlugin('groovy')
+
+        when:
+        context.systemGroovyCommand('acme.Acme.doSomething()') {
+            binding('foo', 'bar')
+            binding('test', '0815')
+            classpath('file:/foo/acme.jar')
+            classpath('file:/foo/test.jar')
+            sandbox()
+        }
+
+        then:
+        context.stepNodes.size() == 2
+        with (context.stepNodes[1]) {
+            name() == 'hudson.plugins.groovy.SystemGroovy'
+            children().size() == 2
+            bindings[0].value() == 'foo=bar\ntest=0815'
+            with(source[0]) {
+                attribute('class') == 'hudson.plugins.groovy.StringSystemScriptSource'
+                children().size() == 1
+                script[0].children().size() == 3
+                script[0].script[0].value() == 'acme.Acme.doSomething()'
+                script[0].sandbox[0].value() == true
+                script[0].classpath[0].children().size() == 2
+                script[0].classpath[0].entry[0].children().size() == 1
+                script[0].classpath[0].entry[0].url[0].value() == 'file:/foo/acme.jar'
+                script[0].classpath[0].entry[1].children().size() == 1
+                script[0].classpath[0].entry[1].url[0].value() == 'file:/foo/test.jar'
+            }
+        }
+        1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
+    }
+
+    def 'call systemGroovyCommand with invalid classpath and plugin version 2.0'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0') >> true
+
+        when:
+        context.systemGroovyCommand('acme.Acme.doSomething()') {
+            classpath('/foo/acme.jar')
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'call systemGroovyScriptFile methods with plugin version 2.0'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0') >> true
+
+        when:
+        context.systemGroovyScriptFile('scripts/hello.groovy')
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.plugins.groovy.SystemGroovy'
+            bindings.size() == 1
+            bindings[0].value() == ''
+            source.size() == 1
+            with(source[0]) {
+                attribute('class') == 'hudson.plugins.groovy.FileSystemScriptSource'
+                scriptFile.size() == 1
+                scriptFile[0].value() == 'scripts/hello.groovy'
+            }
+        }
+        1 * jobManagement.requirePlugin('groovy')
+
+        when:
+        context.systemGroovyScriptFile('acme.groovy') {
+            binding('foo', 'bar')
+            binding('test', '0815')
+            classpath('/foo/acme.jar')
+            classpath('/foo/test.jar')
+        }
+
+        then:
+        context.stepNodes.size() == 2
+        with(context.stepNodes[1]) {
+            name() == 'hudson.plugins.groovy.SystemGroovy'
+            bindings.size() == 1
+            bindings[0].value() == 'foo=bar\ntest=0815'
+            source.size() == 1
+            with(source[0]) {
+                attribute('class') == 'hudson.plugins.groovy.FileSystemScriptSource'
+                scriptFile.size() == 1
+                scriptFile[0].value() == 'acme.groovy'
+            }
+        }
+        1 * jobManagement.requirePlugin('groovy')
+    }
+
     def 'call copyArtifacts selector variants'() {
         when:
         context.copyArtifacts('upstream') {

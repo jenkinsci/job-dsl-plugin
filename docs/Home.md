@@ -29,6 +29,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.67 (unreleased)
+  * Enhanced support for the [Groovy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin)
+    ([JENKINS-44256](https://issues.jenkins-ci.org/browse/JENKINS-44256))
 * 1.66 (October 14 2017)
   * Enhanced support for the [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin)
     ([#1067](https://github.com/jenkinsci/job-dsl-plugin/pull/1067))
