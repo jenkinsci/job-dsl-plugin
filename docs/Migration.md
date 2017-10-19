@@ -1,3 +1,10 @@
+## Migrating to 1.67
+
+### Groovy Plugin
+
+Support for versions older than 2.0 of the [Groovy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.66
 
 ### Notification

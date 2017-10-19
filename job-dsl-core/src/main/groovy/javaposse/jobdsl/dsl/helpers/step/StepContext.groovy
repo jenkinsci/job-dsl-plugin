@@ -348,7 +348,7 @@ class StepContext extends AbstractExtensibleContext {
         groovy(fileName, false, groovyName, groovyClosure)
     }
 
-    protected groovyScriptSource(String commandOrFileName, boolean isCommand) {
+    protected Node groovyScriptSource(String commandOrFileName, boolean isCommand) {
         new NodeBuilder().scriptSource(class: "hudson.plugins.groovy.${isCommand ? 'String' : 'File'}ScriptSource") {
             if (isCommand) {
                 command commandOrFileName
@@ -359,6 +359,8 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     protected groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
+        jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+
         GroovyContext groovyContext = new GroovyContext()
         ContextHelper.executeInContext(groovyClosure, groovyContext)
 
@@ -379,8 +381,39 @@ class StepContext extends AbstractExtensibleContext {
      * Executes a system Groovy script.
      */
     @RequiresPlugin(id = 'groovy')
-    void systemGroovyCommand(String command, @DslContext(SystemGroovyContext) Closure systemGroovyClosure = null) {
-        systemGroovy(command, true, systemGroovyClosure)
+    void systemGroovyCommand(String command, @DslContext(SystemGroovyCommandContext) Closure closure = null) {
+        jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+
+        SystemGroovyCommandContext systemGroovyContext = new SystemGroovyCommandContext(jobManagement)
+        ContextHelper.executeInContext(closure, systemGroovyContext)
+
+        Node systemGroovyNode = new NodeBuilder().'hudson.plugins.groovy.SystemGroovy' {
+            bindings systemGroovyContext.bindings.collect { key, value -> "${key}=${value}" }.join('\n')
+            if (!jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0')) {
+                classpath systemGroovyContext.classpathEntries.join(File.pathSeparator)
+            }
+        }
+        Node scriptSource
+        if (jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0')) {
+            scriptSource = new NodeBuilder().source(class: 'hudson.plugins.groovy.StringSystemScriptSource') {
+                script {
+                    script(command)
+                    sandbox(systemGroovyContext.sandbox)
+                    classpath {
+                        systemGroovyContext.classpathEntries.each { path ->
+                            entry {
+                                url(path)
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            scriptSource = groovyScriptSource(command, true)
+        }
+        systemGroovyNode.append(scriptSource)
+
+        stepNodes << systemGroovyNode
     }
 
     /**
@@ -388,18 +421,26 @@ class StepContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'groovy')
     void systemGroovyScriptFile(String fileName, @DslContext(SystemGroovyContext) Closure systemGroovyClosure = null) {
-        systemGroovy(fileName, false, systemGroovyClosure)
-    }
+        jobManagement.logPluginDeprecationWarning('groovy', '2.0')
 
-    protected systemGroovy(String commandOrFileName, boolean isCommand, Closure systemGroovyClosure) {
         SystemGroovyContext systemGroovyContext = new SystemGroovyContext()
         ContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
 
         Node systemGroovyNode = new NodeBuilder().'hudson.plugins.groovy.SystemGroovy' {
             bindings systemGroovyContext.bindings.collect { key, value -> "${key}=${value}" }.join('\n')
-            classpath systemGroovyContext.classpathEntries.join(File.pathSeparator)
+            if (!jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0')) {
+                classpath systemGroovyContext.classpathEntries.join(File.pathSeparator)
+            }
         }
-        systemGroovyNode.append(groovyScriptSource(commandOrFileName, isCommand))
+        Node scriptSource
+        if (jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0')) {
+            scriptSource = new NodeBuilder().source(class: 'hudson.plugins.groovy.FileSystemScriptSource') {
+                scriptFile fileName
+            }
+        } else {
+            scriptSource = groovyScriptSource(fileName, false)
+        }
+        systemGroovyNode.append(scriptSource)
 
         stepNodes << systemGroovyNode
     }
