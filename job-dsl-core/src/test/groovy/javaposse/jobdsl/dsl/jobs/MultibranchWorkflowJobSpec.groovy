@@ -56,4 +56,12 @@ class MultibranchWorkflowJobSpec extends Specification {
                     '120000'
         }
     }
+
+    def 'can add scriptPath'() {
+        when:
+        job.scriptPath('dir/Jenkinsfile')
+
+        then:
+        job.node.factory[0].scriptPath.text() == 'dir/Jenkinsfile'
+    }
 }

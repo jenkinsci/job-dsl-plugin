@@ -24,4 +24,13 @@ class MultibranchWorkflowJob extends ComputedFolder {
             }
         }
     }
+
+    /**
+     * Sets non-default Jenkinsfile location.
+     */
+    void scriptPath(String path) {
+        configure {
+            it / factory / methodMissing('scriptPath', path)
+        }
+    }
 }
