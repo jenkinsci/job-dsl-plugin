@@ -48,9 +48,8 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
 
                 GroovyShell groovyShell = groovyShellCache[key]
                 if (!groovyShell) {
-                    ClassLoader classLoader = prepareClassLoader(AbstractDslScriptLoader.classLoader)
                     groovyShell = new GroovyShell(
-                            new URLClassLoader(scriptRequest.urlRoots, classLoader),
+                            prepareClassLoader(scriptRequest.urlRoots, AbstractDslScriptLoader.classLoader),
                             new Binding(),
                             config
                     )
@@ -65,8 +64,13 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
             }
         } finally {
             groovyShellCache.values().each { GroovyShell groovyShell ->
-                groovyShell.classLoader.close()
-                groovyShell.classLoader.parent.close()
+                ClassLoader classLoader = groovyShell.classLoader
+                while (classLoader != AbstractDslScriptLoader.classLoader) {
+                    if (classLoader instanceof Closeable) {
+                        ((Closeable) classLoader).close()
+                    }
+                    classLoader = classLoader.parent
+                }
             }
         }
         generatedItems
@@ -112,8 +116,11 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
         }
     }
 
-    protected ClassLoader prepareClassLoader(ClassLoader classLoader) {
-        classLoader
+    /**
+     * @since 1.67
+     */
+    protected ClassLoader prepareClassLoader(URL[] urlRoots, ClassLoader classLoader) {
+        new URLClassLoader(urlRoots, classLoader)
     }
 
     protected GroovyCodeSource createGroovyCodeSource(ScriptRequest scriptRequest) {

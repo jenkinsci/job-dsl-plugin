@@ -33,7 +33,7 @@ class ScriptApprovalDslScriptLoader extends SecureDslScriptLoader {
     }
 
     protected Collection<ScriptRequest> createSecureScriptRequests(Collection<ScriptRequest> scriptRequests) {
-        super.createSecureScriptRequests(scriptRequests).each {
+        scriptRequests.collect {
             if (it.body) {
                 ScriptApproval.get().configuring(
                         it.body,
@@ -41,6 +41,9 @@ class ScriptApprovalDslScriptLoader extends SecureDslScriptLoader {
                         ApprovalContext.create().withItem(seedJob)
                 )
             }
+
+            // it is not safe to use additional classpath entries
+            new ScriptRequest(it.body, new URL[0], it.ignoreExisting, it.scriptPath)
         }
     }
 }

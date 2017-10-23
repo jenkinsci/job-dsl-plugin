@@ -1442,6 +1442,123 @@ class ExecuteDslScriptsSpec extends Specification {
         ScriptApproval.get().pendingSignatures*.signature == ['staticMethod java.lang.System exit int']
     }
 
+    def 'run script in sandbox with import from workspace'() {
+        setup:
+        String script = 'import Helper\njob(Helper.computeName()) { description("foo") }'
+
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+                .grant(Jenkins.READ, Item.READ, Item.CONFIGURE, Item.CREATE, Computer.BUILD, Item.WORKSPACE)
+                .everywhere().to('dev')
+
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
+        build.workspace.child('Helper.groovy').write('class Helper { static computeName() { "foo" } }', 'UTF-8')
+        job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
+        setupQIA('dev', job)
+
+        when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().login('dev').getPage(job, 'configure').getFormByName('config'))
+
+        then:
+        assert ScriptApproval.get().pendingScripts*.script == []
+
+        when:
+        build = job.scheduleBuild2(0).get()
+
+        then:
+        build.result == SUCCESS
+        assert ScriptApproval.get().pendingScripts*.script == []
+    }
+
+    def 'cannot run script in sandbox with import from workspace without WORKSPACE permission'() {
+        setup:
+        String script = 'import Helper\njob(Helper.computeName()) { description("foo") }'
+
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+                .grant(Jenkins.READ, Item.READ, Item.CONFIGURE, Item.CREATE, Computer.BUILD).everywhere().to('dev')
+
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
+        build.workspace.child('Helper.groovy').write('class Helper { static computeName() { "foo" } }', 'UTF-8')
+        job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
+        setupQIA('dev', job)
+
+        when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().login('dev').getPage(job, 'configure').getFormByName('config'))
+
+        then:
+        assert ScriptApproval.get().pendingScripts*.script == []
+
+        when:
+        build = job.scheduleBuild2(0).get()
+
+        then:
+        build.result == FAILURE
+        build.log.contains('unable to resolve class Helper')
+        ScriptApproval.get().pendingSignatures.isEmpty()
+    }
+
+    def 'run script in sandbox with import from workspace with unapproved signature'() {
+        setup:
+        String script = 'import Helper\njob(Helper.boom()) { description("foo") }'
+
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+                .grant(Jenkins.READ, Item.READ, Item.CONFIGURE, Item.CREATE, Computer.BUILD, Item.WORKSPACE)
+                .everywhere().to('dev')
+
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
+        build.workspace.child('Helper.groovy').write('class Helper { static boom() { System.exit(0) } }', 'UTF-8')
+        job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
+        setupQIA('dev', job)
+
+        when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().login('dev').getPage(job, 'configure').getFormByName('config'))
+
+        then:
+        assert ScriptApproval.get().pendingScripts*.script == []
+
+        when:
+        build = job.scheduleBuild2(0).get()
+
+        then:
+        build.result == FAILURE
+        ScriptApproval.get().pendingSignatures*.signature == ['staticMethod java.lang.System exit int']
+    }
+
+    def 'cannot import compiled class from workspace'() {
+        setup:
+        String script = 'import ScriptHelper\njob(ScriptHelper.foo()) { description("foo") }'
+
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+                .grant(Jenkins.READ, Item.READ, Item.CONFIGURE, Item.CREATE, Computer.BUILD, Item.WORKSPACE)
+                .everywhere().to('dev')
+
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
+        build.workspace.child('ScriptHelper.class').copyFrom(getClass().getResourceAsStream('/ScriptHelper.class'))
+        job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
+        setupQIA('dev', job)
+
+        when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().login('dev').getPage(job, 'configure').getFormByName('config'))
+
+        then:
+        assert ScriptApproval.get().pendingScripts*.script == []
+
+        when:
+        build = job.scheduleBuild2(0).get()
+
+        then:
+        build.result == FAILURE
+        build.log.contains('Scripts not permitted to use staticMethod ScriptHelper foo')
+        ScriptApproval.get().pendingSignatures*.signature == ['staticMethod ScriptHelper foo']
+    }
+
     def 'cannot run script in sandbox without queue item authentication'() {
         setup:
         String script = 'job("test") { description("foo") }'

@@ -29,6 +29,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.67 (unreleased)
+  * Allow import of Groovy code from the workspace when script security sandbox is enabled
+    ([#1078](https://github.com/jenkinsci/job-dsl-plugin/pull/1078))
   * Enhanced support for the [Groovy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin)
     ([JENKINS-44256](https://issues.jenkins-ci.org/browse/JENKINS-44256))
   * Support for the older versions of the [Groovy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin) is

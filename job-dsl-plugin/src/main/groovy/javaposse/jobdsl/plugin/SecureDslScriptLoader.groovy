@@ -14,10 +14,10 @@ abstract class SecureDslScriptLoader extends JenkinsDslScriptLoader {
         super.runScripts(createSecureScriptRequests(scriptRequests))
     }
 
-    protected Collection<ScriptRequest> createSecureScriptRequests(Collection<ScriptRequest> scriptRequests) {
-        scriptRequests.collect {
-            // it is not safe to use additional classpath entries
-            new ScriptRequest(it.body, new URL[0], it.ignoreExisting, it.scriptPath)
-        }
+    @Override
+    protected ClassLoader prepareClassLoader(URL[] urlRoots, ClassLoader classLoader) {
+        new URLClassLoader([] as URL[], classLoader)
     }
+
+    protected abstract Collection<ScriptRequest> createSecureScriptRequests(Collection<ScriptRequest> scriptRequests)
 }
