@@ -1423,6 +1423,32 @@ class ExecuteDslScriptsSpec extends Specification {
         assert ScriptApproval.get().pendingScripts*.script == []
     }
 
+    def 'run script with dynamic DSL in sandbox'() {
+        setup:
+        String script = 'job("test") { triggers { cron { spec("@daily") } } }'
+
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+                .grant(Jenkins.READ, Item.READ, Item.CONFIGURE, Item.CREATE, Computer.BUILD).everywhere().to('dev')
+
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
+        setupQIA('dev', job)
+
+        when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().login('dev').getPage(job, 'configure').getFormByName('config'))
+
+        then:
+        assert ScriptApproval.get().pendingScripts*.script == []
+
+        when:
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
+
+        then:
+        build.result == SUCCESS
+        assert ScriptApproval.get().pendingScripts*.script == []
+    }
+
     def 'run script in sandbox with unapproved signature'() {
         setup:
         String script = 'System.exit(0)'
