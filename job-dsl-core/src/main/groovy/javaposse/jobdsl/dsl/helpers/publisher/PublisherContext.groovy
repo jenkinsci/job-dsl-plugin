@@ -1024,21 +1024,14 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.23
      */
-    @RequiresPlugin(id = 'stashNotifier')
+    @RequiresPlugin(id = 'stashNotifier', minimumVersion = '1.11.6')
     void stashNotifier(@DslContext(StashNotifierContext) Closure stashNotifierClosure = null) {
-        jobManagement.logPluginDeprecationWarning('stashNotifier', '1.11.6')
-
         StashNotifierContext context = new StashNotifierContext(jobManagement)
         ContextHelper.executeInContext(stashNotifierClosure, context)
 
         publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.stashNotifier.StashNotifier' {
             stashServerBaseUrl(context.serverBaseUrl ?: '')
-            if (jobManagement.isMinimumPluginVersionInstalled('stashNotifier', '1.9.0')) {
-                credentialsId(context.credentialsId ?: '')
-            } else {
-                stashUserName()
-                stashUserPassword()
-            }
+            credentialsId(context.credentialsId ?: '')
             ignoreUnverifiedSSLPeer(context.ignoreUnverifiedSSLCertificates)
             commitSha1(context.commitSha1 ?: '')
             includeBuildNumberInKey(context.keepRepeatedBuilds)
@@ -1443,25 +1436,19 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.35
      */
-    @RequiresPlugin(id = 'join', minimumVersion = '1.15')
+    @RequiresPlugin(id = 'join', minimumVersion = '1.21')
     void joinTrigger(@DslContext(JoinTriggerContext) Closure joinTriggerClosure) {
-        jobManagement.logPluginDeprecationWarning('join', '1.21')
-
         JoinTriggerContext joinTriggerContext = new JoinTriggerContext(jobManagement, item)
         ContextHelper.executeInContext(joinTriggerClosure, joinTriggerContext)
 
         publisherNodes << new NodeBuilder().'join.JoinTrigger' {
             joinProjects(joinTriggerContext.projects.join(', '))
             joinPublishers(joinTriggerContext.publisherContext.publisherNodes)
-            if (jobManagement.isMinimumPluginVersionInstalled('join', '1.20')) {
-                resultThreshold {
-                    name(joinTriggerContext.resultThreshold)
-                    ordinal(THRESHOLD_ORDINAL_MAP[joinTriggerContext.resultThreshold])
-                    color(THRESHOLD_COLOR_MAP[joinTriggerContext.resultThreshold])
-                    completeBuild(THRESHOLD_COMPLETED_BUILD[joinTriggerContext.resultThreshold])
-                }
-            } else {
-                evenIfDownstreamUnstable(joinTriggerContext.evenIfDownstreamUnstable)
+            resultThreshold {
+                name(joinTriggerContext.resultThreshold)
+                ordinal(THRESHOLD_ORDINAL_MAP[joinTriggerContext.resultThreshold])
+                color(THRESHOLD_COLOR_MAP[joinTriggerContext.resultThreshold])
+                completeBuild(THRESHOLD_COMPLETED_BUILD[joinTriggerContext.resultThreshold])
             }
         }
     }
