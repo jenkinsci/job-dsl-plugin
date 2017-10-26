@@ -24,6 +24,19 @@ class StepContextSpec extends Specification {
         shellStep.command[0].value() == 'echo "Hello"'
     }
 
+    def 'call shell method with unstableReturn'() {
+        when:
+        context.shell('echo "Hello"', '128')
+
+        then:
+        context.stepNodes != null
+        context.stepNodes.size() == 1
+        def shellStep = context.stepNodes[0]
+        shellStep.name() == 'hudson.tasks.Shell'
+        shellStep.command[0].value() == 'echo "Hello"'
+        shellStep.unstableReturn[0].value() == '128'
+    }
+
     def 'call remoteShell method with minimal options'() {
         when:
         context.remoteShell('root@example.com:22') {

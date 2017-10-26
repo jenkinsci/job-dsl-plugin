@@ -35,9 +35,12 @@ class StepContext extends AbstractExtensibleContext {
      * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
      * the script from a file.
      */
-    void shell(String command) {
+    void shell(String command, String unstableReturn = null) {
         stepNodes << new NodeBuilder().'hudson.tasks.Shell' {
             delegate.command(command)
+            if (unstableReturn != null) {
+                delegate.unstableReturn(unstableReturn)
+            }
         }
     }
 
