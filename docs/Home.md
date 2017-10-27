@@ -31,6 +31,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.67 (unreleased)
   * Enhanced support for the [Groovy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin)
     ([JENKINS-44256](https://issues.jenkins-ci.org/browse/JENKINS-44256))
+  * Enhanced support for the
+    [Pipeline Multibranch Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin)
+    ([#1079](https://github.com/jenkinsci/job-dsl-plugin/pull/1079))
   * Support for the older versions of the [Groovy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin) is
     deprecated, see [Migration](Migration#migrating-to-167)
   * Removed anything that has been deprecated in 1.61, see [Migration](Migration#migrating-to-161)

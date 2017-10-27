@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.helpers.workflow.BranchSourcesContext
+import javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext
 
 class MultibranchWorkflowJob extends ComputedFolder {
     MultibranchWorkflowJob(JobManagement jobManagement, String name) {
@@ -22,6 +23,25 @@ class MultibranchWorkflowJob extends ComputedFolder {
             context.branchSourceNodes.each {
                 project / sources / data << it
             }
+        }
+    }
+
+    /**
+     * Sets the project factories for this folder.
+     *
+     * @since 1.67
+     */
+    void factory(@DslContext(MultiBranchProjectFactoryContext) Closure closure) {
+        MultiBranchProjectFactoryContext context = new MultiBranchProjectFactoryContext(jobManagement, this)
+        ContextHelper.executeInContext(closure, context)
+
+        configure { Node project ->
+            Node factory = project / factory
+            if (factory) {
+                project.remove(factory)
+            }
+
+            project << ContextHelper.toNamedNode('factory', context.projectFactoryNodes[0])
         }
     }
 }

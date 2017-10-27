@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext
 import spock.lang.Specification
 
 class MultibranchWorkflowJobSpec extends Specification {
@@ -54,6 +55,26 @@ class MultibranchWorkflowJobSpec extends Specification {
         with(job.node) {
             triggers[0].'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger'[0].interval[0].text() ==
                     '120000'
+        }
+    }
+
+    def 'can set the factory'() {
+        setup:
+        jobManagement.callExtension('factory1', job, MultiBranchProjectFactoryContext, []) >>
+                new Node(null, 'org.example.MultiBranchProjectFactory1')
+
+        when:
+        job.factory {
+            factory1()
+        }
+
+        then:
+        with(job.node) {
+            factory.size() == 1
+            with(factory[0]) {
+                children().size() == 0
+                attribute('class') == 'org.example.MultiBranchProjectFactory1'
+            }
         }
     }
 }
