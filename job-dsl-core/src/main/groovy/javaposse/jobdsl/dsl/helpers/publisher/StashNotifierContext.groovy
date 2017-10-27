@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.publisher
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class StashNotifierContext extends AbstractContext {
     String serverBaseUrl
@@ -29,7 +28,6 @@ class StashNotifierContext extends AbstractContext {
      *
      * @since 1.61
      */
-    @RequiresPlugin(id = 'stashNotifier', minimumVersion = '1.9.0')
     void credentialsId(String credentialsId) {
         this.credentialsId = credentialsId
     }

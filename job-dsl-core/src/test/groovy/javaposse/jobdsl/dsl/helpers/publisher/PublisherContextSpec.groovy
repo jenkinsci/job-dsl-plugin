@@ -3133,83 +3133,6 @@ class PublisherContextSpec extends Specification {
         context.publisherNodes.size() == 1
         with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
-            children().size() == 6
-            stashServerBaseUrl[0].value().empty
-            stashUserName[0].value().empty
-            stashUserPassword[0].value().empty
-            ignoreUnverifiedSSLPeer[0].value() == false
-            commitSha1[0].value() == ''
-            includeBuildNumberInKey[0].value() == false
-        }
-        1 * jobManagement.requirePlugin('stashNotifier')
-        1 * jobManagement.logPluginDeprecationWarning('stashNotifier', '1.11.6')
-    }
-
-    def 'stashNotifier with configuration of all parameters'() {
-        when:
-        context.stashNotifier {
-            serverBaseUrl('test')
-            commitSha1('sha1')
-            keepRepeatedBuilds(true)
-            ignoreUnverifiedSSLCertificates(true)
-        }
-
-        then:
-        context.publisherNodes != null
-        context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
-            children().size() == 6
-            stashServerBaseUrl[0].value() == 'test'
-            stashUserName[0].value().empty
-            stashUserPassword[0].value().empty
-            ignoreUnverifiedSSLPeer[0].value() == true
-            commitSha1[0].value() == 'sha1'
-            includeBuildNumberInKey[0].value() == true
-        }
-        1 * jobManagement.requirePlugin('stashNotifier')
-        1 * jobManagement.logPluginDeprecationWarning('stashNotifier', '1.11.6')
-    }
-
-    def 'stashNotifier with configuration of all parameters using defaults for boolean parameter'() {
-        when:
-        context.stashNotifier {
-            serverBaseUrl('test')
-            commitSha1('sha1')
-            keepRepeatedBuilds()
-            ignoreUnverifiedSSLCertificates()
-        }
-
-        then:
-        context.publisherNodes != null
-        context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
-            children().size() == 6
-            stashServerBaseUrl[0].value() == 'test'
-            stashUserName[0].value().empty
-            stashUserPassword[0].value().empty
-            ignoreUnverifiedSSLPeer[0].value() == true
-            commitSha1[0].value() == 'sha1'
-            includeBuildNumberInKey[0].value() == true
-        }
-        1 * jobManagement.requirePlugin('stashNotifier')
-        1 * jobManagement.logPluginDeprecationWarning('stashNotifier', '1.11.6')
-    }
-
-    def 'stashNotifier with default configuration and plugin version 1.9.0'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('stashNotifier', '1.9.0') >> true
-
-        when:
-        context.stashNotifier {
-        }
-
-        then:
-        context.publisherNodes != null
-        context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.stashNotifier.StashNotifier'
             children().size() == 5
             stashServerBaseUrl[0].value().empty
             credentialsId[0].value().empty
@@ -3217,21 +3140,17 @@ class PublisherContextSpec extends Specification {
             commitSha1[0].value() == ''
             includeBuildNumberInKey[0].value() == false
         }
-        1 * jobManagement.requirePlugin('stashNotifier')
-        1 * jobManagement.logPluginDeprecationWarning('stashNotifier', '1.11.6')
+        1 * jobManagement.requireMinimumPluginVersion('stashNotifier', '1.11.6')
     }
 
-    def 'stashNotifier with configuration of all parameters and plugin version 1.9.0'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('stashNotifier', '1.9.0') >> true
-
+    def 'stashNotifier with configuration of all parameters'() {
         when:
         context.stashNotifier {
             serverBaseUrl('test')
             credentialsId('foo')
             commitSha1('sha1')
-            keepRepeatedBuilds(true)
-            ignoreUnverifiedSSLCertificates(true)
+            keepRepeatedBuilds()
+            ignoreUnverifiedSSLCertificates()
         }
 
         then:
@@ -3246,9 +3165,7 @@ class PublisherContextSpec extends Specification {
             commitSha1[0].value() == 'sha1'
             includeBuildNumberInKey[0].value() == true
         }
-        1 * jobManagement.requirePlugin('stashNotifier')
-        1 * jobManagement.requireMinimumPluginVersion('stashNotifier', '1.9.0')
-        1 * jobManagement.logPluginDeprecationWarning('stashNotifier', '1.11.6')
+        1 * jobManagement.requireMinimumPluginVersion('stashNotifier', '1.11.6')
     }
 
     def 'mavenDeploymentLinker with regex'() {
@@ -4985,59 +4902,6 @@ class PublisherContextSpec extends Specification {
             children().size() == 3
             joinProjects[0].value() == ''
             joinPublishers[0].value().empty
-            evenIfDownstreamUnstable[0].value() == false
-        }
-        1 * jobManagement.requireMinimumPluginVersion('join', '1.15')
-        1 * jobManagement.logPluginDeprecationWarning('join', '1.21')
-    }
-
-    def 'joinTrigger with all options'() {
-        when:
-        context.joinTrigger {
-            projects('one')
-            projects('two', 'three')
-            publishers {
-                downstreamParameterized {
-                    trigger('upload-to-staging') {
-                        parameters {
-                            currentBuild()
-                        }
-                    }
-                }
-            }
-            evenIfDownstreamUnstable()
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'join.JoinTrigger'
-            children().size() == 3
-            joinProjects[0].value() == 'one, two, three'
-            with(joinPublishers[0]) {
-                children().size() == 1
-                children()[0].name() == 'hudson.plugins.parameterizedtrigger.BuildTrigger'
-                children()[0].children().size() == 1
-            }
-            evenIfDownstreamUnstable[0].value() == true
-        }
-        1 * jobManagement.requireMinimumPluginVersion('join', '1.15')
-        1 * jobManagement.logPluginDeprecationWarning('join', '1.21')
-    }
-
-    def 'joinTrigger with no options and plugin version 1.20'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('join', '1.20') >> true
-
-        when:
-        context.joinTrigger {
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'join.JoinTrigger'
-            children().size() == 3
-            joinProjects[0].value() == ''
-            joinPublishers[0].value().empty
             with(resultThreshold[0]) {
                 children().size() == 4
                 name[0].value() == 'SUCCESS'
@@ -5046,14 +4910,10 @@ class PublisherContextSpec extends Specification {
                 completeBuild[0].value() == true
             }
         }
-        1 * jobManagement.requireMinimumPluginVersion('join', '1.15')
-        1 * jobManagement.logPluginDeprecationWarning('join', '1.21')
+        1 * jobManagement.requireMinimumPluginVersion('join', '1.21')
     }
 
-    def 'joinTrigger with all options and plugin version 1.20'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('join', '1.20') >> true
-
+    def 'joinTrigger with all options'() {
         when:
         context.joinTrigger {
             projects('one')
@@ -5088,9 +4948,7 @@ class PublisherContextSpec extends Specification {
                 completeBuild[0].value() == true
             }
         }
-        1 * jobManagement.requireMinimumPluginVersion('join', '1.15')
-        1 * jobManagement.requireMinimumPluginVersion('join', '1.20')
-        1 * jobManagement.logPluginDeprecationWarning('join', '1.21')
+        1 * jobManagement.requireMinimumPluginVersion('join', '1.21')
     }
 
     def 'joinTrigger with unsupported publisher'() {

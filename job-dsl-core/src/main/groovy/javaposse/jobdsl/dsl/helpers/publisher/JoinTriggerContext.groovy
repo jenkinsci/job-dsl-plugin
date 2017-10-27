@@ -6,14 +6,12 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COLOR_MAP
 
 class JoinTriggerContext extends AbstractContext {
     final List<String> projects = []
     final PublisherContext publisherContext
-    boolean evenIfDownstreamUnstable
     String resultThreshold = 'SUCCESS'
 
     protected JoinTriggerContext(JobManagement jobManagement, Item item) {
@@ -45,14 +43,6 @@ class JoinTriggerContext extends AbstractContext {
     }
 
     /**
-     * If set, runs the projects even if the downstream jobs are unstable. Defaults to {@code false}.
-     */
-    @Deprecated
-    void evenIfDownstreamUnstable(boolean evenIfDownstreamUnstable = true) {
-        this.evenIfDownstreamUnstable = evenIfDownstreamUnstable
-    }
-
-    /**
      * The result threshold of the downstream projects to be checked. The join projects will be started only when all
      * downstream projects have results that are better then selected. Defaults to {@code 'SUCCESS'}.
      *
@@ -60,7 +50,6 @@ class JoinTriggerContext extends AbstractContext {
      *
      * @since 1.61
      */
-    @RequiresPlugin(id = 'join', minimumVersion = '1.20')
     void resultThreshold(String threshold) {
         Preconditions.checkArgument(
                 THRESHOLD_COLOR_MAP.containsKey(threshold),
