@@ -12,6 +12,11 @@ We are always happy for folk to help us out on this project. Please follow these
     
 ### New Features
 
+Before opening a feature request or submitting a pull request, make sure that the feature is not already supported by
+the [Automatically Generated DSL](docs/Automatically-Generated-DSL.md). Feature requests or pull requests for features
+already supported by Automatically Generated DSL are likely to be rejected since it's not feasible to add support for
+every config option of each of the 1000+ plugins available in the Update Center.
+
 * Feature Requests - Create a "New Feature" issue on the
   [Jenkins JIRA](https://issues.jenkins-ci.org/browse/JENKINS/component/16720/). Remember to add the `job-dsl-plugin`
   component.
