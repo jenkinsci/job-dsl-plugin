@@ -3607,8 +3607,7 @@ class PublisherContextSpec extends Specification {
             scriptOnlyIfFailure[0].value() == false
             markBuildUnstable[0].value() == false
         }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-        1 * jobManagement.logDeprecationWarning()
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.18')
     }
 
     def 'call post build scripts with all options'() {
@@ -3632,8 +3631,7 @@ class PublisherContextSpec extends Specification {
             scriptOnlyIfFailure[0].value() == value
             markBuildUnstable[0].value() == value
         }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-        1 * jobManagement.logDeprecationWarning()
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.18')
 
         where:
         value << [true, false]
@@ -3658,8 +3656,7 @@ class PublisherContextSpec extends Specification {
             markBuildUnstable[0].value() == false
             executeOn[0].value() == 'BOTH'
         }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-        1 * jobManagement.logDeprecationWarning()
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.18')
     }
 
     def 'call post build scripts with all options and matrix job'() {
@@ -3689,8 +3686,7 @@ class PublisherContextSpec extends Specification {
             markBuildUnstable[0].value() == true
             executeOn[0].value() == mode
         }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-        1 * jobManagement.logDeprecationWarning()
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.18')
 
         where:
         mode << ['MATRIX', 'AXES', 'BOTH']
