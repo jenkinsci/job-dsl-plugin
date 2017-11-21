@@ -9,6 +9,7 @@ class GitCloneOptionsContext extends AbstractContext {
     String reference
     Integer timeout
     boolean honorRefspec
+    Integer depth
 
     GitCloneOptionsContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -51,5 +52,13 @@ class GitCloneOptionsContext extends AbstractContext {
      */
     void honorRefspec(boolean honorRefspec = true) {
         this.honorRefspec = honorRefspec
+    }
+
+    /**
+     * Set shallow clone depth, so that git will only download recent history of the project, saving time and
+     * disk space when you just want to access the latest version of a repository.
+     */
+    void depth(int depth = 0) {
+        this.depth = depth
     }
 }
