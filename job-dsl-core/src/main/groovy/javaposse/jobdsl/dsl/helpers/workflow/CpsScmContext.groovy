@@ -11,6 +11,7 @@ class CpsScmContext extends AbstractContext {
     protected final Item item
 
     String scriptPath = 'JenkinsFile'
+    boolean lightweight = false
     ScmContext scmContext = new ScmContext(jobManagement, item)
 
     CpsScmContext(JobManagement jobManagement, Item item) {
@@ -31,5 +32,13 @@ class CpsScmContext extends AbstractContext {
      */
     void scriptPath(String scriptPath) {
         this.scriptPath = scriptPath
+    }
+
+    /**
+     * If selected, try to obtain the Pipeline script contents directly from the SCM without performing
+     * a full checkout.
+     */
+    void lightweight(boolean lightweight) {
+        this.lightweight = lightweight
     }
 }

@@ -51,6 +51,7 @@ class WorkflowDefinitionContext extends AbstractExtensibleContext {
         definitionNode = new NodeBuilder().
                 definition(class: 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition') {
             scriptPath(context.scriptPath)
+            lightweight(context.lightweight)
         }
         definitionNode.children().add(context.scmContext.scmNodes[0])
     }
