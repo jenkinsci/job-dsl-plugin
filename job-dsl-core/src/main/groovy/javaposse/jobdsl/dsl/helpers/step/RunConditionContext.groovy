@@ -105,6 +105,26 @@ class RunConditionContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Only runs the build steps during a certain days of the week.
+     */
+    void dayCondition(boolean useBuildTime, int... days) {
+        this.condition = new NodeBuilder().'org.jenkins_ci.plugins.run_condition.core.DayCondition' {
+            delegate.useBuildTime(useBuildTime)
+            delegate.daySelector(class: 'org.jenkins_ci.plugins.run_condition.core.DayCondition$SelectDays') {
+                delegate.days() {
+                    for (int i = 1; i <= 7; i++) {
+                        delegate.'org.jenkins__ci.plugins.run__condition.core.DayCondition_-Day'() {
+                            delegate.selected(days.contains(i))
+                            delegate.day(i)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
      * Runs the build steps if the current build status is within the configured range.
      *
      * The values must be one of {@code 'SUCCESS'}, {@code 'UNSTABLE'}, {@code 'FAILURE'}, {@code 'NOT_BUILT'} or

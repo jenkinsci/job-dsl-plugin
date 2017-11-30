@@ -132,6 +132,34 @@ class RunConditionContextSpec extends Specification {
         }
     }
 
+	def 'day condition'() {
+        when:
+        context.dayCondition(true, 2)
+
+        then:
+        with(context.condition) {
+            name() == 'org.jenkins_ci.plugins.run_condition.core.DayCondition'
+            useBuildTime[0].value() == true
+            children().size() == 2
+            daySelector[0].@class == 'org.jenkins_ci.plugins.run_condition.core.DayCondition$SelectDays'
+            with(daySelector[0]) {
+            	with(days[0]) {
+                	children().size() == 7
+                	with(children()[0]) {
+                		name() == 'org.jenkins__ci.plugins.run__condition.core.DayCondition_-Day'
+                		children().size() == 2
+                		selected[0].value() == false
+                		day[0].value() == 1
+                	}
+                	with(children()[1]) {
+                		selected[0].value() == true
+                		day[0].value() == 2
+                	}
+                }
+            }
+        }
+    }
+
     def 'status condition validation'(String worst, String best) {
         when:
         context.status(worst, best)
