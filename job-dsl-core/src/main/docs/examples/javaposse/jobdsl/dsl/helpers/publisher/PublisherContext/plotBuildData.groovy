@@ -32,6 +32,8 @@ job('example-3') {
                 keepRecords()
                 excludeZero()
                 logarithmic()
+                yAxisMinimum(10.0)
+                yAxisMaximum(100.0)
                 propertiesFile('my_data.properties') {
                     label('Builds')
                 }

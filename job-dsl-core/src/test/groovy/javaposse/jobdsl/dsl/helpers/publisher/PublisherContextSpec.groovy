@@ -3771,7 +3771,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -3783,6 +3783,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
                     children().size() == 3
                     file[0].value() == 'data.prop'
@@ -3805,6 +3807,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords()
                 excludeZero()
                 logarithmic()
+                yAxisMinimum(50.0)
+                yAxisMaximum(100.0)
                 propertiesFile('data.prop')
             }
         }
@@ -3814,7 +3818,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value() == 'plot title'
                 yaxis[0].value() == 'yaxis title'
                 group[0].value() == 'my group'
@@ -3826,6 +3830,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == true
                 exclZero[0].value() == true
                 logarithmic[0].value() == true
+                yaxisMinimum[0].value() == 50.0
+                yaxisMaximum[0].value() == 100.0
                 with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
                     children().size() == 3
                     file[0].value() == 'data.prop'
@@ -3853,7 +3859,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -3865,6 +3871,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
                     children().size() == 3
                     file[0].value() == 'data.prop'
@@ -3892,7 +3900,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -3904,6 +3912,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.XMLSeries'[0]) {
                     children().size() == 6
                     file[0].value() == 'data.prop'
@@ -3935,7 +3945,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -3947,6 +3957,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.XMLSeries'[0]) {
                     children().size() == 6
                     file[0].value() == 'data.prop'
@@ -3974,7 +3986,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -3986,6 +3998,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
                     children().size() == 7
                     file[0].value() == 'data.prop'
@@ -4017,7 +4031,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -4029,6 +4043,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
                     children().size() == 7
                     file[0].value() == 'data.prop'
@@ -4059,7 +4075,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -4071,6 +4087,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
                     children().size() == 8
                     file[0].value() == 'data.prop'
@@ -4106,7 +4124,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -4118,6 +4136,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
                     children().size() == 8
                     file[0].value() == 'data.prop'
@@ -4154,7 +4174,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -4166,6 +4186,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
                     children().size() == 8
                     file[0].value() == 'data.prop'
@@ -4201,7 +4223,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -4213,6 +4235,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
                     children().size() == 8
                     file[0].value() == 'data.prop'
@@ -4249,7 +4273,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -4261,6 +4285,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
                     children().size() == 8
                     file[0].value() == 'data.prop'
@@ -4296,7 +4322,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -4308,6 +4334,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
                     children().size() == 8
                     file[0].value() == 'data.prop'
@@ -4344,7 +4372,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -4356,6 +4384,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
                     children().size() == 8
                     file[0].value() == 'data.prop'
@@ -4391,7 +4421,7 @@ class PublisherContextSpec extends Specification {
             name() == 'hudson.plugins.plot.PlotPublisher'
             children().size() == 1
             with(plots.'hudson.plugins.plot.Plot'[0]) {
-                children().size() == 12
+                children().size() == 14
                 title[0].value().empty
                 yaxis[0].value().empty
                 group[0].value() == 'my group'
@@ -4403,6 +4433,8 @@ class PublisherContextSpec extends Specification {
                 keepRecords[0].value() == false
                 exclZero[0].value() == false
                 logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
                 with(series[0].'hudson.plugins.plot.CSVSeries'[0]) {
                     children().size() == 8
                     file[0].value() == 'data.prop'

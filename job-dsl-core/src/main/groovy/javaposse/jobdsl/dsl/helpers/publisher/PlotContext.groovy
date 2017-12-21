@@ -23,6 +23,8 @@ class PlotContext implements Context {
     boolean keepRecords
     boolean excludeZero
     boolean logarithmic
+    Double yAxisMinimum
+    Double yAxisMaximum
 
     PlotContext(String group, String dataStore) {
         this.group = group
@@ -86,6 +88,20 @@ class PlotContext implements Context {
      */
     void logarithmic(boolean logarithmic = true) {
         this.logarithmic = logarithmic
+    }
+
+    /**
+     * Specifies the minimum value for the y-axis.
+     */
+    void yAxisMinimum(Double yAxisMinimum) {
+        this.yAxisMinimum = yAxisMinimum
+    }
+
+    /**
+     * Specifies the maximum value for the y-axis.
+     */
+    void yAxisMaximum(Double yAxisMaximum) {
+        this.yAxisMaximum = yAxisMaximum
     }
 
     /**

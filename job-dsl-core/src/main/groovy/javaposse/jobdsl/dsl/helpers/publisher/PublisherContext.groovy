@@ -329,6 +329,8 @@ class PublisherContext extends AbstractExtensibleContext {
                         keepRecords(plot.keepRecords)
                         exclZero(plot.excludeZero)
                         logarithmic(plot.logarithmic)
+                        yaxisMinimum(plot.yAxisMinimum ?: '')
+                        yaxisMaximum(plot.yAxisMaximum ?: '')
                     }
                 }
             }
