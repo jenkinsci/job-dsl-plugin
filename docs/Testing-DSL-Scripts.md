@@ -49,9 +49,8 @@ when running the DSL scripts, e.g. for testing [[extensions|Extending the DSL]] 
         testCompile 'org.spockframework:spock-core:0.7-groovy-1.8'
 
         // Jenkins test harness dependencies
-        testCompile 'org.jenkins-ci.main:jenkins-test-harness:2.8'
+        testCompile 'org.jenkins-ci.main:jenkins-test-harness:2.33'
         testCompile "org.jenkins-ci.main:jenkins-war:${jenkinsVersion}"
-        testCompile "org.jenkins-ci.main:jenkins-war:${jenkinsVersion}:war-for-test@jar"
 
         // Job DSL plugin including plugin dependencies
         testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}"
