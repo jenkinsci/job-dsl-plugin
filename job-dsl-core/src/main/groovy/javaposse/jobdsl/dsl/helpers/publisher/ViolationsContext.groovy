@@ -4,7 +4,7 @@ import groovy.transform.Canonical
 import javaposse.jobdsl.dsl.Context
 
 class ViolationsContext implements Context {
-    private static final VALID_TYPES = [
+    private static final Set<String> VALID_TYPES = [
             'checkstyle', 'codenarc', 'cpd', 'cpplint', 'csslint', 'findbugs', 'fxcop', 'gendarme',
             'jcreport', 'jslint', 'pep8', 'perlcritic', 'pmd', 'pylint', 'simian', 'stylecop', 'jshint'
     ]
@@ -164,7 +164,8 @@ class ViolationsContext implements Context {
         addEntry('jshint', min, max, unstable, pattern)
     }
 
-    private static createEntry(Integer min = null, Integer max = null, Integer unstable = null, String pattern = null) {
+    private static ViolationsEntry createEntry(Integer min = null, Integer max = null, Integer unstable = null,
+                                               String pattern = null) {
         new ViolationsEntry(
                 min: min == null ? 10 : min,
                 max: max == null ? 999 : max,
@@ -173,7 +174,7 @@ class ViolationsContext implements Context {
         )
     }
 
-    private addEntry(String key, Integer min, Integer max, Integer unstable, String pattern) {
+    private void addEntry(String key, Integer min, Integer max, Integer unstable, String pattern) {
         entries[key] = createEntry(min, max, unstable, pattern)
     }
 

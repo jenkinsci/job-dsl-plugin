@@ -5,8 +5,8 @@ import javaposse.jobdsl.dsl.Preconditions
 
 class StaticAnalysisContext implements Context {
     private static final List<String> THRESHOLD_LIMITS = ['low', 'normal', 'high']
-    private static final ALLOWED_THRESHOLDS = ['unstableTotal', 'failedTotal', 'unstableNew', 'failedNew']
-    private static final ALLOWED_THRESHOLD_TYPES = THRESHOLD_LIMITS + 'all'
+    private static final Set<String> ALLOWED_THRESHOLDS = ['unstableTotal', 'failedTotal', 'unstableNew', 'failedNew']
+    private static final Set<String> ALLOWED_THRESHOLD_TYPES = THRESHOLD_LIMITS + 'all'
 
     Integer healthy
     Integer unHealthy
@@ -31,7 +31,7 @@ class StaticAnalysisContext implements Context {
     /**
      * If set, also runs when the build has failed. Defaults to {@code false}.
      */
-    void canRunOnFailed(canRunOnFailed = true) {
+    void canRunOnFailed(Object canRunOnFailed = true) {
         this.canRunOnFailed = canRunOnFailed
     }
 
@@ -81,7 +81,7 @@ class StaticAnalysisContext implements Context {
      * If set, computes new warnings based on the last successful build.
      * This is set automatically if the {@code unstableNew} or {@code failedNew} thresholds are used.
      */
-    void computeNew(computeNew) {
+    void computeNew(Object computeNew) {
         this.dontComputeNew = !computeNew
     }
 

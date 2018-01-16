@@ -42,7 +42,6 @@ class UrlTriggerEntryContextSpec extends Specification {
 
         then:
         thrown(DslScriptException)
-
     }
 
     def 'check invalid check causes exception'() {
@@ -54,6 +53,5 @@ class UrlTriggerEntryContextSpec extends Specification {
 
         then:
         thrown(DslScriptException)
-
     }
 }

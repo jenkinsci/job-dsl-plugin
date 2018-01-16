@@ -329,6 +329,7 @@ class TriggerContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.4.0')
     }
 
+    @SuppressWarnings('UnnecessarySetter') // false positive for setBuildDescription
     def 'call gitlabPush trigger with all options and name based filter'() {
         when:
         context.gitlabPush {
@@ -375,6 +376,7 @@ class TriggerContextSpec extends Specification {
         value << [true, false]
     }
 
+    @SuppressWarnings('UnnecessarySetter') // false positive for setBuildDescription
     def 'call gitlabPush trigger with all options and regex based filter'() {
         when:
         context.gitlabPush {

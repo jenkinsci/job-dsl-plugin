@@ -9,12 +9,12 @@ import java.util.concurrent.atomic.AtomicBoolean
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 
 class JobSpec extends Specification {
-    private final resourcesDir = new File(getClass().getResource('/simple.dsl').toURI()).parentFile
+    private final File resourcesDir = new File(getClass().getResource('/simple.dsl').toURI()).parentFile
     private final JobManagement jobManagement = Mock(JobManagement)
     private Job job = new TestJob(jobManagement)
 
     def setup() {
-        XMLUnit.setIgnoreWhitespace(true)
+        XMLUnit.ignoreWhitespace = true
     }
 
     def 'load an empty template from a manually constructed job and generate xml from it'() {
@@ -290,7 +290,6 @@ class JobSpec extends Specification {
         then:
         job.node.description.size() == 1
         job.node.description[0].value() == 'Description2'
-
     }
 
     def 'environments work with map arg'() {

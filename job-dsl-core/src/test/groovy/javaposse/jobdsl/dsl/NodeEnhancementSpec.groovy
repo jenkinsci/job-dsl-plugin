@@ -16,7 +16,6 @@ class NodeEnhancementSpec extends Specification {
         trigger.attributes()['class'] == 'vector'
         root.triggers.size() == 1
         root.triggers[0] == trigger
-
     }
 
     def 'lookup up nodes with attribute with attributes'() {

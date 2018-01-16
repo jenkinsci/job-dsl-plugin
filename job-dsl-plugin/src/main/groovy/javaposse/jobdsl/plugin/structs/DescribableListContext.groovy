@@ -38,7 +38,7 @@ class DescribableListContext implements Context {
         this.jobManagement = jobManagement
     }
 
-    Object methodMissing(String name, args) {
+    Object methodMissing(String name, Object args) {
         Object[] argsArray = (Object[]) args
         if (isOptionalClosureArgument(argsArray)) {
             Collection<DescribableModel> candidates = findDescribableModels(describableModels, name)

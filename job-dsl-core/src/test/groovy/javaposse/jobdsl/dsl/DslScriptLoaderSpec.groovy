@@ -5,7 +5,7 @@ import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 
 class DslScriptLoaderSpec extends Specification {
-    private final resourcesDir = getClass().getResource('/simple.dsl')
+    private final URL resourcesDir = getClass().getResource('/simple.dsl')
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream()
     private final PrintStream ps = new PrintStream(baos)
     private final MemoryJobManagement jm = new MemoryJobManagement(ps)
@@ -93,7 +93,6 @@ class DslScriptLoaderSpec extends Specification {
         jobs.size() == 2
         jobs.any { it.jobName == 'test' }
         jobs.any { it.jobName == 'test2' }
-
     }
 
     def 'run engine with dependent jobs'() {
@@ -137,7 +136,6 @@ job('project-b') {
 
         then:
         1 * jm.renameJobMatching(/\d-project/, '5-project')
-
     }
 
     def 'run engine with reference to other class from a string'() {

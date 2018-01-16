@@ -50,7 +50,7 @@ class DescribableContext implements Context {
         describableModel.instantiate(values)
     }
 
-    Object methodMissing(String name, args) {
+    Object methodMissing(String name, Object args) {
         Object[] argsArray = (Object[]) args
         if (argsArray.length == 1) {
             Object value = argsArray[0]

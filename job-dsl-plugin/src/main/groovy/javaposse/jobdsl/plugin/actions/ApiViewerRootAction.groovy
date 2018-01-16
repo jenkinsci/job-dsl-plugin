@@ -91,7 +91,8 @@ class ApiViewerRootAction implements RootAction {
         updateCenter
     }
 
-    private static serveCachedFile(StaplerRequest request, StaplerResponse response, CachedFile file, String fileName) {
+    private static void serveCachedFile(StaplerRequest request, StaplerResponse response, CachedFile file,
+                                        String fileName) {
         response.serveFile(
                 request,
                 new ByteArrayInputStream(file.data),

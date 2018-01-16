@@ -26,7 +26,7 @@ class MissingPropertyToStringDelegate {
         writer.toString()
     }
 
-    Node methodMissing(String methodName, args) {
+    Node methodMissing(String methodName, Object args) {
         LOGGER.fine("Method missing for ${methodName} ${args}")
 
         args.each {

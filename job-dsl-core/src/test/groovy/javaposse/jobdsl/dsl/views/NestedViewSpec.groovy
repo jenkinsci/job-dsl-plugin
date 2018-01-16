@@ -2,17 +2,17 @@ package javaposse.jobdsl.dsl.views
 
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.View
+import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
-import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class NestedViewSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
     NestedView view = new NestedView(jobManagement, 'test')
 
     def setup() {
-        setIgnoreWhitespace(true)
+        XMLUnit.ignoreWhitespace = true
     }
 
     def 'defaults'() {
@@ -289,7 +289,7 @@ class NestedViewSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0', true)
     }
 
-    def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
+    String defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.nested__view.NestedView>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>
@@ -297,7 +297,7 @@ class NestedViewSpec extends Specification {
     <views></views>
 </hudson.plugins.nested__view.NestedView>'''
 
-    def nestedViewColumnsXml = '''<?xml version='1.0' encoding='UTF-8'?>
+    String nestedViewColumnsXml = '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.nested__view.NestedView>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>
@@ -311,7 +311,7 @@ class NestedViewSpec extends Specification {
     </columns>
 </hudson.plugins.nested__view.NestedView>'''
 
-    def nestedViewViewsXml = '''<hudson.plugins.nested__view.NestedView>
+    String nestedViewViewsXml = '''<hudson.plugins.nested__view.NestedView>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>
     <properties class='hudson.model.View$PropertyList'></properties>

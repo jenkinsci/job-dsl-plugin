@@ -47,7 +47,7 @@ class DslSampleSpec extends Specification {
         firstJob != null
     }
 
-    private final sampleTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    private final String sampleTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
   <description>Description</description>
@@ -128,7 +128,7 @@ class DslSampleSpec extends Specification {
 </project>
 '''
 
-    private final sampleMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    private final String sampleMavenTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <maven2-moduleset>
     <actions/>
     <description></description>
@@ -171,7 +171,7 @@ class DslSampleSpec extends Specification {
 </maven2-moduleset>
 '''
 
-    private final sampleVarDsl = '''
+    private final String sampleVarDsl = '''
 job("PROJ-${REPO}") {
     scm {
         git(gitUrl)
@@ -185,7 +185,7 @@ job("PROJ-${REPO}") {
 }
 '''
 
-    private final sampleDsl = '''
+    private final String sampleDsl = '''
 def gitUrl = 'git://github.com/JavaPosseRoundup/job-dsl-plugin.git'
 
 job('PROJ-unit-tests') {
@@ -262,7 +262,7 @@ mavenJob('PROJ-maven-with-template') {
 }
 '''
 
-    private final mavenXml = '''
+    private final String mavenXml = '''
 <maven2-moduleset>
     <actions/>
     <description></description>
@@ -308,7 +308,7 @@ mavenJob('PROJ-maven-with-template') {
 </maven2-moduleset>
 '''
 
-    private final mavenXmlWithTemplate = '''
+    private final String mavenXmlWithTemplate = '''
 <maven2-moduleset>
     <actions/>
     <description></description>

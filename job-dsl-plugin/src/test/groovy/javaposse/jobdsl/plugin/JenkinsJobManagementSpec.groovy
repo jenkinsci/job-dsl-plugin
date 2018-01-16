@@ -128,6 +128,7 @@ class JenkinsJobManagementSpec extends Specification {
         buffer.size() == 0
     }
 
+    @SuppressWarnings('UnnecessarySetter') // false positive for setResult
     def 'requirePlugin not installed'() {
         when:
         jobManagement.requirePlugin('foo')
@@ -154,6 +155,7 @@ class JenkinsJobManagementSpec extends Specification {
         thrown(DslScriptException)
     }
 
+    @SuppressWarnings('UnnecessarySetter') // false positive for setResult
     def 'requirePlugin success'() {
         when:
         jobManagement.requirePlugin('script-security', failIfMissing)
@@ -167,6 +169,7 @@ class JenkinsJobManagementSpec extends Specification {
         failIfMissing << [true, false]
     }
 
+    @SuppressWarnings('UnnecessarySetter') // false positive for setResult
     def 'checkMinimumPluginVersion not installed'() {
         when:
         jobManagement.requireMinimumPluginVersion('foo', '1.2.3')
@@ -176,6 +179,7 @@ class JenkinsJobManagementSpec extends Specification {
         buffer.size() > 0
     }
 
+    @SuppressWarnings('UnnecessarySetter') // false positive for setResult
     def 'checkMinimumPluginVersion too old'() {
         when:
         jobManagement.requireMinimumPluginVersion('ldap', '20.0')
@@ -201,6 +205,7 @@ class JenkinsJobManagementSpec extends Specification {
         thrown(DslScriptException)
     }
 
+    @SuppressWarnings('UnnecessarySetter') // false positive for setResult
     def 'checkMinimumPluginVersion success'() {
         when:
         jobManagement.requireMinimumPluginVersion('script-security', '1.1', failIfMissing)
@@ -214,6 +219,7 @@ class JenkinsJobManagementSpec extends Specification {
         failIfMissing << [true, false]
     }
 
+    @SuppressWarnings('UnnecessarySetter') // false positive for setResult
     def 'requireMinimumCoreVersion success'() {
         when:
         jobManagement.requireMinimumCoreVersion('1.480')
@@ -223,6 +229,7 @@ class JenkinsJobManagementSpec extends Specification {
         buffer.size() == 0
     }
 
+    @SuppressWarnings('UnnecessarySetter') // false positive for setResult
     def 'requireMinimumCoreVersion failed'() {
         when:
         jobManagement.requireMinimumCoreVersion('3.600')

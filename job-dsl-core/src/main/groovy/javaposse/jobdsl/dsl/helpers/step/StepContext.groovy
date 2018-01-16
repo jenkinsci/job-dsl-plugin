@@ -16,7 +16,7 @@ import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORK
 
 @ContextType('hudson.tasks.Builder')
 class StepContext extends AbstractExtensibleContext {
-    private final static VALID_BUILD_RESULTS = ['SUCCESS', 'UNSTABLE', 'FAILURE', 'ABORTED', 'CYCLE']
+    private final static Set<String> VALID_BUILD_RESULTS = ['SUCCESS', 'UNSTABLE', 'FAILURE', 'ABORTED', 'CYCLE']
 
     final List<Node> stepNodes = []
 
@@ -358,7 +358,8 @@ class StepContext extends AbstractExtensibleContext {
         }
     }
 
-    protected groovy(String commandOrFileName, boolean isCommand, String groovyInstallation, Closure groovyClosure) {
+    protected void groovy(String commandOrFileName, boolean isCommand, String groovyInstallation,
+                          Closure groovyClosure) {
         jobManagement.logPluginDeprecationWarning('groovy', '2.0')
 
         GroovyContext groovyContext = new GroovyContext()
@@ -880,7 +881,7 @@ class StepContext extends AbstractExtensibleContext {
         }
     }
 
-    private vSphereBuildStep(String server, String builder, Closure configuration) {
+    private void vSphereBuildStep(String server, String builder, Closure configuration) {
         Integer hash = jobManagement.getVSphereCloudHash(server)
         Preconditions.checkNotNull(hash, "vSphere server ${server} does not exist")
 

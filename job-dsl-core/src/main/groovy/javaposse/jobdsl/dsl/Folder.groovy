@@ -7,7 +7,7 @@ import javaposse.jobdsl.dsl.helpers.properties.FolderPropertiesContext
  * DSL element representing a Jenkins folder.
  */
 class Folder extends Item {
-    private static final AUTHORIZATION_MATRIX_PROPERTY_NAME =
+    private static final String AUTHORIZATION_MATRIX_PROPERTY_NAME =
             'com.cloudbees.hudson.plugins.folder.properties.AuthorizationMatrixProperty'
 
     Folder(JobManagement jobManagement, String name) {

@@ -372,6 +372,7 @@ class WrapperContext extends AbstractExtensibleContext {
      * @since 1.23
      */
     @RequiresPlugin(id = 'logfilesizechecker')
+    @SuppressWarnings('UnnecessarySetter') // false positive for setOwn
     void logSizeChecker(@DslContext(LogFileSizeCheckerContext) Closure closure = null) {
         LogFileSizeCheckerContext context = new LogFileSizeCheckerContext()
         ContextHelper.executeInContext(closure, context)

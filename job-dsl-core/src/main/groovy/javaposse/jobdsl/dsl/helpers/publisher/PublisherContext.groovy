@@ -127,7 +127,6 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'junit', minimumVersion = '1.10')
     void archiveJunit(String glob, @DslContext(ArchiveJUnitContext) Closure junitClosure = null) {
-
         ArchiveJUnitContext junitContext = new ArchiveJUnitContext(jobManagement)
         ContextHelper.executeInContext(junitClosure, junitContext)
 
@@ -689,6 +688,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.17
      */
     @RequiresPlugin(id = 'description-setter')
+    @SuppressWarnings('UnnecessarySetter') // false positive for setForMatrix
     void buildDescription(String regularExpression, String description = '', String regularExpressionForFailed = '',
                           String descriptionForFailed = '', boolean multiConfigurationBuild = false) {
         publisherNodes << new NodeBuilder().'hudson.plugins.descriptionsetter.DescriptionSetterPublisher' {
@@ -711,7 +711,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'text-finder')
     void textFinder(String regularExpression, String fileSet = '', boolean alsoCheckConsoleOutput = false,
-                    boolean succeedIfFound = false, unstableIfFound = false) {
+                    boolean succeedIfFound = false, Object unstableIfFound = false) {
         publisherNodes << new NodeBuilder().'hudson.plugins.textfinder.TextFinderPublisher' {
             if (fileSet) {
                 delegate.fileSet(fileSet)
@@ -881,7 +881,6 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'robot', minimumVersion = '1.4.3')
     void publishRobotFrameworkReports(@DslContext(RobotFrameworkContext) Closure robotClosure = null) {
-
         RobotFrameworkContext context = new RobotFrameworkContext(jobManagement)
         ContextHelper.executeInContext(robotClosure, context)
 
@@ -1159,7 +1158,7 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.17
      */
     @RequiresPlugin(id = 'dry')
-    void dry(String pattern, highThreshold = 50, normalThreshold = 25,
+    void dry(String pattern, Object highThreshold = 50, Object normalThreshold = 25,
              @DslContext(StaticAnalysisContext) Closure staticAnalysisClosure = null) {
         StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
         ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
@@ -1177,8 +1176,8 @@ class PublisherContext extends AbstractExtensibleContext {
      * @since 1.17
      */
     @RequiresPlugin(id = 'tasks', minimumVersion = '4.41')
-    void tasks(String pattern, excludePattern = '', high = '', normal = '', low = '', ignoreCase = false,
-               @DslContext(TaskScannerContext) Closure closure = null) {
+    void tasks(String pattern, Object excludePattern = '', Object high = '', Object normal = '', Object low = '',
+               Object ignoreCase = false, @DslContext(TaskScannerContext) Closure closure = null) {
         TaskScannerContext context = new TaskScannerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
@@ -1939,8 +1938,7 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-    @SuppressWarnings('NoDef')
-    protected static addStaticAnalysisContext(def nodeBuilder, StaticAnalysisContext context) {
+    protected static void addStaticAnalysisContext(Object nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
             healthy(context.healthy ?: '')
             unHealthy(context.unHealthy ?: '')
@@ -1962,14 +1960,12 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-    @SuppressWarnings('NoDef')
-    protected static addStaticAnalysisPattern(def nodeBuilder, String pattern) {
+    protected static void addStaticAnalysisPattern(Object nodeBuilder, String pattern) {
         nodeBuilder.pattern(pattern)
     }
 
-    @SuppressWarnings('NoDef')
-    protected static addStaticAnalysisContextAndPattern(def nodeBuilder, StaticAnalysisContext context,
-                                                        String pattern) {
+    protected static void addStaticAnalysisContextAndPattern(Object nodeBuilder, StaticAnalysisContext context,
+                                                             String pattern) {
         addStaticAnalysisContext(nodeBuilder, context)
         addStaticAnalysisPattern(nodeBuilder, pattern)
     }

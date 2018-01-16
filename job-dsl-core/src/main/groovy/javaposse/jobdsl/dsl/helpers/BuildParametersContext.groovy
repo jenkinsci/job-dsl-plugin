@@ -247,7 +247,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
         simpleParam('hudson.model.TextParameterDefinition', parameterName, defaultValue, description)
     }
 
-    private simpleParam(String type, String parameterName, Object defaultValue = null, String description = null) {
+    private void simpleParam(String type, String parameterName, Object defaultValue = null, String description = null) {
         checkParameterName(parameterName)
 
         Node definitionNode = new Node(null, type)
@@ -391,7 +391,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
                 }
     }
 
-    private checkParameterName(String name) {
+    private void checkParameterName(String name) {
         checkNotNullOrEmpty(name, 'parameterName cannot be null')
         checkArgument(!buildParameterNodes.containsKey(name), "parameter ${name} already defined")
     }
