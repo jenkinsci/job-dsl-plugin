@@ -38,12 +38,12 @@ class ContextHelperSpec extends Specification {
     final Node root = new XmlParser().parse(new StringReader(XML))
 
     def setup() {
-        Logger.getLogger('javaposse.jobdsl').setLevel(Level.ALL)
+        Logger.getLogger('javaposse.jobdsl').level = Level.ALL
 
         // Our only choice to allow lower logging is to allow it for everyone since JUL puts the handler in one place
         // and sets a horrible default
         LogManager.logManager.getLogger('').handlers.each { Handler handler ->
-            handler.setLevel(Level.ALL)
+            handler.level = Level.ALL
         }
     }
 

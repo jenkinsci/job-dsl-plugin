@@ -18,6 +18,10 @@ ruleset {
         // Spock encourages to violate this rule
         exclude 'MethodName'
         // that's OK for test code
+        exclude 'MethodParameterTypeRequired'
+        // Spock encourages to violate this rule
+        exclude 'MethodReturnTypeRequired'
+        // that's OK for test code
         exclude 'NoDef'
         // Fields annotated with @org.junit.Rule violate this rule
         exclude 'NonFinalPublicField'
@@ -27,5 +31,7 @@ ruleset {
         exclude 'UnnecessaryBooleanExpression'
         // causes false negatives
         exclude 'UnusedObject'
+        // that's OK for test code
+        exclude 'VariableTypeRequired'
     }
 }

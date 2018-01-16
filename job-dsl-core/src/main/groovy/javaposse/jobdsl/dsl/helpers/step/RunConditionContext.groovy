@@ -13,7 +13,7 @@ import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 @ContextType('org.jenkins_ci.plugins.run_condition.RunCondition')
 class RunConditionContext extends AbstractExtensibleContext {
-    private static final STATUSES = [
+    private static final Set<String> STATUSES = [
             'SUCCESS',
             'UNSTABLE',
             'FAILURE',
@@ -236,7 +236,7 @@ class RunConditionContext extends AbstractExtensibleContext {
         }
     }
 
-    private createLogic(String name, Closure... conditionClosures) {
+    private void createLogic(String name, Closure... conditionClosures) {
         List<Node> conditions = conditionClosures.collect {
             RunConditionContext context = new RunConditionContext(jobManagement, item)
             ContextHelper.executeInContext(it, context)

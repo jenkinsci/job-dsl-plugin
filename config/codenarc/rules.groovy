@@ -6,6 +6,8 @@ ruleset {
     ruleset('rulesets/concurrency.xml')
 
     ruleset('rulesets/convention.xml') {
+        // we don't care
+        exclude 'CouldBeSwitchStatement'
         // this rule does not necessarily lead to better code
         exclude 'IfStatementCouldBeTernary'
         // we don't care
@@ -48,6 +50,9 @@ ruleset {
 
         // we don't care for now
         exclude 'ClassJavadoc'
+        // causes false positives
+        exclude 'Indentation'
+
     }
 
     ruleset('rulesets/generic.xml')

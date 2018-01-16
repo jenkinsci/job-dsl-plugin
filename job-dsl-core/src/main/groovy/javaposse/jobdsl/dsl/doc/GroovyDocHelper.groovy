@@ -18,7 +18,7 @@ class GroovyDocHelper {
         rootDoc = createRootDoc(sourcePath)
     }
 
-    private static createRootDoc(String sourcePath) {
+    private static GroovyRootDoc createRootDoc(String sourcePath) {
         List filePaths = []
         File root = new File(sourcePath)
         root.eachFileRecurse { File file ->
@@ -44,7 +44,6 @@ class GroovyDocHelper {
 
     static Method getMethodFromGroovyMethodDoc(GroovyMethodDoc methodDoc, Class clazz) {
         Method method = clazz.methods.findAll { it.name == methodDoc.name() }.find { Method method ->
-
             List docParamNames = methodDoc.parameters().collect {
                 String name = it.type()?.qualifiedTypeName() ?: it.typeName()
                 if (name.startsWith('.')) {

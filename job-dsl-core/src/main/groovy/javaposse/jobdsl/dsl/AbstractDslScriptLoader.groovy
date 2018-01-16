@@ -85,6 +85,7 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
         runScripts([new ScriptRequest(script)])
     }
 
+    @SuppressWarnings('UnnecessarySetter') // must use JobParent.setJm() for some reason
     protected S runScriptEngine(ScriptRequest scriptRequest, GroovyShell groovyShell) {
         try {
             if (scriptRequest.scriptPath) {

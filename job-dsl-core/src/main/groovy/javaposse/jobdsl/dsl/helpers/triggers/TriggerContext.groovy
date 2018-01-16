@@ -177,6 +177,7 @@ class TriggerContext extends ItemTriggerContext {
      * @since 1.42
      */
     @RequiresPlugin(id = 'gitlab-plugin', minimumVersion = '1.4.0')
+    @SuppressWarnings('UnnecessarySetter') // false positive for setBuildDescription
     void gitlabPush(@DslContext(GitLabTriggerContext) Closure closure) {
         GitLabTriggerContext context = new GitLabTriggerContext(jobManagement)
         ContextHelper.executeInContext(closure, context)

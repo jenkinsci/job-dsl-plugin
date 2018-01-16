@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.Context
 
 class RcovContext implements Context {
-    private static final VALID_TYPES = ['TOTAL_COVERAGE', 'CODE_COVERAGE']
+    private static final Set<String> VALID_TYPES = ['TOTAL_COVERAGE', 'CODE_COVERAGE']
 
     final Map<String, MetricEntry> entries = VALID_TYPES.collectEntries { [it, createEntry()] }
     String reportDirectory
@@ -31,11 +31,11 @@ class RcovContext implements Context {
         addEntry('CODE_COVERAGE', healthy, unhealthy, unstable)
     }
 
-    private static createEntry(int healthy = 80, int unhealthy = 0, int unstable = 0) {
+    private static MetricEntry createEntry(int healthy = 80, int unhealthy = 0, int unstable = 0) {
         new MetricEntry(healthy: healthy, unhealthy: unhealthy, unstable: unstable)
     }
 
-    private addEntry(String key, int healthy, int unhealthy, int unstable) {
+    private void addEntry(String key, int healthy, int unhealthy, int unstable) {
         entries[key] = createEntry(healthy, unhealthy, unstable)
     }
 

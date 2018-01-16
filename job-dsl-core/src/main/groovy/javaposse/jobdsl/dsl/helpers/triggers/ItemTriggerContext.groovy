@@ -74,10 +74,8 @@ class ItemTriggerContext extends AbstractExtensibleContext {
                                     }
                                 }
                             }
-
                         }
                     }
-
                 }
             }
         }

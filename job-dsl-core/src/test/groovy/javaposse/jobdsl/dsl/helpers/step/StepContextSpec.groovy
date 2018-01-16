@@ -1875,7 +1875,6 @@ class StepContextSpec extends Specification {
         with(context.stepNodes[0]) {
             name() == 'jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin'
             with(delegate.delegate[0]) {
-
                 consolePrefix[0].value() == 'SSH: '
                 with(delegate.delegate[0]) {
                     with(publishers[0]) {
@@ -3007,6 +3006,7 @@ class StepContextSpec extends Specification {
         (1.._) * jobManagement.requirePlugin('rake')
     }
 
+    @SuppressWarnings('UnnecessarySetter') // false positive for setBuildResult
     def 'call setBuildResult'() {
         when:
         context.setBuildResult(result)
@@ -3023,6 +3023,7 @@ class StepContextSpec extends Specification {
         result << ['SUCCESS', 'UNSTABLE', 'FAILURE', 'ABORTED', 'CYCLE']
     }
 
+    @SuppressWarnings('UnnecessarySetter') // false positive for setBuildResult
     def 'call setBuildResult with invalid result'() {
         when:
         context.setBuildResult('FOO')
@@ -3701,7 +3702,6 @@ class StepContextSpec extends Specification {
             nantName[0].value() == '(Default)'
         }
         1 * jobManagement.requireMinimumPluginVersion('nant', '1.4.3')
-
     }
 
     def 'call nant with all options'() {

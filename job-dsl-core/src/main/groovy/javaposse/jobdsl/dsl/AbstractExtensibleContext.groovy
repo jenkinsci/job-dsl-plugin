@@ -11,7 +11,7 @@ abstract class AbstractExtensibleContext extends AbstractContext implements Exte
         this.item = item
     }
 
-    Object methodMissing(String name, args) {
+    Object methodMissing(String name, Object args) {
         Object[] argsArray = (Object[]) args
         Class<? extends ExtensibleContext> contextType = this.class as Class<? extends ExtensibleContext>
         Node node = jobManagement.callExtension(name, item, contextType, argsArray)

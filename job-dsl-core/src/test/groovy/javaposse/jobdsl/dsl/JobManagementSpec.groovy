@@ -1,8 +1,7 @@
 package javaposse.jobdsl.dsl
 
+import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
-
-import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class JobManagementSpec extends Specification {
     def 'get non-existent config'() {
@@ -29,7 +28,7 @@ class JobManagementSpec extends Specification {
 
     def 'create new config - name not provided (NULL)'() {
         setup:
-        setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
+        XMLUnit.ignoreWhitespace = true
         JobManagement jm = new MemoryJobManagement()
         Item item = Mock(Item)
         item.name >> null
@@ -44,7 +43,7 @@ class JobManagementSpec extends Specification {
 
     def 'create new config - name not provided (EMPTY)'() {
         setup:
-        setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
+        XMLUnit.ignoreWhitespace = true
         JobManagement jm = new MemoryJobManagement()
         Item item = Mock(Item)
         item.name >> ''
@@ -59,7 +58,7 @@ class JobManagementSpec extends Specification {
 
     def 'create new config - config XML not provided (NULL)'() {
         setup:
-        setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
+        XMLUnit.ignoreWhitespace = true
         JobManagement jm = new MemoryJobManagement()
         Item item = Mock(Item, constructorArgs: [jm, 'NEW-JOB-NAME'])
         item.xml >> null
@@ -73,7 +72,7 @@ class JobManagementSpec extends Specification {
 
     def 'create new config - config XML not provided (EMPTY)'() {
         setup:
-        setIgnoreWhitespace(Boolean.TRUE); // XMLUnit
+        XMLUnit.ignoreWhitespace = true
         JobManagement jm = new MemoryJobManagement()
         Item item = Mock(Item, constructorArgs: [jm, 'NEW-JOB-NAME'])
         item.xml >> ''
@@ -85,7 +84,7 @@ class JobManagementSpec extends Specification {
         thrown(ConfigurationMissingException)
     }
 
-    private final minimalXml = '''
+    private final String minimalXml = '''
 <project>
   <actions/>
   <description/>

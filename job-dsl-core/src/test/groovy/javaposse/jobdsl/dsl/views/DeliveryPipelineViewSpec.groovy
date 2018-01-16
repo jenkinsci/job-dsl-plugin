@@ -3,17 +3,17 @@ package javaposse.jobdsl.dsl.views
 import groovy.text.SimpleTemplateEngine
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView.Sorting
+import org.custommonkey.xmlunit.XMLUnit
 import spock.lang.Specification
 
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
-import static org.custommonkey.xmlunit.XMLUnit.setIgnoreWhitespace
 
 class DeliveryPipelineViewSpec extends Specification {
     JobManagement jobManagement = Mock(JobManagement)
     DeliveryPipelineView view = new DeliveryPipelineView(jobManagement, 'test')
 
     def setup() {
-        setIgnoreWhitespace(true)
+        XMLUnit.ignoreWhitespace = true
     }
 
     def 'defaults'() {
@@ -75,7 +75,7 @@ class DeliveryPipelineViewSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.3')
     }
 
-    def defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
+    String defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
 <se.diabol.jenkins.pipeline.DeliveryPipelineView>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>
@@ -90,7 +90,7 @@ class DeliveryPipelineViewSpec extends Specification {
     <allowManualTriggers>false</allowManualTriggers>
 </se.diabol.jenkins.pipeline.DeliveryPipelineView>'''
 
-    def sortingXmlTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
+    String sortingXmlTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
 <se.diabol.jenkins.pipeline.DeliveryPipelineView>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>
@@ -105,7 +105,7 @@ class DeliveryPipelineViewSpec extends Specification {
     <allowManualTriggers>false</allowManualTriggers>
 </se.diabol.jenkins.pipeline.DeliveryPipelineView>'''
 
-    def allOptionsXml = '''<?xml version='1.0' encoding='UTF-8'?>
+    String allOptionsXml = '''<?xml version='1.0' encoding='UTF-8'?>
 <se.diabol.jenkins.pipeline.DeliveryPipelineView>
     <filterExecutors>false</filterExecutors>
     <filterQueue>false</filterQueue>

@@ -108,7 +108,7 @@ class AxisContext extends AbstractExtensibleContext {
         configureBlocks << configureBlock
     }
 
-    private simpleAxis(String axisType, String axisName, Iterable<String> axisValues) {
+    private void simpleAxis(String axisType, String axisName, Iterable<String> axisValues) {
         NodeBuilder nodeBuilder = new NodeBuilder()
 
         axisNodes << nodeBuilder."hudson.matrix.${axisType}Axis" {
