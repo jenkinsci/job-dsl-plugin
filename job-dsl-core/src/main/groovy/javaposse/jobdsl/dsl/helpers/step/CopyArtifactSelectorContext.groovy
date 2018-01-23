@@ -10,10 +10,13 @@ import javaposse.jobdsl.dsl.RequiresPlugin
 
 @ContextType('hudson.plugins.copyartifact.BuildSelector')
 class CopyArtifactSelectorContext extends AbstractExtensibleContext {
+
+    final String classifier
     Node selector
 
-    CopyArtifactSelectorContext(JobManagement jobManagement, Item item) {
+    CopyArtifactSelectorContext(JobManagement jobManagement, Item item, String classifier = 'selector') {
         super(jobManagement, item)
+        this.classifier = classifier
         latestSuccessful()
     }
 
@@ -122,10 +125,10 @@ class CopyArtifactSelectorContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.22')
     void multiJobBuild() {
-        selector = new NodeBuilder().'selector'(class: 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector')
+        selector = new NodeBuilder()."$classifier"(class: 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector')
     }
 
     private void createSelectorNode(String type, Closure nodeBuilder = null) {
-        selector = new NodeBuilder().'selector'(class: "hudson.plugins.copyartifact.${type}Selector", nodeBuilder)
+        selector = new NodeBuilder()."$classifier"(class: "hudson.plugins.copyartifact.${type}Selector", nodeBuilder)
     }
 }
