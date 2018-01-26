@@ -38,6 +38,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the
     [Pipeline Multibranch Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin)
     ([#1079](https://github.com/jenkinsci/job-dsl-plugin/pull/1079))
+  * Fixed compatibility with Jenkins Remoting whitelist
+    ([JENKINS-49175](https://issues.jenkins-ci.org/browse/JENKINS-49175))
   * Support for the older versions of the [Groovy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin) is
     deprecated, see [Migration](Migration#migrating-to-167)
   * Removed anything that has been deprecated in 1.61, see [Migration](Migration#migrating-to-161)
