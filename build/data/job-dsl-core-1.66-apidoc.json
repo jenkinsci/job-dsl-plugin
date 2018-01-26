@@ -1,5 +1,5 @@
 {
-    "version": "1.67",
+    "version": "1.66",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -9276,6 +9276,23 @@
             "type": "javaposse.jobdsl.dsl.helpers.publisher.JoinTriggerContext",
             "methods": [
                 {
+                    "name": "evenIfDownstreamUnstable",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "evenIfDownstreamUnstable",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "deprecated": true,
+                            "html": "If set, runs the projects even if the downstream jobs are unstable. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "If set, runs the projects even if the downstream jobs are unstable. "
+                        }
+                    ]
+                },
+                {
                     "name": "projects",
                     "signatures": [
                         {
@@ -9317,6 +9334,12 @@
                                 }
                             ],
                             "availableSince": "1.61",
+                            "plugins": [
+                                {
+                                    "id": "join",
+                                    "minimumVersion": "1.20"
+                                }
+                            ],
                             "html": "The result threshold of the downstream projects to be checked. The join projects will be started only when all\r\n downstream projects have results that are better then selected. Defaults to <CODE>'SUCCESS'</CODE>.\r\n\r\n Possible thresholds are <CODE>'SUCCESS'</CODE>, <CODE>'UNSTABLE'</CODE>, <CODE>'FAILURE'</CODE> or <CODE>'ABORTED'</CODE>.",
                             "firstSentenceCommentText": "The result threshold of the downstream projects to be checked. "
                         }
@@ -13464,68 +13487,6 @@
                 }
             ]
         },
-        "javaposse.jobdsl.dsl.helpers.step.SystemGroovyCommandContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.step.SystemGroovyCommandContext",
-            "methods": [
-                {
-                    "name": "binding",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "value",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Adds a variable binding for the script. Can be called multiple times to add more bindings.",
-                            "firstSentenceCommentText": "Adds a variable binding for the script. "
-                        }
-                    ]
-                },
-                {
-                    "name": "classpath",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "classpath",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Specifies the script classpath. Can be called multiple times to add more entries.",
-                            "firstSentenceCommentText": "Specifies the script classpath. "
-                        }
-                    ]
-                },
-                {
-                    "name": "sandbox",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "sandbox",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.67",
-                            "plugins": [
-                                {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
-                                }
-                            ],
-                            "html": "If set, run the Groovy script in a sandbox with limited abilities. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "If set, run the Groovy script in a sandbox with limited abilities. "
-                        }
-                    ]
-                }
-            ]
-        },
         "javaposse.jobdsl.dsl.helpers.step.SystemGroovyContext": {
             "type": "javaposse.jobdsl.dsl.helpers.step.SystemGroovyContext",
             "methods": [
@@ -15126,7 +15087,7 @@
                                     "type": "String"
                                 },
                                 {
-                                    "name": "closure",
+                                    "name": "systemGroovyClosure",
                                     "type": "Closure",
                                     "defaultValue": "null"
                                 }
@@ -15138,7 +15099,7 @@
                             ],
                             "html": "Executes a system Groovy script.",
                             "firstSentenceCommentText": "Executes a system Groovy script.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.step.SystemGroovyCommandContext"
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.step.SystemGroovyContext"
                         }
                     ],
                     "examples": "job('example') {\r\n    steps {\r\n        systemGroovyCommand(readFileFromWorkspace('disconnect-slave.groovy')) {\r\n            binding('computerName', 'ubuntu-04')\r\n        }\r\n    }\r\n}"
@@ -16501,6 +16462,12 @@
                                 }
                             ],
                             "availableSince": "1.61",
+                            "plugins": [
+                                {
+                                    "id": "stashNotifier",
+                                    "minimumVersion": "1.9.0"
+                                }
+                            ],
                             "html": "Sets credentials for authentication with the Stash server.",
                             "firstSentenceCommentText": "Sets credentials for authentication with the Stash server."
                         }
@@ -18940,7 +18907,7 @@
                             "plugins": [
                                 {
                                     "id": "join",
-                                    "minimumVersion": "1.21"
+                                    "minimumVersion": "1.15"
                                 }
                             ],
                             "html": "Runs a job after all immediate downstream jobs have completed.",
@@ -19695,8 +19662,7 @@
                             "availableSince": "1.23",
                             "plugins": [
                                 {
-                                    "id": "stashNotifier",
-                                    "minimumVersion": "1.11.6"
+                                    "id": "stashNotifier"
                                 }
                             ],
                             "html": "Notifies an Atlassian Stash instance of Jenkins builds in progress and of their results.",
@@ -21278,7 +21244,7 @@
                             "plugins": [
                                 {
                                     "id": "join",
-                                    "minimumVersion": "1.21"
+                                    "minimumVersion": "1.15"
                                 }
                             ],
                             "html": "Runs a job after all immediate downstream jobs have completed.",
@@ -22033,8 +21999,7 @@
                             "availableSince": "1.23",
                             "plugins": [
                                 {
-                                    "id": "stashNotifier",
-                                    "minimumVersion": "1.11.6"
+                                    "id": "stashNotifier"
                                 }
                             ],
                             "html": "Notifies an Atlassian Stash instance of Jenkins builds in progress and of their results.",
@@ -33955,7 +33920,7 @@
                             "plugins": [
                                 {
                                     "id": "join",
-                                    "minimumVersion": "1.21"
+                                    "minimumVersion": "1.15"
                                 }
                             ],
                             "html": "Runs a job after all immediate downstream jobs have completed.",
@@ -34710,8 +34675,7 @@
                             "availableSince": "1.23",
                             "plugins": [
                                 {
-                                    "id": "stashNotifier",
-                                    "minimumVersion": "1.11.6"
+                                    "id": "stashNotifier"
                                 }
                             ],
                             "html": "Notifies an Atlassian Stash instance of Jenkins builds in progress and of their results.",
@@ -38714,7 +38678,7 @@
                                     "type": "String"
                                 },
                                 {
-                                    "name": "closure",
+                                    "name": "systemGroovyClosure",
                                     "type": "Closure",
                                     "defaultValue": "null"
                                 }
@@ -38726,7 +38690,7 @@
                             ],
                             "html": "Executes a system Groovy script.",
                             "firstSentenceCommentText": "Executes a system Groovy script.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.step.SystemGroovyCommandContext"
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.step.SystemGroovyContext"
                         }
                     ],
                     "examples": "job('example') {\r\n    steps {\r\n        systemGroovyCommand(readFileFromWorkspace('disconnect-slave.groovy')) {\r\n            binding('computerName', 'ubuntu-04')\r\n        }\r\n    }\r\n}"
@@ -40059,12 +40023,6 @@
                 }
             ]
         },
-        "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext",
-            "methods": [
-                
-            ]
-        },
         "javaposse.jobdsl.dsl.helpers.workflow.DefaultOrphanedItemStrategyContext": {
             "type": "javaposse.jobdsl.dsl.helpers.workflow.DefaultOrphanedItemStrategyContext",
             "methods": [
@@ -40306,23 +40264,6 @@
                         }
                     ],
                     "examples": "folder('project-a') {\r\n    displayName('Project A')\r\n}"
-                },
-                {
-                    "name": "factory",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.67",
-                            "html": "Sets the project factories for this folder.",
-                            "firstSentenceCommentText": "Sets the project factories for this folder.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext"
-                        }
-                    ]
                 },
                 {
                     "name": "orphanedItemStrategy",
@@ -41297,6 +41238,12 @@
         },
         "javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext": {
             "type": "javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext",
+            "methods": [
+                
+            ]
+        },
+        "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext",
             "methods": [
                 
             ]
