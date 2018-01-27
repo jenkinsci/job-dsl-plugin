@@ -29,6 +29,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.68 (unreleased)
+  * Un-deprecated support for the
+    [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin)
+    ([JENKINS-43637](https://issues.jenkins-ci.org/browse/JENKINS-43637))
 * 1.67 (January 26 2018)
   * Allow import of Groovy code from the workspace when script security sandbox is enabled
     ([#1078](https://github.com/jenkinsci/job-dsl-plugin/pull/1078))
