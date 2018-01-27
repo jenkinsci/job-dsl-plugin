@@ -148,8 +148,6 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     see [Migration](Migration#migrating-to-162)
   * Support for the [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-162)
-  * Support for the [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin) is
-    deprecated, see [Migration](Migration#migrating-to-162)
   * Support for the [ArtifactDeployer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ArtifactDeployer+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-162)
   * Support for the [Subversion Tagging Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Tagging+Plugin)
