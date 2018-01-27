@@ -3608,7 +3608,6 @@ class PublisherContextSpec extends Specification {
             markBuildUnstable[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call post build scripts with all options'() {
@@ -3633,7 +3632,6 @@ class PublisherContextSpec extends Specification {
             markBuildUnstable[0].value() == value
         }
         1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-        1 * jobManagement.logDeprecationWarning()
 
         where:
         value << [true, false]
@@ -3659,7 +3657,6 @@ class PublisherContextSpec extends Specification {
             executeOn[0].value() == 'BOTH'
         }
         1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call post build scripts with all options and matrix job'() {
@@ -3690,7 +3687,6 @@ class PublisherContextSpec extends Specification {
             executeOn[0].value() == mode
         }
         1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-        1 * jobManagement.logDeprecationWarning()
 
         where:
         mode << ['MATRIX', 'AXES', 'BOTH']
