@@ -70,6 +70,7 @@ class WorkflowJobSpec extends Specification {
             scriptPath[0].value() == 'JenkinsFile'
         }
         1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
+        1 * jobManagement.logPluginDeprecationWarning('workflow-cps', '2.29')
     }
 
     def 'minimal cps scm workflow with newer plugin version'() {
@@ -95,6 +96,7 @@ class WorkflowJobSpec extends Specification {
             lightweight[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
+        1 * jobManagement.logPluginDeprecationWarning('workflow-cps', '2.29')
     }
 
     def 'full cps scm workflow'() {
@@ -117,6 +119,7 @@ class WorkflowJobSpec extends Specification {
             scriptPath[0].value() == '.jenkins/Jenkinsfile'
         }
         1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
+        1 * jobManagement.logPluginDeprecationWarning('workflow-cps', '2.29')
     }
 
     def 'full cps scm workflow with newer plugin version'() {
@@ -145,6 +148,7 @@ class WorkflowJobSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
         1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '2.29')
+        1 * jobManagement.logPluginDeprecationWarning('workflow-cps', '2.29')
     }
 
     def 'cps scm workflow without scm'() {

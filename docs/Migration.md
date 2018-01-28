@@ -1,3 +1,11 @@
+## Migrating to 1.68
+
+### Pipeline Groovy Plugin
+
+Support for versions older than 2.29 of the
+[Pipeline Groovy Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Groovy+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.67
 
 ### Groovy Plugin

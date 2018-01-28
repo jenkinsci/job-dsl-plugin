@@ -42,6 +42,8 @@ class WorkflowDefinitionContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'workflow-cps', minimumVersion = '1.2')
     void cpsScm(@DslContext(CpsScmContext) Closure cpsScmClosure) {
+        jobManagement.logPluginDeprecationWarning('workflow-cps', '2.29')
+
         CpsScmContext context = new CpsScmContext(jobManagement, item)
         ContextHelper.executeInContext(cpsScmClosure, context)
 
