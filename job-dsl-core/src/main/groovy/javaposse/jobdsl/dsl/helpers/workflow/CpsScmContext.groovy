@@ -5,12 +5,14 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.ScmContext
 
 class CpsScmContext extends AbstractContext {
     protected final Item item
 
     String scriptPath = 'JenkinsFile'
+    boolean lightweight
     ScmContext scmContext = new ScmContext(jobManagement, item)
 
     CpsScmContext(JobManagement jobManagement, Item item) {
@@ -31,5 +33,16 @@ class CpsScmContext extends AbstractContext {
      */
     void scriptPath(String scriptPath) {
         this.scriptPath = scriptPath
+    }
+
+    /**
+     * If selected, try to obtain the Pipeline script contents directly from the SCM without performing
+     * a full checkout. Defaults to {@code false}.
+     *
+     * @since 1.68
+     */
+    @RequiresPlugin(id = 'workflow-cps', minimumVersion = '2.29')
+    void lightweight(boolean lightweight = true) {
+        this.lightweight = lightweight
     }
 }
