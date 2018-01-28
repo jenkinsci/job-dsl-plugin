@@ -3601,13 +3601,13 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
-            children().size() == 4
-            buildSteps[0].children().size == 0
-            scriptOnlyIfSuccess[0].value() == true
-            scriptOnlyIfFailure[0].value() == false
-            markBuildUnstable[0].value() == false
+            children().size() == 1
+            config[0].scriptFiles[0].children().size == 0
+            config[0].groovyScripts[0].children().size == 0
+            config[0].buildSteps[0].children().size == 0
+            config[0].markBuildUnstable[0].value() == false
         }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '2.3.0')
     }
 
     def 'call post build scripts with all options'() {
@@ -3624,14 +3624,21 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
-            children().size() == 4
-            buildSteps[0].children().size == 1
-            buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
-            scriptOnlyIfSuccess[0].value() == value
-            scriptOnlyIfFailure[0].value() == value
-            markBuildUnstable[0].value() == value
+            children().size() == 1
+            config[0].children().size() == 4
+            config[0].scriptFiles[0].children().size == 0
+            config[0].groovyScripts[0].children().size == 0
+            config[0].buildSteps[0].children().size == 1
+            if (value) {
+                config[0].buildSteps[0].children()[0].results[0].children()[0].value() == 'SUCCESS'
+                config[0].buildSteps[0].children()[0].results[0].children()[1].value() == 'FAILURE'
+            }
+            config[0].buildSteps[0].children()[0].role[0].value() == 'BOTH'
+            config[0].buildSteps[0].children()[0].name() == 'org.jenkinsci.plugins.postbuildscript.model.PostBuildStep'
+            config[0].buildSteps[0].children()[0].buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
+            config[0].markBuildUnstable[0].value() == value
         }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '2.3.0')
 
         where:
         value << [true, false]
@@ -3648,15 +3655,16 @@ class PublisherContextSpec extends Specification {
 
         then:
         with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
-            children().size() == 5
-            buildSteps[0].children().size == 0
-            scriptOnlyIfSuccess[0].value() == true
-            scriptOnlyIfFailure[0].value() == false
-            markBuildUnstable[0].value() == false
+            name() == 'org.jenkinsci.plugins.postbuildscript.MatrixPostBuildScript'
+            children().size() == 2
+            config[0].children().size() == 4
+            config[0].scriptFiles[0].children().size == 0
+            config[0].groovyScripts[0].children().size == 0
+            config[0].buildSteps[0].children().size == 0
+            config[0].markBuildUnstable[0].value() == false
             executeOn[0].value() == 'BOTH'
         }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '2.3.0')
     }
 
     def 'call post build scripts with all options and matrix job'() {
@@ -3677,16 +3685,22 @@ class PublisherContextSpec extends Specification {
 
         then:
         with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
-            children().size() == 5
-            buildSteps[0].children().size == 1
-            buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
-            scriptOnlyIfSuccess[0].value() == false
-            scriptOnlyIfFailure[0].value() == true
-            markBuildUnstable[0].value() == true
+            name() == 'org.jenkinsci.plugins.postbuildscript.MatrixPostBuildScript'
+            children().size() == 2
+            config[0].children().size() == 4
+            config[0].scriptFiles[0].children().size == 0
+            config[0].groovyScripts[0].children().size == 0
+            config[0].buildSteps[0].children().size == 1
+            if (value) {
+                config[0].buildSteps[0].children()[0].results[0].children()[0].value() == 'SUCCESS'
+                config[0].buildSteps[0].children()[0].results[0].children()[1].value() == 'FAILURE'
+            }
+            config[0].buildSteps[0].children()[0].role[0].value() == 'BOTH'
+            config[0].buildSteps[0].children()[0].buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
+            config[0].markBuildUnstable[0].value() == true
             executeOn[0].value() == mode
         }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
+        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '2.3.0')
 
         where:
         mode << ['MATRIX', 'AXES', 'BOTH']
