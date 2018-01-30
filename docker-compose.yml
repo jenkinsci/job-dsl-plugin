@@ -1,7 +1,7 @@
 version: '2'
 services:
   master:
-    image: jenkins:2.19.1
+    image: jenkins/jenkins:2.73.2
     ports:
      - "8081:8080"
     volumes:

@@ -29,6 +29,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.68 (unreleased)
+  * Increased the minimum supported Jenkins version to 2.73
   * Un-deprecated support for the
     [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin)
     ([JENKINS-43637](https://issues.jenkins-ci.org/browse/JENKINS-43637))

@@ -251,15 +251,16 @@ class DescribableHelperSpec extends Specification {
         Map<String, DescribableModel> models = DescribableHelper.findDescribableModels(TriggerContext)
 
         then:
-        models.size() == 9
+        models.size() == 10
         models['dummy'].type == DummyTrigger
         models['foo'].type == FooTrigger
         models['bar'].type == FooTrigger
         models['cron'].type == TimerTrigger
-        models['scm'].type == SCMTrigger
+        models['pollSCM'].type == SCMTrigger
         models['integerTrigger'].type == IntegerTrigger
         models['someTrigger'].type == SomeTrigger
         models['periodicFolderTrigger'].type == PeriodicFolderTrigger
         models['old'].type == DeprecatedTrigger
+        models['upstream'].type == ReverseBuildTrigger
     }
 }
