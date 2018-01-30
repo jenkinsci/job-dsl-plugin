@@ -11,7 +11,7 @@ import javaposse.jobdsl.dsl.helpers.ScmContext
 class CpsScmContext extends AbstractContext {
     protected final Item item
 
-    String scriptPath = 'JenkinsFile'
+    String scriptPath = 'Jenkinsfile'
     boolean lightweight
     ScmContext scmContext = new ScmContext(jobManagement, item)
 
@@ -29,7 +29,7 @@ class CpsScmContext extends AbstractContext {
 
     /**
      * Sets the relative location of the pipeline script within the source code repository. Defaults to
-     * {@code 'pipeline'}.
+     * {@code 'Jenkinsfile'}.
      */
     void scriptPath(String scriptPath) {
         this.scriptPath = scriptPath

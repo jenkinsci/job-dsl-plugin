@@ -1,5 +1,39 @@
 ## Migrating to 1.68
 
+### Pipeline Script From SCM
+
+The default script path for Pipeline `cpsScm` context changed from `JenkinsFile` to `Jenkinsfile` as `Jenkinsfile` is
+more conventional.
+
+The following example shows how to migrate DSL scripts to keep the old behaviour.
+
+DSL prior to 1.68
+```
+pipelineJob('example') {
+    definition {
+        cpsScm {
+            scm {
+                git('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+        }
+    }
+}
+```
+
+DSL since 1.68
+```
+pipelineJob('example') {
+    definition {
+        cpsScm {
+            scm {
+                git('https://github.com/jenkinsci/job-dsl-plugin.git')
+                scriptPath('JenkinsFile')
+            }
+        }
+    }
+}
+```
+
 ### Pipeline Groovy Plugin
 
 Support for versions older than 2.29 of the
