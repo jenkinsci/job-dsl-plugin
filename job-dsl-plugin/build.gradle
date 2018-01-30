@@ -62,7 +62,6 @@ clean {
 }
 
 test {
-    jvmArgs += ['-XX:MaxPermSize=256m']
     /* TODO useful in conjunction with BuildWatcher, but better to enable conditionally (in jpi plugin?) as in https://github.com/jenkinsci/plugin-pom/blob/d1c2e7dc75692014184260f6d975bac36b1123b1/pom.xml#L955-L965
     testLogging {
         showStandardStreams = true
