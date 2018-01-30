@@ -3014,7 +3014,7 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'org.jenkins__ci.plugins.fail__the__build.FixResultBuilder'
-            children().size == 1
+            children().size() == 1
             defaultResultName[0].value() == result
         }
         1 * jobManagement.requireMinimumPluginVersion('fail-the-build-plugin', '1.0')
@@ -3144,8 +3144,8 @@ class StepContextSpec extends Specification {
                 template[0].value() == 'template'
                 clone[0].value() == 'clone'
                 cluster[0].value() == 'cluster'
-                datastore[0].value().empty
-                resourcePool[0].value().empty
+                datastore[0].value() == []
+                resourcePool[0].value() == []
                 linkedClone[0].value() == false
             }
             serverName[0].value() == 'vsphere.acme.org'
@@ -3499,8 +3499,8 @@ class StepContextSpec extends Specification {
         with(context.stepNodes[0]) {
             name() == 'com.cloudbees.dockerpublish.DockerBuilder'
             children().size() == 15
-            server[0].value().empty
-            registry[0].value().empty
+            server[0].value() == []
+            registry[0].value() == []
             repoName[0].value().empty
             noCache[0].value() == false
             forcePull[0].value() == true
@@ -3642,7 +3642,7 @@ class StepContextSpec extends Specification {
             name() == 'org.jenkinsci.plugins.managedscripts.ScriptBuildStep'
             children().size() == 3
             buildStepId[0].value() == 'foo'
-            buildStepArgs[0].value().empty
+            buildStepArgs[0].value() == []
             tokenized[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('managed-scripts', '1.2.1')
@@ -3900,7 +3900,7 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'com.meyling.hudson.plugin.job__exporter.ExporterBuilder'
-            children().empty
+            children() == []
         }
         1 * jobManagement.requireMinimumPluginVersion('job-exporter', '0.4')
     }

@@ -32,7 +32,7 @@ class PublisherContextSpec extends Specification {
             defaultContent[0].value() == '$DEFAULT_CONTENT'
             attachmentsPattern[0].value().empty
             presendScript[0].value() == '$DEFAULT_PRESEND_SCRIPT'
-            classpath[0].value().empty
+            classpath[0].value() == []
             attachBuildLog[0].value() == false
             compressBuildLog[0].value() == false
             replyTo[0].value() == '$DEFAULT_REPLYTO'
@@ -767,7 +767,7 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'io.gatling.jenkins.GatlingPublisher'
-            children().size == 1
+            children().size() == 1
             enabled[0].value() == true
         }
         1 * jobManagement.requireMinimumPluginVersion('gatling', '1.1.1')
@@ -782,7 +782,7 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'io.gatling.jenkins.GatlingPublisher'
-            children().size == 1
+            children().size() == 1
             enabled[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('gatling', '1.1.1')
@@ -1632,7 +1632,7 @@ class PublisherContextSpec extends Specification {
         Node ircPublisher = context.publisherNodes[0]
         ircPublisher.name() == 'hudson.plugins.ircbot.IrcPublisher'
         def targets = ircPublisher.value()[0]
-        targets.value().size == 2
+        targets.value().size() == 2
         targets.value()[0].name() == 'hudson.plugins.im.GroupChatIMMessageTarget'
         targets.value()[0].value()[0].name() == 'name'
         targets.value()[0].value()[0].value() == '#c1'
@@ -2438,7 +2438,7 @@ class PublisherContextSpec extends Specification {
             logFileName[0].value() == 'log.html'
             outputFileName[0].value() == 'output.xml'
             disableArchiveOutput[0].value() == false
-            otherFiles[0].value().empty
+            otherFiles[0].value() == []
         }
         1 * jobManagement.requireMinimumPluginVersion('robot', '1.4.3')
     }
@@ -2530,7 +2530,7 @@ class PublisherContextSpec extends Specification {
 
             configs.size() == 1
             configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'.size() == 1
-            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0].value().empty
+            configs[0].'hudson.plugins.parameterizedtrigger.CurrentBuildParameters'[0].value() == []
             configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'.size() == 1
             configs[0].'hudson.plugins.parameterizedtrigger.PredefinedBuildParameters'[0].'properties'[0].value() ==
                     'key1=value1'
@@ -3310,7 +3310,7 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
-            publishers[0].children().size == 1
+            publishers[0].children().size() == 1
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
                 children().size() == 3
@@ -3319,7 +3319,7 @@ class PublisherContextSpec extends Specification {
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == false
                 runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
-                runner[0].value().empty
+                runner[0].value() == []
                 publisherList[0].children().size() == 1
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Mailer'
@@ -3348,7 +3348,7 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
-            publishers[0].children().size == 1
+            publishers[0].children().size() == 1
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
                 children().size() == 3
@@ -3357,7 +3357,7 @@ class PublisherContextSpec extends Specification {
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == false
                 runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
-                runner[0].value().empty
+                runner[0].value() == []
                 publisherList[0].children().size() == 1
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Shell'
@@ -3390,7 +3390,7 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
-            publishers[0].children().size == 1
+            publishers[0].children().size() == 1
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
                 children().size() == 3
@@ -3399,7 +3399,7 @@ class PublisherContextSpec extends Specification {
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == false
                 runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
-                runner[0].value().empty
+                runner[0].value() == []
                 publisherList[0].children().size() == 2
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Shell'
@@ -3426,14 +3426,14 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
-            publishers[0].children().size == 1
+            publishers[0].children().size() == 1
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
                 children().size() == 3
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
                 condition[0].children().size() == 0
                 runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
-                runner[0].value().empty
+                runner[0].value() == []
                 publisherList[0].children().size() == 1
                 with(publisherList[0]) {
                     children()[0].name() == 'hudson.tasks.Shell'
@@ -3468,14 +3468,14 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
-            publishers[0].children().size == 2
+            publishers[0].children().size() == 2
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
                 children().size() == 3
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
                 condition[0].children().size() == 0
                 runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
-                runner[0].value().empty
+                runner[0].value() == []
                 with(publisherList[0]) {
                     children().size() == 1
                     children()[0].name() == 'hudson.tasks.Shell'
@@ -3490,7 +3490,7 @@ class PublisherContextSpec extends Specification {
                 condition[0].arg2[0].value() == 'bar'
                 condition[0].ignoreCase[0].value() == false
                 runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun'
-                runner[0].value().empty
+                runner[0].value() == []
                 with(publisherList[0]) {
                     children().size() == 1
                     children()[0].name() == 'hudson.plugins.ws__cleanup.WsCleanup'
@@ -3510,7 +3510,7 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
-            publishers[0].value().empty
+            publishers[0].value() == []
         }
         1 * jobManagement.requireMinimumPluginVersion('flexible-publish', '0.13')
     }
@@ -3537,14 +3537,14 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'org.jenkins__ci.plugins.flexible__publish.FlexiblePublisher'
             children().size() == 1
-            publishers[0].children().size == 1
+            publishers[0].children().size() == 1
             with(publishers[0].children()[0]) {
                 name() == 'org.jenkins__ci.plugins.flexible__publish.ConditionalPublisher'
                 children().size() == 5
                 condition[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.AlwaysRun'
                 condition[0].children().size() == 0
                 runner[0].attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail'
-                runner[0].value().empty
+                runner[0].value() == []
                 with(aggregationCondition[0]) {
                     attribute('class') == 'org.jenkins_ci.plugins.run_condition.core.StringsMatchCondition'
                     arg1[0].value() == 'foo'
@@ -3553,7 +3553,7 @@ class PublisherContextSpec extends Specification {
                 }
                 with(aggregationRunner[0]) {
                     attribute('class') == 'org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun'
-                    value().empty
+                    value() == []
                 }
                 with(publisherList[0]) {
                     children().size() == 1
@@ -3702,14 +3702,14 @@ class PublisherContextSpec extends Specification {
             children().size() == 10
             jdk[0].value() == '(Inherit From Job)'
             branch[0].value() == ''
-            language[0].value().empty
-            mavenOpts[0].value().empty
+            language[0].value() == []
+            mavenOpts[0].value() == []
             jobAdditionalProperties[0].value().empty
             mavenInstallationName[0].value() == '(Inherit From Job)'
-            rootPom[0].value().empty
-            settings[0].value().empty
+            rootPom[0].value() == []
+            settings[0].value() == []
             settings[0].@class == 'jenkins.mvn.DefaultSettingsProvider'
-            globalSettings[0].value().empty
+            globalSettings[0].value() == []
             globalSettings[0].@class == 'jenkins.mvn.DefaultGlobalSettingsProvider'
             usePrivateRepository[0].value() == false
         }
@@ -3736,14 +3736,14 @@ class PublisherContextSpec extends Specification {
             installationName[0].value() == 'sonarTest'
             jdk[0].value() == 'myJDK'
             branch[0].value() == 'test'
-            language[0].value().empty
-            mavenOpts[0].value().empty
+            language[0].value() == []
+            mavenOpts[0].value() == []
             jobAdditionalProperties[0].value() == '-Dtest=test'
             mavenInstallationName[0].value() == 'myMaven'
-            rootPom[0].value().empty
-            settings[0].value().empty
+            rootPom[0].value() == []
+            settings[0].value() == []
             settings[0].@class == 'jenkins.mvn.DefaultSettingsProvider'
-            globalSettings[0].value().empty
+            globalSettings[0].value() == []
             globalSettings[0].@class == 'jenkins.mvn.DefaultGlobalSettingsProvider'
             usePrivateRepository[0].value() == false
             triggers[0].children().size() == 3
@@ -3996,7 +3996,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 6
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'xml'
-                    label[0].value().empty
+                    label[0].value() == []
                     nodeTypeString[0].value() == 'NODESET'
                     url[0].value() == ''
                     xpathString[0].value() == ''
@@ -4039,7 +4039,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 6
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'xml'
-                    label[0].value().empty
+                    label[0].value() == []
                     nodeTypeString[0].value() == 'NODE'
                     url[0].value() == 'http://somewhere'
                     xpathString[0].value() == 'an xpath string'
@@ -4078,7 +4078,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 7
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value().empty
+                    label[0].value() == []
                     inclusionFlag[0].value() == 'OFF'
                     exclusionValues[0].value() == ''
                     url[0].value() == ''
@@ -4121,7 +4121,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 7
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value().empty
+                    label[0].value() == []
                     inclusionFlag[0].value() == 'OFF'
                     exclusionValues[0].value() == ''
                     url[0].value() == 'http://somewhere'
@@ -4163,7 +4163,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value().empty
+                    label[0].value() == []
                     inclusionFlag[0].value() == 'INCLUDE_BY_STRING'
                     exclusionValues[0].value() == 'foo'
                     url[0].value() == ''
@@ -4210,7 +4210,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value().empty
+                    label[0].value() == []
                     inclusionFlag[0].value() == 'INCLUDE_BY_STRING'
                     exclusionValues[0].value() == 'foo,bar,woo'
                     url[0].value() == ''
@@ -4258,7 +4258,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value().empty
+                    label[0].value() == []
                     inclusionFlag[0].value() == 'EXCLUDE_BY_STRING'
                     exclusionValues[0].value() == 'foo'
                     url[0].value() == ''
@@ -4305,7 +4305,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value().empty
+                    label[0].value() == []
                     inclusionFlag[0].value() == 'EXCLUDE_BY_STRING'
                     exclusionValues[0].value() == 'foo,bar,woo'
                     url[0].value() == ''
@@ -4353,7 +4353,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value().empty
+                    label[0].value() == []
                     inclusionFlag[0].value() == 'INCLUDE_BY_COLUMN'
                     exclusionValues[0].value() == '1'
                     url[0].value() == ''
@@ -4400,7 +4400,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value().empty
+                    label[0].value() == []
                     inclusionFlag[0].value() == 'INCLUDE_BY_COLUMN'
                     exclusionValues[0].value() == '1,3,6'
                     url[0].value() == ''
@@ -4448,7 +4448,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value().empty
+                    label[0].value() == []
                     inclusionFlag[0].value() == 'EXCLUDE_BY_COLUMN'
                     exclusionValues[0].value() == '1'
                     url[0].value() == ''
@@ -4495,7 +4495,7 @@ class PublisherContextSpec extends Specification {
                     children().size() == 8
                     file[0].value() == 'data.prop'
                     fileType[0].value() == 'csv'
-                    label[0].value().empty
+                    label[0].value() == []
                     inclusionFlag[0].value() == 'EXCLUDE_BY_COLUMN'
                     exclusionValues[0].value() == '1,3,6'
                     url[0].value() == ''
@@ -4604,7 +4604,7 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'com.chikli.hudson.plugin.naginator.NaginatorPublisher'
             children().size() == 6
-            regexpForRerun[0].value().empty
+            regexpForRerun[0].value() == []
             rerunIfUnstable[0].value() == false
             rerunMatrixPart[0].value() == false
             checkRegexp[0].value() == false
@@ -4629,7 +4629,7 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'com.chikli.hudson.plugin.naginator.NaginatorPublisher'
             children().size() == 6
-            regexpForRerun[0].value().empty
+            regexpForRerun[0].value() == []
             rerunIfUnstable[0].value() == true
             rerunMatrixPart[0].value() == false
             checkRegexp[0].value() == false
@@ -5111,7 +5111,7 @@ class PublisherContextSpec extends Specification {
             name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerPublisher'
             children().size() == 2
             deployEvenBuildFail[0].value() == false
-            entries[0].value().empty
+            entries[0].value() == []
         }
         1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
         1 * jobManagement.logDeprecationWarning()
@@ -5408,7 +5408,7 @@ class PublisherContextSpec extends Specification {
             children().size() == 6
             mustExitOnFailure[0].value() == false
             forceStopOnFirstFailure[0].value() == false
-            selectedDeploymentStrategyIds[0].value().empty
+            selectedDeploymentStrategyIds[0].value() == []
             isDeployingOnlyWhenUpdates[0].value() == false
             deployedProjectsDependencies[0].value().empty
             tasks[0].value().empty
@@ -5849,8 +5849,8 @@ class PublisherContextSpec extends Specification {
                 methodCoverage[0].value() == 70
                 statementCoverage[0].value() == 80
             }
-            unhealthyTarget[0].value().empty
-            failingTarget[0].value().empty
+            unhealthyTarget[0].value() == []
+            failingTarget[0].value() == []
         }
         1 * jobManagement.requireMinimumPluginVersion('cloverphp', '0.5')
     }
@@ -5878,7 +5878,7 @@ class PublisherContextSpec extends Specification {
             reportDir[0].value() == 'dir'
             xmlLocation[0].value() == 'html'
             disableArchiving[0].value() == disable
-            healthyTarget[0].value().empty
+            healthyTarget[0].value() == []
             with(unhealthyTarget[0]) {
                 children().size() == 2
                 methodCoverage[0].value() == 3

@@ -21,7 +21,7 @@ class MultiJobStepContextSpec extends Specification {
             phaseName[0].value() == 'First'
             continuationCondition[0].value() == 'SUCCESSFUL'
             executionType[0].value() == 'PARALLEL'
-            phaseJobs[0].value().empty
+            phaseJobs[0].value() == []
         }
 
         when:
@@ -251,7 +251,7 @@ class MultiJobStepContextSpec extends Specification {
             phaseName[0].value() == 'test'
             continuationCondition[0].value() == condition
             executionType[0].value() == 'PARALLEL'
-            phaseJobs[0].value().empty
+            phaseJobs[0].value() == []
         }
 
         where:
@@ -271,7 +271,7 @@ class MultiJobStepContextSpec extends Specification {
             phaseName[0].value() == 'test'
             continuationCondition[0].value() == 'SUCCESSFUL'
             executionType[0].value() == execution
-            phaseJobs[0].value().empty
+            phaseJobs[0].value() == []
         }
 
         where:

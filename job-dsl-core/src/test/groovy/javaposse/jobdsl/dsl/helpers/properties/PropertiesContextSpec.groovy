@@ -169,7 +169,7 @@ class PropertiesContextSpec extends Specification {
                 ownershipEnabled[0].value() == true
                 primaryOwnerId[0].value() == ''
                 coownersIds[0].'@class' == 'sorted-set'
-                coownersIds[0].value().empty
+                coownersIds[0].value() == []
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('ownership', '0.8')
