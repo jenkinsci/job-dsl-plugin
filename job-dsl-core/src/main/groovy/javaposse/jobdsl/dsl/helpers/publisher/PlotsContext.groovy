@@ -1,12 +1,17 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 
-class PlotsContext implements Context {
+class PlotsContext extends AbstractContext {
     final List<PlotContext> plots = []
+
+    PlotsContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Adds a plot containing one or more data series. Can be called multiple times to add more plots.
@@ -19,7 +24,7 @@ class PlotsContext implements Context {
         Preconditions.checkNotNullOrEmpty(group, 'group must not be null or empty')
         Preconditions.checkNotNullOrEmpty(dataStore, 'dataStore must not be null or empty')
 
-        PlotContext plotContext = new PlotContext(group, dataStore)
+        PlotContext plotContext = new PlotContext(jobManagement, group, dataStore)
         ContextHelper.executeInContext(plotClosure, plotContext)
 
         plots << plotContext

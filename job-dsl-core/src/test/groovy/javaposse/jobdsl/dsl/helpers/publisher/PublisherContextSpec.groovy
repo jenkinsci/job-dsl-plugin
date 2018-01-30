@@ -3790,6 +3790,47 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
     }
 
+    def 'call plotPlugin with some basic args and newer plugin version'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('plot', '1.10') >> true
+
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                propertiesFile('data.prop')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 14
+                title[0].value().empty
+                yaxis[0].value().empty
+                group[0].value() == 'my group'
+                numBuilds[0].value().empty
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == false
+                keepRecords[0].value() == false
+                exclZero[0].value() == false
+                logarithmic[0].value() == false
+                yaxisMinimum[0].value().empty
+                yaxisMaximum[0].value().empty
+                with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
+                    children().size() == 3
+                    file[0].value() == 'data.prop'
+                    label[0].value() == ''
+                    fileType[0].value() == 'properties'
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
     def 'call plotPlugin with all args'() {
         when:
         context.plotBuildData {
@@ -3831,6 +3872,57 @@ class PublisherContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+    }
+
+    def 'call plotPlugin with all args and newer plugin version'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('plot', '1.10') >> true
+
+        when:
+        context.plotBuildData {
+            plot('my group', 'some.csv') {
+                title('plot title')
+                yAxis('yaxis title')
+                numberOfBuilds(42)
+                useDescriptions()
+                keepRecords()
+                excludeZero()
+                logarithmic()
+                yAxisMinimum(50.0)
+                yAxisMaximum(100.0)
+                propertiesFile('data.prop')
+            }
+        }
+
+        then:
+        with(context.publisherNodes[0]) {
+            name() == 'hudson.plugins.plot.PlotPublisher'
+            children().size() == 1
+            with(plots.'hudson.plugins.plot.Plot'[0]) {
+                children().size() == 14
+                title[0].value() == 'plot title'
+                yaxis[0].value() == 'yaxis title'
+                group[0].value() == 'my group'
+                numBuilds[0].value() == 42
+                csvFileName[0].value() == 'some.csv'
+                csvLastModification[0].value() == 0
+                style[0].value() == 'line'
+                useDescr[0].value() == true
+                keepRecords[0].value() == true
+                exclZero[0].value() == true
+                logarithmic[0].value() == true
+                yaxisMinimum[0].value() == 50.0
+                yaxisMaximum[0].value() == 100.0
+                with(series[0].'hudson.plugins.plot.PropertiesSeries'[0]) {
+                    children().size() == 3
+                    file[0].value() == 'data.prop'
+                    label[0].value() == ''
+                    fileType[0].value() == 'properties'
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('plot', '1.9')
+        2 * jobManagement.requireMinimumPluginVersion('plot', '1.10')
     }
 
     def 'call plotPlugin with all chart styles'() {

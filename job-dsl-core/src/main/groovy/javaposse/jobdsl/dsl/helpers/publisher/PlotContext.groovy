@@ -1,13 +1,15 @@
 package javaposse.jobdsl.dsl.helpers.publisher
 
-import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
-class PlotContext implements Context {
+class PlotContext extends AbstractContext {
     private static final List<String> STYLE = [
         'area', 'bar', 'bar3d', 'line', 'line3d', 'stackedArea', 'stackedbar', 'stackedbar3d', 'waterfall'
     ]
@@ -23,8 +25,11 @@ class PlotContext implements Context {
     boolean keepRecords
     boolean excludeZero
     boolean logarithmic
+    Double yAxisMinimum
+    Double yAxisMaximum
 
-    PlotContext(String group, String dataStore) {
+    PlotContext(JobManagement jobManagement, String group, String dataStore) {
+        super(jobManagement)
         this.group = group
         this.dataStore = dataStore
     }
@@ -86,6 +91,26 @@ class PlotContext implements Context {
      */
     void logarithmic(boolean logarithmic = true) {
         this.logarithmic = logarithmic
+    }
+
+    /**
+     * Specifies the minimum value for the y-axis.
+     *
+     * @since 1.68
+     */
+    @RequiresPlugin(id = 'plot', minimumVersion = '1.10')
+    void yAxisMinimum(Double yAxisMinimum) {
+        this.yAxisMinimum = yAxisMinimum
+    }
+
+    /**
+     * Specifies the maximum value for the y-axis.
+     *
+     * @since 1.68
+     */
+    @RequiresPlugin(id = 'plot', minimumVersion = '1.10')
+    void yAxisMaximum(Double yAxisMaximum) {
+        this.yAxisMaximum = yAxisMaximum
     }
 
     /**

@@ -270,7 +270,7 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'plot', minimumVersion = '1.9')
     void plotBuildData(@DslContext(PlotsContext) Closure plotsClosure) {
-        PlotsContext plotsContext = new PlotsContext()
+        PlotsContext plotsContext = new PlotsContext(jobManagement)
         ContextHelper.executeInContext(plotsClosure, plotsContext)
 
         publisherNodes << new NodeBuilder().'hudson.plugins.plot.PlotPublisher' {
@@ -328,6 +328,10 @@ class PublisherContext extends AbstractExtensibleContext {
                         keepRecords(plot.keepRecords)
                         exclZero(plot.excludeZero)
                         logarithmic(plot.logarithmic)
+                        if (jobManagement.isMinimumPluginVersionInstalled('plot', '1.10')) {
+                            yaxisMinimum(plot.yAxisMinimum ?: '')
+                            yaxisMaximum(plot.yAxisMaximum ?: '')
+                        }
                     }
                 }
             }
