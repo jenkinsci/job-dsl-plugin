@@ -46,7 +46,7 @@ when running the DSL scripts, e.g. for testing [[extensions|Extending the DSL]] 
     }
 
     dependencies {
-        testCompile 'org.spockframework:spock-core:0.7-groovy-1.8'
+        testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
 
         // Jenkins test harness dependencies
         testCompile 'org.jenkins-ci.main:jenkins-test-harness:2.33'
