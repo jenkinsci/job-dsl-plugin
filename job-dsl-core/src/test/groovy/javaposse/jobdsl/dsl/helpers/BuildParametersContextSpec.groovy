@@ -1005,7 +1005,6 @@ class BuildParametersContextSpec extends Specification {
             filterable.text() == 'false'
         }
         1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'active choice param with all options and groovy script'() {
@@ -1038,46 +1037,6 @@ class BuildParametersContextSpec extends Specification {
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'active choice param with all options and scriptler script'() {
-        when:
-        context.activeChoiceParam('activeChoiceScriptlerParam') {
-            description('Active choice param test/scriptler script')
-            filterable()
-            choiceType('MULTI_SELECT')
-            scriptlerScript('scriptler-1.groovy') {
-                parameter('param1', 'x1')
-                parameter('param2', 'x2')
-            }
-        }
-
-        then:
-        with(context.buildParameterNodes['activeChoiceScriptlerParam']) {
-            name() == 'org.biouno.unochoice.ChoiceParameter'
-            children().size() == 7
-            name.text() == 'activeChoiceScriptlerParam'
-            description.text() == 'Active choice param test/scriptler script'
-            randomName.text() =~ /choice-parameter-\d+/
-            visibleItemCount.text() == '1'
-            choiceType.text() == 'PT_MULTI_SELECT'
-            filterable.text() == 'true'
-            with(script[0]) {
-                attributes()['class'] == 'org.biouno.unochoice.model.ScriptlerScript'
-                scriptlerScriptId.text() == 'scriptler-1.groovy'
-                children().size() == 2
-                with(parameters[0]) {
-                    children().size() == 2
-                    entry[0].string[0].text() == 'param1'
-                    entry[0].string[1].text() == 'x1'
-                    entry[1].string[0].text() == 'param2'
-                    entry[1].string[1].text() == 'x2'
-                }
-            }
-        }
-        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'active choice reactive param without options'() {
@@ -1099,7 +1058,6 @@ class BuildParametersContextSpec extends Specification {
             script.text() == ''
             referencedParameters.text() == ''
         }
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'active choice reactive param with all options and groovy script'() {
@@ -1135,7 +1093,6 @@ class BuildParametersContextSpec extends Specification {
             }
             referencedParameters.text() == 'param1, param2'
         }
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'active choice reactive reference param without options'() {
@@ -1157,17 +1114,17 @@ class BuildParametersContextSpec extends Specification {
             referencedParameters.text() == ''
             omitValueField.text() == 'false'
         }
-        1 * jobManagement.logDeprecationWarning()
     }
 
-    def 'active choice reactive reference param with all options and scriptler script'() {
+    def 'active choice reactive reference param with all options and groovy script'() {
         when:
         context.activeChoiceReactiveReferenceParam('activeChoiceReactiveReferenceScriptlerParam') {
             description('Active choice reactive reference param test with scriptler script')
             omitValueField()
             choiceType('FORMATTED_HIDDEN_HTML')
-            scriptlerScript('scriptler-2.groovy') {
-                parameter('script-param', 'x1')
+            groovyScript {
+                script('x1')
+                fallbackScript('x2')
             }
             referencedParameter('param3')
             referencedParameter('param4')
@@ -1184,18 +1141,13 @@ class BuildParametersContextSpec extends Specification {
             visibleItemCount.text() == '1'
             choiceType.text() == 'ET_FORMATTED_HIDDEN_HTML'
             with(script[0]) {
-                attributes()['class'] == 'org.biouno.unochoice.model.ScriptlerScript'
-                scriptlerScriptId.text() == 'scriptler-2.groovy'
+                attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
                 children().size() == 2
-                with(parameters[0]) {
-                    children().size() == 1
-                    entry[0].string[0].text() == 'script-param'
-                    entry[0].string[1].text() == 'x1'
-                }
+                script.text() == 'x1'
+                fallbackScript.text() == 'x2'
             }
             referencedParameters.text() == 'param3, param4'
         }
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'credentials parameter with minimal options'() {

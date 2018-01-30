@@ -28,24 +28,4 @@ abstract class AbstractActiveChoiceContext implements Context {
             delegate.fallbackScript(context.fallbackScript ?: '')
         }
     }
-
-    /**
-     * Use a Scriptler script to generate value options.
-     */
-    void scriptlerScript(String scriptId, @DslContext(ActiveChoiceScriptlerScriptContext) Closure closure = null) {
-        ActiveChoiceScriptlerScriptContext context = new ActiveChoiceScriptlerScriptContext()
-        executeInContext(closure, context)
-
-        script = new NodeBuilder().script(class: 'org.biouno.unochoice.model.ScriptlerScript') {
-            scriptlerScriptId(scriptId)
-            parameters {
-                context.parameters.each { String name, String value ->
-                    entry {
-                        string(name)
-                        string(value)
-                    }
-                }
-            }
-        }
-    }
 }
