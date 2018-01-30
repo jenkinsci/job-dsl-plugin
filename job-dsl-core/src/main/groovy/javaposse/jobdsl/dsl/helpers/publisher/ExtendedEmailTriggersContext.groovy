@@ -130,12 +130,6 @@ class ExtendedEmailTriggersContext implements Context {
         ExtendedEmailTriggerContext context = new ExtendedEmailTriggerContext()
         ContextHelper.executeInContext(closure, context)
 
-        if (context.sendToContext.recipientProviders.empty) {
-            context.sendTo {
-                recipientList()
-            }
-        }
-
         configuredTriggers << new NodeBuilder()."hudson.plugins.emailext.plugins.trigger.${name}Trigger" {
             email {
                 recipientList(context.recipientList.join(', '))

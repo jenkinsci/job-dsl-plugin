@@ -49,8 +49,7 @@ class PublisherContextSpec extends Specification {
                         subject[0].value() == '$PROJECT_DEFAULT_SUBJECT'
                         body[0].value() == '$PROJECT_DEFAULT_CONTENT'
                         with(recipientProviders[0]) {
-                            children().size() == 1
-                            children()[0].name() == 'hudson.plugins.emailext.plugins.recipients.ListRecipientProvider'
+                            children().size() == 0
                         }
                         attachmentsPattern[0].value().empty
                         attachBuildLog[0].value() == false
