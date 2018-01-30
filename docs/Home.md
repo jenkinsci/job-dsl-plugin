@@ -35,6 +35,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the
     [Pipeline Groovy Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Groovy+Plugin)
     ([#1086](https://github.com/jenkinsci/job-dsl-plugin/pull/1086))
+  * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
+    ([#1087](https://github.com/jenkinsci/job-dsl-plugin/pull/1087))
   * Support for older versions of the
     [Pipeline Groovy Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Groovy+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-168)
