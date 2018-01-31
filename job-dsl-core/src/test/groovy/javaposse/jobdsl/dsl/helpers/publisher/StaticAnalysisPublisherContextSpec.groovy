@@ -301,7 +301,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
             unHealthy[0].value() == ''
             thresholdLimit[0].value() == 'low'
             defaultEncoding[0].value().empty
-            thresholds[0].value().empty
+            thresholds[0].value() == []
             canRunOnFailed[0].value() == false
             useStableBuildAsReference[0].value() == false
             useDeltaValues[0].value() == false
@@ -333,7 +333,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
             unHealthy[0].value() == ''
             thresholdLimit[0].value() == 'low'
             defaultEncoding[0].value().empty
-            thresholds[0].value().empty
+            thresholds[0].value() == []
             canRunOnFailed[0].value() == false
             useStableBuildAsReference[0].value() == false
             useDeltaValues[0].value() == false

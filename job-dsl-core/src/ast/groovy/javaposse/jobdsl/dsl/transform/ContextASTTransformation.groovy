@@ -31,8 +31,8 @@ class ContextASTTransformation implements ASTTransformation {
                     parameter.getAnnotations(ClassHelper.make('javaposse.jobdsl.dsl.DslContext'))
             if (!dslContextAnnotations.empty) {
                 AnnotationNode delegatesToAnnotation = new AnnotationNode(DELEGATES_TO_CLASS)
-                delegatesToAnnotation.members.value = dslContextAnnotations[0].members.value
-                delegatesToAnnotation.members.strategy = DELEGATE_FIRST_EXPRESSION
+                delegatesToAnnotation.addMember('value', dslContextAnnotations[0].members.value)
+                delegatesToAnnotation.addMember('strategy', DELEGATE_FIRST_EXPRESSION)
                 parameter.annotations << delegatesToAnnotation
             }
         }

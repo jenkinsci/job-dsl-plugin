@@ -1752,7 +1752,7 @@ class ScmContextSpec extends Specification {
                     locked[0].value() == false
                     modtime[0].value() == false
                     rmdir[0].value() == false
-                    streamName[0].value().empty
+                    streamName[0].value() == []
                     line[0].value() == 'LOCAL'
                     view[0].value() == 'view'
                 }
@@ -1764,7 +1764,7 @@ class ScmContextSpec extends Specification {
                 force[0].value() == false
                 modtime[0].value() == false
                 quiet[0].value() == true
-                pin[0].value().empty
+                pin[0].value() == []
                 replace[0].value() == true
                 delete[0].value() == true
             }
@@ -1800,7 +1800,7 @@ class ScmContextSpec extends Specification {
                     locked[0].value() == false
                     modtime[0].value() == false
                     rmdir[0].value() == false
-                    streamName[0].value().empty
+                    streamName[0].value() == []
                     line[0].value() == 'LOCAL'
                     view[0].value().empty
                 }
@@ -1812,7 +1812,7 @@ class ScmContextSpec extends Specification {
                 force[0].value() == false
                 modtime[0].value() == false
                 quiet[0].value() == true
-                pin[0].value().empty
+                pin[0].value() == []
                 replace[0].value() == true
                 delete[0].value() == true
             }

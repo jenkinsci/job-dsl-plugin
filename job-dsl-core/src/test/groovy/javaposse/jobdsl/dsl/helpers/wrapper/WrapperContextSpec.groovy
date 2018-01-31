@@ -1126,8 +1126,8 @@ class WrapperContextSpec extends Specification {
             enableSauceConnect[0].value() == false
             seleniumHost[0].value() == ''
             seleniumPort[0].value() == ''
-            webDriverBrowsers[0].value().empty
-            appiumBrowsers[0].value().empty
+            webDriverBrowsers[0].value() == []
+            appiumBrowsers[0].value() == []
             useLatestVersion[0].value() == false
             launchSauceConnectOnSlave[0].value() == false
             options[0].value() == ''
@@ -1156,8 +1156,8 @@ class WrapperContextSpec extends Specification {
             enableSauceConnect[0].value() == false
             seleniumHost[0].value() == ''
             seleniumPort[0].value() == ''
-            webDriverBrowsers[0].value().empty
-            appiumBrowsers[0].value().empty
+            webDriverBrowsers[0].value() == []
+            appiumBrowsers[0].value() == []
             useLatestVersion[0].value() == false
             launchSauceConnectOnSlave[0].value() == false
             options[0].value() == ''
@@ -1396,7 +1396,7 @@ class WrapperContextSpec extends Specification {
             selector[0].attribute('class') == 'com.cloudbees.jenkins.plugins.okidocki.DockerfileImageSelector'
             selector[0].contextPath[0].value() == '.'
             selector[0].dockerfile[0].value() == 'Dockerfile'
-            dockerHost[0].value().empty
+            dockerHost[0].value() == []
             dockerRegistryCredentials[0].value().empty
             verbose[0].value() == false
             volumes[0].value().empty

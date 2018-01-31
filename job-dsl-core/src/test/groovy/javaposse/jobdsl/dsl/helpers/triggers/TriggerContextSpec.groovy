@@ -233,7 +233,7 @@ class TriggerContextSpec extends Specification {
         with(context.triggerNodes[0]) {
             name() == 'jenkins.triggers.ReverseBuildTrigger'
             children().size() == 3
-            spec[0].value().empty
+            spec[0].value() == []
             upstreamProjects[0].value() == 'THE-JOB'
             with(threshold[0]) {
                 children().size() == 4
@@ -253,7 +253,7 @@ class TriggerContextSpec extends Specification {
         with(context.triggerNodes[0]) {
             name() == 'jenkins.triggers.ReverseBuildTrigger'
             children().size() == 3
-            spec[0].value().empty
+            spec[0].value() == []
             upstreamProjects[0].value() == 'THE-JOB'
             with(threshold[0]) {
                 children().size() == 4
@@ -294,7 +294,7 @@ class TriggerContextSpec extends Specification {
         with(context.triggerNodes[0]) {
             name() == 'com.cloudbees.jenkins.plugins.BitBucketTrigger'
             children().size() == 1
-            spec[0].value().empty
+            spec[0].value() == []
         }
         1 * mockJobManagement.requireMinimumPluginVersion('bitbucket', '1.1.2')
     }
@@ -308,7 +308,7 @@ class TriggerContextSpec extends Specification {
         with(context.triggerNodes[0]) {
             name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
             children().size() == 17
-            spec[0].value().empty
+            spec[0].value() == []
             triggerOnPush[0].value() == true
             triggerOnMergeRequest[0].value() == true
             triggerOpenMergeRequestOnPush[0].value() == 'never'
@@ -352,7 +352,7 @@ class TriggerContextSpec extends Specification {
         with(context.triggerNodes[0]) {
             name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
             children().size() == 17
-            spec[0].value().empty
+            spec[0].value() == []
             triggerOnPush[0].value() == value
             triggerOnMergeRequest[0].value() == value
             triggerOpenMergeRequestOnPush[0].value() == 'both'
@@ -396,7 +396,7 @@ class TriggerContextSpec extends Specification {
         with(context.triggerNodes[0]) {
             name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
             children().size() == 17
-            spec[0].value().empty
+            spec[0].value() == []
             triggerOnPush[0].value() == value
             triggerOnMergeRequest[0].value() == value
             triggerOpenMergeRequestOnPush[0].value() == 'both'

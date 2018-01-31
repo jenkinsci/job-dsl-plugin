@@ -182,7 +182,7 @@ class RunConditionContextSpec extends Specification {
             name() == 'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition'
             children().size() == 2
             file[0].value() == 'some_file.txt'
-            baseDir[0].value().empty
+            baseDir[0].value() == []
             baseDir[0].@class == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
         }
     }
@@ -197,7 +197,7 @@ class RunConditionContextSpec extends Specification {
             children().size() == 3
             includes[0].value() == /incl.*udes/
             excludes[0].value() == /excl.*udes/
-            baseDir[0].value().empty
+            baseDir[0].value() == []
             baseDir[0].@class == 'org.jenkins_ci.plugins.run_condition.common.BaseDirectory$Workspace'
         }
     }

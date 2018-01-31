@@ -40,7 +40,7 @@ class BranchSourcesContextsSpec extends Specification {
             with(strategy[0]) {
                 children().size() == 1
                 attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
-                properties[0].value().empty
+                properties[0].value() == []
                 properties[0].attribute('class') == 'empty-list'
             }
         }
@@ -75,7 +75,7 @@ class BranchSourcesContextsSpec extends Specification {
             with(strategy[0]) {
                 children().size() == 1
                 attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
-                properties[0].value().empty
+                properties[0].value() == []
                 properties[0].attribute('class') == 'empty-list'
             }
         }
@@ -110,7 +110,7 @@ class BranchSourcesContextsSpec extends Specification {
             with(strategy[0]) {
                 children().size() == 1
                 attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
-                properties[0].value().empty
+                properties[0].value() == []
                 properties[0].attribute('class') == 'empty-list'
             }
         }
@@ -161,7 +161,7 @@ class BranchSourcesContextsSpec extends Specification {
             with(strategy[0]) {
                 children().size() == 1
                 attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
-                properties[0].value().empty
+                properties[0].value() == []
                 properties[0].attribute('class') == 'empty-list'
             }
         }
