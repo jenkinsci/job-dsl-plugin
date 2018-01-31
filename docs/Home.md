@@ -38,6 +38,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Un-deprecated support for the
     [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin), but removed support for
     Scriptler scripts
+    ([JENKINS-48121](https://issues.jenkins-ci.org/browse/JENKINS-48121))
   * Enhanced support for the [Plot Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Plot+Plugin)
     ([#1091](https://github.com/jenkinsci/job-dsl-plugin/pull/1091))
   * Enhanced support for the
