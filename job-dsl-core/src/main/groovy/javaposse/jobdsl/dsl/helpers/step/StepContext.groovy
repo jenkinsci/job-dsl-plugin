@@ -120,17 +120,12 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.27
      */
-    @RequiresPlugin(id = 'gradle', minimumVersion = '1.23')
+    @RequiresPlugin(id = 'gradle', minimumVersion = '1.26')
     void gradle(@DslContext(GradleContext) Closure gradleClosure) {
-        jobManagement.logPluginDeprecationWarning('gradle', '1.26')
-
         GradleContext gradleContext = new GradleContext(jobManagement)
         ContextHelper.executeInContext(gradleClosure, gradleContext)
 
         Node gradleNode = new NodeBuilder().'hudson.plugins.gradle.Gradle' {
-            if (!jobManagement.isMinimumPluginVersionInstalled('gradle', '1.26')) {
-                description gradleContext.description
-            }
             switches gradleContext.switches.join(' ')
             tasks gradleContext.tasks.join(' ')
             rootBuildScriptDir gradleContext.rootBuildScriptDir
@@ -140,9 +135,7 @@ class StepContext extends AbstractExtensibleContext {
             makeExecutable gradleContext.makeExecutable
             fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir
             useWorkspaceAsHome gradleContext.useWorkspaceAsHome
-            if (jobManagement.isMinimumPluginVersionInstalled('gradle', '1.25')) {
-                passAsProperties gradleContext.passAsProperties
-            }
+            passAsProperties gradleContext.passAsProperties
         }
 
         ContextHelper.executeConfigureBlock(gradleNode, gradleContext.configureBlock)
@@ -156,7 +149,7 @@ class StepContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The
      * {@code hudson.plugins.gradle.Gradle} node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'gradle')
+    @RequiresPlugin(id = 'gradle', minimumVersion = '1.26')
     void gradle(String tasks = null, String switches = null, Boolean useWrapper = true, Closure configure = null) {
         gradle {
             if (tasks != null) {

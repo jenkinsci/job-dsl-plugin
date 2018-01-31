@@ -157,8 +157,7 @@ class StepContextSpec extends Specification {
         gradleStep.name() == 'hudson.plugins.gradle.Gradle'
         gradleStep.tasks[0].value() == 'build'
         gradleStep.useWrapper[0].value() == true
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
 
         when:
         context.gradle('build', '-I init.gradle', false)
@@ -168,8 +167,7 @@ class StepContextSpec extends Specification {
         def gradleStep2 = context.stepNodes[1]
         gradleStep2.switches[0].value() == '-I init.gradle'
         gradleStep2.useWrapper[0].value() == false
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
 
         when:
         context.gradle('build', '-I init.gradle', false) {
@@ -180,60 +178,10 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 3
         def gradleStep3 = context.stepNodes[2]
         gradleStep3.node1[0].value() == 'value1'
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
     }
 
     def 'call gradle methods with defaults'() {
-        when:
-        context.gradle()
-
-        then:
-        context.stepNodes.size() == 1
-        with(context.stepNodes[0]) {
-            children().size() == 10
-            tasks[0].value() == ''
-            switches[0].value() == ''
-            useWrapper[0].value() == true
-            description[0].value() == ''
-            rootBuildScriptDir[0].value() == ''
-            buildFile[0].value() == ''
-            gradleName[0].value() == '(Default)'
-            fromRootBuildScriptDir[0].value() == true
-            makeExecutable[0].value() == false
-            useWorkspaceAsHome[0].value() == false
-        }
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
-
-        when:
-        context.gradle {
-        }
-
-        then:
-        context.stepNodes.size() == 2
-        with(context.stepNodes[1]) {
-            children().size() == 10
-            tasks[0].value() == ''
-            switches[0].value() == ''
-            useWrapper[0].value() == true
-            description[0].value() == ''
-            rootBuildScriptDir[0].value() == ''
-            buildFile[0].value() == ''
-            gradleName[0].value() == '(Default)'
-            fromRootBuildScriptDir[0].value() == true
-            makeExecutable[0].value() == false
-            useWorkspaceAsHome[0].value() == false
-        }
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
-    }
-
-    def 'call gradle methods with defaults and plugin version 1.26'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.26') >> true
-        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.25') >> true
-
         when:
         context.gradle()
 
@@ -252,51 +200,10 @@ class StepContextSpec extends Specification {
             useWorkspaceAsHome[0].value() == false
             passAsProperties[0].value() == false
         }
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
-    }
-
-    def 'call gradle methods with context and old plugin version'() {
-        when:
-        context.gradle {
-            tasks 'clean'
-            tasks 'build'
-            switches '--info'
-            switches '--stacktrace'
-            useWrapper false
-            description 'desc'
-            rootBuildScriptDir 'rbsd'
-            buildFile 'bf'
-            gradleName 'gn'
-            fromRootBuildScriptDir true
-            makeExecutable true
-            useWorkspaceAsHome true
-        }
-
-        then:
-        context.stepNodes.size() == 1
-        with(context.stepNodes[0]) {
-            children().size() == 10
-            tasks[0].value() == 'clean build'
-            switches[0].value() == '--info --stacktrace'
-            useWrapper[0].value() == false
-            description[0].value() == 'desc'
-            rootBuildScriptDir[0].value() == 'rbsd'
-            buildFile[0].value() == 'bf'
-            gradleName[0].value() == 'gn'
-            fromRootBuildScriptDir[0].value() == true
-            makeExecutable[0].value() == true
-            useWorkspaceAsHome[0].value() == true
-        }
-        1 * jobManagement.logDeprecationWarning()
-        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
     }
 
     def 'call gradle methods with context'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.25') >> true
-
         when:
         context.gradle {
             tasks 'clean'
@@ -304,7 +211,6 @@ class StepContextSpec extends Specification {
             switches '--info'
             switches '--stacktrace'
             useWrapper false
-            description 'desc'
             rootBuildScriptDir 'rbsd'
             buildFile 'bf'
             gradleName 'gn'
@@ -317,11 +223,10 @@ class StepContextSpec extends Specification {
         then:
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
-            children().size() == 11
+            children().size() == 10
             tasks[0].value() == 'clean build'
             switches[0].value() == '--info --stacktrace'
             useWrapper[0].value() == false
-            description[0].value() == 'desc'
             rootBuildScriptDir[0].value() == 'rbsd'
             buildFile[0].value() == 'bf'
             gradleName[0].value() == 'gn'
@@ -330,10 +235,7 @@ class StepContextSpec extends Specification {
             useWorkspaceAsHome[0].value() == true
             passAsProperties[0].value() == true
         }
-        1 * jobManagement.logDeprecationWarning()
-        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.25')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
+        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
     }
 
     def 'call maven methods'() {

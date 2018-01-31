@@ -340,10 +340,8 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Publishes HTML reports.
      */
-    @RequiresPlugin(id = 'htmlpublisher', minimumVersion = '1.5')
+    @RequiresPlugin(id = 'htmlpublisher', minimumVersion = '1.13')
     void publishHtml(@DslContext(HtmlReportContext) Closure htmlReportContext) {
-        jobManagement.logPluginDeprecationWarning('htmlpublisher', '1.13')
-
         HtmlReportContext reportContext = new HtmlReportContext(jobManagement)
         ContextHelper.executeInContext(htmlReportContext, reportContext)
 
@@ -354,9 +352,7 @@ class PublisherContext extends AbstractExtensibleContext {
                         reportName(target.reportName ?: '')
                         reportDir(target.reportDir)
                         reportFiles(target.reportFiles ?: '')
-                        if (jobManagement.isMinimumPluginVersionInstalled('htmlpublisher', '1.13')) {
-                            reportTitles(target.reportTitles ?: '')
-                        }
+                        reportTitles(target.reportTitles ?: '')
                         keepAll(target.keepAll)
                         allowMissing(target.allowMissing)
                         alwaysLinkToLastBuild(target.alwaysLinkToLastBuild)
