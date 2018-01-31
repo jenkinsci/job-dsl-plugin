@@ -1297,16 +1297,44 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.31
      */
-    @RequiresPlugin(id = 'postbuildscript', minimumVersion = '0.17')
+    @RequiresPlugin(id = 'postbuildscript', minimumVersion = '2.3.0')
     void postBuildScripts(@DslContext(PostBuildScriptsContext) Closure closure) {
         PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement, item)
         ContextHelper.executeInContext(closure, context)
 
-        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.postbuildscript.PostBuildScript' {
-            buildSteps(context.stepContext.stepNodes)
-            scriptOnlyIfSuccess(context.onlyIfBuildSucceeds)
-            scriptOnlyIfFailure(context.onlyIfBuildFails)
-            markBuildUnstable(context.markBuildUnstable)
+        String nodeName
+        if (item instanceof MatrixJob) {
+            nodeName = 'org.jenkinsci.plugins.postbuildscript.MatrixPostBuildScript'
+        } else {
+            nodeName = 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
+        }
+
+        publisherNodes << new NodeBuilder()."${nodeName}" {
+            config {
+                scriptFiles {
+                    // not yet implemented
+                }
+                groovyScripts {
+                    // not yet implemented
+                }
+                buildSteps {
+                    if (!context.stepContext.stepNodes.empty) {
+                        'org.jenkinsci.plugins.postbuildscript.model.PostBuildStep' {
+                            results {
+                                if (context.onlyIfBuildSucceeds) {
+                                    string 'SUCCESS'
+                                }
+                                if (context.onlyIfBuildFails) {
+                                    string 'FAILURE'
+                                }
+                            }
+                            role 'BOTH'
+                            buildSteps(context.stepContext.stepNodes)
+                        }
+                    }
+                }
+                markBuildUnstable(context.markBuildUnstable)
+            }
             if (item instanceof MatrixJob) {
                 executeOn(context.executeOn)
             }
