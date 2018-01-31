@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class GradleContext extends AbstractContext {
     final List<String> tasks = []
@@ -41,14 +40,6 @@ class GradleContext extends AbstractContext {
      */
     void useWrapper(boolean useWrapper = true) {
         this.useWrapper = useWrapper
-    }
-
-    /**
-     * Sets a description for the build step.
-     */
-    @Deprecated
-    void description(String description) {
-        this.description = description
     }
 
     /**
@@ -91,7 +82,6 @@ class GradleContext extends AbstractContext {
      *
      * @since 1.49
      */
-    @RequiresPlugin(id = 'gradle', minimumVersion = '1.25')
     void passAsProperties(boolean passAsProperties = true) {
         this.passAsProperties = passAsProperties
     }

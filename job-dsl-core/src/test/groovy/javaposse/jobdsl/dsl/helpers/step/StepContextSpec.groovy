@@ -157,8 +157,7 @@ class StepContextSpec extends Specification {
         gradleStep.name() == 'hudson.plugins.gradle.Gradle'
         gradleStep.tasks[0].value() == 'build'
         gradleStep.useWrapper[0].value() == true
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
 
         when:
         context.gradle('build', '-I init.gradle', false)
@@ -168,8 +167,7 @@ class StepContextSpec extends Specification {
         def gradleStep2 = context.stepNodes[1]
         gradleStep2.switches[0].value() == '-I init.gradle'
         gradleStep2.useWrapper[0].value() == false
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
 
         when:
         context.gradle('build', '-I init.gradle', false) {
@@ -180,60 +178,10 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 3
         def gradleStep3 = context.stepNodes[2]
         gradleStep3.node1[0].value() == 'value1'
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
     }
 
     def 'call gradle methods with defaults'() {
-        when:
-        context.gradle()
-
-        then:
-        context.stepNodes.size() == 1
-        with(context.stepNodes[0]) {
-            children().size() == 10
-            tasks[0].value() == ''
-            switches[0].value() == ''
-            useWrapper[0].value() == true
-            description[0].value() == ''
-            rootBuildScriptDir[0].value() == ''
-            buildFile[0].value() == ''
-            gradleName[0].value() == '(Default)'
-            fromRootBuildScriptDir[0].value() == true
-            makeExecutable[0].value() == false
-            useWorkspaceAsHome[0].value() == false
-        }
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
-
-        when:
-        context.gradle {
-        }
-
-        then:
-        context.stepNodes.size() == 2
-        with(context.stepNodes[1]) {
-            children().size() == 10
-            tasks[0].value() == ''
-            switches[0].value() == ''
-            useWrapper[0].value() == true
-            description[0].value() == ''
-            rootBuildScriptDir[0].value() == ''
-            buildFile[0].value() == ''
-            gradleName[0].value() == '(Default)'
-            fromRootBuildScriptDir[0].value() == true
-            makeExecutable[0].value() == false
-            useWorkspaceAsHome[0].value() == false
-        }
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
-    }
-
-    def 'call gradle methods with defaults and plugin version 1.26'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.26') >> true
-        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.25') >> true
-
         when:
         context.gradle()
 
@@ -252,51 +200,10 @@ class StepContextSpec extends Specification {
             useWorkspaceAsHome[0].value() == false
             passAsProperties[0].value() == false
         }
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
-    }
-
-    def 'call gradle methods with context and old plugin version'() {
-        when:
-        context.gradle {
-            tasks 'clean'
-            tasks 'build'
-            switches '--info'
-            switches '--stacktrace'
-            useWrapper false
-            description 'desc'
-            rootBuildScriptDir 'rbsd'
-            buildFile 'bf'
-            gradleName 'gn'
-            fromRootBuildScriptDir true
-            makeExecutable true
-            useWorkspaceAsHome true
-        }
-
-        then:
-        context.stepNodes.size() == 1
-        with(context.stepNodes[0]) {
-            children().size() == 10
-            tasks[0].value() == 'clean build'
-            switches[0].value() == '--info --stacktrace'
-            useWrapper[0].value() == false
-            description[0].value() == 'desc'
-            rootBuildScriptDir[0].value() == 'rbsd'
-            buildFile[0].value() == 'bf'
-            gradleName[0].value() == 'gn'
-            fromRootBuildScriptDir[0].value() == true
-            makeExecutable[0].value() == true
-            useWorkspaceAsHome[0].value() == true
-        }
-        1 * jobManagement.logDeprecationWarning()
-        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
     }
 
     def 'call gradle methods with context'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.25') >> true
-
         when:
         context.gradle {
             tasks 'clean'
@@ -304,7 +211,6 @@ class StepContextSpec extends Specification {
             switches '--info'
             switches '--stacktrace'
             useWrapper false
-            description 'desc'
             rootBuildScriptDir 'rbsd'
             buildFile 'bf'
             gradleName 'gn'
@@ -317,11 +223,10 @@ class StepContextSpec extends Specification {
         then:
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
-            children().size() == 11
+            children().size() == 10
             tasks[0].value() == 'clean build'
             switches[0].value() == '--info --stacktrace'
             useWrapper[0].value() == false
-            description[0].value() == 'desc'
             rootBuildScriptDir[0].value() == 'rbsd'
             buildFile[0].value() == 'bf'
             gradleName[0].value() == 'gn'
@@ -330,151 +235,7 @@ class StepContextSpec extends Specification {
             useWorkspaceAsHome[0].value() == true
             passAsProperties[0].value() == true
         }
-        1 * jobManagement.logDeprecationWarning()
-        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.23')
-        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.25')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.26')
-    }
-
-    def 'call grails methods'() {
-        when:
-        context.grails('compile')
-
-        then:
-        context.stepNodes != null
-        context.stepNodes.size() == 1
-        def grailsStep0 = context.stepNodes[0]
-        grailsStep0.name() == 'com.g2one.hudson.grails.GrailsBuilder'
-        grailsStep0.targets[0].value() == 'compile'
-        grailsStep0.useWrapper[0].value() == false
-        grailsStep0.grailsWorkDir[0].value() == ''
-        grailsStep0.projectWorkDir[0].value() == ''
-        grailsStep0.projectBaseDir[0].value() == ''
-        grailsStep0.serverPort[0].value() == ''
-        grailsStep0.'properties'[0].value() == ''
-        grailsStep0.forceUpgrade[0].value() == false
-        grailsStep0.nonInteractive[0].value() == true
-        (1.._) * jobManagement.requirePlugin('grails')
-        1 * jobManagement.logDeprecationWarning()
-
-        when:
-        context.grails('compile', true)
-
-        then:
-        context.stepNodes.size() == 2
-        def grailsStep1 = context.stepNodes[1]
-        grailsStep1.name() == 'com.g2one.hudson.grails.GrailsBuilder'
-        grailsStep1.targets[0].value() == 'compile'
-        grailsStep1.useWrapper[0].value() == true
-        grailsStep1.grailsWorkDir[0].value() == ''
-        grailsStep1.projectWorkDir[0].value() == ''
-        grailsStep1.projectBaseDir[0].value() == ''
-        grailsStep1.serverPort[0].value() == ''
-        grailsStep1.'properties'[0].value() == ''
-        grailsStep1.forceUpgrade[0].value() == false
-        grailsStep1.nonInteractive[0].value() == true
-        (1.._) * jobManagement.requirePlugin('grails')
-        1 * jobManagement.logDeprecationWarning()
-
-        when:
-        context.grails('compile', false) {
-            grailsWorkDir 'work1'
-            nonInteractive false
-        }
-
-        then:
-        context.stepNodes.size() == 3
-        def grailsStep2 = context.stepNodes[2]
-        grailsStep2.name() == 'com.g2one.hudson.grails.GrailsBuilder'
-        grailsStep2.targets[0].value() == 'compile'
-        grailsStep2.useWrapper[0].value() == false
-        grailsStep2.grailsWorkDir[0].value() == 'work1'
-        grailsStep2.projectWorkDir[0].value() == ''
-        grailsStep2.projectBaseDir[0].value() == ''
-        grailsStep2.serverPort[0].value() == ''
-        grailsStep2.'properties'[0].value() == ''
-        grailsStep2.forceUpgrade[0].value() == false
-        grailsStep2.nonInteractive[0].value() == false
-        (1.._) * jobManagement.requirePlugin('grails')
-        1 * jobManagement.logDeprecationWarning()
-
-        when:
-        context.grails {
-            target 'clean'
-            targets(['compile', 'test-app'])
-            useWrapper true
-            grailsWorkDir 'work'
-            projectWorkDir 'project'
-            projectBaseDir 'base'
-            serverPort '1111'
-            props prop1: 'val1', prop2: 'val2'
-            prop 'prop3', 'val3'
-            forceUpgrade true
-            nonInteractive false
-        }
-
-        then:
-        context.stepNodes.size() == 4
-        def grailsStep3 = context.stepNodes[3]
-        grailsStep3.name() == 'com.g2one.hudson.grails.GrailsBuilder'
-        grailsStep3.targets[0].value() == 'clean compile test-app'
-        grailsStep3.useWrapper[0].value() == true
-        grailsStep3.grailsWorkDir[0].value() == 'work'
-        grailsStep3.projectWorkDir[0].value() == 'project'
-        grailsStep3.projectBaseDir[0].value() == 'base'
-        grailsStep3.serverPort[0].value() == '1111'
-        grailsStep3.'properties'[0].value() == 'prop1=val1\nprop2=val2\nprop3=val3'
-        grailsStep3.forceUpgrade[0].value() == true
-        grailsStep3.nonInteractive[0].value() == false
-        (1.._) * jobManagement.requirePlugin('grails')
-        (1.._) * jobManagement.logDeprecationWarning()
-
-        when:
-        context.grails '"test-app --stacktrace"', {
-            useWrapper true
-            grailsWorkDir 'work'
-            projectWorkDir 'project'
-            projectBaseDir 'base'
-            serverPort '8080'
-            forceUpgrade true
-            nonInteractive false
-        }
-
-        then:
-        context.stepNodes.size() == 5
-        def grailsStep4 = context.stepNodes[4]
-        grailsStep4.name() == 'com.g2one.hudson.grails.GrailsBuilder'
-        grailsStep4.targets[0].value() == '"test-app --stacktrace"'
-        grailsStep4.useWrapper[0].value() == true
-        grailsStep4.grailsWorkDir[0].value() == 'work'
-        grailsStep4.projectWorkDir[0].value() == 'project'
-        grailsStep4.projectBaseDir[0].value() == 'base'
-        grailsStep4.serverPort[0].value() == '8080'
-        grailsStep4.'properties'[0].value() == ''
-        grailsStep4.forceUpgrade[0].value() == true
-        grailsStep4.nonInteractive[0].value() == false
-        (1.._) * jobManagement.requirePlugin('grails')
-        (1.._) * jobManagement.logDeprecationWarning()
-
-        when:
-        context.grails {
-        }
-
-        then:
-        context.stepNodes.size() == 6
-        def grailsStep5 = context.stepNodes[5]
-        grailsStep5.name() == 'com.g2one.hudson.grails.GrailsBuilder'
-        grailsStep5.targets[0].value() == ''
-        grailsStep5.useWrapper[0].value() == false
-        grailsStep5.grailsWorkDir[0].value() == ''
-        grailsStep5.projectWorkDir[0].value() == ''
-        grailsStep5.projectBaseDir[0].value() == ''
-        grailsStep5.serverPort[0].value() == ''
-        grailsStep5.'properties'[0].value() == ''
-        grailsStep5.forceUpgrade[0].value() == false
-        grailsStep5.nonInteractive[0].value() == true
-        (1.._) * jobManagement.requirePlugin('grails')
-        (1.._) * jobManagement.logDeprecationWarning()
+        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
     }
 
     def 'call maven methods'() {
@@ -2753,8 +2514,7 @@ class StepContextSpec extends Specification {
             parameterFile[0].value() == []
             queryString[0].value() == []
         }
-        1 * jobManagement.requirePlugin('Parameterized-Remote-Trigger')
-        1 * jobManagement.logPluginDeprecationWarning('Parameterized-Remote-Trigger', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('Parameterized-Remote-Trigger', '2.0')
     }
 
     def 'call remoteTrigger with parameters and credentials'() {
@@ -2796,9 +2556,7 @@ class StepContextSpec extends Specification {
             parameterFile[0].value() == []
             queryString[0].value() == []
         }
-        1 * jobManagement.requirePlugin('Parameterized-Remote-Trigger')
         1 * jobManagement.requireMinimumPluginVersion('Parameterized-Remote-Trigger', '2.0')
-        1 * jobManagement.logPluginDeprecationWarning('Parameterized-Remote-Trigger', '2.0')
     }
 
     def 'call remoteTrigger with parameters and config'() {
@@ -2842,8 +2600,7 @@ class StepContextSpec extends Specification {
             parameterFile[0].value() == []
             queryString[0].value() == []
         }
-        1 * jobManagement.requirePlugin('Parameterized-Remote-Trigger')
-        1 * jobManagement.logPluginDeprecationWarning('Parameterized-Remote-Trigger', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('Parameterized-Remote-Trigger', '2.0')
     }
 
     def 'call remoteTrigger without jenkins'() {
@@ -3566,70 +3323,6 @@ class StepContextSpec extends Specification {
             forceTag[0].value() == false
         }
         1 * jobManagement.requireMinimumPluginVersion('docker-build-publish', '1.2')
-    }
-
-    def 'call artifactDeployer with no options'() {
-        when:
-        context.artifactDeployer {
-        }
-
-        then:
-        context.stepNodes.size() == 1
-        with(context.stepNodes[0]) {
-            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerBuilder'
-            children().size() == 1
-            with(entry[0]) {
-                children().size() == 9
-                includes[0].value().empty
-                basedir[0].value().empty
-                remote[0].value().empty
-                excludes[0].value().empty
-                flatten[0].value() == false
-                deleteRemote[0].value() == false
-                deleteRemoteArtifacts[0].value() == false
-                deleteRemoteArtifactsByScript[0].value() == false
-                failNoFilesDeploy[0].value() == false
-            }
-        }
-        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'call artifactDeployer with all options'() {
-        when:
-        context.artifactDeployer {
-            includes('test1')
-            baseDir('test2')
-            remoteFileLocation('test3')
-            excludes('test4')
-            flatten()
-            cleanUp()
-            deleteRemoteArtifacts()
-            deleteRemoteArtifactsByScript('test5')
-            failIfNoFiles()
-        }
-
-        then:
-        context.stepNodes.size() == 1
-        with(context.stepNodes[0]) {
-            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerBuilder'
-            children().size() == 1
-            with(entry[0]) {
-                children().size() == 10
-                includes[0].value() == 'test1'
-                basedir[0].value() == 'test2'
-                remote[0].value() == 'test3'
-                excludes[0].value() == 'test4'
-                flatten[0].value() == true
-                deleteRemote[0].value() == true
-                deleteRemoteArtifacts[0].value() == true
-                deleteRemoteArtifactsByScript[0].value() == true
-                groovyExpression[0].value() == 'test5'
-                failNoFilesDeploy[0].value() == true
-            }
-        }
-        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call managedScript with minimal options'() {

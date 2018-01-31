@@ -1,3 +1,0 @@
-buildFlowJob('example') {
-    buildNeedsWorkspace()
-}

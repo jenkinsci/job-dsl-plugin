@@ -57,6 +57,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Support for older versions of the
     [Pipeline Groovy Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Groovy+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-168)
+  * Removed anything that has been deprecated in 1.62, see [Migration](Migration#migrating-to-162)
+  * Removed anything that has been deprecated in 1.64, see [Migration](Migration#migrating-to-164)
 * 1.67 (January 26 2018)
   * Allow import of Groovy code from the workspace when script security sandbox is enabled
     ([#1078](https://github.com/jenkinsci/job-dsl-plugin/pull/1078))

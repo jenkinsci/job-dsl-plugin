@@ -9,7 +9,6 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
-import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 
 import static javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation.LOCAL_TO_WORKSPACE
@@ -121,17 +120,12 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.27
      */
-    @RequiresPlugin(id = 'gradle', minimumVersion = '1.23')
+    @RequiresPlugin(id = 'gradle', minimumVersion = '1.26')
     void gradle(@DslContext(GradleContext) Closure gradleClosure) {
-        jobManagement.logPluginDeprecationWarning('gradle', '1.26')
-
         GradleContext gradleContext = new GradleContext(jobManagement)
         ContextHelper.executeInContext(gradleClosure, gradleContext)
 
         Node gradleNode = new NodeBuilder().'hudson.plugins.gradle.Gradle' {
-            if (!jobManagement.isMinimumPluginVersionInstalled('gradle', '1.26')) {
-                description gradleContext.description
-            }
             switches gradleContext.switches.join(' ')
             tasks gradleContext.tasks.join(' ')
             rootBuildScriptDir gradleContext.rootBuildScriptDir
@@ -141,9 +135,7 @@ class StepContext extends AbstractExtensibleContext {
             makeExecutable gradleContext.makeExecutable
             fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir
             useWorkspaceAsHome gradleContext.useWorkspaceAsHome
-            if (jobManagement.isMinimumPluginVersionInstalled('gradle', '1.25')) {
-                passAsProperties gradleContext.passAsProperties
-            }
+            passAsProperties gradleContext.passAsProperties
         }
 
         ContextHelper.executeConfigureBlock(gradleNode, gradleContext.configureBlock)
@@ -157,7 +149,7 @@ class StepContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The
      * {@code hudson.plugins.gradle.Gradle} node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'gradle')
+    @RequiresPlugin(id = 'gradle', minimumVersion = '1.26')
     void gradle(String tasks = null, String switches = null, Boolean useWrapper = true, Closure configure = null) {
         gradle {
             if (tasks != null) {
@@ -501,50 +493,6 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Builds a Grails project.
-     */
-    @RequiresPlugin(id = 'grails')
-    @Deprecated
-    void grails(@DslContext(GrailsContext) Closure grailsClosure) {
-        grails null, false, grailsClosure
-    }
-
-    /**
-     * Builds a Grails project.
-     */
-    @RequiresPlugin(id = 'grails')
-    @Deprecated
-    void grails(String targets, @DslContext(GrailsContext) Closure grailsClosure) {
-        grails targets, false, grailsClosure
-    }
-
-    /**
-     * Builds a Grails project.
-     */
-    @RequiresPlugin(id = 'grails')
-    @Deprecated
-    void grails(String targets = null, boolean useWrapper = false,
-                @DslContext(GrailsContext) Closure grailsClosure = null) {
-        GrailsContext grailsContext = new GrailsContext(
-                useWrapper: useWrapper
-        )
-        ContextHelper.executeInContext(grailsClosure, grailsContext)
-
-        stepNodes << new NodeBuilder().'com.g2one.hudson.grails.GrailsBuilder' {
-            delegate.targets(targets ?: grailsContext.targets.join(' '))
-            name grailsContext.name
-            grailsWorkDir grailsContext.grailsWorkDir
-            projectWorkDir grailsContext.projectWorkDir
-            projectBaseDir grailsContext.projectBaseDir
-            serverPort grailsContext.serverPort
-            'properties' grailsContext.props.collect { k, v -> "$k=$v" }.join('\n')
-            forceUpgrade grailsContext.forceUpgrade
-            nonInteractive grailsContext.nonInteractive
-            delegate.useWrapper(grailsContext.useWrapper)
-        }
-    }
-
-    /**
      * Copies artifacts from another project.
      *
      * @since 1.33
@@ -687,11 +635,9 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.22
      */
-    @RequiresPlugin(id = 'Parameterized-Remote-Trigger')
+    @RequiresPlugin(id = 'Parameterized-Remote-Trigger', minimumVersion = '2.0')
     void remoteTrigger(String remoteJenkins, String jobName,
                        @DslContext(ParameterizedRemoteTriggerContext) Closure closure = null) {
-        jobManagement.logPluginDeprecationWarning('Parameterized-Remote-Trigger', '2.0')
-
         Preconditions.checkNotNullOrEmpty(remoteJenkins, 'remoteJenkins must be specified')
         Preconditions.checkNotNullOrEmpty(jobName, 'jobName must be specified')
 
@@ -1065,35 +1011,6 @@ class StepContext extends AbstractExtensibleContext {
             buildContext(context.buildContext ?: '')
             buildAdditionalArgs(context.additionalBuildArgs ?: '')
             forceTag(context.forceTag)
-        }
-    }
-
-    /**
-     * Deploys artifacts from the build workspace to remote locations.
-     *
-     * @since 1.39
-     */
-    @RequiresPlugin(id = 'artifactdeployer', minimumVersion = '0.33')
-    @Deprecated
-    void artifactDeployer(@DslContext(ArtifactDeployerContext) Closure closure) {
-        ArtifactDeployerContext context = new ArtifactDeployerContext()
-        ContextHelper.executeInContext(closure, context)
-
-        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerBuilder' {
-            entry {
-                includes(context.includes ?: '')
-                basedir(context.baseDir ?: '')
-                excludes(context.excludes ?: '')
-                remote(context.remoteFileLocation ?: '')
-                flatten(context.flatten)
-                deleteRemote(context.cleanUp)
-                deleteRemoteArtifacts(context.deleteRemoteArtifacts)
-                deleteRemoteArtifactsByScript(context.deleteRemoteArtifactsByScript as boolean)
-                if (context.deleteRemoteArtifactsByScript) {
-                    groovyExpression(context.deleteRemoteArtifactsByScript)
-                }
-                failNoFilesDeploy(context.failIfNoFiles)
-            }
         }
     }
 

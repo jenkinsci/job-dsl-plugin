@@ -2,7 +2,6 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 
 class ParameterizedRemoteTriggerContext extends AbstractContext {
     Map<String, String> parameters = [:]
@@ -83,7 +82,6 @@ class ParameterizedRemoteTriggerContext extends AbstractContext {
      *
      * @since 1.62
      */
-    @RequiresPlugin(id = 'Parameterized-Remote-Trigger', minimumVersion = '2.0')
     void overrideCredentials(String credentialsIds) {
         this.credentialsIds = credentialsIds
     }
