@@ -13,7 +13,6 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
-import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Items;
@@ -40,6 +39,7 @@ import javaposse.jobdsl.plugin.actions.GeneratedUserContentsBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
 import jenkins.model.Jenkins;
+import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
 import jenkins.tasks.SimpleBuildStep;
 import org.acegisecurity.AccessDeniedException;
 import org.apache.commons.io.FilenameUtils;
@@ -429,13 +429,10 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                     removedItem.delete();
                     removed.add(unreferencedJob);
                 } else {
-                    if (removedItem instanceof AbstractProject) {
-                        AbstractProject project = (AbstractProject) removedItem;
+                    if (removedItem instanceof ParameterizedJob) {
+                        ParameterizedJob project = (ParameterizedJob) removedItem;
                         project.checkPermission(Item.CONFIGURE);
-                        if (project.isInQueue()) {
-                            project.checkPermission(Item.CANCEL); // disable() will cancel queued builds
-                        }
-                        project.disable();
+                        project.makeDisabled(true);
                         disabled.add(unreferencedJob);
                     }
                 }
