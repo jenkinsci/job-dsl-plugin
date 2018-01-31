@@ -1,5 +1,0 @@
-buildFlowJob('example') {
-    publishers {
-        aggregateBuildFlowTests()
-    }
-}

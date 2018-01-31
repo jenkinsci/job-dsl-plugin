@@ -8,7 +8,6 @@ import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
-import javaposse.jobdsl.dsl.helpers.common.ArtifactDeployerContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
 import javaposse.jobdsl.dsl.jobs.MatrixJob
 
@@ -1505,40 +1504,6 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Deploys artifacts from the build workspace to remote locations.
-     *
-     * @since 1.39
-     */
-    @RequiresPlugin(id = 'artifactdeployer', minimumVersion = '0.33')
-    @Deprecated
-    void artifactDeployer(@DslContext(ArtifactDeployerPublisherContext) Closure closure) {
-        ArtifactDeployerPublisherContext context = new ArtifactDeployerPublisherContext()
-        ContextHelper.executeInContext(closure, context)
-
-        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerPublisher' {
-            entries {
-                context.entries.each { ArtifactDeployerContext entry ->
-                    'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerEntry' {
-                        includes(entry.includes ?: '')
-                        basedir(entry.baseDir ?: '')
-                        excludes(entry.excludes ?: '')
-                        remote(entry.remoteFileLocation ?: '')
-                        flatten(entry.flatten)
-                        deleteRemote(entry.cleanUp)
-                        deleteRemoteArtifacts(entry.deleteRemoteArtifacts)
-                        deleteRemoteArtifactsByScript(entry.deleteRemoteArtifactsByScript as boolean)
-                        if (entry.deleteRemoteArtifactsByScript) {
-                            groovyExpression(entry.deleteRemoteArtifactsByScript)
-                        }
-                        failNoFilesDeploy(entry.failIfNoFiles)
-                    }
-                }
-            }
-            deployEvenBuildFail(context.deployIfFailed)
-        }
-    }
-
-    /**
      * Generates trend report for SLOCCount and cloc.
      *
      * @since 1.41
@@ -1554,24 +1519,6 @@ class PublisherContext extends AbstractExtensibleContext {
             numBuildsInGraph(context.buildsInGraph)
             commentIsCode(context.commentIsCode)
             ignoreBuildFailure(context.ignoreBuildFailure)
-        }
-    }
-
-    /**
-     * Performs subversion tagging (technically speaking svn copy) on successful builds.
-     *
-     * @since 1.41
-     */
-    @RequiresPlugin(id = 'svn-tag', minimumVersion = '1.18')
-    @Deprecated
-    void svnTag(@DslContext(SubversionTagContext) Closure closure) {
-        SubversionTagContext context = new SubversionTagContext()
-        ContextHelper.executeInContext(closure, context)
-
-        publisherNodes << new NodeBuilder().'hudson.plugins.svn__tag.SvnTagPublisher' {
-            tagBaseURL(context.baseUrl)
-            tagComment(context.comment)
-            tagDeleteComment(context.deleteComment)
         }
     }
 

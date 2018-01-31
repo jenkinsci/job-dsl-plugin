@@ -5042,7 +5042,7 @@ class PublisherContextSpec extends Specification {
         when:
         context.joinTrigger {
             publishers {
-                artifactDeployer {}
+                extendedEmail {}
             }
         }
 
@@ -5099,82 +5099,6 @@ class PublisherContextSpec extends Specification {
         'automatic commit by Jenkins' | true
     }
 
-    def 'call artifactDeployer with no options'() {
-        when:
-        context.artifactDeployer {
-        }
-
-        then:
-        context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerPublisher'
-            children().size() == 2
-            deployEvenBuildFail[0].value() == false
-            entries[0].value() == []
-        }
-        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'call artifactDeployer with all options'() {
-        when:
-        context.artifactDeployer {
-            artifactsToDeploy {
-                includes('test1')
-                baseDir('test2')
-                remoteFileLocation('test3')
-                excludes('test4')
-                flatten()
-                cleanUp()
-                deleteRemoteArtifacts()
-                deleteRemoteArtifactsByScript('test5')
-                failIfNoFiles()
-            }
-            artifactsToDeploy {}
-            deployIfFailed()
-        }
-
-        then:
-        context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerPublisher'
-            children().size() == 2
-            deployEvenBuildFail[0].value() == true
-            with(entries[0]) {
-                children().size() == 2
-                with(children()[0]) {
-                    name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerEntry'
-                    children().size() == 10
-                    includes[0].value() == 'test1'
-                    basedir[0].value() == 'test2'
-                    remote[0].value() == 'test3'
-                    excludes[0].value() == 'test4'
-                    flatten[0].value() == true
-                    deleteRemote[0].value() == true
-                    deleteRemoteArtifacts[0].value() == true
-                    deleteRemoteArtifactsByScript[0].value() == true
-                    groovyExpression[0].value() == 'test5'
-                    failNoFilesDeploy[0].value() == true
-                }
-                with(children()[1]) {
-                    name() == 'org.jenkinsci.plugins.artifactdeployer.ArtifactDeployerEntry'
-                    children().size() == 9
-                    includes[0].value().empty
-                    basedir[0].value().empty
-                    remote[0].value().empty
-                    excludes[0].value().empty
-                    flatten[0].value() == false
-                    deleteRemote[0].value() == false
-                    deleteRemoteArtifacts[0].value() == false
-                    deleteRemoteArtifactsByScript[0].value() == false
-                    failNoFilesDeploy[0].value() == false
-                }
-            }
-        }
-        1 * jobManagement.requireMinimumPluginVersion('artifactdeployer', '0.33')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
     def 'slocCount with no options'() {
         when:
         context.slocCount {}
@@ -5216,44 +5140,6 @@ class PublisherContextSpec extends Specification {
 
         where:
         value << [true, false]
-    }
-
-    def 'svnTag with no options'() {
-        when:
-        context.svnTag {}
-
-        then:
-        context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            name() == 'hudson.plugins.svn__tag.SvnTagPublisher'
-            children().size() == 3
-            tagBaseURL[0].value() == "http://subversion_host/project/tags/last-successful/\${env['JOB_NAME']}"
-            tagComment[0].value() == "Tagged by Jenkins svn-tag plugin. Build:\${env['BUILD_TAG']}."
-            tagDeleteComment[0].value() == 'Delete old tag by svn-tag Jenkins plugin.'
-        }
-        1 * jobManagement.requireMinimumPluginVersion('svn-tag', '1.18')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'svnTag with all options'() {
-        when:
-        context.svnTag {
-            baseUrl('http://subversion.com')
-            comment('tag comment')
-            deleteComment('delete comment')
-        }
-
-        then:
-        context.publisherNodes.size() == 1
-        with(context.publisherNodes[0]) {
-            name() == 'hudson.plugins.svn__tag.SvnTagPublisher'
-            children().size() == 3
-            tagBaseURL[0].value() == 'http://subversion.com'
-            tagComment[0].value() == 'tag comment'
-            tagDeleteComment[0].value() == 'delete comment'
-        }
-        1 * jobManagement.requireMinimumPluginVersion('svn-tag', '1.18')
-        1 * jobManagement.logDeprecationWarning()
     }
 
     def 'call cucumberReports with no options'() {

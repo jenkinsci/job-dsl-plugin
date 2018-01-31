@@ -1,6 +1,5 @@
 package javaposse.jobdsl.dsl
 
-import javaposse.jobdsl.dsl.jobs.BuildFlowJob
 import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import javaposse.jobdsl.dsl.jobs.MavenJob
 import javaposse.jobdsl.dsl.jobs.MultiJob
@@ -20,9 +19,6 @@ class ItemProcessingOrderComparatorSpec extends Specification {
         new Folder(jobManagement, 'test')       | new Folder(jobManagement, 'test')       | 0
         new Folder(jobManagement, 'test')       | new FreeStyleJob(jobManagement, 'test') | -1
         new FreeStyleJob(jobManagement, 'test') | new Folder(jobManagement, 'test')       | 1
-        new BuildFlowJob(jobManagement, 'test') | new BuildFlowJob(jobManagement, 'test') | 0
-        new MultiJob(jobManagement, 'test')     | new BuildFlowJob(jobManagement, 'test') | 1
-        new BuildFlowJob(jobManagement, 'test') | new MultiJob(jobManagement, 'test')     | -1
         new MultiJob(jobManagement, 'test')     | new FreeStyleJob(jobManagement, 'test') | 1
         new FreeStyleJob(jobManagement, 'test') | new MultiJob(jobManagement, 'test')     | -1
         new MultiJob(jobManagement, 'test')     | new MavenJob(jobManagement, 'test')     | 1
