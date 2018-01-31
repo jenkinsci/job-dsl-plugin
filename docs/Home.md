@@ -44,6 +44,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([#1087](https://github.com/jenkinsci/job-dsl-plugin/pull/1087))
   * Changed the default script path for Pipeline `cpsScm` context to `Jenkinsfile`, see
     [Migration](Migration#migrating-to-168)
+  * Changed the `sendTo` recipient list to be empty by default for the
+    [Email Extension Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin), see
+    [Migration](Migration#migrating-to-168)
+    ([JENKINS-49098](https://issues.jenkins-ci.org/browse/JENKINS-49098)
   * Support for older versions of the
     [Pipeline Groovy Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Groovy+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-168)

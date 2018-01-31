@@ -19,7 +19,7 @@ class ExtendedEmailTriggerContext implements Context {
     final List<String> replyToList = []
 
     /**
-     * Specifies the email recipients. Emails are sent to the recipient list by default.
+     * Specifies the email recipients.
      */
     void sendTo(@DslContext(ExtendedEmailSendToContext) Closure closure) {
         ContextHelper.executeInContext(closure, sendToContext)

@@ -34,6 +34,45 @@ pipelineJob('example') {
 }
 ```
 
+### Email Extension Recipient List
+
+The default value of the `sendTo` recipient list of the
+[Email Extension Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin) has been changed from
+`recipientList()` to an empty list.
+
+The following example shows how to migrate DSL scripts to keep the old behaviour.
+
+DSL prior to 1.68
+```
+job('example') {
+    publishers {
+        extendedEmail {
+            triggers {
+                failure {
+                }
+            }
+        }
+    }
+}
+```
+
+DSL since 1.68
+```
+job('example') {
+    publishers {
+        extendedEmail {
+            triggers {
+                failure {
+                    sendTo {
+                        recipientList()
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
 ### Pipeline Groovy Plugin
 
 Support for versions older than 2.29 of the
