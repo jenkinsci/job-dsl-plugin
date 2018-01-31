@@ -49,6 +49,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([JENKINS-47705](https://issues.jenkins-ci.org/browse/JENKINS-47705))
   * Changed the default script path for Pipeline `cpsScm` context to `Jenkinsfile`, see
     [Migration](Migration#migrating-to-168)
+    ([JENKINS-34133](https://issues.jenkins-ci.org/browse/JENKINS-34133))
   * Changed the `sendTo` recipient list to be empty by default for the
     [Email Extension Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin), see
     [Migration](Migration#migrating-to-168)
