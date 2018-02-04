@@ -577,6 +577,21 @@
               "required": true
             }
           ]
+        },
+        {
+          "name": "threshold",
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "String"
+                }
+              ],
+              "deprecated": false,
+              "generated": true
+            }
+          ]
         }
       ]
     },

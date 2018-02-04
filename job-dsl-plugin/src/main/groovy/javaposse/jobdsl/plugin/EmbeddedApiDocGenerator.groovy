@@ -310,7 +310,7 @@ class EmbeddedApiDocGenerator {
         if (parameterType instanceof HomogeneousObjectType) {
             return parameterType.schemaType
         } else if (parameterType instanceof HeterogeneousObjectType) {
-            return new DescribableModel(parameterType.type)
+            return DescribableModel.of(parameterType.type)
         } else if (parameterType instanceof ArrayType) {
             return getContextModel(parameterType.elementType)
         }
