@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl.helpers.step
 
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
 
 class GradleContext extends AbstractContext {
     final List<String> tasks = []
@@ -14,6 +15,8 @@ class GradleContext extends AbstractContext {
     boolean makeExecutable
     boolean useWorkspaceAsHome
     boolean passAsProperties
+    boolean passAllAsSystemProperties
+    boolean passAllAsProjectProperties
     String gradleName = '(Default)'
     Closure configureBlock
 
@@ -82,8 +85,29 @@ class GradleContext extends AbstractContext {
      *
      * @since 1.49
      */
+    @Deprecated
     void passAsProperties(boolean passAsProperties = true) {
         this.passAsProperties = passAsProperties
+    }
+
+    /**
+     * Passes all job parameters as System properties. Defaults to {@code false}.
+     *
+     * @since 1.68
+     */
+    @RequiresPlugin(id = 'gradle', minimumVersion = '1.27')
+    void passAllAsSystemProperties(boolean passAllAsSystemProperties = true) {
+        this.passAllAsSystemProperties = passAllAsSystemProperties
+    }
+
+    /**
+     * Passes all job parameters as Gradle project properties. Defaults to {@code false}.
+     *
+     * @since 1.68
+     */
+    @RequiresPlugin(id = 'gradle', minimumVersion = '1.27')
+    void passAllAsProjectProperties(boolean passAllAsProjectProperties = true) {
+        this.passAllAsProjectProperties = passAllAsProjectProperties
     }
 
     /**

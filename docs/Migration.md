@@ -73,6 +73,43 @@ job('example') {
 }
 ```
 
+### Gradle Plugin
+
+Support for versions older than 1.28 of the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)
+is [[deprecated|Deprecation-Policy]] and will be removed.
+
+When using version 1.27 or later of the Gradle plugin, the generated configuration changed in Job DSL 1.68. The
+`passAsProperties` option is deprecated and has been replaced by `passAllAsSystemProperties` and
+`passAllAsProjectProperties`. The following example shows how to migrate DSL scripts to keep the old behaviour.
+
+DSL prior to 1.68
+```
+job('example') {
+    steps {
+        gradle {
+            passAsProperties(false)
+        }
+        gradle {
+            passAsProperties(true)
+        }
+    }
+}
+```
+
+DSL since 1.68
+```
+job('example') {
+    steps {
+        gradle {
+            passAllAsSystemProperties()
+        }
+        gradle {
+            passAllAsProjectProperties()
+        }
+    }
+}
+```
+
 ### Pipeline Groovy Plugin
 
 Support for versions older than 2.29 of the
