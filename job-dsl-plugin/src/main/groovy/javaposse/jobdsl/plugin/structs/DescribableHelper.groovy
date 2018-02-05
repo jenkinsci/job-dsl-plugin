@@ -180,7 +180,7 @@ class DescribableHelper {
         List<DescribableModel> result = []
         descriptors.each {
             try {
-                result << new DescribableModel(it.clazz)
+                result << DescribableModel.of(it.clazz)
             } catch (NoStaplerConstructorException e) {
                 LOGGER.fine("can not introspect ${it.clazz}: ${e.message}")
             } catch (NoClassDefFoundError e) {

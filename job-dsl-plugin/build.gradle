@@ -88,7 +88,7 @@ dependencies {
     compile(project(':job-dsl-core'))  {
         exclude group: 'org.jvnet.hudson', module:'xstream'
     }
-    jenkinsPlugins 'org.jenkins-ci.plugins:structs:1.6'
+    jenkinsPlugins 'org.jenkins-ci.plugins:structs:1.13'
     jenkinsPlugins 'org.jenkins-ci.plugins:script-security:1.25'
     optionalJenkinsPlugins('org.jenkins-ci.plugins:vsphere-cloud:1.1.11') {
         exclude group: 'dom4j'
