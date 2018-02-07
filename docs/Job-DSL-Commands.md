@@ -132,7 +132,7 @@ mavenSettingsConfigFile(String name, Closure configFileClosure = null) // deprec
 ```
 
 The `configFiles` method can be used to create any kind of config file that is supported by the
-[[Automatically Generated DSL]]. Use the embedded API viewer to browse available methods.
+[[Dynamic DSL]]. Use the embedded API viewer to browse available methods.
 
 The other methods behaves like the [job](#job) methods and will return a config file object, but these methods are
 [[deprecated|Deprecation-Policy]] and will be removed.

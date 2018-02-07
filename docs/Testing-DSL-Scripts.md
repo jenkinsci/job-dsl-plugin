@@ -11,7 +11,7 @@ root of the same source code repository as the Job DSL scripts.
 The build script assumes that the Job DSL scripts are located in a sub-directory called `jobs`. The `jobDslVersion` and
 `jenkinsVersion` settings should match the versions running in the target installation. The dependencies listed as
 `testPlugins` are Jenkins plugins that will be installed in the emulated Jenkins instance so that they are available
-when running the DSL scripts, e.g. for testing [[extensions|Extending the DSL]] or [[Automatically Generated DSL]].
+when running the DSL scripts, e.g. for testing [[extensions|Extending the DSL]] or [[Dynamic DSL]].
 
     apply plugin: 'groovy'
 

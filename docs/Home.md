@@ -17,7 +17,7 @@ Job DSL provides a secure environment for executing DSL scripts. See [[Script Se
 
 Not all of the 1000+ Jenkins plugins are supported by the built-in DSL. If the
 [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/) does not list support for a certain plugin, the
-[[Automatically Generated DSL]] can be used to fill the gap.
+[[Dynamic DSL]] can be used to fill the gap.
 
 If you want to get fancy you'll want to read up on [[configure block|The Configure Block]], which gives you direct access to the `config.xml`.
 
@@ -34,6 +34,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Increased the minimum supported Groovy version to 2.4.11
   * Updated [Structs Plugin](https://github.com/jenkinsci/structs-plugin) dependency to version 1.13 and use new caching
     feature
+  * Renamed Automatically Generated DSL to [[Dynamic DSL]]
   * Un-deprecated support for the
     [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin)
     ([JENKINS-43637](https://issues.jenkins-ci.org/browse/JENKINS-43637))
@@ -69,7 +70,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.67 (January 26 2018)
   * Allow import of Groovy code from the workspace when script security sandbox is enabled
     ([#1078](https://github.com/jenkinsci/job-dsl-plugin/pull/1078))
-  * Fixed support for [[Automatically Generated DSL]] when using script security sandbox
+  * Fixed support for [[Dynamic DSL]] when using script security sandbox
     ([JENKINS-47560](https://issues.jenkins-ci.org/browse/JENKINS-47560))
   * Enhanced support for the [Groovy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin)
     ([JENKINS-44256](https://issues.jenkins-ci.org/browse/JENKINS-44256))
@@ -159,7 +160,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Fixed problem with special characters in job, folder and view names
     ([JENKINS-44140](https://issues.jenkins-ci.org/browse/JENKINS-44140))
 * 1.62 (May 09 2017)
-  * Show enum values for generated DSL in embedded API viewer
+  * Show enum values for dynamic DSL in embedded API viewer
     [#1020](https://github.com/jenkinsci/job-dsl-plugin/pull/1020)
   * Added option to remove unreferenced config files
     ([JENKINS-40720](https://issues.jenkins-ci.org/browse/JENKINS-40720))
@@ -219,10 +220,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [Migration](Migration#migrating-to-160)
     ([SECURITY-363](https://issues.jenkins-ci.org/browse/SECURITY-363))
 * 1.59 (March 31 2017)
-  * Enable [[Automatically Generated DSL]] for
+  * Enable [[Dynamic DSL]] for
     [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
     ([JENKINS-41741](https://issues.jenkins-ci.org/browse/JENKINS-41741))
-  * Log deprecation warnings for [[Automatically Generated DSL]] and DSL extensions
+  * Log deprecation warnings for [[Dynamic DSL]] and DSL extensions
   * Updated the troubleshooting section for [[The Configure Block]]
     ([JENKINS-41958](https://issues.jenkins-ci.org/browse/JENKINS-41958))
   * Updated [Structs Plugin](https://github.com/jenkinsci/structs-plugin) dependency to version 1.6
@@ -341,7 +342,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([JENKINS-38637](https://issues.jenkins-ci.org/browse/JENKINS-38637))
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
     ([JENKINS-39558](https://issues.jenkins-ci.org/browse/JENKINS-39558))
-  * Allow `GString` as argument type for Automatically Generated DSL
+  * Allow `GString` as argument type for dynamic DSL
     ([JENKINS-39153](https://issues.jenkins-ci.org/browse/JENKINS-39153))
   * The XML configuration for jobs and folders will only be generated once
     ([JENKINS-39417](https://issues.jenkins-ci.org/browse/JENKINS-39417))
@@ -421,7 +422,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Allow extensions for job view filters
     ([#896](https://github.com/jenkinsci/job-dsl-plugin/pull/896))
   * Updated [Structs Plugin](https://github.com/jenkinsci/structs-plugin) dependency to version 1.2
-  * Improved support for [[Automatically Generated DSL]]: print deprecation warnings and show deprecated methods in API
+  * Improved support for [[Dynamic DSL]]: print deprecation warnings and show deprecated methods in API
     viewer
   * Added symbol to allow nicer pipeline syntax, see
     [Use Job DSL in Pipeline scripts](User-Power-Moves#use-job-dsl-in-pipeline-scripts)
@@ -501,7 +502,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [Migration](Migration#migrating-to-147)
 * 1.46 (May 08 2016)
   * Increased the minimum supported Jenkins version to 1.625
-  * Added support for [[Automatically Generated DSL]]
+  * Added support for [[Dynamic DSL]]
     ([#816](https://github.com/jenkinsci/job-dsl-plugin/pull/816))
   * Integrated the API Viewer into the plugin
     ([#822](https://github.com/jenkinsci/job-dsl-plugin/pull/822))

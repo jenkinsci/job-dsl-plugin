@@ -13,8 +13,8 @@ We are always happy for folk to help us out on this project. Please follow these
 ### New Features
 
 Before opening a feature request or submitting a pull request, make sure that the feature is not already supported by
-the [Automatically Generated DSL](docs/Automatically-Generated-DSL.md). Feature requests or pull requests for features
-already supported by Automatically Generated DSL are likely to be rejected since it's not feasible to add support for
+the [Dynamic DSL](docs/Dynamic-DSL.md). Feature requests or pull requests for features
+already supported by dynamic DSL are likely to be rejected since it's not feasible to add support for
 every config option of each of the 1000+ plugins available in the Update Center.
 
 * Feature Requests - Create a "New Feature" issue on the
@@ -26,7 +26,7 @@ every config option of each of the 1000+ plugins available in the Update Center.
   the repo, create a branch (named after the JIRA "New Feature" you created earlier), implement it yourself and submit a
   Pull Request.
 * Open a feature request for adding support for a specific plugin only if the plugin is not supported by the
-  [Automatically Generated DSL](docs/Automatically-Generated-DSL.md) and if the plugin does not implement the
+  [Dynamic DSL](docs/Dynamic-DSL.md) and if the plugin does not implement the
   [Job DSL Extension Point](docs/Extending-the-DSL.md). Contact the
   [mailing list](https://groups.google.com/forum/?fromgroups#!forum/job-dsl-plugin) if uncertain.
 

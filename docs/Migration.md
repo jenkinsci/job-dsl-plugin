@@ -134,7 +134,7 @@ Support for versions older than 1.12 of the
 ### Cucumber Reports Plugin
 
 Support for the [Cucumber Reports Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cucumber+Reports+Plugin) is
-[[deprecated|Deprecation-Policy]] and will be removed. Use the syntax provided by the [[Automatically Generated DSL]]
+[[deprecated|Deprecation-Policy]] and will be removed. Use the syntax provided by the [[Dynamic DSL]]
 instead.
 
 DSL prior to 1.66
@@ -272,7 +272,7 @@ See [[Script Security]] for details.
 ### Mattermost
 
 Support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin) is
-[deprecated|Deprecation-Policy]] and will be removed. Use the syntax provided by the [[Automatically Generated DSL]]
+[deprecated|Deprecation-Policy]] and will be removed. Use the syntax provided by the [[Dynamic DSL]]
 instead.
 
 DSL prior to 1.59
@@ -534,7 +534,7 @@ instead.
 ### S3
 
 Support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin) is [deprecated|Deprecation-Policy]]
-and will be removed. Use the syntax provided by the [[Automatically Generated DSL]] instead.
+and will be removed. Use the syntax provided by the [[Dynamic DSL]] instead.
 
 DSL prior to 1.54
 ```groovy
@@ -686,7 +686,7 @@ and will be removed.
 ### Rundeck
 
 Support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin) is
-[deprecated|Deprecation-Policy]] and will be removed. Use the syntax provided by the [[Automatically Generated DSL]]
+[deprecated|Deprecation-Policy]] and will be removed. Use the syntax provided by the [[Dynamic DSL]]
 instead.
 
 DSL prior to 1.52
@@ -895,7 +895,7 @@ Support for versions older than 1.2 of the [Gitlab Plugin](https://wiki.jenkins-
 
 Support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin) is
 [[deprecated|Deprecation-Policy]] because it is incompatible with newer versions of that plugin. It has been replaced by
-the [[Automatically Generated DSL]].
+the [[Dynamic DSL]].
 
 DSL prior to 1.47
 ```groovy
@@ -944,7 +944,7 @@ job('example') {
 
 Support for the [HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin) is
 [[deprecated|Deprecation-Policy]] because it is incompatible with newer versions of that plugin. It has been replaced by
-the [[Automatically Generated DSL]].
+the [[Dynamic DSL]].
 
 DSL prior to 1.47
 ```groovy
