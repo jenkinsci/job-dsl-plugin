@@ -29,7 +29,7 @@ abstract class ComputedFolder extends Folder {
      * Sets the orphaned branch strategy.
      */
     void orphanedItemStrategy(@DslContext(OrphanedItemStrategyContext) Closure closure) {
-        OrphanedItemStrategyContext context = new OrphanedItemStrategyContext()
+        OrphanedItemStrategyContext context = new OrphanedItemStrategyContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         if (context.orphanedItemStrategyNode != null) {

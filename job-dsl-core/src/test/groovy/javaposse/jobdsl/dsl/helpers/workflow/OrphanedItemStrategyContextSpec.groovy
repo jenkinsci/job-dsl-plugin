@@ -1,9 +1,31 @@
 package javaposse.jobdsl.dsl.helpers.workflow
 
+import javaposse.jobdsl.dsl.Item
+import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class OrphanedItemStrategyContextSpec extends Specification {
-    OrphanedItemStrategyContext context = new OrphanedItemStrategyContext()
+    JobManagement jobManagement = Mock(JobManagement)
+    Item item = Mock(Item)
+    OrphanedItemStrategyContext context = new OrphanedItemStrategyContext(jobManagement, item)
+
+    def 'extension node is transformed to orphanedItemStrategy node'() {
+        Node node = new Node(null, 'org.example.CustomStrategy', [foo: 'bar'])
+        node.appendNode('test', 'value')
+
+        when:
+        context.addExtensionNode(node)
+
+        then:
+        with(context.orphanedItemStrategyNode) {
+            name() == 'orphanedItemStrategy'
+            attributes().size() == 2
+            attribute('class') == 'org.example.CustomStrategy'
+            attribute('foo') == 'bar'
+            children().size() == 1
+            test[0].text() == 'value'
+        }
+    }
 
     def 'discardOldItems with minimal options'() {
         when:
