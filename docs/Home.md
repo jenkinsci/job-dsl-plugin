@@ -51,6 +51,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([#1087](https://github.com/jenkinsci/job-dsl-plugin/pull/1087))
   * Enhanced support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin), see
     [Migration](Migration#migrating-to-168)
+  * Enhanced support for the
+    [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin)
+    ([JENKINS-48336](https://issues.jenkins-ci.org/browse/JENKINS-48336))
   * Fixed "Disable removed jobs" for Pipeline jobs
     ([JENKINS-47705](https://issues.jenkins-ci.org/browse/JENKINS-47705))
   * Changed the default script path for Pipeline `cpsScm` context to `Jenkinsfile`, see
