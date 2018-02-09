@@ -28,7 +28,7 @@ scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Suppo
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.68 (unreleased)
+* 1.68 (February 09 2018)
   * Increased the minimum supported Java version to JDK 8
   * Increased the minimum supported Jenkins version to 2.73
   * Increased the minimum supported Groovy version to 2.4.11
