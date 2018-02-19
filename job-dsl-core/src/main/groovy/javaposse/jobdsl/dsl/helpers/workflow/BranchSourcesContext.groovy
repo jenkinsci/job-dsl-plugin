@@ -29,7 +29,7 @@ class BranchSourcesContext extends AbstractExtensibleContext {
         GitBranchSourceContext context = new GitBranchSourceContext()
         ContextHelper.executeInContext(branchSourceClosure, context)
 
-        branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
+        Node branchSourceNode = new NodeBuilder().'jenkins.branch.BranchSource' {
             source(class: 'jenkins.plugins.git.GitSCMSource') {
                 id(context.id)
                 remote(context.remote ?: '')
@@ -38,10 +38,14 @@ class BranchSourcesContext extends AbstractExtensibleContext {
                 excludes(context.excludes ?: '')
                 ignoreOnPushNotifications(context.ignoreOnPushNotifications)
             }
-            strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
-                properties(class: 'empty-list')
-            }
         }
+
+        branchSourceNode.append(context.branchPropertyStrategy
+            ?: new NodeBuilder().strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
+                properties(class: 'empty-list')
+            })
+
+        branchSourceNodes << branchSourceNode
     }
 
     /**
