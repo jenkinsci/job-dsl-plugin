@@ -18,13 +18,17 @@ class MultiBranchProjectFactoryContext extends AbstractExtensibleContext {
     /**
      * Configure the default workflow branch project factory.
      */
-    void workflowBranchProjectFactory(@DslContext(WorkflowBranchProjectFactoryContext) Closure workflowBranchProjectFactoryClosure) {
+    void workflowBranchProjectFactory(
+        @DslContext(WorkflowBranchProjectFactoryContext)
+        Closure workflowBranchProjectFactoryClosure) {
         WorkflowBranchProjectFactoryContext context = new WorkflowBranchProjectFactoryContext()
         ContextHelper.executeInContext(workflowBranchProjectFactoryClosure, context)
 
         this.projectFactoryNodes <<
             new NodeBuilder().'org.jenkinsci.plugins.workflow.multibranch.WorkflowBranchProjectFactory' {
-                owner(class: 'org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject', reference: '../..')
+                owner(class: 'org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject',
+                    reference: '../..')
+
                 scriptPath(context.scriptPath)
             }
     }
