@@ -18,8 +18,9 @@ class ScriptRequestGenerator implements Closeable {
     }
 
     Set<ScriptRequest> getScriptRequests(String targets, boolean usingScriptText, String scriptText,
-                                         boolean ignoreExisting, boolean ignoreMissingFiles = false,
-                                         String additionalClasspath) throws IOException, InterruptedException {
+                                         boolean ignoreExisting, boolean deleteExistingViews,
+                                         boolean ignoreMissingFiles = false, String additionalClasspath)
+            throws IOException, InterruptedException {
         Set<ScriptRequest> scriptRequests = new LinkedHashSet<ScriptRequest>()
 
         List<URL> classpath = []
@@ -36,7 +37,7 @@ class ScriptRequestGenerator implements Closeable {
         }
         if (usingScriptText) {
             URL[] urlRoots = ([createWorkspaceUrl()] + classpath) as URL[]
-            ScriptRequest request = new ScriptRequest(scriptText, urlRoots, ignoreExisting)
+            ScriptRequest request = new ScriptRequest(scriptText, urlRoots, ignoreExisting, deleteExistingViews)
             scriptRequests.add(request)
         } else {
             targets.split('\n').each { String target ->
@@ -49,7 +50,7 @@ class ScriptRequestGenerator implements Closeable {
                 for (FilePath filePath : filePaths) {
                     URL[] urlRoots = ([createWorkspaceUrl(filePath.parent)] + classpath) as URL[]
                     ScriptRequest request = new ScriptRequest(
-                            readFile(filePath), urlRoots, ignoreExisting, getAbsolutePath(filePath)
+                            readFile(filePath), urlRoots, ignoreExisting, deleteExistingViews, getAbsolutePath(filePath)
                     )
                     scriptRequests.add(request)
                 }

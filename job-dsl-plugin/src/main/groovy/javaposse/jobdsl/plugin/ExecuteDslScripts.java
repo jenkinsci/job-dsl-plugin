@@ -94,6 +94,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private boolean ignoreMissingFiles;
 
+    private boolean deleteExistingViews;
+
     private boolean failOnMissingPlugin;
 
     private boolean unstableOnDeprecation;
@@ -182,6 +184,15 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     public boolean isIgnoreExisting() {
         return ignoreExisting;
+    }
+
+    @DataBoundSetter
+    public void setDeleteExistingViews(boolean deleteExistingViews) {
+        this.deleteExistingViews = deleteExistingViews;
+    }
+
+    public boolean isDeleteExistingViews() {
+        return !isIgnoreExisting() && deleteExistingViews;
     }
 
     @DataBoundSetter
@@ -306,7 +317,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
             try (ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env)) {
                 Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
-                        getTargets(), isUsingScriptText(), getScriptText(), ignoreExisting, isIgnoreMissingFiles(), additionalClasspath
+                        getTargets(), isUsingScriptText(), getScriptText(), ignoreExisting,
+                        isDeleteExistingViews(), isIgnoreMissingFiles(), additionalClasspath
                 );
 
                 JenkinsDslScriptLoader dslScriptLoader;

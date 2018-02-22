@@ -38,11 +38,12 @@ interface JobManagement {
      * @param viewName the name of the new / updated view
      * @param config the new / updated view config
      * @param ignoreExisting do not update existing view
+     * @param deleteExistingViews delete and re-create existing views
      * @throws NameNotProvidedException if the viewName is null or blank
      * @throws ConfigurationMissingException if the config xml is null or blank
      * @since 1.21
      */
-    void createOrUpdateView(String viewName, String config, boolean ignoreExisting)
+    void createOrUpdateView(String viewName, String config, boolean ignoreExisting, boolean deleteExistingViews)
             throws NameNotProvidedException, ConfigurationMissingException
 
     /**

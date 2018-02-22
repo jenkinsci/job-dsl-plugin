@@ -13,6 +13,9 @@ class ScriptRequest {
     // Ignore existing jobs
     final boolean ignoreExisting
 
+    // Delete and re-create existing views
+    final boolean deleteExistingViews
+
     // Path to the script in the local filesystem, optional
     final String scriptPath
 
@@ -21,13 +24,15 @@ class ScriptRequest {
     }
 
     ScriptRequest(String body, URL urlRoot, boolean ignoreExisting = false, String scriptPath = null) {
-        this(body, [urlRoot] as URL[], ignoreExisting, scriptPath)
+        this(body, [urlRoot] as URL[], ignoreExisting, false,  scriptPath)
     }
 
-    ScriptRequest(String body, URL[] urlRoots, boolean ignoreExisting = false, String scriptPath = null) {
+    ScriptRequest(String body, URL[] urlRoots, boolean ignoreExisting = false,
+                  boolean deleteExistingViews = false, String scriptPath = null) {
         this.body = body
         this.urlRoots = urlRoots
         this.ignoreExisting = ignoreExisting
+        this.deleteExistingViews = deleteExistingViews
         this.scriptPath = scriptPath
     }
 

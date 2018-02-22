@@ -547,6 +547,21 @@ class JenkinsJobManagementSpec extends Specification {
         e.message == 'Type of view "foo" does not match existing type, view type can not be changed'
     }
 
+    def 'createOrUpdateView should not fail on view type change if Delete existing views is checked'() {
+        setup:
+        jenkinsRule.jenkins.addView(new AllView('foo'))
+
+        when:
+        jobManagement.createOrUpdateView(
+                'foo',
+                JenkinsJobManagementSpec.getResourceAsStream('/javaposse/jobdsl/dsl/views/ListView-template.xml').text,
+                false, true
+        )
+
+        then:
+        noExceptionThrown()
+    }
+
     def isMinimumPluginVersionInstalled() {
         when:
         boolean result = jobManagement.isMinimumPluginVersionInstalled('script-security', '0.1')
