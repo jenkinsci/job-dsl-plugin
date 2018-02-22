@@ -174,7 +174,9 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
                 extractGeneratedJobs(jobParent.referencedJobs, scriptRequest.ignoreExisting)
         )
         generatedItems.views.addAll(
-                extractGeneratedViews(jobParent.referencedViews, scriptRequest.ignoreExisting)
+                extractGeneratedViews(jobParent.referencedViews,
+                        scriptRequest.ignoreExisting,
+                        scriptRequest.deleteExistingViews)
         )
         generatedItems.userContents.addAll(
                 extractGeneratedUserContents(jobParent.referencedUserContents, scriptRequest.ignoreExisting)
@@ -198,12 +200,14 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
         generatedJobs
     }
 
-    protected Set<GeneratedView> extractGeneratedViews(Set<View> referencedViews, boolean ignoreExisting) {
+    protected Set<GeneratedView> extractGeneratedViews(Set<View> referencedViews,
+                                                       boolean ignoreExisting,
+                                                       boolean deleteExisting) {
         Set<GeneratedView> generatedViews = new LinkedHashSet<GeneratedView>()
         referencedViews.each { View view ->
             String xml = view.xml
             LOGGER.log(Level.FINE, "Saving view ${view.name} as ${xml}")
-            jobManagement.createOrUpdateView(view.name, xml, ignoreExisting)
+            jobManagement.createOrUpdateView(view.name, xml, ignoreExisting, deleteExisting)
             generatedViews << new GeneratedView(view.name)
         }
         generatedViews

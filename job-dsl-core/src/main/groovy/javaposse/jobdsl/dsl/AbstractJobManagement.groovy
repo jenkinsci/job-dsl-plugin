@@ -38,6 +38,10 @@ abstract class AbstractJobManagement implements JobManagement {
         requireMinimumPluginVersion(pluginShortName, version, false)
     }
 
+    void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
+        createOrUpdateView(viewName, config, ignoreExisting, false)
+    }
+
     protected void logDeprecationWarning(String subject, String details) {
         logWarning("${subject} is deprecated", details)
     }

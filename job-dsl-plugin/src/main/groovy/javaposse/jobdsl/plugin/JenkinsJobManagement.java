@@ -142,7 +142,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public void createOrUpdateView(String path, String config, boolean ignoreExisting) {
+    public void createOrUpdateView(String path, String config, boolean ignoreExisting, boolean deleteExisting) {
         validateUpdateArgs(path, config);
         String viewBaseName = FilenameUtils.getName(path);
         Jenkins.checkGoodName(viewBaseName);
@@ -151,7 +151,12 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
             ItemGroup parent = lookupStrategy.getParent(project, path);
             if (parent instanceof ViewGroup) {
-                View view = ((ViewGroup) parent).getView(viewBaseName);
+                ViewGroup parentViewGroup = (ViewGroup) parent;
+                View view = parentViewGroup.getView(viewBaseName);
+                if (deleteExisting && view != null) {
+                    parentViewGroup.deleteView(view);
+                    view = null;
+                }
                 if (view == null) {
                     if (parent instanceof ModifiableViewGroup) {
                         ((ModifiableViewGroup) parent).checkPermission(View.CREATE);
@@ -174,7 +179,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
-  @Override
+    @Override
     public void createOrUpdateUserContent(UserContent userContent, boolean ignoreExisting) {
         // As in git-userContent-plugin:
         Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);

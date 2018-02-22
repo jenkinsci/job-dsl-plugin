@@ -47,7 +47,7 @@ class FileJobManagement extends MockJobManagement {
     }
 
     @Override
-    void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
+    void createOrUpdateView(String viewName, String config, boolean ignoreExisting, boolean deleteExistingViews) {
         validateUpdateArgs(viewName, config)
 
         File file = new File(root, viewName + ext)

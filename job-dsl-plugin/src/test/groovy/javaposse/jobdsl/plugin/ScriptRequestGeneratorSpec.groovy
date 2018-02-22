@@ -55,7 +55,8 @@ class ScriptRequestGeneratorSpec extends Specification {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests(null, true, SCRIPT, false, null).toList()
+        List<ScriptRequest> requests = generator.getScriptRequests(null, true, SCRIPT, false, false, null)
+                .toList()
 
         then:
         requests.size() == 1
@@ -72,7 +73,8 @@ class ScriptRequestGeneratorSpec extends Specification {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests(null, true, SCRIPT, true, null).toList()
+        List<ScriptRequest> requests = generator.getScriptRequests(null, true, SCRIPT, true, false, null)
+                .toList()
 
         then:
         requests.size() == 1
@@ -83,13 +85,32 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].scriptPath == null
     }
 
+    def 'script text delete existing views'() {
+        setup:
+        EnvVars env = new EnvVars()
+        ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
+
+        when:
+        List<ScriptRequest> requests = generator.getScriptRequests(null, true, SCRIPT, false, true, null)
+                .toList()
+
+        then:
+        requests.size() == 1
+        requests[0].body == SCRIPT
+        requests[0].urlRoots.length == 1
+        requests[0].urlRoots[0].toString() == 'workspace:/'
+        requests[0].deleteExistingViews
+        requests[0].scriptPath == null
+    }
+
     def 'script text with additional classpath entry'() {
         setup:
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests(null, true, SCRIPT, false, 'classes').toList()
+        List<ScriptRequest> requests = generator.getScriptRequests(null, true, SCRIPT, false, false, 'classes')
+                .toList()
 
         then:
         requests.size() == 1
@@ -107,7 +128,8 @@ class ScriptRequestGeneratorSpec extends Specification {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests(null, true, SCRIPT, false, '${FOO}/classes').toList()
+        List<ScriptRequest> requests = generator.getScriptRequests(null, true, SCRIPT, false, false, '${FOO}/classes')
+                .toList()
 
         then:
         requests.size() == 1
@@ -126,7 +148,7 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         when:
         List<ScriptRequest> requests = generator.getScriptRequests(
-                null, true, SCRIPT, false, 'classes\noutput'
+                null, true, SCRIPT, false, false, 'classes\noutput'
         ).toList()
 
         then:
@@ -146,7 +168,8 @@ class ScriptRequestGeneratorSpec extends Specification {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests('a.groovy', false, null, false, null).toList()
+        List<ScriptRequest> requests = generator.getScriptRequests('a.groovy', false, null, false, false, null)
+                .toList()
 
         then:
         requests.size() == 1
@@ -163,7 +186,8 @@ class ScriptRequestGeneratorSpec extends Specification {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests('${FOO}.groovy', false, null, false, null).toList()
+        List<ScriptRequest> requests = generator.getScriptRequests('${FOO}.groovy', false, null, false, false, null)
+                .toList()
 
         then:
         requests.size() == 1
@@ -180,7 +204,8 @@ class ScriptRequestGeneratorSpec extends Specification {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests('a.groovy', false, null, true, null).toList()
+        List<ScriptRequest> requests = generator.getScriptRequests('a.groovy', false, null, true, false, null)
+                .toList()
 
         then:
         requests.size() == 1
@@ -191,6 +216,24 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
     }
 
+    def 'single target delete existing views'() {
+        setup:
+        EnvVars env = new EnvVars()
+        ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
+
+        when:
+        List<ScriptRequest> requests = generator.getScriptRequests('a.groovy', false, null, false, true, null)
+                .toList()
+
+        then:
+        requests.size() == 1
+        requests[0].body == SCRIPT_A
+        requests[0].urlRoots.length == 1
+        requests[0].urlRoots[0].toString() == 'workspace:/'
+        requests[0].deleteExistingViews
+        requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
+    }
+
     def 'multiple target'() {
         setup:
         EnvVars env = new EnvVars()
@@ -198,7 +241,7 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         when:
         List<ScriptRequest> requests = generator.getScriptRequests(
-                'a.groovy\nb.groovy', false, null, false, null
+                'a.groovy\nb.groovy', false, null, false, false, null
         ).toList()
 
         then:
@@ -221,7 +264,8 @@ class ScriptRequestGeneratorSpec extends Specification {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests('*.groovy', false, null, false, null).toList()
+        List<ScriptRequest> requests = generator.getScriptRequests('*.groovy', false, null, false, false, null)
+                .toList()
 
         then:
         requests.size() == 2
@@ -244,7 +288,7 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         when:
         List<ScriptRequest> requests = generator.getScriptRequests(
-                'a.groovy\nb.groovy', false, null, false, 'classes\noutput'
+                'a.groovy\nb.groovy', false, null, false, false, 'classes\noutput'
         ).toList()
 
         then:
@@ -272,7 +316,7 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         when:
         List<ScriptRequest> requests = generator.getScriptRequests(
-                'a.groovy', false, null, false, 'lib/*.jar'
+                'a.groovy', false, null, false, false, 'lib/*.jar'
         ).toList()
 
         then:
@@ -293,7 +337,7 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         when:
         List<ScriptRequest> requests = generator.getScriptRequests(
-                'a.groovy', false, null, false, 'lib/*.jar'
+                'a.groovy', false, null, false, false, 'lib/*.jar'
         ).toList()
 
         then:
@@ -324,7 +368,7 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         when:
         List<ScriptRequest> requests = generator.getScriptRequests(
-                null, true, SCRIPT, false, additionalClasspath
+                null, true, SCRIPT, false, false, additionalClasspath
         ).toList()
 
         then:
@@ -342,7 +386,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        generator.getScriptRequests('x.groovy', false, null, false, null).toList()
+        generator.getScriptRequests('x.groovy', false, null, false, false, null).toList()
 
         then:
         Exception e = thrown(DslException)
@@ -355,7 +399,8 @@ class ScriptRequestGeneratorSpec extends Specification {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests('x.groovy', false, null, false, true, null).toList()
+        List<ScriptRequest> requests = generator.getScriptRequests('x.groovy', false, null, false, false, true, null)
+                .toList()
 
         then:
         requests.empty
@@ -367,7 +412,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        generator.getScriptRequests('*.foo', false, null, false, null).toList()
+        generator.getScriptRequests('*.foo', false, null, false, false, null).toList()
 
         then:
         Exception e = thrown(DslException)
@@ -380,7 +425,8 @@ class ScriptRequestGeneratorSpec extends Specification {
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
 
         when:
-        List<ScriptRequest> requests = generator.getScriptRequests('*.foo', false, null, false, true, null).toList()
+        List<ScriptRequest> requests = generator.getScriptRequests('*.foo', false, null, false, false, true, null)
+                .toList()
 
         then:
         requests.empty

@@ -137,7 +137,7 @@ class AbstractJobManagementSpec extends Specification {
         }
 
         @Override
-        void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
+        void createOrUpdateView(String viewName, String config, boolean ignoreExisting, boolean deleteExisting) {
             throw new UnsupportedOperationException()
         }
 

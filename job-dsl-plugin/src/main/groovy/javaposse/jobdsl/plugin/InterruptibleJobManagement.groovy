@@ -36,9 +36,9 @@ class InterruptibleJobManagement implements JobManagement {
     }
 
     @Override
-    void createOrUpdateView(String viewName, String config, boolean ignoreExisting) throws NameNotProvidedException,
-            ConfigurationMissingException {
-        delegate.createOrUpdateView(viewName, config, ignoreExisting)
+    void createOrUpdateView(String viewName, String config, boolean ignoreExisting, boolean deleteExisting)
+            throws NameNotProvidedException, ConfigurationMissingException {
+        delegate.createOrUpdateView(viewName, config, ignoreExisting, deleteExisting)
     }
 
     @Override

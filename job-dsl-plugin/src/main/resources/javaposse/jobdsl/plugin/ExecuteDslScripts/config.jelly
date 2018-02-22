@@ -27,6 +27,9 @@
         <f:checkbox name="ignoreExisting" title="Ignore changes" checked="${instance.ignoreExisting}"
                     description="What to do with previously generated jobs and views when generated config is not the same?"/>
     </f:entry>
+    <f:entry title="Delete and re-create existing views:" field="deleteExistingViews">
+        <f:checkbox name="deleteExistingViews" checked="${instance.deleteExistingViews}"/>
+    </f:entry>
     <f:entry title="Action for removed jobs:" field="removedJobAction">
         <f:select/>
     </f:entry>

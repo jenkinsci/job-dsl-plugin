@@ -38,7 +38,7 @@ class MemoryJobManagement extends MockJobManagement {
     }
 
     @Override
-    void createOrUpdateView(String viewName, String config, boolean ignoreExisting) {
+    void createOrUpdateView(String viewName, String config, boolean ignoreExisting, boolean deleteExisting) {
         validateUpdateArgs(viewName, config)
 
         savedViews[viewName] = config
