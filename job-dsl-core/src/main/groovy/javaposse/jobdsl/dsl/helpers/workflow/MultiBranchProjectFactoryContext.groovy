@@ -21,10 +21,10 @@ class MultiBranchProjectFactoryContext extends AbstractExtensibleContext {
     void workflowBranchProjectFactory(
         @DslContext(WorkflowBranchProjectFactoryContext)
         Closure workflowBranchProjectFactoryClosure) {
-        WorkflowBranchProjectFactoryContext context = new WorkflowBranchProjectFactoryContext()
+        WorkflowBranchProjectFactoryContext context = new WorkflowBranchProjectFactoryContext(jobManagement)
         ContextHelper.executeInContext(workflowBranchProjectFactoryClosure, context)
 
-        this.projectFactoryNodes <<
+        projectFactoryNodes <<
             new NodeBuilder().'org.jenkinsci.plugins.workflow.multibranch.WorkflowBranchProjectFactory' {
                 owner(class: 'org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject',
                     reference: '../..')
