@@ -26,7 +26,7 @@ class NamedExceptionsBranchPropertyStrategyContext implements Context {
         ContextHelper.executeInContext(namedExceptionBranchPropertyClosure, context)
 
         this.namedExceptions << new NodeBuilder().'jenkins.branch.NamedExceptionsBranchPropertyStrategy_-Named' {
-            props(context.properties)
+            context.properties.size() > 0 ? props(context.properties) : props(class: 'empty-list')
             name(context.branch)
         }
     }
