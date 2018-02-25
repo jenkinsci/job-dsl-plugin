@@ -17,6 +17,8 @@ class MultiBranchProjectFactoryContext extends AbstractExtensibleContext {
 
     /**
      * Configure the default workflow branch project factory.
+     *
+     * @since 1.69
      */
     void workflowBranchProjectFactory(
         @DslContext(WorkflowBranchProjectFactoryContext)

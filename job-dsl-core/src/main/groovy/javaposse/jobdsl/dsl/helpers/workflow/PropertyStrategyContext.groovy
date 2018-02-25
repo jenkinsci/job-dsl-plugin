@@ -7,6 +7,8 @@ class PropertyStrategyContext implements Context {
 
     /**
      * Branch source property that suppresses automatically building indexed branches.
+     *
+     * @since 1.69
      */
     void noTriggerBranchProperty() {
         properties << new NodeBuilder().'jenkins.branch.NoTriggerBranchProperty'()

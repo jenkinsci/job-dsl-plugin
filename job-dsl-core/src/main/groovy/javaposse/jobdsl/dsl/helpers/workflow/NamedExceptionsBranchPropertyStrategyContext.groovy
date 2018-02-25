@@ -10,6 +10,8 @@ class NamedExceptionsBranchPropertyStrategyContext implements Context {
 
     /**
      * Default branch properties for unnamed branches.
+     *
+     * @since 1.69
      */
     void defaultProperties(@DslContext(PropertyStrategyContext) Closure propertyStrategyClosure) {
         PropertyStrategyContext context = new PropertyStrategyContext()
@@ -20,6 +22,8 @@ class NamedExceptionsBranchPropertyStrategyContext implements Context {
 
     /**
      * Named branch exception to the default properties.
+     *
+     * @since 1.69
      */
     void namedException(@DslContext(NamedExceptionBranchPropertyContext) Closure namedExceptionBranchPropertyClosure) {
         NamedExceptionBranchPropertyContext context = new NamedExceptionBranchPropertyContext()

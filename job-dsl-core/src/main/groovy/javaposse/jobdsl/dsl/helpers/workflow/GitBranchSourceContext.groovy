@@ -59,6 +59,8 @@ class GitBranchSourceContext implements Context {
 
     /**
      * Use the default branch property strategy for this branch source.
+     *
+     * @since 1.69
      */
     void defaultBranchPropertyStrategy(@DslContext(PropertyStrategyContext) Closure propertyStrategyClosure) {
         PropertyStrategyContext context = new PropertyStrategyContext()
@@ -72,6 +74,8 @@ class GitBranchSourceContext implements Context {
 
     /**
      * Use the named exceptions branch property strategy for this branch source.
+     *
+     * @since 1.69
      */
     void namedExceptionsBranchPropertyStrategy(
         @DslContext(NamedExceptionsBranchPropertyStrategyContext)

@@ -12,7 +12,9 @@ class WorkflowBranchProjectFactoryContext extends AbstractContext {
     }
 
     /**
-     * Path to use for the workflow branch project pipeline script. Default is `Jenkinsfile`.
+     * Path to use for the workflow branch project pipeline script. Defaults to `Jenkinsfile`.
+     *
+     * @since 1.69
      */
     @RequiresPlugin(id = 'workflow-multibranch', minimumVersion = '2.15')
     void scriptPath(String scriptPath) {

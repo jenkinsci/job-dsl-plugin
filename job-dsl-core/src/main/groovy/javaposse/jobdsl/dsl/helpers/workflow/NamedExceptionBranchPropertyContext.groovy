@@ -7,6 +7,8 @@ class NamedExceptionBranchPropertyContext extends PropertyStrategyContext implem
 
     /**
      * Branch to apply property exception to.
+     *
+     * @since 1.69
      */
     void branch(String branchName) {
         this.branch = branchName
