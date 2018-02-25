@@ -32,7 +32,7 @@ class MultiBranchProjectFactoryContextSpec extends Specification {
                 attribute('reference') == '../..'
             }
             with(scriptPath[0]) {
-                text() == "Jenkinsfile"
+                text() == 'Jenkinsfile'
             }
         }
         0 * jobManagement.requireMinimumPluginVersion('workflow-multibranch', '2.15')
@@ -41,7 +41,7 @@ class MultiBranchProjectFactoryContextSpec extends Specification {
     def 'multibranch project with workflow branch project factory and custom script path'() {
         when:
         context.workflowBranchProjectFactory {
-            scriptPath("scripts/pipeline.groovy")
+            scriptPath('scripts/pipeline.groovy')
         }
 
         then:
@@ -53,7 +53,7 @@ class MultiBranchProjectFactoryContextSpec extends Specification {
                 attribute('reference') == '../..'
             }
             with(scriptPath[0]) {
-                text() == "scripts/pipeline.groovy"
+                text() == 'scripts/pipeline.groovy'
             }
         }
         1 * jobManagement.requireMinimumPluginVersion('workflow-multibranch', '2.15')
