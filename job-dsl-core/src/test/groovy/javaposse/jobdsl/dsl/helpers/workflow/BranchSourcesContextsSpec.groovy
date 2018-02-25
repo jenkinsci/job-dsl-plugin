@@ -82,6 +82,213 @@ class BranchSourcesContextsSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('git', '2.5.3')
     }
 
+    def 'git with default branch property strategy'() {
+        when:
+        context.git {
+            defaultBranchPropertyStrategy {
+                noTriggerBranchProperty()
+            }
+        }
+
+        then:
+        with(context.branchSourceNodes[0]) {
+            with(strategy[0]) {
+                children().size() == 1
+                attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
+                with(getByName('properties')[0]) {
+                    children().size() == 1
+                    with(getByName('jenkins.branch.NoTriggerBranchProperty')[0]) {
+                    }
+                }
+            }
+        }
+    }
+
+    def 'git with default branch property strategy and multiple properties'() {
+        when:
+        context.git {
+            defaultBranchPropertyStrategy {
+                noTriggerBranchProperty()
+                noTriggerBranchProperty()
+            }
+        }
+
+        then:
+        with(context.branchSourceNodes[0]) {
+            with(strategy[0]) {
+                children().size() == 1
+                attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
+                with(getByName('properties')[0]) {
+                    children().size() == 2
+                    with(getByName('jenkins.branch.NoTriggerBranchProperty')[0]) {
+                    }
+                    with(getByName('jenkins.branch.NoTriggerBranchProperty')[1]) {
+                    }
+                }
+            }
+        }
+    }
+
+    def 'git with named exceptions branch property strategy'() {
+        when:
+        context.git {
+            namedExceptionsBranchPropertyStrategy {
+                defaultProperties {
+                    noTriggerBranchProperty()
+                }
+
+                namedException {
+                    branch('dev')
+                }
+            }
+        }
+
+        then:
+        with(context.branchSourceNodes[0]) {
+            with(strategy[0]) {
+                children().size() == 2
+                attribute('class') == 'jenkins.branch.NamedExceptionsBranchPropertyStrategy'
+                with(defaultProperties[0]) {
+                    children().size() == 1
+                    with('jenkins.branch.NoTriggerBranchProperty'[0]) {
+                    }
+                }
+                with(namedExceptions[0]) {
+                    children().size() == 1
+                    with(getByName('jenkins.branch.NamedExceptionsBranchPropertyStrategy_-Named')[0]) {
+                        children().size() == 2
+                        with(props[0]) {
+                            value() == []
+                            attribute('class') == 'empty-list'
+                        }
+                        with(getByName('name')[0]) {
+                            text() == 'dev'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    def 'git with named exceptions branch property strategy and multiple named exceptions'() {
+        when:
+        context.git {
+            namedExceptionsBranchPropertyStrategy {
+                defaultProperties {
+                    noTriggerBranchProperty()
+                }
+
+                namedException {
+                    branch('dev')
+                }
+
+                namedException {
+                    branch('release')
+                }
+            }
+        }
+
+        then:
+        with(context.branchSourceNodes[0]) {
+            with(strategy[0]) {
+                children().size() == 2
+                attribute('class') == 'jenkins.branch.NamedExceptionsBranchPropertyStrategy'
+                with(defaultProperties[0]) {
+                    children().size() == 1
+                    with('jenkins.branch.NoTriggerBranchProperty'[0]) {
+                    }
+                }
+                with(namedExceptions[0]) {
+                    children().size() == 2
+                    with(getByName('jenkins.branch.NamedExceptionsBranchPropertyStrategy_-Named')[0]) {
+                        children().size() == 2
+                        with(props[0]) {
+                            value() == []
+                            attribute('class') == 'empty-list'
+                        }
+                        with(getByName('name')[0]) {
+                            text() == 'dev'
+                        }
+                    }
+                    with(getByName('jenkins.branch.NamedExceptionsBranchPropertyStrategy_-Named')[1]) {
+                        children().size() == 2
+                        with(props[0]) {
+                            value() == []
+                            attribute('class') == 'empty-list'
+                        }
+                        with(getByName('name')[0]) {
+                            text() == 'release'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    def 'git with named exceptions branch property strategy and only default properties'() {
+        when:
+        context.git {
+            namedExceptionsBranchPropertyStrategy {
+                defaultProperties {
+                    noTriggerBranchProperty()
+                }
+            }
+        }
+
+        then:
+        with(context.branchSourceNodes[0]) {
+            with(strategy[0]) {
+                children().size() == 2
+                attribute('class') == 'jenkins.branch.NamedExceptionsBranchPropertyStrategy'
+                with(defaultProperties[0]) {
+                    children().size() == 1
+                    with(getByName('jenkins.branch.NoTriggerBranchProperty')[0]) {
+                    }
+                }
+                with(namedExceptions[0]) {
+                    children().size == 0
+                }
+            }
+        }
+    }
+
+    def 'git with named exceptions branch property strategy and no default properties'() {
+        when:
+        context.git {
+            namedExceptionsBranchPropertyStrategy {
+                namedException {
+                    branch('dev')
+                    noTriggerBranchProperty()
+                }
+            }
+        }
+
+        then:
+        with(context.branchSourceNodes[0]) {
+            with(strategy[0]) {
+                children().size() == 2
+                attribute('class') == 'jenkins.branch.NamedExceptionsBranchPropertyStrategy'
+                with(defaultProperties[0]) {
+                    children().size() == 0
+                }
+                with(namedExceptions[0]) {
+                    children().size() == 1
+                    with(getByName('jenkins.branch.NamedExceptionsBranchPropertyStrategy_-Named')[0]) {
+                        children().size() == 2
+                        with(props[0]) {
+                            children().size() == 1
+                            with('jenkins.branch.NoTriggerBranchProperty'[0]) {
+                            }
+                        }
+                        with(getByName('name')[0]) {
+                            text() == 'dev'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     def 'github with minimal options'() {
         when:
         context.github {}

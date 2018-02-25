@@ -1,6 +1,8 @@
 package javaposse.jobdsl.dsl.helpers.workflow
 
 import javaposse.jobdsl.dsl.Context
+import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.DslContext
 
 class GitBranchSourceContext implements Context {
     String id = UUID.randomUUID()
@@ -9,6 +11,7 @@ class GitBranchSourceContext implements Context {
     String includes = '*'
     String excludes
     boolean ignoreOnPushNotifications
+    Node branchPropertyStrategy
 
     /**
      * Specifies a unique ID for this branch source.
@@ -52,5 +55,38 @@ class GitBranchSourceContext implements Context {
      */
     void ignoreOnPushNotifications(boolean ignoreOnPushNotifications = true) {
         this.ignoreOnPushNotifications = ignoreOnPushNotifications
+    }
+
+    /**
+     * Use the default branch property strategy for this branch source.
+     *
+     * @since 1.69
+     */
+    void defaultBranchPropertyStrategy(@DslContext(PropertyStrategyContext) Closure propertyStrategyClosure) {
+        PropertyStrategyContext context = new PropertyStrategyContext()
+        ContextHelper.executeInContext(propertyStrategyClosure, context)
+
+        this.branchPropertyStrategy =
+            new NodeBuilder().strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
+                properties(context.properties)
+            }
+    }
+
+    /**
+     * Use the named exceptions branch property strategy for this branch source.
+     *
+     * @since 1.69
+     */
+    void namedExceptionsBranchPropertyStrategy(
+        @DslContext(NamedExceptionsBranchPropertyStrategyContext)
+        Closure namedExceptionsBranchPropertyStrategyClosure) {
+        NamedExceptionsBranchPropertyStrategyContext context = new NamedExceptionsBranchPropertyStrategyContext()
+        ContextHelper.executeInContext(namedExceptionsBranchPropertyStrategyClosure, context)
+
+        this.branchPropertyStrategy =
+            new NodeBuilder().strategy(class: 'jenkins.branch.NamedExceptionsBranchPropertyStrategy') {
+                defaultProperties(context.defaultProperties)
+                namedExceptions(context.namedExceptions)
+            }
     }
 }
