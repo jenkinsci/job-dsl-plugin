@@ -95,9 +95,9 @@ class BranchSourcesContextsSpec extends Specification {
             with(strategy[0]) {
                 children().size() == 1
                 attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
-                with('properties'[0]) {
+                with(getByName('properties')[0]) {
                     children().size() == 1
-                    with('jenkins.branch.NoTriggerBranchProperty'[0]) {
+                    with(getByName('jenkins.branch.NoTriggerBranchProperty')[0]) {
                     }
                 }
             }
@@ -120,9 +120,9 @@ class BranchSourcesContextsSpec extends Specification {
                 attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
                 with(getByName('properties')[0]) {
                     children().size() == 2
-                    with('jenkins.branch.NoTriggerBranchProperty'[0]) {
+                    with(getByName('jenkins.branch.NoTriggerBranchProperty')[0]) {
                     }
-                    with('jenkins.branch.NoTriggerBranchProperty'[1]) {
+                    with(getByName('jenkins.branch.NoTriggerBranchProperty')[1]) {
                     }
                 }
             }
@@ -161,7 +161,7 @@ class BranchSourcesContextsSpec extends Specification {
                             value() == []
                             attribute('class') == 'empty-list'
                         }
-                        with('name'[0]) {
+                        with(getByName('name')[0]) {
                             text() == 'dev'
                         }
                     }
@@ -206,7 +206,7 @@ class BranchSourcesContextsSpec extends Specification {
                             value() == []
                             attribute('class') == 'empty-list'
                         }
-                        with('name'[0]) {
+                        with(getByName('name')[0]) {
                             text() == 'dev'
                         }
                     }
@@ -216,7 +216,7 @@ class BranchSourcesContextsSpec extends Specification {
                             value() == []
                             attribute('class') == 'empty-list'
                         }
-                        with('name'[0]) {
+                        with(getByName('name')[0]) {
                             text() == 'release'
                         }
                     }
@@ -242,7 +242,7 @@ class BranchSourcesContextsSpec extends Specification {
                 attribute('class') == 'jenkins.branch.NamedExceptionsBranchPropertyStrategy'
                 with(defaultProperties[0]) {
                     children().size() == 1
-                    with('jenkins.branch.NoTriggerBranchProperty'[0]) {
+                    with(getByName('jenkins.branch.NoTriggerBranchProperty')[0]) {
                     }
                 }
                 with(namedExceptions[0]) {
@@ -280,7 +280,7 @@ class BranchSourcesContextsSpec extends Specification {
                             with('jenkins.branch.NoTriggerBranchProperty'[0]) {
                             }
                         }
-                        with('name'[0]) {
+                        with(getByName('name')[0]) {
                             text() == 'dev'
                         }
                     }
