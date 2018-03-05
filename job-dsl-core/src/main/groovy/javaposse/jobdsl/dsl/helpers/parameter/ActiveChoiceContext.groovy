@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.parameter
 
+import javaposse.jobdsl.dsl.JobManagement
+
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class ActiveChoiceContext extends AbstractActiveChoiceContext {
@@ -9,6 +11,10 @@ class ActiveChoiceContext extends AbstractActiveChoiceContext {
 
     boolean filterable
     String choiceType = 'SINGLE_SELECT'
+
+    ActiveChoiceContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * If set, provides a text box filter in the UI control where a text filter can be typed.

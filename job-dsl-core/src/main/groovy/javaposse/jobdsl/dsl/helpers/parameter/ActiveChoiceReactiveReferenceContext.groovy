@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.parameter
 
+import javaposse.jobdsl.dsl.JobManagement
+
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 
 class ActiveChoiceReactiveReferenceContext extends AbstractActiveChoiceContext {
@@ -10,6 +12,10 @@ class ActiveChoiceReactiveReferenceContext extends AbstractActiveChoiceContext {
     Set<String> referencedParameters = []
     boolean omitValueField
     String choiceType = 'TEXT_BOX'
+
+    ActiveChoiceReactiveReferenceContext(JobManagement jobManagement) {
+        super(jobManagement)
+    }
 
     /**
      * Specifies a list of job parameters that trigger an auto-refresh.
