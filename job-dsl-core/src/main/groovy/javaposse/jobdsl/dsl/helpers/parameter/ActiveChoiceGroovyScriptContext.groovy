@@ -26,7 +26,8 @@ class ActiveChoiceGroovyScriptContext extends AbstractContext {
     /**
      * Provides alternate parameter value options in case the main script fails.
      */
-    ActiveChoiceScriptContext fallbackScript(String fallbackScript, @DslContext(ActiveChoiceScriptContext) Closure closure = null) {
+    ActiveChoiceScriptContext fallbackScript(String fallbackScript,
+                                             @DslContext(ActiveChoiceScriptContext) Closure closure = null) {
         this.fallbackScript = new ActiveChoiceScriptContext(jobManagement, fallbackScript)
         executeInContext(closure, this.fallbackScript)
         this.fallbackScript

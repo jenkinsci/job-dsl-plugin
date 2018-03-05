@@ -10,7 +10,7 @@ abstract class AbstractActiveChoiceContext extends AbstractContext {
     String description
     Node script
 
-    AbstractActiveChoiceContext(JobManagement jobManagement) {
+    protected AbstractActiveChoiceContext(JobManagement jobManagement) {
         super(jobManagement)
     }
 
