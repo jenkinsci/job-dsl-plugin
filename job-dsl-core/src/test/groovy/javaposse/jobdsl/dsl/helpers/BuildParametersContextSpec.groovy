@@ -1039,6 +1039,177 @@ class BuildParametersContextSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
     }
 
+    def 'active choice param with sandboxed script'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+            groovyScript {
+                script('x1') {
+                    useSandbox(true)
+                }
+                fallbackScript('x2')
+            }
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 7
+            name.text() == 'activeChoiceGroovyParam'
+            description.text() == ''
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_SINGLE_SELECT'
+            filterable.text() == 'false'
+            with(script[0]) {
+                attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
+                children().size() == 2
+                with(secureScript[0]) {
+                    script.text() == 'x1'
+                    sandbox.text() == 'true'
+                }
+                fallbackScript.text() == 'x2'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '2.0')
+    }
+
+    def 'active choice param with sandboxed script (short syntax)'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+            groovyScript {
+                script('x1').useSandbox()
+                fallbackScript('x2')
+            }
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 7
+            name.text() == 'activeChoiceGroovyParam'
+            description.text() == ''
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_SINGLE_SELECT'
+            filterable.text() == 'false'
+            with(script[0]) {
+                attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
+                children().size() == 2
+                with(secureScript[0]) {
+                    script.text() == 'x1'
+                    sandbox.text() == 'true'
+                }
+                fallbackScript.text() == 'x2'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '2.0')
+    }
+
+    def 'active choice param with sandboxed disabled script'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+            groovyScript {
+                script('x1') {
+                    useSandbox(false)
+                }
+                fallbackScript('x2')
+            }
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 7
+            name.text() == 'activeChoiceGroovyParam'
+            description.text() == ''
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_SINGLE_SELECT'
+            filterable.text() == 'false'
+            with(script[0]) {
+                attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
+                children().size() == 2
+                with(secureScript[0]) {
+                    script.text() == 'x1'
+                    sandbox.text() == 'false'
+                }
+                fallbackScript.text() == 'x2'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '2.0')
+    }
+
+    def 'active choice param with sandboxed fallbackscript'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+            groovyScript {
+                script('x1')
+                fallbackScript('x2') {
+                    useSandbox(true)
+                }
+            }
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 7
+            name.text() == 'activeChoiceGroovyParam'
+            description.text() == ''
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_SINGLE_SELECT'
+            filterable.text() == 'false'
+            with(script[0]) {
+                attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
+                children().size() == 2
+                script.text() == 'x1'
+                with(secureFallbackScript[0]) {
+                    script.text() == 'x2'
+                    sandbox.text() == 'true'
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '2.0')
+    }
+
+    def 'active choice param with sandboxed fallbackscript (short syntax)'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+            groovyScript {
+                script('x1')
+                fallbackScript('x2').useSandbox()
+            }
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 7
+            name.text() == 'activeChoiceGroovyParam'
+            description.text() == ''
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_SINGLE_SELECT'
+            filterable.text() == 'false'
+            with(script[0]) {
+                attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
+                children().size() == 2
+                script.text() == 'x1'
+                with(secureFallbackScript[0]) {
+                    script.text() == 'x2'
+                    sandbox.text() == 'true'
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '2.0')
+    }
+
     def 'active choice reactive param without options'() {
         when:
         context.activeChoiceReactiveParam('activeChoiceReferenceParam') {

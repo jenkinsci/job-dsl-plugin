@@ -268,7 +268,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
     void activeChoiceParam(String parameterName, @DslContext(ActiveChoiceContext) Closure closure) {
-        ActiveChoiceContext context = new ActiveChoiceContext()
+        ActiveChoiceContext context = new ActiveChoiceContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         buildParameterNodes[parameterName] = createActiveChoiceNode(
@@ -286,7 +286,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
     void activeChoiceReactiveParam(String parameterName,
                                    @DslContext(ActiveChoiceReactiveContext) Closure closure = null) {
-        ActiveChoiceReactiveContext context = new ActiveChoiceReactiveContext()
+        ActiveChoiceReactiveContext context = new ActiveChoiceReactiveContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         Node node = createActiveChoiceNode('org.biouno.unochoice.CascadeChoiceParameter', parameterName, context)
@@ -306,7 +306,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
     void activeChoiceReactiveReferenceParam(String parameterName,
                                             @DslContext(ActiveChoiceReactiveReferenceContext) Closure closure = null) {
-        ActiveChoiceReactiveReferenceContext context = new ActiveChoiceReactiveReferenceContext()
+        ActiveChoiceReactiveReferenceContext context = new ActiveChoiceReactiveReferenceContext(jobManagement)
         ContextHelper.executeInContext(closure, context)
 
         Node node = createAbstractActiveChoiceNode(
