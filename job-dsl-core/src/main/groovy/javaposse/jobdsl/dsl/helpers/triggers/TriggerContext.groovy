@@ -59,7 +59,8 @@ class TriggerContext extends ItemTriggerContext {
             spec ''
             if (gerritContext.projects) {
                 gerritProjects {
-                    gerritContext.projects.each { GerritSpec project, List<GerritSpec> brancheSpecs ->
+                    gerritContext.projects.each {
+                        GerritSpec project, List<GerritSpec> brancheSpecs, List<GerritSpec> filePathSpecs ->
                         'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.GerritProject' {
                             compareType project.type
                             pattern project.pattern
@@ -68,6 +69,14 @@ class TriggerContext extends ItemTriggerContext {
                                     'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.Branch' {
                                         compareType branch.type
                                         pattern branch.pattern
+                                    }
+                                }
+                            }
+                            filePaths {
+                                filePathSpecs.each { GerritSpec filePath ->
+                                    'com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.data.FilePath' {
+                                        compareType filePath.type
+                                        pattern filePath.pattern
                                     }
                                 }
                             }
