@@ -923,13 +923,14 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['paramName']) {
             name() == 'net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition'
-            children().size() == 8
+            children().size() == 9
             name.text() == 'paramName'
             description[0].value() == ''
             UUID.fromString(uuid[0].value() as String)
             type[0].value() == 'PT_TAG'
             branch[0].value() == ''
             tagFilter[0].value() == ''
+            branchFilter[0].value() == ''
             sortMode[0].value() == 'NONE'
             defaultValue[0].value() == ''
         }
@@ -943,6 +944,7 @@ class BuildParametersContextSpec extends Specification {
             type('REVISION')
             branch('master')
             tagFilter('*')
+            branchFilter('*')
             sortMode('ASCENDING_SMART')
             defaultValue('foo')
         }
@@ -952,13 +954,14 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes.size() == 1
         with(context.buildParameterNodes['sha']) {
             name() == 'net.uaznia.lukanus.hudson.plugins.gitparameter.GitParameterDefinition'
-            children().size() == 8
+            children().size() == 9
             name.text() == 'sha'
             description[0].value() == 'Revision commit SHA'
             UUID.fromString(uuid[0].value() as String)
             type[0].value() == 'PT_REVISION'
             branch[0].value() == 'master'
             tagFilter[0].value() == '*'
+            branchFilter[0].value() == '*'
             sortMode[0].value() == 'ASCENDING_SMART'
             defaultValue[0].value() == 'foo'
         }

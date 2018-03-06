@@ -16,6 +16,7 @@ final class GitParamContext implements Context {
     String type = 'TAG'
     String branch
     String tagFilter
+    String branchFilter
     String sortMode = 'NONE'
     String defaultValue
 
@@ -48,6 +49,13 @@ final class GitParamContext implements Context {
      */
     void tagFilter(String tagFilter) {
         this.tagFilter = tagFilter
+    }
+    
+    /**
+     * Specifies a filter for branches.
+     */
+    void branchFilter(String branchFilter) {
+        this.branchFilter = branchFilter
     }
 
     /**

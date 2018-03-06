@@ -228,6 +228,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
                     type("PT_$context.type")
                     branch(context.branch ?: '')
                     tagFilter(context.tagFilter ?: '')
+                    branchFilter(context.branchFilter ?: '')
                     sortMode(context.sortMode)
                     defaultValue(context.defaultValue ?: '')
                 }
