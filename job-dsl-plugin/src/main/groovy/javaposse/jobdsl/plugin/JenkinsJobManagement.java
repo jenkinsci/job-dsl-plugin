@@ -151,7 +151,12 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
             ItemGroup parent = lookupStrategy.getParent(project, path);
             if (parent instanceof ViewGroup) {
-                View view = ((ViewGroup) parent).getView(viewBaseName);
+                ViewGroup parentGroup = (ViewGroup) parent;
+                View view = parentGroup.getView(viewBaseName);
+                if (view != null && viewTypeChanged(view, inputStream)) {
+                    parentGroup.deleteView(view);
+                    view = null;
+                }
                 if (view == null) {
                     if (parent instanceof ModifiableViewGroup) {
                         ((ModifiableViewGroup) parent).checkPermission(View.CREATE);
@@ -160,7 +165,6 @@ public class JenkinsJobManagement extends AbstractJobManagement {
                         throw new DslException(format(Messages.CreateView_UnsupportedParent(), parent.getFullName(), parent.getClass()));
                     }
                 } else if (!ignoreExisting) {
-                    checkItemType(view, inputStream);
                     inputStream.reset();
                     view.updateByXml(new StreamSource(inputStream));
                 }
@@ -174,7 +178,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
-  @Override
+    @Override
     public void createOrUpdateUserContent(UserContent userContent, boolean ignoreExisting) {
         // As in git-userContent-plugin:
         Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
@@ -479,11 +483,10 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
-    private void checkItemType(View view, InputStream config) {
+    private boolean viewTypeChanged(View view, InputStream config) throws IOException {
         Class viewType = Jenkins.XSTREAM2.getMapper().realClass(new XppDriver().createReader(config).getNodeName());
-        if (!viewType.equals(view.getClass())) {
-            throw new DslException(format(Messages.UpdateExistingView_ViewTypeDoesNotMatch(), view.getViewName()));
-        }
+        config.reset();
+        return !viewType.equals(view.getClass());
     }
 
     private void createNewItem(String path, javaposse.jobdsl.dsl.Item dslItem) {
