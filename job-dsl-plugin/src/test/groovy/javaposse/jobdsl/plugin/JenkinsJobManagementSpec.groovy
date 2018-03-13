@@ -531,7 +531,7 @@ class JenkinsJobManagementSpec extends Specification {
         e.message == 'Type of item "my-job" does not match existing type, item type can not be changed'
     }
 
-    def 'createOrUpdateView should fail if view type does not match'() {
+    def 'createOrUpdateView should work if view type changes'() {
         setup:
         jenkinsRule.jenkins.addView(new AllView('foo'))
 
@@ -543,8 +543,9 @@ class JenkinsJobManagementSpec extends Specification {
         )
 
         then:
-        Exception e = thrown(DslException)
-        e.message == 'Type of view "foo" does not match existing type, view type can not be changed'
+        noExceptionThrown()
+        jenkinsRule.jenkins.getView('foo') != null
+        jenkinsRule.jenkins.getView('foo').class == ListView
     }
 
     def isMinimumPluginVersionInstalled() {
