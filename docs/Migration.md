@@ -1,3 +1,9 @@
+## Migrating to 1.69
+
+Support for versions older than 5.14 of the
+[CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.68
 
 ### Pipeline Script From SCM

@@ -2,6 +2,7 @@ package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.helpers.AuthorizationContext
 import javaposse.jobdsl.dsl.helpers.properties.FolderPropertiesContext
+import javaposse.jobdsl.dsl.views.NestedViewsContext
 
 /**
  * DSL element representing a Jenkins folder.
@@ -39,7 +40,11 @@ class Folder extends Item {
      */
     void primaryView(String primaryViewArg) {
         configure {
-            it / methodMissing('primaryView', primaryViewArg)
+            Node node = it
+            if (jobManagement.isMinimumPluginVersionInstalled('cloudbees-folder', '5.14')) {
+                node = node / 'folderViews'
+            }
+            node / methodMissing('primaryView', primaryViewArg)
         }
     }
 
@@ -74,5 +79,34 @@ class Folder extends Item {
                 project / 'properties' << it
             }
         }
+    }
+
+    /**
+     * Adds nested views.
+     *
+     * @since 1.69
+     */
+    @RequiresPlugin(id = 'cloudbees-folder', minimumVersion = '5.14')
+    void views(@DslContext(NestedViewsContext) Closure viewsClosure) {
+        NestedViewsContext context = new NestedViewsContext(jobManagement)
+        ContextHelper.executeInContext(viewsClosure, context)
+
+        configure {
+            for (View view : context.views) {
+                Node viewNode = view.node
+                viewNode.appendNode('name', view.name)
+                viewNode.appendNode('owner', [
+                        class: 'com.cloudbees.hudson.plugins.folder.Folder',
+                        reference: '../../../..'
+                ])
+                it / 'folderViews' / 'views' << viewNode
+            }
+        }
+    }
+
+    @Override
+    protected Node getNodeTemplate() {
+        String version = jobManagement.isMinimumPluginVersionInstalled('cloudbees-folder', '5.14') ? '-5.14' : ''
+        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}${version}-template.xml"))
     }
 }
