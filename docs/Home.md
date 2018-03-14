@@ -31,6 +31,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.69 (unreleased)
   * Delete and re-create view if type changes
     ([JENKINS-49696](https://issues.jenkins-ci.org/browse/JENKINS-49696))
+  * Fixed problem when setting primary view for a folder
+    ([JENKINS-48288](https://issues.jenkins-ci.org/browse/JENKINS-48288))
 * 1.68 (February 09 2018)
   * Increased the minimum supported Java version to JDK 8
   * Increased the minimum supported Jenkins version to 2.73
