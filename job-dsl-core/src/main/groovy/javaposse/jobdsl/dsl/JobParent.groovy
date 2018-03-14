@@ -195,6 +195,8 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     Folder folder(String name, @DslContext(Folder) Closure closure = null) {
+        jm.logPluginDeprecationWarning('cloudbees-folder', '5.14')
+
         processItem(name, Folder, closure)
     }
 
