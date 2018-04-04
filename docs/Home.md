@@ -36,6 +36,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Support for older versions of the
     [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-169)
+  * Provide license information
+    ([JENKINS-36753](https://issues.jenkins-ci.org/browse/JENKINS-36753))
 * 1.68 (February 09 2018)
   * Increased the minimum supported Java version to JDK 8
   * Increased the minimum supported Jenkins version to 2.73
