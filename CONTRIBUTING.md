@@ -18,7 +18,7 @@ already supported by dynamic DSL are likely to be rejected since it's not feasib
 every config option of each of the 1000+ plugins available in the Update Center.
 
 * Feature Requests - Create a "New Feature" issue on the
-  [Jenkins JIRA](https://issues.jenkins-ci.org/browse/JENKINS/component/16720/). Remember to add the `job-dsl-plugin`
+  [Jenkins JIRA](https://issues.jenkins-ci.org/secure/Dashboard.jspa?selectPageId=15341). Remember to add the `job-dsl-plugin`
   component.
 * Feature Implementations - Even better than a JIRA issue is an implementation. If the implementation requires design
   or architectural changes or would need refactoring, send a mail to the
@@ -33,7 +33,7 @@ every config option of each of the 1000+ plugins available in the Update Center.
 ### Bugs
 
 * Bug Reports - Create a new "Bug" issue on the
-  [Jenkins JIRA](https://issues.jenkins-ci.org/browse/JENKINS/component/16720/). Remember to add the `job-dsl-plugin`
+  [Jenkins JIRA](https://issues.jenkins-ci.org/secure/Dashboard.jspa?selectPageId=15341). Remember to add the `job-dsl-plugin`
   component.
 * Bug Fixes - Even better than a JIRA issue is a fix. Simply fork our repo, create a branch (named after the JIRA "Bug"
   you created earlier), implement it yourself and submit a Pull Request.
