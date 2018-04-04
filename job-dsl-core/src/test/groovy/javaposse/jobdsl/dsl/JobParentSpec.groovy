@@ -235,6 +235,7 @@ class JobParentSpec extends Specification {
         parent.referencedJobs.contains(folder)
         folder.node.displayName[0].text() == 'foo'
         1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.0', true)
+        1 * jobManagement.logPluginDeprecationWarning('cloudbees-folder', '5.14')
     }
 
     def 'folder without closure'() {
@@ -245,6 +246,7 @@ class JobParentSpec extends Specification {
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
         1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.0', true)
+        1 * jobManagement.logPluginDeprecationWarning('cloudbees-folder', '5.14')
     }
 
     def 'readFileInWorkspace from seed job'() {

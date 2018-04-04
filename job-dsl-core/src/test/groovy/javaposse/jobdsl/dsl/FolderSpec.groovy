@@ -43,6 +43,41 @@ class FolderSpec extends Specification {
         root.primaryView[0].text() == 'test primaryView'
     }
 
+    def 'primaryView with newer plugin version'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('cloudbees-folder', '5.14') >> true
+
+        when:
+        folder.primaryView('test primaryView')
+
+        then:
+        Node root = folder.node
+        root.folderViews.size() == 1
+        root.folderViews[0].primaryView.size() == 1
+        root.folderViews[0].primaryView[0].text() == 'test primaryView'
+    }
+
+    def 'views'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('cloudbees-folder', '5.14') >> true
+
+        when:
+        folder.views {
+            listView('test')
+        }
+
+        then:
+        Node root = folder.node
+        root.folderViews.size() == 1
+        root.folderViews[0].views.size() == 1
+        root.folderViews[0].views[0].'hudson.model.ListView'.size() == 1
+        root.folderViews[0].views[0].'hudson.model.ListView'[0].children().size() == 8
+        root.folderViews[0].views[0].'hudson.model.ListView'[0].name[0].text() == 'test'
+        root.folderViews[0].views[0].'hudson.model.ListView'[0].owner[0].attribute('reference') == '../../../..'
+        root.folderViews[0].views[0].'hudson.model.ListView'[0].owner[0].attribute('class') ==
+                'com.cloudbees.hudson.plugins.folder.Folder'
+    }
+
     def 'call authorization'() {
         setup:
         String propertyName = 'com.cloudbees.hudson.plugins.folder.properties.AuthorizationMatrixProperty'
@@ -108,6 +143,20 @@ class FolderSpec extends Specification {
         compareXML(XML, xml).similar()
     }
 
+    def 'xml for newer plugin version'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('cloudbees-folder', '5.14') >> true
+        folder.displayName('Test Folder')
+        folder.description('la la la')
+        folder.primaryView('Some View')
+
+        when:
+        String xml = folder.xml
+
+        then:
+        compareXML(XML_514, xml).similar()
+    }
+
     private static final String XML = '''<?xml version='1.0' encoding='UTF-8'?>
 <com.cloudbees.hudson.plugins.folder.Folder>
     <actions/>
@@ -126,6 +175,31 @@ class FolderSpec extends Specification {
     </views>
     <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
     <primaryView>Some View</primaryView>
+    <healthMetrics>
+        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
+    </healthMetrics>
+</com.cloudbees.hudson.plugins.folder.Folder>'''
+
+    private static final String XML_514 = '''<?xml version='1.0' encoding='UTF-8'?>
+<com.cloudbees.hudson.plugins.folder.Folder>
+    <actions/>
+    <description>la la la</description>
+    <displayName>Test Folder</displayName>
+    <properties/>
+    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
+    <folderViews class="com.cloudbees.hudson.plugins.folder.views.DefaultFolderViewHolder">
+        <views>
+            <hudson.model.AllView>
+                <owner class="com.cloudbees.hudson.plugins.folder.Folder" reference="../../../.."/>
+                <name>All</name>
+                <filterExecutors>false</filterExecutors>
+                <filterQueue>false</filterQueue>
+                <properties class="hudson.model.View$PropertyList"/>
+            </hudson.model.AllView>
+        </views>
+        <tabBar class="hudson.views.DefaultViewsTabBar"/>
+        <primaryView>Some View</primaryView>
+    </folderViews>
     <healthMetrics>
         <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
     </healthMetrics>
