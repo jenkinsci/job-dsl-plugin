@@ -422,6 +422,7 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         1 * jobManagement.requireMinimumPluginVersion('workflow-multibranch', '1.12', true)
+        1 * jobManagement.logPluginDeprecationWarning('workflow-multibranch', '2.10')
     }
 
     def 'organization folder job'() {
@@ -433,5 +434,6 @@ class JobParentSpec extends Specification {
         job.name == 'test'
         parent.referencedJobs.contains(job)
         1 * jobManagement.requireMinimumPluginVersion('branch-api', '1.11', true)
+        1 * jobManagement.logPluginDeprecationWarning('branch-api', '2.0.0')
     }
 }

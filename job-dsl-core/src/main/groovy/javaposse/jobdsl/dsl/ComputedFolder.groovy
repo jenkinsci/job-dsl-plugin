@@ -6,9 +6,15 @@ import javaposse.jobdsl.dsl.helpers.workflow.OrphanedItemStrategyContext
 /**
  * @since 1.58
  */
-abstract class ComputedFolder extends Folder {
+abstract class ComputedFolder extends AbstractFolder {
     protected ComputedFolder(final JobManagement jobManagement, final String name) {
         super(jobManagement, name)
+    }
+
+    @Override
+    @Deprecated
+    void primaryView(String primaryViewArg) {
+        super.primaryView(primaryViewArg)
     }
 
     /**

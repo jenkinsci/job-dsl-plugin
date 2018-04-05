@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jenkins.branch.OrganizationFolder>
+    <properties/>
+    <folderViews class="jenkins.branch.OrganizationFolderViewHolder">
+        <owner reference="../.."/>
+    </folderViews>
+    <healthMetrics>
+        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
+            <nonRecursive>false</nonRecursive>
+        </com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
+    </healthMetrics>
+    <icon class="jenkins.branch.MetadataActionFolderIcon">
+        <owner class="jenkins.branch.OrganizationFolder" reference="../.."/>
+    </icon>
+    <orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy">
+        <pruneDeadBranches>true</pruneDeadBranches>
+        <daysToKeep>0</daysToKeep>
+        <numToKeep>0</numToKeep>
+    </orphanedItemStrategy>
+    <triggers/>
+    <navigators/>
+    <projectFactories>
+        <org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProjectFactory/>
+    </projectFactories>
+</jenkins.branch.OrganizationFolder>
