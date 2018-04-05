@@ -1717,6 +1717,7 @@ class ScmContextSpec extends Specification {
         context.scmNodes[0].projectPath.size() == 1
         context.scmNodes[0].projectPath[0].value().contains('//depot')
         1 * mockJobManagement.requirePlugin('perforce')
+        1 * mockJobManagement.logDeprecationWarning()
     }
 
     def 'call perforceP4 with all options'() {

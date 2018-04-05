@@ -1,8 +1,16 @@
 ## Migrating to 1.69
 
+### CloudBees Folders Plugin
+
 Support for versions older than 5.14 of the
 [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is
 [[deprecated|Deprecation-Policy]] and will be removed.
+
+### Perforce Plugin
+
+The [Perforce Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Perforce+Plugin) has been removed from the
+Update Center due to [Security Vulnerabilities](https://jenkins.io/security/advisory/2018-03-26/). As a consequence the
+DSL support is [[deprecated|Deprecation-Policy]] and will be removed.
 
 ## Migrating to 1.68
 

@@ -262,6 +262,7 @@ class ScmContext extends AbstractExtensibleContext {
      * @see #p4(java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
      */
     @RequiresPlugin(id = 'perforce')
+    @Deprecated
     void p4(String viewspec, String user, Closure configure = null) {
         p4(viewspec, user, '', configure)
     }
@@ -283,6 +284,7 @@ class ScmContext extends AbstractExtensibleContext {
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
      */
     @RequiresPlugin(id = 'perforce')
+    @Deprecated
     void p4(String viewspec, String user, String password, Closure configureBlock = null) {
         checkNotNull(viewspec, 'viewspec must not be null')
 
