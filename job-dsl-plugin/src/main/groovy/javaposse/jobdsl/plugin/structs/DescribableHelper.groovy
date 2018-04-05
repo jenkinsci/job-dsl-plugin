@@ -134,7 +134,7 @@ class DescribableHelper {
      * </ul>
      */
     static String uncapitalize(Class clazz) {
-        String simpleName = clazz.simpleName
+        String simpleName = getSimpleName(clazz)
         int firstLowerCase = simpleName.chars.findIndexOf { Character.isLowerCase(it) }
         if (firstLowerCase == -1) {
             simpleName.toLowerCase(Locale.ENGLISH)
@@ -147,6 +147,22 @@ class DescribableHelper {
                     .append(simpleName[(firstLowerCase - 1)..-1])
                     .toString()
         }
+    }
+
+    /**
+     * Workaround for JENKINS-50411
+     */
+    @SuppressWarnings('UnnecessaryGetter')
+    static String getSimpleName(Class clazz) {
+        clazz.getSimpleName()
+    }
+
+    /**
+     * Workaround for JENKINS-50411
+     */
+    @SuppressWarnings('UnnecessaryGetter')
+    static String getClassName(Class clazz) {
+        clazz.getName()
     }
 
     private static Class getTypeForLookup(DescribableModel model) {

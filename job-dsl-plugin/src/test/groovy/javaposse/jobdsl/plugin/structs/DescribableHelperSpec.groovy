@@ -162,7 +162,6 @@ class DescribableHelperSpec extends Specification {
 
     def 'uncapitalize class names'() {
         expect:
-        DescribableHelper.uncapitalize(DescribableHelper) == 'describableHelper'
         DescribableHelper.uncapitalize(URL) == 'url'
         DescribableHelper.uncapitalize(URLClassLoader) == 'urlClassLoader'
         DescribableHelper.uncapitalize(Character.UnicodeBlock) == 'unicodeBlock'

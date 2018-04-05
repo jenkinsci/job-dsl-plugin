@@ -27,6 +27,8 @@ import static javaposse.jobdsl.plugin.ExtensionPointHelper.findExtensionMethods
 import static javaposse.jobdsl.plugin.ExtensionPointHelper.hasIdenticalSignature
 import static javaposse.jobdsl.plugin.ExtensionPointHelper.isVisibleParameterType
 import static javaposse.jobdsl.plugin.structs.DescribableHelper.findDescribableModels
+import static javaposse.jobdsl.plugin.structs.DescribableHelper.getClassName
+import static javaposse.jobdsl.plugin.structs.DescribableHelper.getSimpleName
 import static org.apache.commons.lang.StringEscapeUtils.unescapeHtml
 
 class EmbeddedApiDocGenerator {
@@ -159,7 +161,7 @@ class EmbeddedApiDocGenerator {
         method.parameterTypes.eachWithIndex { Class type, int index ->
             if (isVisibleParameterType(type)) {
                 String name = names ? names[index] : 'arg' + index
-                String simpleName = type.simpleName
+                String simpleName = getSimpleName(type)
                 if (simpleName == 'Runnable') {
                     simpleName = 'Closure'
                 }
@@ -279,7 +281,7 @@ class EmbeddedApiDocGenerator {
      */
     private static JSONObject generateParameter(ParameterType parameterType) {
         if (parameterType instanceof AtomicType) {
-            return JSONObject.fromObject([name: 'value', type: ((AtomicType) parameterType).type.simpleName])
+            return JSONObject.fromObject([name: 'value', type: getSimpleName(((AtomicType) parameterType).type)])
         } else if (parameterType instanceof EnumType) {
             return JSONObject.fromObject([name: 'value', type: 'String', enumConstants: parameterType.values])
         } else if (parameterType instanceof HomogeneousObjectType || parameterType instanceof HeterogeneousObjectType) {
@@ -294,7 +296,7 @@ class EmbeddedApiDocGenerator {
                 // Property 'value' of class org.codehaus.groovy.runtime.GStringImpl has no read method. SKIPPED
                 return JSONObject.fromObject([
                         name: 'value',
-                        type: "Iterable<${elementType.type.simpleName}>".toString()
+                        type: "Iterable<${getSimpleName(elementType.type)}>".toString()
                 ])
             } else if (elementType instanceof EnumType) {
                 return JSONObject.fromObject([
@@ -322,7 +324,7 @@ class EmbeddedApiDocGenerator {
     }
 
     private static String getContextClassName(DescribableModel model) {
-        model.type.name
+        getClassName(model.type)
     }
 
     private static String getListContextClassName(ParameterType parameterType) {
@@ -333,7 +335,7 @@ class EmbeddedApiDocGenerator {
         if (parameterType instanceof HomogeneousObjectType) {
             return getContextClassName(parameterType.schemaType)
         } else if (parameterType instanceof HeterogeneousObjectType) {
-            return parameterType.type.name
+            return getClassName(parameterType.type)
         } else if (parameterType instanceof ArrayType) {
             return getContextClassName(parameterType.elementType)
         }
