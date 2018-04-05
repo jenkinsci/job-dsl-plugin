@@ -38,6 +38,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [Migration](Migration#migrating-to-169)
   * Provide license information
     ([JENKINS-36753](https://issues.jenkins-ci.org/browse/JENKINS-36753))
+  * Removed anything that has been deprecated in 1.66, see [Migration](Migration#migrating-to-166)
 * 1.68 (February 09 2018)
   * Increased the minimum supported Java version to JDK 8
   * Increased the minimum supported Jenkins version to 2.73
