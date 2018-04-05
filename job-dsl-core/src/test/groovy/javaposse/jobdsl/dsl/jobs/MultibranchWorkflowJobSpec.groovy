@@ -1,7 +1,7 @@
 package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext
+import javaposse.jobdsl.dsl.helpers.workflow.BranchProjectFactoryContext
 import spock.lang.Specification
 
 class MultibranchWorkflowJobSpec extends Specification {
@@ -60,8 +60,8 @@ class MultibranchWorkflowJobSpec extends Specification {
 
     def 'can set the factory'() {
         setup:
-        jobManagement.callExtension('factory1', job, MultiBranchProjectFactoryContext, []) >>
-                new Node(null, 'org.example.MultiBranchProjectFactory1')
+        jobManagement.callExtension('factory1', job, BranchProjectFactoryContext, []) >>
+                new Node(null, 'org.example.BranchProjectFactory1')
 
         when:
         job.factory {
@@ -73,7 +73,7 @@ class MultibranchWorkflowJobSpec extends Specification {
             factory.size() == 1
             with(factory[0]) {
                 children().size() == 0
-                attribute('class') == 'org.example.MultiBranchProjectFactory1'
+                attribute('class') == 'org.example.BranchProjectFactory1'
             }
         }
     }
