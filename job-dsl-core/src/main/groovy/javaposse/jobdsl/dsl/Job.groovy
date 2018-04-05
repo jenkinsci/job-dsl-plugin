@@ -410,10 +410,8 @@ abstract class Job extends Item {
      *
      * @since 1.26
      */
-    @RequiresPlugin(id = 'notification', minimumVersion = '1.8')
+    @RequiresPlugin(id = 'notification', minimumVersion = '1.12')
     void notifications(@DslContext(NotificationContext) Closure notificationClosure) {
-        jobManagement.logPluginDeprecationWarning('notification', '1.12')
-
         NotificationContext notificationContext = new NotificationContext(jobManagement)
         ContextHelper.executeInContext(notificationClosure, notificationContext)
 

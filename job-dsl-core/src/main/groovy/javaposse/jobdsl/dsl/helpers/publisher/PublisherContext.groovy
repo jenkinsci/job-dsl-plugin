@@ -1519,32 +1519,6 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Publishes Cucumber results as HTML reports.
-     *
-     * @since 1.41
-     */
-    @Deprecated
-    @RequiresPlugin(id = 'cucumber-reports', minimumVersion = '0.6.0')
-    void cucumberReports(@DslContext(CucumberReportsContext) Closure closure) {
-        CucumberReportsContext context = new CucumberReportsContext()
-        ContextHelper.executeInContext(closure, context)
-
-        publisherNodes << new NodeBuilder().'net.masterthought.jenkins.CucumberReportPublisher' {
-            jsonReportDirectory(context.jsonReportPath ?: '')
-            pluginUrlPath(context.pluginUrlPath ?: '')
-            fileIncludePattern(context.fileIncludePattern ?: '')
-            fileExcludePattern(context.fileExcludePattern ?: '')
-            skippedFails(context.failOnSkippedSteps)
-            pendingFails(context.failOnPendingSteps)
-            undefinedFails(context.failOnUndefinedSteps)
-            missingFails(context.failOnMissingSteps)
-            noFlashCharts(context.turnOffFlashCharts)
-            ignoreFailedTests(context.ignoreFailedTests)
-            parallelTesting(context.parallelTesting)
-        }
-    }
-
-    /**
      * Publishes Cucumber test results.
      *
      * @since 1.41
