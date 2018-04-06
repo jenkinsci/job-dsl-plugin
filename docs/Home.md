@@ -41,6 +41,13 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Support for older versions of the
     [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-169)
+  * Support for older versions of the
+    [Pipeline Multibranch Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin) is deprecated,
+    see [Migration](Migration#migrating-to-169)
+  * Support for older versions of the [Branch API Plugin](https://wiki.jenkins.io/display/JENKINS/Branch+API+Plugin) is
+    deprecated, see [Migration](Migration#migrating-to-169)
+  * Support for setting the primary view in `multibranchPipelineJob` and `organizationFolder` is deprecated,
+    see [Migration](Migration#migrating-to-169)
   * Support for the [Perforce Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Perforce+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-169)
   * Provide license information

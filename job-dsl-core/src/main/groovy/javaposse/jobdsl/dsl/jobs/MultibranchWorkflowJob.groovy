@@ -44,4 +44,10 @@ class MultibranchWorkflowJob extends ComputedFolder {
             project << ContextHelper.toNamedNode('factory', context.projectFactoryNodes[0])
         }
     }
+
+    @Override
+    protected Node getNodeTemplate() {
+        String version = jobManagement.isMinimumPluginVersionInstalled('workflow-multibranch', '2.10') ? '-2.10' : ''
+        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}${version}-template.xml"))
+    }
 }
