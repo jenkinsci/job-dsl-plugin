@@ -4,8 +4,8 @@ import javaposse.jobdsl.dsl.ComputedFolder
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.helpers.workflow.BranchProjectFactoryContext
 import javaposse.jobdsl.dsl.helpers.workflow.BranchSourcesContext
-import javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext
 
 class MultibranchWorkflowJob extends ComputedFolder {
     MultibranchWorkflowJob(JobManagement jobManagement, String name) {
@@ -31,8 +31,8 @@ class MultibranchWorkflowJob extends ComputedFolder {
      *
      * @since 1.67
      */
-    void factory(@DslContext(MultiBranchProjectFactoryContext) Closure closure) {
-        MultiBranchProjectFactoryContext context = new MultiBranchProjectFactoryContext(jobManagement, this)
+    void factory(@DslContext(BranchProjectFactoryContext) Closure closure) {
+        BranchProjectFactoryContext context = new BranchProjectFactoryContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)
 
         configure { Node project ->

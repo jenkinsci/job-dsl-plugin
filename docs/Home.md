@@ -35,6 +35,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([JENKINS-48288](https://issues.jenkins-ci.org/browse/JENKINS-48288))
   * Fixed problem with embedded API viewer
     ([JENKINS-50411](https://issues.jenkins-ci.org/browse/JENKINS-50411))
+  * Fixed problem with
+    [Pipeline Multibranch Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin)
+    ([JENKINS-50119](https://issues.jenkins-ci.org/browse/JENKINS-50119))
   * Support for older versions of the
     [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-169)
