@@ -894,17 +894,18 @@ class JobSpec extends Specification {
         2 * jobManagement.requirePlugin('batch-task')
     }
 
-    def 'delivery pipeline configuration with stage and task names'() {
+    def 'delivery pipeline configuration with stage, task name and description template'() {
         when:
-        job.deliveryPipelineConfiguration('qa', 'integration-tests')
+        job.deliveryPipelineConfiguration('qa', 'integration-tests', 'additional description')
 
         then:
         job.node.'properties'.size() == 1
         job.node.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'.size() == 1
         with(job.node.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'[0]) {
-            children().size() == 2
+            children().size() == 3
             taskName[0].value() == 'integration-tests'
             stageName[0].value() == 'qa'
+            descriptionTemplate[0].value() == 'additional description'
         }
         1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0')
     }
@@ -933,6 +934,20 @@ class JobSpec extends Specification {
         with(job.node.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'[0]) {
             children().size() == 1
             taskName[0].value() == 'integration-tests'
+        }
+        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0')
+    }
+    
+    def 'delivery pipeline configuration with description template'() {
+        when:
+        job.deliveryPipelineConfiguration(null, null, 'additional description')
+
+        then:
+        job.node.'properties'.size() == 1
+        job.node.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'.size() == 1
+        with(job.node.'properties'[0].'se.diabol.jenkins.pipeline.PipelineProperty'[0]) {
+            children().size() == 1
+            descriptionTemplate[0].value() == 'additional description'
         }
         1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0')
     }
