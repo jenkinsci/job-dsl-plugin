@@ -440,7 +440,7 @@ abstract class Job extends Item {
     }
 
     /**
-     * Sets the stage name, task name and description template for the delivery pipeline view. 
+     * Sets the stage name, task name and description template for the delivery pipeline view.
      * Parameters stageName and taskName can be set to {@code null} to use the job name as stage or task name.
      * Parameter descriptionTemplate can be set to {@code null} to not use customized task description template.
      *
