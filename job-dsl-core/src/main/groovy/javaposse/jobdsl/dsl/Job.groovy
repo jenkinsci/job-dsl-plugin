@@ -446,7 +446,7 @@ abstract class Job extends Item {
      * @since 1.26
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.10.0')
-    void deliveryPipelineConfiguration(String stageName, String taskName = null) {
+    void deliveryPipelineConfiguration(String stageName, String taskName = null, String descriptionTemplate = null) {
         if (stageName || taskName) {
             configure { Node project ->
                 project / 'properties' / 'se.diabol.jenkins.pipeline.PipelineProperty' {
@@ -455,6 +455,9 @@ abstract class Job extends Item {
                     }
                     if (stageName) {
                         delegate.stageName(stageName)
+                    }
+                    if (descriptionTemplate) {
+                        delegate.descriptionTemplate(descriptionTemplate)
                     }
                 }
             }
