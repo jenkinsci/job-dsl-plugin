@@ -937,7 +937,7 @@ class JobSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0')
     }
-    
+
     def 'delivery pipeline configuration with description template'() {
         when:
         job.deliveryPipelineConfiguration(null, null, 'additional description')
