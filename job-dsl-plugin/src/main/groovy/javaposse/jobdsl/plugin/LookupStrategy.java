@@ -5,6 +5,8 @@ import hudson.model.ItemGroup;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FilenameUtils;
 
+import java.util.function.Function;
+
 /**
  * A JobLookupStrategy encapsulates where a seed job will look for existing jobs
  * and where it will create new jobs. This matters when you use relative names in
@@ -14,26 +16,17 @@ public enum LookupStrategy {
     /**
      * Using this naming strategy jobs with relative path names are absolute names.
      */
-    JENKINS_ROOT("Jenkins Root") {
-        @Override
-        protected ItemGroup getContext(Item seedJob) {
-            return Jenkins.getInstance();
-        }
-    },
+    JENKINS_ROOT("Jenkins Root", (seedJob) -> Jenkins.getInstance()),
 
     /**
      * Using this naming strategy jobs with relative path names are created relative
      * to the seed job's parent folder.
      */
-    SEED_JOB("Seed Job") {
-        @Override
-        protected ItemGroup getContext(Item seedJob) {
-            return seedJob.getParent();
-        }
-    };
+    SEED_JOB("Seed Job", Item::getParent);
 
-    LookupStrategy(String displayName) {
+    LookupStrategy(String displayName, Function<Item, ItemGroup> context) {
         this.displayName = displayName;
+        this.context = context;
     }
 
     /**
@@ -60,7 +53,9 @@ public enum LookupStrategy {
      * @param seedJob a seed job
      * @return the context
      */
-    protected abstract ItemGroup getContext(Item seedJob);
+    protected ItemGroup getContext(Item seedJob) {
+        return context.apply(seedJob);
+    }
 
     /**
      * Get the parent {@link hudson.model.ItemGroup} of the item addressed by the given path.
@@ -93,6 +88,7 @@ public enum LookupStrategy {
     }
 
     private final String displayName;
+    private final Function<Item, ItemGroup> context;
 
     private static ItemGroup getItemGroup(String path) {
         Jenkins instance = Jenkins.getInstance();
