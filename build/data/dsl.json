@@ -1,5 +1,5 @@
 {
-    "version": "1.68",
+    "version": "1.69",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -2825,6 +2825,1072 @@
                 
             ]
         },
+        "javaposse.jobdsl.dsl.views.ListView": {
+            "type": "javaposse.jobdsl.dsl.views.ListView",
+            "methods": [
+                {
+                    "name": "columns",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "columnsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Adds columns to the views. The view will have no columns by default.",
+                            "firstSentenceCommentText": "Adds columns to the views. ",
+                            "contextClass": "javaposse.jobdsl.dsl.views.ColumnsContext"
+                        }
+                    ],
+                    "examples": "listView('project-A') {\r\n    columns {\r\n        status()\r\n        weather()\r\n        name()\r\n        lastSuccess()\r\n        lastFailure()\r\n        lastDuration()\r\n        buildButton()\r\n    }\r\n}"
+                },
+                {
+                    "name": "configure",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "configureBlock",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Allows direct manipulation of the generated XML.",
+                            "firstSentenceCommentText": "Allows direct manipulation of the generated XML."
+                        }
+                    ],
+                    "examples": "listView('example') {\r\n    configure { view ->\r\n        view / icon(class: 'org.example.MyViewIcon')\r\n    }\r\n}"
+                },
+                {
+                    "name": "description",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "description",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets a description for the view.",
+                            "firstSentenceCommentText": "Sets a description for the view."
+                        }
+                    ],
+                    "examples": "listView('project-a') {\r\n    description('View for project A')\r\n}"
+                },
+                {
+                    "name": "filterBuildQueue",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "filterBuildQueue",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "If set to <CODE>true</CODE>. only jobs in this view will be shown in the build queue. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "If set to true. only jobs in this view will be shown in the build queue. "
+                        }
+                    ],
+                    "examples": "listView('example') {\r\n    filterBuildQueue()\r\n}"
+                },
+                {
+                    "name": "filterExecutors",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "filterExecutors",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "If set to <CODE>true</CODE>, only those build executors will be shown that could execute the jobs in this view.\r\n Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "If set to true, only those build executors will be shown that could execute the jobs in this view.\r\n "
+                        }
+                    ],
+                    "examples": "listView('example') {\r\n    filterExecutors()\r\n}"
+                },
+                {
+                    "name": "jobFilters",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobFiltersClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.29",
+                            "html": "Adds or removes jobs from the view by specifying filters.",
+                            "firstSentenceCommentText": "Adds or removes jobs from the view by specifying filters.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.JobFiltersContext"
+                        }
+                    ],
+                    "examples": "listView('example') {\r\n    jobFilters {\r\n        regex {\r\n            matchType(MatchType.EXCLUDE_MATCHED)\r\n            matchValue(RegexMatchValue.DESCRIPTION)\r\n            regex('.*project-a.*')\r\n        }\r\n        status {\r\n            matchType(MatchType.INCLUDE_MATCHED)\r\n            status(Status.FAILED)\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "jobs",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Adds jobs to the view.",
+                            "firstSentenceCommentText": "Adds jobs to the view.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.JobsContext"
+                        }
+                    ],
+                    "examples": "listView('example') {\r\n    jobs {\r\n        name('build')\r\n        name('test')\r\n        names('compile', 'deploy')\r\n        regex('project-A-.+')\r\n    }\r\n}"
+                },
+                {
+                    "name": "recurse",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "shouldRecurse",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "availableSince": "1.31",
+                            "html": "If set to <CODE>true</CODE>, jobs from sub-folders will be shown.\r\n Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "If set to true, jobs from sub-folders will be shown.\r\n "
+                        }
+                    ],
+                    "examples": "listView('project-A') {\r\n    recurse()\r\n}"
+                },
+                {
+                    "name": "statusFilter",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "filter",
+                                    "type": "javaposse.jobdsl.dsl.views.ListView.StatusFilter",
+                                    "enumConstants": [
+                                        "ALL",
+                                        "ENABLED",
+                                        "DISABLED"
+                                    ]
+                                }
+                            ],
+                            "html": "Filter the job list by enabled/disabled status. Defaults to <CODE>StatusFilter.ALL</CODE>.",
+                            "firstSentenceCommentText": "Filter the job list by enabled/disabled status. "
+                        }
+                    ],
+                    "examples": "listView('project-A') {\r\n    statusFilter(StatusFilter.ENABLED)\r\n}"
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.views.NestedViewColumnsContext": {
+            "type": "javaposse.jobdsl.dsl.views.NestedViewColumnsContext",
+            "methods": [
+                {
+                    "name": "status",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                
+                            ],
+                            "html": "Adds a column showing the status of the last build.",
+                            "firstSentenceCommentText": "Adds a column showing the status of the last build."
+                        }
+                    ]
+                },
+                {
+                    "name": "weather",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                
+                            ],
+                            "html": "Adds a weather report showing the aggregated status of recent builds.",
+                            "firstSentenceCommentText": "Adds a weather report showing the aggregated status of recent builds."
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.views.NestedView": {
+            "type": "javaposse.jobdsl.dsl.views.NestedView",
+            "methods": [
+                {
+                    "name": "columns",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "columnsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Adds columns to the views. The view will have no columns by default.",
+                            "firstSentenceCommentText": "Adds columns to the views. ",
+                            "contextClass": "javaposse.jobdsl.dsl.views.NestedViewColumnsContext"
+                        }
+                    ],
+                    "examples": "nestedView('project-A') {\r\n    columns {\r\n        status()\r\n        weather()\r\n    }\r\n}"
+                },
+                {
+                    "name": "configure",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "configureBlock",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Allows direct manipulation of the generated XML.",
+                            "firstSentenceCommentText": "Allows direct manipulation of the generated XML."
+                        }
+                    ],
+                    "examples": "nestedView('example') {\r\n    configure { view ->\r\n        view / icon(class: 'org.example.MyViewIcon')\r\n    }\r\n}"
+                },
+                {
+                    "name": "description",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "description",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets a description for the view.",
+                            "firstSentenceCommentText": "Sets a description for the view."
+                        }
+                    ],
+                    "examples": "nestedView('project-a') {\r\n    description('View for project A')\r\n}"
+                },
+                {
+                    "name": "filterBuildQueue",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "filterBuildQueue",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "If set to <CODE>true</CODE>. only jobs in this view will be shown in the build queue. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "If set to true. only jobs in this view will be shown in the build queue. "
+                        }
+                    ],
+                    "examples": "nestedView('example') {\r\n    filterBuildQueue()\r\n}"
+                },
+                {
+                    "name": "filterExecutors",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "filterExecutors",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "If set to <CODE>true</CODE>, only those build executors will be shown that could execute the jobs in this view.\r\n Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "If set to true, only those build executors will be shown that could execute the jobs in this view.\r\n "
+                        }
+                    ],
+                    "examples": "nestedView('example') {\r\n    filterExecutors()\r\n}"
+                },
+                {
+                    "name": "views",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "viewsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Adds nested views.",
+                            "firstSentenceCommentText": "Adds nested views.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.NestedViewsContext"
+                        }
+                    ],
+                    "examples": "nestedView('project-a') {\r\n    views {\r\n        listView('overview') {\r\n            jobs {\r\n                regex(/project-A-.*/)\r\n            }\r\n            columns {\r\n                status()\r\n                weather()\r\n                name()\r\n                lastSuccess()\r\n                lastFailure()\r\n            }\r\n        }\r\n        buildPipelineView('pipeline') {\r\n            selectedJob('project-a-compile')\r\n        }\r\n    }\r\n}"
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.views.SectionContext": {
+            "type": "javaposse.jobdsl.dsl.views.SectionContext",
+            "methods": [
+                {
+                    "name": "alignment",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "alignment",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the alignment of the section. Either <CODE>'CENTER'</CODE>, <CODE>'LEFT'</CODE> or <CODE>'RIGHT'</CODE>.",
+                            "firstSentenceCommentText": "Sets the alignment of the section. "
+                        }
+                    ]
+                },
+                {
+                    "name": "jobFilters",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobFiltersClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.29",
+                            "html": "Adds or removes jobs from the view by specifying filters.",
+                            "firstSentenceCommentText": "Adds or removes jobs from the view by specifying filters.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.JobFiltersContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "jobs",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Adds jobs to the section.",
+                            "firstSentenceCommentText": "Adds jobs to the section.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.JobsContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the name of the section.",
+                            "firstSentenceCommentText": "Sets the name of the section."
+                        }
+                    ]
+                },
+                {
+                    "name": "width",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "width",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the with of the section. Either <CODE>'FULL'</CODE>, <CODE>'HALF'</CODE>, <CODE>'THIRD'</CODE> or <CODE>'TWO_THIRDS'</CODE>.",
+                            "firstSentenceCommentText": "Sets the with of the section. "
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.views.ListViewSectionContext": {
+            "type": "javaposse.jobdsl.dsl.views.ListViewSectionContext",
+            "methods": [
+                {
+                    "name": "alignment",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "alignment",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the alignment of the section. Either <CODE>'CENTER'</CODE>, <CODE>'LEFT'</CODE> or <CODE>'RIGHT'</CODE>.",
+                            "firstSentenceCommentText": "Sets the alignment of the section. "
+                        }
+                    ]
+                },
+                {
+                    "name": "columns",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "columnsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Adds columns to the views. The view will have no columns by default.",
+                            "firstSentenceCommentText": "Adds columns to the views. ",
+                            "contextClass": "javaposse.jobdsl.dsl.views.ColumnsContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "jobFilters",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobFiltersClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.29",
+                            "html": "Adds or removes jobs from the view by specifying filters.",
+                            "firstSentenceCommentText": "Adds or removes jobs from the view by specifying filters.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.JobFiltersContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "jobs",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Adds jobs to the section.",
+                            "firstSentenceCommentText": "Adds jobs to the section.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.JobsContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the name of the section.",
+                            "firstSentenceCommentText": "Sets the name of the section."
+                        }
+                    ]
+                },
+                {
+                    "name": "width",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "width",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the with of the section. Either <CODE>'FULL'</CODE>, <CODE>'HALF'</CODE>, <CODE>'THIRD'</CODE> or <CODE>'TWO_THIRDS'</CODE>.",
+                            "firstSentenceCommentText": "Sets the with of the section. "
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.views.TextSectionContext": {
+            "type": "javaposse.jobdsl.dsl.views.TextSectionContext",
+            "methods": [
+                {
+                    "name": "alignment",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "alignment",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the alignment of the section. Either <CODE>'CENTER'</CODE>, <CODE>'LEFT'</CODE> or <CODE>'RIGHT'</CODE>.",
+                            "firstSentenceCommentText": "Sets the alignment of the section. "
+                        }
+                    ]
+                },
+                {
+                    "name": "jobFilters",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobFiltersClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.29",
+                            "html": "Adds or removes jobs from the view by specifying filters.",
+                            "firstSentenceCommentText": "Adds or removes jobs from the view by specifying filters.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.JobFiltersContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "jobs",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Adds jobs to the section.",
+                            "firstSentenceCommentText": "Adds jobs to the section.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.JobsContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the name of the section.",
+                            "firstSentenceCommentText": "Sets the name of the section."
+                        }
+                    ]
+                },
+                {
+                    "name": "style",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "style",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the style of the section. Either <CODE>'NONE'</CODE>, <CODE>'NOTE'</CODE>, <CODE>'INFO'</CODE>, <CODE>WARNING'</CODE>, or\r\n <CODE>'TIP'</CODE>.",
+                            "firstSentenceCommentText": "Sets the style of the section. "
+                        }
+                    ]
+                },
+                {
+                    "name": "text",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "text",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the text of the section.",
+                            "firstSentenceCommentText": "Sets the text of the section."
+                        }
+                    ]
+                },
+                {
+                    "name": "width",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "width",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the with of the section. Either <CODE>'FULL'</CODE>, <CODE>'HALF'</CODE>, <CODE>'THIRD'</CODE> or <CODE>'TWO_THIRDS'</CODE>.",
+                            "firstSentenceCommentText": "Sets the with of the section. "
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.views.ViewListingSectionContext": {
+            "type": "javaposse.jobdsl.dsl.views.ViewListingSectionContext",
+            "methods": [
+                {
+                    "name": "alignment",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "alignment",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the alignment of the section. Either <CODE>'CENTER'</CODE>, <CODE>'LEFT'</CODE> or <CODE>'RIGHT'</CODE>.",
+                            "firstSentenceCommentText": "Sets the alignment of the section. "
+                        }
+                    ]
+                },
+                {
+                    "name": "columns",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "columns",
+                                    "type": "int"
+                                }
+                            ],
+                            "html": "Sets the number of columns of the section.",
+                            "firstSentenceCommentText": "Sets the number of columns of the section."
+                        }
+                    ]
+                },
+                {
+                    "name": "jobFilters",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobFiltersClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.29",
+                            "html": "Adds or removes jobs from the view by specifying filters.",
+                            "firstSentenceCommentText": "Adds or removes jobs from the view by specifying filters.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.JobFiltersContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "jobs",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jobsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Adds jobs to the section.",
+                            "firstSentenceCommentText": "Adds jobs to the section.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.JobsContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the name of the section.",
+                            "firstSentenceCommentText": "Sets the name of the section."
+                        }
+                    ]
+                },
+                {
+                    "name": "view",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "viewName",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Adds views to the section. Can be called multiple times to added more views.",
+                            "firstSentenceCommentText": "Adds views to the section. "
+                        }
+                    ]
+                },
+                {
+                    "name": "views",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "viewNames",
+                                    "type": "String..."
+                                }
+                            ],
+                            "html": "Adds views to the section. Can be called multiple times to added more views.",
+                            "firstSentenceCommentText": "Adds views to the section. "
+                        }
+                    ]
+                },
+                {
+                    "name": "width",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "width",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets the with of the section. Either <CODE>'FULL'</CODE>, <CODE>'HALF'</CODE>, <CODE>'THIRD'</CODE> or <CODE>'TWO_THIRDS'</CODE>.",
+                            "firstSentenceCommentText": "Sets the with of the section. "
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.views.SectionsContext": {
+            "type": "javaposse.jobdsl.dsl.views.SectionsContext",
+            "methods": [
+                {
+                    "name": "jobGraphs",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "sectionClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.64",
+                            "html": "Adds a job graphs section.",
+                            "firstSentenceCommentText": "Adds a job graphs section.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.SectionContext"
+                        }
+                    ],
+                    "examples": "sectionedView('example') {\r\n    sections {\r\n        jobGraphs {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            jobs {\r\n                regex('project-A-.*')\r\n            }\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "listView",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "listViewSectionClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Adds a list view section.",
+                            "firstSentenceCommentText": "Adds a list view section.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.ListViewSectionContext"
+                        }
+                    ],
+                    "examples": "sectionedView('example') {\r\n    sections {\r\n        listView {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            jobs {\r\n                regex('project-A-.*')\r\n            }\r\n            columns {\r\n                status()\r\n                weather()\r\n                name()\r\n                lastSuccess()\r\n                lastFailure()\r\n            }\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "testResult",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "sectionClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.64",
+                            "html": "Adds a test result section.",
+                            "firstSentenceCommentText": "Adds a test result section.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.SectionContext"
+                        }
+                    ],
+                    "examples": "sectionedView('example') {\r\n    sections {\r\n        testResult {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            jobs {\r\n                regex('project-A-.*')\r\n            }\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "text",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "textSectionClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.64",
+                            "html": "Adds a text view section.",
+                            "firstSentenceCommentText": "Adds a text view section.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.TextSectionContext"
+                        }
+                    ],
+                    "examples": "sectionedView('example') {\r\n    sections {\r\n        text {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            style('TIP')\r\n            text('Helpful tip')\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "viewListing",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "viewListingSectionClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.64",
+                            "html": "Adds a view listing section.",
+                            "firstSentenceCommentText": "Adds a view listing section.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.ViewListingSectionContext"
+                        }
+                    ],
+                    "examples": "sectionedView('example') {\r\n    sections {\r\n        viewListing {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            columns(2)\r\n            view('view-a')\r\n            view('view-b')\r\n        }\r\n    }\r\n}"
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.views.SectionedView": {
+            "type": "javaposse.jobdsl.dsl.views.SectionedView",
+            "methods": [
+                {
+                    "name": "configure",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "configureBlock",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Allows direct manipulation of the generated XML.",
+                            "firstSentenceCommentText": "Allows direct manipulation of the generated XML."
+                        }
+                    ],
+                    "examples": "sectionedView('example') {\r\n    configure { view ->\r\n        view / icon(class: 'org.example.MyViewIcon')\r\n    }\r\n}"
+                },
+                {
+                    "name": "description",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "description",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Sets a description for the view.",
+                            "firstSentenceCommentText": "Sets a description for the view."
+                        }
+                    ],
+                    "examples": "sectionedView('project-a') {\r\n    description('View for project A')\r\n}"
+                },
+                {
+                    "name": "filterBuildQueue",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "filterBuildQueue",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "If set to <CODE>true</CODE>. only jobs in this view will be shown in the build queue. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "If set to true. only jobs in this view will be shown in the build queue. "
+                        }
+                    ],
+                    "examples": "sectionedView('example') {\r\n    filterBuildQueue()\r\n}"
+                },
+                {
+                    "name": "filterExecutors",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "filterExecutors",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "If set to <CODE>true</CODE>, only those build executors will be shown that could execute the jobs in this view.\r\n Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "If set to true, only those build executors will be shown that could execute the jobs in this view.\r\n "
+                        }
+                    ],
+                    "examples": "sectionedView('example') {\r\n    filterExecutors()\r\n}"
+                },
+                {
+                    "name": "sections",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "sectionsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "html": "Creates a section containing a list of jobs.",
+                            "firstSentenceCommentText": "Creates a section containing a list of jobs.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.SectionsContext"
+                        }
+                    ],
+                    "examples": "sectionedView('example') {\r\n    sections {\r\n        listView {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            jobs {\r\n                regex('project-A-.*')\r\n            }\r\n            columns {\r\n                status()\r\n                weather()\r\n                name()\r\n                lastSuccess()\r\n                lastFailure()\r\n            }\r\n        }\r\n    }\r\n}"
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.views.NestedViewsContext": {
+            "type": "javaposse.jobdsl.dsl.views.NestedViewsContext",
+            "methods": [
+                {
+                    "name": "buildMonitorView",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "availableSince": "1.31",
+                            "contextClass": "javaposse.jobdsl.dsl.views.BuildMonitorView"
+                        }
+                    ]
+                },
+                {
+                    "name": "buildPipelineView",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "availableSince": "1.31",
+                            "contextClass": "javaposse.jobdsl.dsl.views.BuildPipelineView"
+                        }
+                    ]
+                },
+                {
+                    "name": "categorizedJobsView",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "availableSince": "1.31",
+                            "contextClass": "javaposse.jobdsl.dsl.views.CategorizedJobsView"
+                        }
+                    ]
+                },
+                {
+                    "name": "dashboardView",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "availableSince": "1.42",
+                            "contextClass": "javaposse.jobdsl.dsl.views.DashboardView"
+                        }
+                    ]
+                },
+                {
+                    "name": "deliveryPipelineView",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "availableSince": "1.31",
+                            "contextClass": "javaposse.jobdsl.dsl.views.DeliveryPipelineView"
+                        }
+                    ]
+                },
+                {
+                    "name": "listView",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "availableSince": "1.31",
+                            "contextClass": "javaposse.jobdsl.dsl.views.ListView"
+                        }
+                    ]
+                },
+                {
+                    "name": "nestedView",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "availableSince": "1.31",
+                            "contextClass": "javaposse.jobdsl.dsl.views.NestedView"
+                        }
+                    ]
+                },
+                {
+                    "name": "sectionedView",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "closure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "availableSince": "1.31",
+                            "contextClass": "javaposse.jobdsl.dsl.views.SectionedView"
+                        }
+                    ]
+                }
+            ]
+        },
         "javaposse.jobdsl.dsl.Folder": {
             "type": "javaposse.jobdsl.dsl.Folder",
             "methods": [
@@ -2926,6 +3992,30 @@
                             "contextClass": "javaposse.jobdsl.dsl.helpers.properties.FolderPropertiesContext"
                         }
                     ]
+                },
+                {
+                    "name": "views",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "viewsClosure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.69",
+                            "plugins": [
+                                {
+                                    "id": "cloudbees-folder",
+                                    "minimumVersion": "5.14"
+                                }
+                            ],
+                            "html": "Adds nested views.",
+                            "firstSentenceCommentText": "Adds nested views.",
+                            "contextClass": "javaposse.jobdsl.dsl.views.NestedViewsContext"
+                        }
+                    ],
+                    "examples": "folder('project-a') {\r\n    views {\r\n        listView('unstable') {\r\n            description('All unstable jobs for project A')\r\n            filterBuildQueue()\r\n            filterExecutors()\r\n            jobs {\r\n                name('release-projectA')\r\n                regex(/project-A-.+/)\r\n            }\r\n            jobFilters {\r\n                status {\r\n                    status(Status.UNSTABLE)\r\n                }\r\n            }\r\n            columns {\r\n                status()\r\n                weather()\r\n                name()\r\n                lastSuccess()\r\n                lastFailure()\r\n                lastDuration()\r\n                buildButton()\r\n            }\r\n        }\r\n    }\r\n}"
                 }
             ]
         },
@@ -5029,6 +6119,7 @@
                                     "defaultValue": "null"
                                 }
                             ],
+                            "deprecated": true,
                             "plugins": [
                                 {
                                     "id": "perforce"
@@ -5057,6 +6148,7 @@
                                     "defaultValue": "null"
                                 }
                             ],
+                            "deprecated": true,
                             "plugins": [
                                 {
                                     "id": "perforce"
@@ -9113,183 +10205,6 @@
                             ],
                             "html": "Specifies the path to the dSYM file.",
                             "firstSentenceCommentText": "Specifies the path to the dSYM file."
-                        }
-                    ]
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.helpers.publisher.CucumberReportsContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.publisher.CucumberReportsContext",
-            "methods": [
-                {
-                    "name": "failOnMissingSteps",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "missingFails",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "Fails the build if there were missing steps. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "Fails the build if there were missing steps. "
-                        }
-                    ]
-                },
-                {
-                    "name": "failOnPendingSteps",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "pendingFails",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "Fails the build if there were pending steps. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "Fails the build if there were pending steps. "
-                        }
-                    ]
-                },
-                {
-                    "name": "failOnSkipSteps",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "skippedFails",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "Fails the build if there were skipped steps. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "Fails the build if there were skipped steps. "
-                        }
-                    ]
-                },
-                {
-                    "name": "failOnUndefinedSteps",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "undefinedFails",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "Fails the build if there were undefined steps. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "Fails the build if there were undefined steps. "
-                        }
-                    ]
-                },
-                {
-                    "name": "fileExcludePattern",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "fileExcludePattern",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Specifies files that will not be shown.",
-                            "firstSentenceCommentText": "Specifies files that will not be shown."
-                        }
-                    ]
-                },
-                {
-                    "name": "fileIncludePattern",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "fileIncludePattern",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Specifies files that will be shown.",
-                            "firstSentenceCommentText": "Specifies files that will be shown."
-                        }
-                    ]
-                },
-                {
-                    "name": "ignoreFailedTests",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "ignoreFailedTests",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "Fails builds if these tests fail. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "Fails builds if these tests fail. "
-                        }
-                    ]
-                },
-                {
-                    "name": "jsonReportPath",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "jsonReportPath",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the path to the JSON report directory in the workspace.",
-                            "firstSentenceCommentText": "Sets the path to the JSON report directory in the workspace."
-                        }
-                    ]
-                },
-                {
-                    "name": "parallelTesting",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "parallelTesting",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "If set, runs the same test in parallel for multiple devices. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "If set, runs the same test in parallel for multiple devices. "
-                        }
-                    ]
-                },
-                {
-                    "name": "pluginUrlPath",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "pluginUrlPath",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the path to the Jenkins user content URL.",
-                            "firstSentenceCommentText": "Sets the path to the Jenkins user content URL."
-                        }
-                    ]
-                },
-                {
-                    "name": "turnOffFlashCharts",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "turnOffFlashCharts",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "If set, uses JavaScript charts instead of Flash charts. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "If set, uses JavaScript charts instead of Flash charts. "
                         }
                     ]
                 }
@@ -20845,31 +21760,6 @@
                     "examples": "job('example') {\r\n    publishers {\r\n        crittercismDsymUpload {\r\n            apiKey('secret')\r\n            appID('c001abb')\r\n            filePath('build/myapp.dSYM.zip')\r\n        }\r\n    }\r\n}"
                 },
                 {
-                    "name": "cucumberReports",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "deprecated": true,
-                            "availableSince": "1.41",
-                            "plugins": [
-                                {
-                                    "id": "cucumber-reports",
-                                    "minimumVersion": "0.6.0"
-                                }
-                            ],
-                            "html": "Publishes Cucumber results as HTML reports.",
-                            "firstSentenceCommentText": "Publishes Cucumber results as HTML reports.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.CucumberReportsContext"
-                        }
-                    ],
-                    "examples": "job('example') {\r\n    publishers {\r\n        cucumberReports {\r\n            jsonReportPath('files.json')\r\n            pluginUrlPath('url')\r\n            fileIncludePattern('included')\r\n            fileExcludePattern('excluded')\r\n            failOnSkipSteps()\r\n            failOnPendingSteps()\r\n            failOnUndefinedSteps()\r\n            failOnMissingSteps()\r\n            turnOffFlashCharts()\r\n            ignoreFailedTests()\r\n            parallelTesting()\r\n        }\r\n    }\r\n}"
-                },
-                {
                     "name": "cucumberTestResults",
                     "signatures": [
                         {
@@ -26581,7 +27471,7 @@
                             "plugins": [
                                 {
                                     "id": "notification",
-                                    "minimumVersion": "1.8"
+                                    "minimumVersion": "1.12"
                                 }
                             ],
                             "html": "Configures notifications for the build.",
@@ -27450,7 +28340,7 @@
                             "plugins": [
                                 {
                                     "id": "notification",
-                                    "minimumVersion": "1.8"
+                                    "minimumVersion": "1.12"
                                 }
                             ],
                             "html": "Configures notifications for the build.",
@@ -27691,168 +28581,6 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    wrappers {\r\n        colorizeOutput()\r\n        timestamps()\r\n    }\r\n}"
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.views.ListView": {
-            "type": "javaposse.jobdsl.dsl.views.ListView",
-            "methods": [
-                {
-                    "name": "columns",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "columnsClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Adds columns to the views. The view will have no columns by default.",
-                            "firstSentenceCommentText": "Adds columns to the views. ",
-                            "contextClass": "javaposse.jobdsl.dsl.views.ColumnsContext"
-                        }
-                    ],
-                    "examples": "listView('project-A') {\r\n    columns {\r\n        status()\r\n        weather()\r\n        name()\r\n        lastSuccess()\r\n        lastFailure()\r\n        lastDuration()\r\n        buildButton()\r\n    }\r\n}"
-                },
-                {
-                    "name": "configure",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "configureBlock",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Allows direct manipulation of the generated XML.",
-                            "firstSentenceCommentText": "Allows direct manipulation of the generated XML."
-                        }
-                    ],
-                    "examples": "listView('example') {\r\n    configure { view ->\r\n        view / icon(class: 'org.example.MyViewIcon')\r\n    }\r\n}"
-                },
-                {
-                    "name": "description",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "description",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets a description for the view.",
-                            "firstSentenceCommentText": "Sets a description for the view."
-                        }
-                    ],
-                    "examples": "listView('project-a') {\r\n    description('View for project A')\r\n}"
-                },
-                {
-                    "name": "filterBuildQueue",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "filterBuildQueue",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "If set to <CODE>true</CODE>. only jobs in this view will be shown in the build queue. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "If set to true. only jobs in this view will be shown in the build queue. "
-                        }
-                    ],
-                    "examples": "listView('example') {\r\n    filterBuildQueue()\r\n}"
-                },
-                {
-                    "name": "filterExecutors",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "filterExecutors",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "If set to <CODE>true</CODE>, only those build executors will be shown that could execute the jobs in this view.\r\n Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "If set to true, only those build executors will be shown that could execute the jobs in this view.\r\n "
-                        }
-                    ],
-                    "examples": "listView('example') {\r\n    filterExecutors()\r\n}"
-                },
-                {
-                    "name": "jobFilters",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "jobFiltersClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.29",
-                            "html": "Adds or removes jobs from the view by specifying filters.",
-                            "firstSentenceCommentText": "Adds or removes jobs from the view by specifying filters.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.JobFiltersContext"
-                        }
-                    ],
-                    "examples": "listView('example') {\r\n    jobFilters {\r\n        regex {\r\n            matchType(MatchType.EXCLUDE_MATCHED)\r\n            matchValue(RegexMatchValue.DESCRIPTION)\r\n            regex('.*project-a.*')\r\n        }\r\n        status {\r\n            matchType(MatchType.INCLUDE_MATCHED)\r\n            status(Status.FAILED)\r\n        }\r\n    }\r\n}"
-                },
-                {
-                    "name": "jobs",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "jobsClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Adds jobs to the view.",
-                            "firstSentenceCommentText": "Adds jobs to the view.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.JobsContext"
-                        }
-                    ],
-                    "examples": "listView('example') {\r\n    jobs {\r\n        name('build')\r\n        name('test')\r\n        names('compile', 'deploy')\r\n        regex('project-A-.+')\r\n    }\r\n}"
-                },
-                {
-                    "name": "recurse",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "shouldRecurse",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "availableSince": "1.31",
-                            "html": "If set to <CODE>true</CODE>, jobs from sub-folders will be shown.\r\n Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "If set to true, jobs from sub-folders will be shown.\r\n "
-                        }
-                    ],
-                    "examples": "listView('project-A') {\r\n    recurse()\r\n}"
-                },
-                {
-                    "name": "statusFilter",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "filter",
-                                    "type": "javaposse.jobdsl.dsl.views.ListView.StatusFilter",
-                                    "enumConstants": [
-                                        "ALL",
-                                        "ENABLED",
-                                        "DISABLED"
-                                    ]
-                                }
-                            ],
-                            "html": "Filter the job list by enabled/disabled status. Defaults to <CODE>StatusFilter.ALL</CODE>.",
-                            "firstSentenceCommentText": "Filter the job list by enabled/disabled status. "
-                        }
-                    ],
-                    "examples": "listView('project-A') {\r\n    statusFilter(StatusFilter.ENABLED)\r\n}"
                 }
             ]
         },
@@ -28518,7 +29246,7 @@
                             "plugins": [
                                 {
                                     "id": "notification",
-                                    "minimumVersion": "1.8"
+                                    "minimumVersion": "1.12"
                                 }
                             ],
                             "html": "Configures notifications for the build.",
@@ -29757,31 +30485,6 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    publishers {\r\n        crittercismDsymUpload {\r\n            apiKey('secret')\r\n            appID('c001abb')\r\n            filePath('build/myapp.dSYM.zip')\r\n        }\r\n    }\r\n}"
-                },
-                {
-                    "name": "cucumberReports",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "deprecated": true,
-                            "availableSince": "1.41",
-                            "plugins": [
-                                {
-                                    "id": "cucumber-reports",
-                                    "minimumVersion": "0.6.0"
-                                }
-                            ],
-                            "html": "Publishes Cucumber results as HTML reports.",
-                            "firstSentenceCommentText": "Publishes Cucumber results as HTML reports.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.CucumberReportsContext"
-                        }
-                    ],
-                    "examples": "job('example') {\r\n    publishers {\r\n        cucumberReports {\r\n            jsonReportPath('files.json')\r\n            pluginUrlPath('url')\r\n            fileIncludePattern('included')\r\n            fileExcludePattern('excluded')\r\n            failOnSkipSteps()\r\n            failOnPendingSteps()\r\n            failOnUndefinedSteps()\r\n            failOnMissingSteps()\r\n            turnOffFlashCharts()\r\n            ignoreFailedTests()\r\n            parallelTesting()\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "cucumberTestResults",
@@ -33161,7 +33864,7 @@
                             "plugins": [
                                 {
                                     "id": "notification",
-                                    "minimumVersion": "1.8"
+                                    "minimumVersion": "1.12"
                                 }
                             ],
                             "html": "Configures notifications for the build.",
@@ -35729,7 +36432,7 @@
                             "plugins": [
                                 {
                                     "id": "notification",
-                                    "minimumVersion": "1.8"
+                                    "minimumVersion": "1.12"
                                 }
                             ],
                             "html": "Configures notifications for the build.",
@@ -36353,8 +37056,8 @@
                 }
             ]
         },
-        "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext",
+        "javaposse.jobdsl.dsl.helpers.workflow.BranchProjectFactoryContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.workflow.BranchProjectFactoryContext",
             "methods": [
                 
             ]
@@ -36534,8 +37237,7 @@
                             "firstSentenceCommentText": "Creates permission records.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.AuthorizationContext"
                         }
-                    ],
-                    "examples": "// gives permission for the special authenticated group to create jobs in the folder\r\nfolder('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Create:authenticated')\r\n    }\r\n}\r\n\r\n// gives discover permission for the special anonymous user\r\nfolder('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Discover', 'anonymous')\r\n    }\r\n}\r\n\r\n// gives all permissions to the special anonymous user\r\nfolder('example-3') {\r\n    authorization {\r\n        permissionAll('anonymous')\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\nfolder('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    ]
                 },
                 {
                     "name": "branchSources",
@@ -36566,8 +37268,7 @@
                             "html": "Allows direct manipulation of the generated XML.",
                             "firstSentenceCommentText": "Allows direct manipulation of the generated XML."
                         }
-                    ],
-                    "examples": "folder('example-2') {\r\n    configure { folder ->\r\n        folder / icon(class: 'org.example.MyFolderIcon')\r\n    }\r\n}"
+                    ]
                 },
                 {
                     "name": "description",
@@ -36582,8 +37283,7 @@
                             "html": "Sets a description for the folder.",
                             "firstSentenceCommentText": "Sets a description for the folder."
                         }
-                    ],
-                    "examples": "folder('project-a') {\r\n    description('Folder for project A')\r\n}"
+                    ]
                 },
                 {
                     "name": "displayName",
@@ -36598,8 +37298,7 @@
                             "html": "Sets the name to display instead of the actual folder name.",
                             "firstSentenceCommentText": "Sets the name to display instead of the actual folder name."
                         }
-                    ],
-                    "examples": "folder('project-a') {\r\n    displayName('Project A')\r\n}"
+                    ]
                 },
                 {
                     "name": "factory",
@@ -36614,7 +37313,7 @@
                             "availableSince": "1.67",
                             "html": "Sets the project factories for this folder.",
                             "firstSentenceCommentText": "Sets the project factories for this folder.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext"
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.BranchProjectFactoryContext"
                         }
                     ]
                 },
@@ -36644,7 +37343,7 @@
                                     "type": "String"
                                 }
                             ],
-                            "availableSince": "1.36",
+                            "deprecated": true,
                             "html": "Changes the initial view to show when the folder contains multiple views. Defaults to the <CODE>'All'</CODE> view.",
                             "firstSentenceCommentText": "Changes the initial view to show when the folder contains multiple views. "
                         }
@@ -36685,912 +37384,14 @@
                 }
             ]
         },
-        "javaposse.jobdsl.dsl.views.NestedViewColumnsContext": {
-            "type": "javaposse.jobdsl.dsl.views.NestedViewColumnsContext",
-            "methods": [
-                {
-                    "name": "status",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                
-                            ],
-                            "html": "Adds a column showing the status of the last build.",
-                            "firstSentenceCommentText": "Adds a column showing the status of the last build."
-                        }
-                    ]
-                },
-                {
-                    "name": "weather",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                
-                            ],
-                            "html": "Adds a weather report showing the aggregated status of recent builds.",
-                            "firstSentenceCommentText": "Adds a weather report showing the aggregated status of recent builds."
-                        }
-                    ]
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.views.SectionContext": {
-            "type": "javaposse.jobdsl.dsl.views.SectionContext",
-            "methods": [
-                {
-                    "name": "alignment",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "alignment",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the alignment of the section. Either <CODE>'CENTER'</CODE>, <CODE>'LEFT'</CODE> or <CODE>'RIGHT'</CODE>.",
-                            "firstSentenceCommentText": "Sets the alignment of the section. "
-                        }
-                    ]
-                },
-                {
-                    "name": "jobFilters",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "jobFiltersClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.29",
-                            "html": "Adds or removes jobs from the view by specifying filters.",
-                            "firstSentenceCommentText": "Adds or removes jobs from the view by specifying filters.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.JobFiltersContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "jobs",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "jobsClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Adds jobs to the section.",
-                            "firstSentenceCommentText": "Adds jobs to the section.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.JobsContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "name",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the name of the section.",
-                            "firstSentenceCommentText": "Sets the name of the section."
-                        }
-                    ]
-                },
-                {
-                    "name": "width",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "width",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the with of the section. Either <CODE>'FULL'</CODE>, <CODE>'HALF'</CODE>, <CODE>'THIRD'</CODE> or <CODE>'TWO_THIRDS'</CODE>.",
-                            "firstSentenceCommentText": "Sets the with of the section. "
-                        }
-                    ]
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.views.ListViewSectionContext": {
-            "type": "javaposse.jobdsl.dsl.views.ListViewSectionContext",
-            "methods": [
-                {
-                    "name": "alignment",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "alignment",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the alignment of the section. Either <CODE>'CENTER'</CODE>, <CODE>'LEFT'</CODE> or <CODE>'RIGHT'</CODE>.",
-                            "firstSentenceCommentText": "Sets the alignment of the section. "
-                        }
-                    ]
-                },
-                {
-                    "name": "columns",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "columnsClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Adds columns to the views. The view will have no columns by default.",
-                            "firstSentenceCommentText": "Adds columns to the views. ",
-                            "contextClass": "javaposse.jobdsl.dsl.views.ColumnsContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "jobFilters",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "jobFiltersClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.29",
-                            "html": "Adds or removes jobs from the view by specifying filters.",
-                            "firstSentenceCommentText": "Adds or removes jobs from the view by specifying filters.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.JobFiltersContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "jobs",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "jobsClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Adds jobs to the section.",
-                            "firstSentenceCommentText": "Adds jobs to the section.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.JobsContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "name",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the name of the section.",
-                            "firstSentenceCommentText": "Sets the name of the section."
-                        }
-                    ]
-                },
-                {
-                    "name": "width",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "width",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the with of the section. Either <CODE>'FULL'</CODE>, <CODE>'HALF'</CODE>, <CODE>'THIRD'</CODE> or <CODE>'TWO_THIRDS'</CODE>.",
-                            "firstSentenceCommentText": "Sets the with of the section. "
-                        }
-                    ]
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.views.TextSectionContext": {
-            "type": "javaposse.jobdsl.dsl.views.TextSectionContext",
-            "methods": [
-                {
-                    "name": "alignment",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "alignment",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the alignment of the section. Either <CODE>'CENTER'</CODE>, <CODE>'LEFT'</CODE> or <CODE>'RIGHT'</CODE>.",
-                            "firstSentenceCommentText": "Sets the alignment of the section. "
-                        }
-                    ]
-                },
-                {
-                    "name": "jobFilters",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "jobFiltersClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.29",
-                            "html": "Adds or removes jobs from the view by specifying filters.",
-                            "firstSentenceCommentText": "Adds or removes jobs from the view by specifying filters.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.JobFiltersContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "jobs",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "jobsClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Adds jobs to the section.",
-                            "firstSentenceCommentText": "Adds jobs to the section.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.JobsContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "name",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the name of the section.",
-                            "firstSentenceCommentText": "Sets the name of the section."
-                        }
-                    ]
-                },
-                {
-                    "name": "style",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "style",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the style of the section. Either <CODE>'NONE'</CODE>, <CODE>'NOTE'</CODE>, <CODE>'INFO'</CODE>, <CODE>WARNING'</CODE>, or\r\n <CODE>'TIP'</CODE>.",
-                            "firstSentenceCommentText": "Sets the style of the section. "
-                        }
-                    ]
-                },
-                {
-                    "name": "text",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "text",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the text of the section.",
-                            "firstSentenceCommentText": "Sets the text of the section."
-                        }
-                    ]
-                },
-                {
-                    "name": "width",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "width",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the with of the section. Either <CODE>'FULL'</CODE>, <CODE>'HALF'</CODE>, <CODE>'THIRD'</CODE> or <CODE>'TWO_THIRDS'</CODE>.",
-                            "firstSentenceCommentText": "Sets the with of the section. "
-                        }
-                    ]
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.views.ViewListingSectionContext": {
-            "type": "javaposse.jobdsl.dsl.views.ViewListingSectionContext",
-            "methods": [
-                {
-                    "name": "alignment",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "alignment",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the alignment of the section. Either <CODE>'CENTER'</CODE>, <CODE>'LEFT'</CODE> or <CODE>'RIGHT'</CODE>.",
-                            "firstSentenceCommentText": "Sets the alignment of the section. "
-                        }
-                    ]
-                },
-                {
-                    "name": "columns",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "columns",
-                                    "type": "int"
-                                }
-                            ],
-                            "html": "Sets the number of columns of the section.",
-                            "firstSentenceCommentText": "Sets the number of columns of the section."
-                        }
-                    ]
-                },
-                {
-                    "name": "jobFilters",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "jobFiltersClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.29",
-                            "html": "Adds or removes jobs from the view by specifying filters.",
-                            "firstSentenceCommentText": "Adds or removes jobs from the view by specifying filters.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.JobFiltersContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "jobs",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "jobsClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Adds jobs to the section.",
-                            "firstSentenceCommentText": "Adds jobs to the section.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.JobsContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "name",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the name of the section.",
-                            "firstSentenceCommentText": "Sets the name of the section."
-                        }
-                    ]
-                },
-                {
-                    "name": "view",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "viewName",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Adds views to the section. Can be called multiple times to added more views.",
-                            "firstSentenceCommentText": "Adds views to the section. "
-                        }
-                    ]
-                },
-                {
-                    "name": "views",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "viewNames",
-                                    "type": "String..."
-                                }
-                            ],
-                            "html": "Adds views to the section. Can be called multiple times to added more views.",
-                            "firstSentenceCommentText": "Adds views to the section. "
-                        }
-                    ]
-                },
-                {
-                    "name": "width",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "width",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets the with of the section. Either <CODE>'FULL'</CODE>, <CODE>'HALF'</CODE>, <CODE>'THIRD'</CODE> or <CODE>'TWO_THIRDS'</CODE>.",
-                            "firstSentenceCommentText": "Sets the with of the section. "
-                        }
-                    ]
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.views.SectionsContext": {
-            "type": "javaposse.jobdsl.dsl.views.SectionsContext",
-            "methods": [
-                {
-                    "name": "jobGraphs",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "sectionClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.64",
-                            "html": "Adds a job graphs section.",
-                            "firstSentenceCommentText": "Adds a job graphs section.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.SectionContext"
-                        }
-                    ],
-                    "examples": "sectionedView('example') {\r\n    sections {\r\n        jobGraphs {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            jobs {\r\n                regex('project-A-.*')\r\n            }\r\n        }\r\n    }\r\n}"
-                },
-                {
-                    "name": "listView",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "listViewSectionClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Adds a list view section.",
-                            "firstSentenceCommentText": "Adds a list view section.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.ListViewSectionContext"
-                        }
-                    ],
-                    "examples": "sectionedView('example') {\r\n    sections {\r\n        listView {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            jobs {\r\n                regex('project-A-.*')\r\n            }\r\n            columns {\r\n                status()\r\n                weather()\r\n                name()\r\n                lastSuccess()\r\n                lastFailure()\r\n            }\r\n        }\r\n    }\r\n}"
-                },
-                {
-                    "name": "testResult",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "sectionClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.64",
-                            "html": "Adds a test result section.",
-                            "firstSentenceCommentText": "Adds a test result section.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.SectionContext"
-                        }
-                    ],
-                    "examples": "sectionedView('example') {\r\n    sections {\r\n        testResult {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            jobs {\r\n                regex('project-A-.*')\r\n            }\r\n        }\r\n    }\r\n}"
-                },
-                {
-                    "name": "text",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "textSectionClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.64",
-                            "html": "Adds a text view section.",
-                            "firstSentenceCommentText": "Adds a text view section.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.TextSectionContext"
-                        }
-                    ],
-                    "examples": "sectionedView('example') {\r\n    sections {\r\n        text {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            style('TIP')\r\n            text('Helpful tip')\r\n        }\r\n    }\r\n}"
-                },
-                {
-                    "name": "viewListing",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "viewListingSectionClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.64",
-                            "html": "Adds a view listing section.",
-                            "firstSentenceCommentText": "Adds a view listing section.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.ViewListingSectionContext"
-                        }
-                    ],
-                    "examples": "sectionedView('example') {\r\n    sections {\r\n        viewListing {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            columns(2)\r\n            view('view-a')\r\n            view('view-b')\r\n        }\r\n    }\r\n}"
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.views.SectionedView": {
-            "type": "javaposse.jobdsl.dsl.views.SectionedView",
-            "methods": [
-                {
-                    "name": "configure",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "configureBlock",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Allows direct manipulation of the generated XML.",
-                            "firstSentenceCommentText": "Allows direct manipulation of the generated XML."
-                        }
-                    ],
-                    "examples": "sectionedView('example') {\r\n    configure { view ->\r\n        view / icon(class: 'org.example.MyViewIcon')\r\n    }\r\n}"
-                },
-                {
-                    "name": "description",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "description",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets a description for the view.",
-                            "firstSentenceCommentText": "Sets a description for the view."
-                        }
-                    ],
-                    "examples": "sectionedView('project-a') {\r\n    description('View for project A')\r\n}"
-                },
-                {
-                    "name": "filterBuildQueue",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "filterBuildQueue",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "If set to <CODE>true</CODE>. only jobs in this view will be shown in the build queue. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "If set to true. only jobs in this view will be shown in the build queue. "
-                        }
-                    ],
-                    "examples": "sectionedView('example') {\r\n    filterBuildQueue()\r\n}"
-                },
-                {
-                    "name": "filterExecutors",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "filterExecutors",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "If set to <CODE>true</CODE>, only those build executors will be shown that could execute the jobs in this view.\r\n Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "If set to true, only those build executors will be shown that could execute the jobs in this view.\r\n "
-                        }
-                    ],
-                    "examples": "sectionedView('example') {\r\n    filterExecutors()\r\n}"
-                },
-                {
-                    "name": "sections",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "sectionsClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Creates a section containing a list of jobs.",
-                            "firstSentenceCommentText": "Creates a section containing a list of jobs.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.SectionsContext"
-                        }
-                    ],
-                    "examples": "sectionedView('example') {\r\n    sections {\r\n        listView {\r\n            name('project-A')\r\n            width('HALF')\r\n            alignment('LEFT')\r\n            jobs {\r\n                regex('project-A-.*')\r\n            }\r\n            columns {\r\n                status()\r\n                weather()\r\n                name()\r\n                lastSuccess()\r\n                lastFailure()\r\n            }\r\n        }\r\n    }\r\n}"
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.views.NestedViewsContext": {
-            "type": "javaposse.jobdsl.dsl.views.NestedViewsContext",
-            "methods": [
-                {
-                    "name": "buildMonitorView",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure",
-                                    "defaultValue": "null"
-                                }
-                            ],
-                            "availableSince": "1.31",
-                            "contextClass": "javaposse.jobdsl.dsl.views.BuildMonitorView"
-                        }
-                    ]
-                },
-                {
-                    "name": "buildPipelineView",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure",
-                                    "defaultValue": "null"
-                                }
-                            ],
-                            "availableSince": "1.31",
-                            "contextClass": "javaposse.jobdsl.dsl.views.BuildPipelineView"
-                        }
-                    ]
-                },
-                {
-                    "name": "categorizedJobsView",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure",
-                                    "defaultValue": "null"
-                                }
-                            ],
-                            "availableSince": "1.31",
-                            "contextClass": "javaposse.jobdsl.dsl.views.CategorizedJobsView"
-                        }
-                    ]
-                },
-                {
-                    "name": "dashboardView",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure",
-                                    "defaultValue": "null"
-                                }
-                            ],
-                            "availableSince": "1.42",
-                            "contextClass": "javaposse.jobdsl.dsl.views.DashboardView"
-                        }
-                    ]
-                },
-                {
-                    "name": "deliveryPipelineView",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure",
-                                    "defaultValue": "null"
-                                }
-                            ],
-                            "availableSince": "1.31",
-                            "contextClass": "javaposse.jobdsl.dsl.views.DeliveryPipelineView"
-                        }
-                    ]
-                },
-                {
-                    "name": "listView",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure",
-                                    "defaultValue": "null"
-                                }
-                            ],
-                            "availableSince": "1.31",
-                            "contextClass": "javaposse.jobdsl.dsl.views.ListView"
-                        }
-                    ]
-                },
-                {
-                    "name": "nestedView",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure",
-                                    "defaultValue": "null"
-                                }
-                            ],
-                            "availableSince": "1.31",
-                            "contextClass": "javaposse.jobdsl.dsl.views.NestedView"
-                        }
-                    ]
-                },
-                {
-                    "name": "sectionedView",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "name",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "closure",
-                                    "type": "Closure",
-                                    "defaultValue": "null"
-                                }
-                            ],
-                            "availableSince": "1.31",
-                            "contextClass": "javaposse.jobdsl.dsl.views.SectionedView"
-                        }
-                    ]
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.views.NestedView": {
-            "type": "javaposse.jobdsl.dsl.views.NestedView",
-            "methods": [
-                {
-                    "name": "columns",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "columnsClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Adds columns to the views. The view will have no columns by default.",
-                            "firstSentenceCommentText": "Adds columns to the views. ",
-                            "contextClass": "javaposse.jobdsl.dsl.views.NestedViewColumnsContext"
-                        }
-                    ],
-                    "examples": "nestedView('project-A') {\r\n    columns {\r\n        status()\r\n        weather()\r\n    }\r\n}"
-                },
-                {
-                    "name": "configure",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "configureBlock",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Allows direct manipulation of the generated XML.",
-                            "firstSentenceCommentText": "Allows direct manipulation of the generated XML."
-                        }
-                    ],
-                    "examples": "nestedView('example') {\r\n    configure { view ->\r\n        view / icon(class: 'org.example.MyViewIcon')\r\n    }\r\n}"
-                },
-                {
-                    "name": "description",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "description",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Sets a description for the view.",
-                            "firstSentenceCommentText": "Sets a description for the view."
-                        }
-                    ],
-                    "examples": "nestedView('project-a') {\r\n    description('View for project A')\r\n}"
-                },
-                {
-                    "name": "filterBuildQueue",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "filterBuildQueue",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "If set to <CODE>true</CODE>. only jobs in this view will be shown in the build queue. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "If set to true. only jobs in this view will be shown in the build queue. "
-                        }
-                    ],
-                    "examples": "nestedView('example') {\r\n    filterBuildQueue()\r\n}"
-                },
-                {
-                    "name": "filterExecutors",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "filterExecutors",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "If set to <CODE>true</CODE>, only those build executors will be shown that could execute the jobs in this view.\r\n Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "If set to true, only those build executors will be shown that could execute the jobs in this view.\r\n "
-                        }
-                    ],
-                    "examples": "nestedView('example') {\r\n    filterExecutors()\r\n}"
-                },
-                {
-                    "name": "views",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "viewsClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Adds nested views.",
-                            "firstSentenceCommentText": "Adds nested views.",
-                            "contextClass": "javaposse.jobdsl.dsl.views.NestedViewsContext"
-                        }
-                    ],
-                    "examples": "nestedView('project-a') {\r\n    views {\r\n        listView('overview') {\r\n            jobs {\r\n                regex(/project-A-.*/)\r\n            }\r\n            columns {\r\n                status()\r\n                weather()\r\n                name()\r\n                lastSuccess()\r\n                lastFailure()\r\n            }\r\n        }\r\n        buildPipelineView('pipeline') {\r\n            selectedJob('project-a-compile')\r\n        }\r\n    }\r\n}"
-                }
-            ]
-        },
         "javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext": {
             "type": "javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext",
+            "methods": [
+                
+            ]
+        },
+        "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext",
             "methods": [
                 
             ]
@@ -37613,8 +37414,7 @@
                             "firstSentenceCommentText": "Creates permission records.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.AuthorizationContext"
                         }
-                    ],
-                    "examples": "// gives permission for the special authenticated group to create jobs in the folder\r\nfolder('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Create:authenticated')\r\n    }\r\n}\r\n\r\n// gives discover permission for the special anonymous user\r\nfolder('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Discover', 'anonymous')\r\n    }\r\n}\r\n\r\n// gives all permissions to the special anonymous user\r\nfolder('example-3') {\r\n    authorization {\r\n        permissionAll('anonymous')\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\nfolder('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
+                    ]
                 },
                 {
                     "name": "configure",
@@ -37629,8 +37429,7 @@
                             "html": "Allows direct manipulation of the generated XML.",
                             "firstSentenceCommentText": "Allows direct manipulation of the generated XML."
                         }
-                    ],
-                    "examples": "folder('example-2') {\r\n    configure { folder ->\r\n        folder / icon(class: 'org.example.MyFolderIcon')\r\n    }\r\n}"
+                    ]
                 },
                 {
                     "name": "description",
@@ -37645,8 +37444,7 @@
                             "html": "Sets a description for the folder.",
                             "firstSentenceCommentText": "Sets a description for the folder."
                         }
-                    ],
-                    "examples": "folder('project-a') {\r\n    description('Folder for project A')\r\n}"
+                    ]
                 },
                 {
                     "name": "displayName",
@@ -37661,8 +37459,7 @@
                             "html": "Sets the name to display instead of the actual folder name.",
                             "firstSentenceCommentText": "Sets the name to display instead of the actual folder name."
                         }
-                    ],
-                    "examples": "folder('project-a') {\r\n    displayName('Project A')\r\n}"
+                    ]
                 },
                 {
                     "name": "organizations",
@@ -37706,7 +37503,7 @@
                                     "type": "String"
                                 }
                             ],
-                            "availableSince": "1.36",
+                            "deprecated": true,
                             "html": "Changes the initial view to show when the folder contains multiple views. Defaults to the <CODE>'All'</CODE> view.",
                             "firstSentenceCommentText": "Changes the initial view to show when the folder contains multiple views. "
                         }
@@ -38421,7 +38218,7 @@
                             "plugins": [
                                 {
                                     "id": "notification",
-                                    "minimumVersion": "1.8"
+                                    "minimumVersion": "1.12"
                                 }
                             ],
                             "html": "Configures notifications for the build.",
