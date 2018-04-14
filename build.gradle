@@ -1,16 +1,8 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.rholder:gradle-one-jar:1.0.4'
-        classpath 'org.ajoberstar:gradle-git:0.12.0'
-    }
-}
-
 plugins {
+    id 'org.ajoberstar.git-publish' version '0.3.3'
+    id 'com.github.onslip.gradle-one-jar' version '1.0.5'
     // need to be in the root project as workaround for https://github.com/michel-kraemer/gradle-download-task/issues/48
     id 'de.undercouch.download' version '3.1.2'
 }
@@ -194,14 +186,12 @@ private Map loadCredentialsForJenkinsCommunityRepository() {
     [userName: props.userName, password: props.password]
 }
 
-apply plugin: 'org.ajoberstar.github-pages'
-
-githubPages {
+gitPublish {
     commitMessage = "updated wiki for $version"
     repoUri = "git@github.com:$githubUser/job-dsl-plugin.wiki.git"
-    targetBranch = 'master'
-    workingPath = "$buildDir/wiki"
-    pages {
+    branch = 'master'
+    repoDir = file("$buildDir/wiki")
+    contents {
         from 'docs'
         filesMatching('*.md') {
             filter(ReplaceTokens, tokens: [version: version, jenkinsVersion: jenkinsVersion])
@@ -209,4 +199,4 @@ githubPages {
     }
 }
 
-task publishDocs(dependsOn: ['publishGhPages', ':job-dsl-api-viewer:publishGhPages'])
+task publishDocs(dependsOn: ['gitPublishPush', ':job-dsl-api-viewer:gitPublishPush'])

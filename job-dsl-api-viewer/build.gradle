@@ -18,7 +18,7 @@ plugins {
     id 'com.eriwen.gradle.js' version '2.14.1'
 }
 
-apply plugin: 'org.ajoberstar.github-pages'
+apply plugin: 'org.ajoberstar.git-publish'
 apply plugin: 'com.bertramlabs.asset-pipeline'
 
 repositories {
@@ -94,10 +94,11 @@ task build {
     dependsOn 'concat', 'processUpdateCenter', 'copyData', 'copyFonts'
 }
 
-githubPages {
+gitPublish {
     commitMessage = "updated gh-pages for $version"
     repoUri = "git@github.com:$githubUser/job-dsl-plugin.git"
-    pages {
+    branch = 'gh-pages'
+    contents {
         from '.'
         include 'index.html'
         include 'config.json'
@@ -173,7 +174,7 @@ int latestVersion = (tokenizedVersion[1] as int) - 1 // extract minor version an
     tasks.copyData.from(config)
 }
 
-tasks.publishGhPages.dependsOn('build')
+tasks.gitPublishCopy.dependsOn('build')
 
 task clean(type: Delete) {
     delete project.buildDir
