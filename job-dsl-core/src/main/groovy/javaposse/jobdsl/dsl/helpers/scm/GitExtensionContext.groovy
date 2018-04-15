@@ -146,6 +146,20 @@ class GitExtensionContext extends AbstractExtensibleContext {
     }
 
     /**
+     * If set, and Jenkins is set to poll for changes, Jenkins will pay attention to included and/or excluded
+     * files and/or folders when determining if a build needs to be triggered.
+     */
+    void pathRestriction(@DslContext(GitPathRestrictionContext) Closure closure) {
+        GitPathRestrictionContext context = new GitPathRestrictionContext(jobManagement)
+        executeInContext(closure, context)
+
+        extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.PathRestriction' {
+            includedRegions(context.includedRegions)
+            excludedRegions(context.excludedRegions)
+        }
+    }
+
+    /**
      * If set, the repository will be ignored when the notifyCommit-URL is accessed.
      */
     void ignoreNotifyCommit() {
