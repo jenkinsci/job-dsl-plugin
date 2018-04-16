@@ -250,6 +250,33 @@ class ScmContextSpec extends Specification {
         1 * mockJobManagement.requireMinimumPluginVersion('git', '2.5.3')
     }
 
+    def 'call git scm with pathRestriction extension'() {
+        when:
+        context.git {
+            remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+            }
+            extensions {
+                pathRestriction {
+                    includedRegions('job-dsl-core/src')
+                    excludedRegions('')
+                }
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        with(context.scmNodes[0]) {
+            extensions.size() == 1
+            extensions[0].children().size() == 1
+            extensions[0].'hudson.plugins.git.extensions.impl.PathRestriction'[0].children().size() == 2
+            extensions[0].'hudson.plugins.git.extensions.impl.PathRestriction'[0].includedRegions[0].value() ==
+             'job-dsl-core/src'
+            extensions[0].'hudson.plugins.git.extensions.impl.PathRestriction'[0].excludedRegions[0].value() == ''
+        }
+        1 * mockJobManagement.requireMinimumPluginVersion('git', '2.5.3')
+    }
+
     def 'call git scm with minimal clone options'() {
         when:
         context.git {
