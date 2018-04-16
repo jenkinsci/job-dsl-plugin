@@ -392,7 +392,7 @@ def emailTrigger = {
 
 job('example') {
     configure { project ->
-        project / publisher << 'hudson.plugins.emailext.ExtendedEmailPublisher' {
+        project / publishers << 'hudson.plugins.emailext.ExtendedEmailPublisher' {
               recipientList 'Engineering@company.com'
               configuredTriggers {
                   'hudson.plugins.emailext.plugins.trigger.FailureTrigger' emailTrigger
@@ -409,7 +409,7 @@ job('example') {
 Result:
 ```xml
 <project>
-    <publisher>
+    <publishers>
         <hudson.plugins.emailext.ExtendedEmailPublisher>
             <recipientList>Engineering@company.com</recipientList>
             <configuredTriggers>
