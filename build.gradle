@@ -13,7 +13,6 @@ configure(subprojects - project(':job-dsl-api-viewer')) {
     group = 'org.jenkins-ci.plugins'
 
     apply plugin: 'groovy'
-    apply plugin: 'maven' // for publishing
     apply plugin: 'codenarc'
 
     sourceCompatibility = 1.8
