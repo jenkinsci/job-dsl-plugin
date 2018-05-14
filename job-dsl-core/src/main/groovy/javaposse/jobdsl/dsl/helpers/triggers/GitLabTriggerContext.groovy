@@ -15,6 +15,9 @@ class GitLabTriggerContext extends AbstractContext {
     String branchFilterType = 'All'
     boolean buildOnMergeRequestEvents = true
     boolean buildOnPushEvents = true
+    boolean buildOnClosedMergeRequest = true
+    boolean buildOnAcceptedMergeRequest = true
+    boolean buildOnApprovedMergeRequest = true
     boolean enableCiSkip = true
     boolean setBuildDescription = true
     boolean addNoteOnMergeRequest = true
@@ -68,6 +71,27 @@ class GitLabTriggerContext extends AbstractContext {
      */
     void buildOnPushEvents(boolean buildOnPushEvents = true) {
         this.buildOnPushEvents = buildOnPushEvents
+    }
+
+    /**
+     * If set, builds on closed merge request events. Defaults to {@code true}.
+     */
+    void buildOnClosedMergeRequest(boolean buildOnClosedMergeRequest = true) {
+        this.buildOnClosedMergeRequest = buildOnClosedMergeRequest
+    }
+
+    /**
+     * If set, builds on accepted merge request events. Defaults to {@code true}.
+     */
+    void buildOnAcceptedMergeRequest(boolean buildOnAcceptedMergeRequest = true) {
+        this.buildOnAcceptedMergeRequest = buildOnAcceptedMergeRequest
+    }
+
+    /**
+     * If set, builds on approved merge request events. Defaults to {@code true}.
+     */
+    void buildOnApprovedMergeRequest(boolean buildOnApprovedMergeRequest = true) {
+        this.buildOnApprovedMergeRequest = buildOnApprovedMergeRequest
     }
 
     /**
