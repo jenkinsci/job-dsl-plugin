@@ -307,11 +307,14 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
-            children().size() == 17
+            children().size() == 20
             spec[0].value() == []
             triggerOnPush[0].value() == true
             triggerOnMergeRequest[0].value() == true
             triggerOpenMergeRequestOnPush[0].value() == 'never'
+            triggerOnClosedMergeRequest[0].value() == true
+            triggerOnAcceptedMergeRequest[0].value() == true
+            triggerOnApprovedMergeRequest[0].value() == true
             ciSkip[0].value() == true
             setBuildDescription[0].value() == true
             addNoteOnMergeRequest[0].value() == true
@@ -326,7 +329,7 @@ class TriggerContextSpec extends Specification {
             noteRegex[0].value() == 'Jenkins please retry a build'
             skipWorkInProgressMergeRequest[0].value() == true
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.4.0')
+        1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.5.5')
     }
 
     @SuppressWarnings('UnnecessarySetter') // false positive for setBuildDescription
@@ -335,6 +338,9 @@ class TriggerContextSpec extends Specification {
         context.gitlabPush {
             buildOnMergeRequestEvents(value)
             buildOnPushEvents(value)
+            buildOnClosedMergeRequest(value)
+            buildOnAcceptedMergeRequest(value)
+            buildOnApprovedMergeRequest(value)
             enableCiSkip(value)
             setBuildDescription(value)
             addNoteOnMergeRequest(value)
@@ -351,10 +357,13 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
-            children().size() == 17
+            children().size() == 20
             spec[0].value() == []
             triggerOnPush[0].value() == value
             triggerOnMergeRequest[0].value() == value
+            triggerOnClosedMergeRequest[0].value() == value
+            triggerOnAcceptedMergeRequest[0].value() == value
+            triggerOnApprovedMergeRequest[0].value() == value
             triggerOpenMergeRequestOnPush[0].value() == 'both'
             ciSkip[0].value() == value
             setBuildDescription[0].value() == value
@@ -370,7 +379,7 @@ class TriggerContextSpec extends Specification {
             noteRegex[0].value() == ''
             skipWorkInProgressMergeRequest[0].value() == value
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.4.0')
+        1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.5.5')
 
         where:
         value << [true, false]
@@ -382,6 +391,9 @@ class TriggerContextSpec extends Specification {
         context.gitlabPush {
             buildOnMergeRequestEvents(value)
             buildOnPushEvents(value)
+            buildOnClosedMergeRequest(value)
+            buildOnAcceptedMergeRequest(value)
+            buildOnApprovedMergeRequest(value)
             enableCiSkip(value)
             setBuildDescription(value)
             addNoteOnMergeRequest(value)
@@ -395,10 +407,13 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
-            children().size() == 17
+            children().size() == 20
             spec[0].value() == []
             triggerOnPush[0].value() == value
             triggerOnMergeRequest[0].value() == value
+            triggerOnClosedMergeRequest[0].value() == value
+            triggerOnAcceptedMergeRequest[0].value() == value
+            triggerOnApprovedMergeRequest[0].value() == value
             triggerOpenMergeRequestOnPush[0].value() == 'both'
             ciSkip[0].value() == value
             setBuildDescription[0].value() == value
@@ -414,7 +429,7 @@ class TriggerContextSpec extends Specification {
             noteRegex[0].value() == 'Jenkins please retry a build'
             skipWorkInProgressMergeRequest[0].value() == true
         }
-        1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.4.0')
+        1 * mockJobManagement.requireMinimumPluginVersion('gitlab-plugin', '1.5.5')
 
         where:
         value << [true, false]
