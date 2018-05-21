@@ -601,6 +601,7 @@ class PublisherContextSpec extends Specification {
         'msTest'     | 'MSTestJunitHudsonTestType'
         'mbUnit'     | 'MbUnitType'
         'nUnit'      | 'NUnitJunitHudsonTestType'
+        'nUnit3'     | 'NUnit3TestType'
         'phpUnit'    | 'PHPUnitJunitHudsonTestType'
         'qTestLib'   | 'QTestLibType'
         'unitTest'   | 'UnitTestJunitHudsonTestType'
