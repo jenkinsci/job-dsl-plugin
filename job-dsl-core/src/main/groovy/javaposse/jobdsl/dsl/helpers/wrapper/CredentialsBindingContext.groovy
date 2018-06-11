@@ -50,7 +50,7 @@ class CredentialsBindingContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Sets one variable to the username and one variable to the password given in the credentials.
+     * Sets variables for the keystore, password and alias of a certificate
      *
      * @since 1.31
      */
