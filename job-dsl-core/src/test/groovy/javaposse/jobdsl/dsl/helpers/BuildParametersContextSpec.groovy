@@ -6,6 +6,8 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class BuildParametersContextSpec extends Specification {
+
+    static final String DEFAULT_SELECTOR_CLASS = 'hudson.plugins.copyartifact.StatusBuildSelector'
     JobManagement jobManagement = Mock(JobManagement)
     Item item = Mock(Item)
     BuildParametersContext context = new BuildParametersContext(jobManagement, item)
@@ -1480,5 +1482,29 @@ class BuildParametersContextSpec extends Specification {
 
         then:
         thrown(DslScriptException)
+    }
+
+    def 'should add buildSelectorParameter node'() {
+        when:
+        context.buildSelectorParam('myParameterName') { description('myDescription') }
+        then:
+        context.buildParameterNodes
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.plugins.copyartifact.BuildSelectorParameter'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].children().size() == 3
+        context.buildParameterNodes['myParameterName'].description.text() == 'myDescription'
+        context.buildParameterNodes['myParameterName'].defaultSelector.get(0).attributes().class ==
+                DEFAULT_SELECTOR_CLASS
+    }
+
+    def 'buildSelectorParameter name should not be null, empty or previously defined'() {
+        when:
+        context.stringParam('myParameterName')
+        context.buildSelectorParam(name) {}
+        then:
+        thrown(DslScriptException)
+        where:
+        name << [null, '', 'myParameterName']
     }
 }
