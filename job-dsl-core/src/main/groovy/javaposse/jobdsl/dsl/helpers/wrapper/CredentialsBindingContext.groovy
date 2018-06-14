@@ -55,7 +55,8 @@ class CredentialsBindingContext extends AbstractExtensibleContext {
      * @since 1.31
      */
     @RequiresPlugin(id = 'credentials-binding', minimumVersion = '1.3')
-    void certificate(String keystoreVariableName, String passwordVariableName, String aliasVariableName, String credentials) {
+    void certificate(String keystoreVariableName, String passwordVariableName,
+                     String aliasVariableName, String credentials) {
         nodes << new NodeBuilder().'org.jenkinsci.plugins.credentialsbinding.impl.CertificateMultiBinding' {
             credentialsId(credentials)
             keystoreVariable(keystoreVariableName)
