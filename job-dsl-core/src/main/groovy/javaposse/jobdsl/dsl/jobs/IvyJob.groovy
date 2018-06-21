@@ -2,15 +2,15 @@ package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
-import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NoDoc
+import javaposse.jobdsl.dsl.Project
 import javaposse.jobdsl.dsl.helpers.IvyBuilderContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 
 import static javaposse.jobdsl.dsl.Preconditions.checkState
 
-class IvyJob extends Job {
+class IvyJob extends Project {
     IvyJob(JobManagement jobManagement, String name) {
         super(jobManagement, name)
     }

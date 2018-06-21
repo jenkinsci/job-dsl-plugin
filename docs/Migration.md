@@ -1,3 +1,40 @@
+## Migrating to 1.70
+
+The following methods in the `pipelineJob` are [[deprecated|Deprecation-Policy]] and will be removed because they are
+not available for the Pipeline job type.
+
+DSL prior to 1.70
+```
+pipelineJob('example') {
+    authenticationToken('secret')
+    batchTask('upload', 'curl --upload-file build/dist.zip http://www.example.com/upload')
+    blockOnUpstreamProjects()
+    blockOnDownstreamProjects()
+    checkoutRetryCount(10)
+    concurrentBuild()
+    customWorkspace('/tmp')
+    jdk('jdk-1.8')
+    label('linux')
+    lockableResources('lock-resource')
+    multiscm {
+         // ...
+    }
+    publishers {
+         // ...
+    }
+    scm {
+         // ...
+    }
+    steps {
+         // ...
+    }
+    weight(50)
+    wrappers {
+         // ...
+    }
+}
+```
+
 ## Migrating to 1.69
 
 ### CloudBees Folders Plugin

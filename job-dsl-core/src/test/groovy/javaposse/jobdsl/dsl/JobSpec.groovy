@@ -64,18 +64,6 @@ class JobSpec extends Specification {
         thrown(JobTypeMismatchException)
     }
 
-    def 'run engine and ensure canRoam values'() {
-        setup:
-        JobManagement jm = new FileJobManagement(resourcesDir)
-        TestJob job = new TestJob(jm)
-
-        when:
-        job.label('Ubuntu')
-
-        then:
-        job.node.canRoam[0].value() == false
-    }
-
     def 'update Node using withXml'() {
         setup:
         TestJob job = new TestJob(null)
@@ -191,52 +179,6 @@ class JobSpec extends Specification {
         }
     }
 
-    def 'call scm'() {
-        when:
-        job.scm {
-            git {
-            }
-        }
-
-        then:
-        job.node.scm[0].configVersion[0].text() == '2'
-    }
-
-    def 'duplicate scm calls allowed with multiscm'() {
-        when:
-        job.multiscm {
-            git('git://github.com/jenkinsci/jenkins.git')
-            git('git://github.com/jenkinsci/job-dsl-plugin.git')
-        }
-
-        then:
-        noExceptionThrown()
-        job.node.scm[0].scms[0].scm.size() == 2
-        1 * jobManagement.requirePlugin('multiple-scms')
-    }
-
-    def 'duplicate scm calls not allowed'() {
-        when:
-        job.scm {
-            git('git://github.com/jenkinsci/jenkins.git')
-            git('git://github.com/jenkinsci/job-dsl-plugin.git')
-        }
-
-        then:
-        thrown(DslScriptException)
-    }
-
-    def 'call wrappers'() {
-        when:
-        job.wrappers {
-            maskPasswords()
-        }
-
-        then:
-        job.node.buildWrappers[0].children()[0].name() ==
-            'com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper'
-    }
-
     def 'call properties'() {
         when:
         job.properties {
@@ -255,26 +197,6 @@ class JobSpec extends Specification {
 
         then:
         job.node.triggers[0].'hudson.triggers.SCMTrigger'[0].spec[0].text() == '2 3 * * * *'
-    }
-
-    def 'call steps'() {
-        when:
-        job.steps {
-            shell('ls')
-        }
-
-        then:
-        job.node.builders[0].'hudson.tasks.Shell'[0].command[0].text() == 'ls'
-    }
-
-    def 'call publishers'() {
-        when:
-        job.publishers {
-            chucknorris()
-        }
-
-        then:
-        job.node.publishers[0].'hudson.plugins.chucknorris.CordellWalkerRecorder'[0].factGenerator[0].text() == ''
     }
 
     def 'add description'() {
@@ -510,87 +432,6 @@ class JobSpec extends Specification {
         job.node.disabled[0].value() == false
     }
 
-    def 'label constructs xml'() {
-        when:
-        job.label('FullTools')
-
-        then:
-        job.node.assignedNode[0].value() == 'FullTools'
-        job.node.canRoam[0].value() == false
-    }
-
-    def 'without label leaves canRoam as true'() {
-        when:
-        job.label()
-
-        then:
-        job.node.assignedNode[0].value() == ''
-        job.node.canRoam[0].value() == true
-    }
-
-    def 'authenticationToken constructs xml'() {
-        when:
-        job.authenticationToken('secret')
-
-        then:
-        job.node.authToken[0].value() == 'secret'
-    }
-
-    def 'lockable resources simple'() {
-        when:
-        job.lockableResources('lock-resource')
-
-        then:
-        with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
-            children().size() == 1
-            resourceNames[0].value() == 'lock-resource'
-        }
-        1 * jobManagement.requireMinimumPluginVersion('lockable-resources', '1.7')
-    }
-
-    def 'lockable resources with all parameters'() {
-        when:
-        job.lockableResources('res0 res1 res2') {
-            resourcesVariable('RESOURCES')
-            resourceNumber(1)
-            label('foo')
-        }
-
-        then:
-        with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
-            children().size() == 4
-            resourceNames[0].value() == 'res0 res1 res2'
-            resourceNamesVar[0].value() == 'RESOURCES'
-            resourceNumber[0].value() == 1
-            labelName[0].value() == 'foo'
-        }
-        1 * jobManagement.requireMinimumPluginVersion('lockable-resources', '1.7')
-    }
-
-    def 'lockable resources with label only'() {
-        when:
-        job.lockableResources {
-            label('HEAVY_RESOURCE')
-        }
-
-        then:
-        with(job.node.properties[0].'org.jenkins.plugins.lockableresources.RequiredResourcesProperty'[0]) {
-            children().size() == 1
-            labelName[0].value() == 'HEAVY_RESOURCE'
-        }
-        2 * jobManagement.requireMinimumPluginVersion('lockable-resources', '1.7')
-    }
-
-    def 'lockable resources resource or label have to be defined'() {
-        when:
-        job.lockableResources {
-        }
-
-        then:
-        Exception e = thrown(DslScriptException)
-        e.message =~ /Either resource or label have to be specified/
-    }
-
     def 'compress build log'() {
         when:
         job.compressBuildLog()
@@ -600,18 +441,6 @@ class JobSpec extends Specification {
             children().size() == 0
         }
         1 * jobManagement.requireMinimumPluginVersion('compress-buildlog', '1.0')
-    }
-
-    def 'heavy job weight'() {
-        when:
-        job.weight(42)
-
-        then:
-        with(job.node.properties[0].'hudson.plugins.heavy__job.HeavyJobProperty'[0]) {
-            children().size() == 1
-            weight[0].value() == 42
-        }
-        1 * jobManagement.requireMinimumPluginVersion('heavy-job', '1.1')
     }
 
     def 'log rotate xml'() {
@@ -743,29 +572,6 @@ class JobSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('build-blocker-plugin', '1.7.1')
     }
 
-    def 'can run jdk'() {
-        when:
-        job.jdk('JDK1.6.0_32')
-
-        then:
-        job.node.jdk[0].value() == 'JDK1.6.0_32'
-    }
-
-    def 'can run jdk twice'() {
-        when:
-        job.jdk('JDK1.6.0_16')
-
-        then:
-        job.node.jdk[0].value() == 'JDK1.6.0_16'
-
-        when:
-        job.jdk('JDK1.6.0_17')
-
-        then:
-        job.node.jdk.size() == 1
-        job.node.jdk[0].value() == 'JDK1.6.0_17'
-    }
-
     def 'add a quiet period'() {
         when:
         job.quietPeriod()
@@ -780,48 +586,12 @@ class JobSpec extends Specification {
         job.node.quietPeriod[0].value() == 10
     }
 
-    def 'add SCM retry count'() {
-        when:
-        job.checkoutRetryCount()
-
-        then:
-        job.node.scmCheckoutRetryCount[0].value() == 3
-
-        when:
-        job.checkoutRetryCount(6)
-
-        then:
-        job.node.scmCheckoutRetryCount[0].value() == 6
-    }
-
     def 'add display name'() {
         when:
         job.displayName('FooBar')
 
         then:
         job.node.displayName[0].value() == 'FooBar'
-    }
-
-    def 'add custom workspace'() {
-        when:
-        job.customWorkspace('/var/lib/jenkins/foobar')
-
-        then:
-        job.node.customWorkspace[0].value() == '/var/lib/jenkins/foobar'
-    }
-
-    def 'add block for up and downstream projects'() {
-        when:
-        job.blockOnUpstreamProjects()
-
-        then:
-        job.node.blockBuildWhenUpstreamBuilding[0].value() == true
-
-        when:
-        job.blockOnDownstreamProjects()
-
-        then:
-        job.node.blockBuildWhenDownstreamBuilding[0].value() == true
     }
 
     def 'set keep Dependencies'(keep) {
@@ -834,64 +604,6 @@ class JobSpec extends Specification {
 
         where:
         keep << [true, false]
-    }
-
-    def 'set concurrentBuild with value'(allowConcurrentBuild) {
-        when:
-        job.concurrentBuild(allowConcurrentBuild)
-
-        then:
-        job.node.concurrentBuild.size() == 1
-        job.node.concurrentBuild[0].value() == allowConcurrentBuild ? 'true' : 'false'
-
-        where:
-        allowConcurrentBuild << [true, false]
-    }
-
-    def 'set concurrentBuild default'() {
-        when:
-        job.concurrentBuild()
-
-        then:
-        job.node.concurrentBuild[0].value() == true
-    }
-
-    def 'add batch task'() {
-        when:
-        job.batchTask('Hello World', 'echo Hello World')
-
-        then:
-        job.node.'properties'.size() == 1
-        job.node.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'.size() == 1
-        with(job.node.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'[0]) {
-            tasks.size() == 1
-            tasks[0].'hudson.plugins.batch__task.BatchTask'.size() == 1
-            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].children().size() == 2
-            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'name'[0].value() == 'Hello World'
-            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'script'[0].value() == 'echo Hello World'
-        }
-        1 * jobManagement.requirePlugin('batch-task')
-    }
-
-    def 'add two batch tasks'() {
-        when:
-        job.batchTask('Hello World', 'echo Hello World')
-        job.batchTask('foo', 'echo bar')
-
-        then:
-        job.node.'properties'.size() == 1
-        job.node.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'.size() == 1
-        with(job.node.'properties'[0].'hudson.plugins.batch__task.BatchTaskProperty'[0]) {
-            tasks.size() == 1
-            tasks[0].'hudson.plugins.batch__task.BatchTask'.size() == 2
-            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].children().size() == 2
-            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'name'[0].value() == 'Hello World'
-            tasks[0].'hudson.plugins.batch__task.BatchTask'[0].'script'[0].value() == 'echo Hello World'
-            tasks[0].'hudson.plugins.batch__task.BatchTask'[1].children().size() == 2
-            tasks[0].'hudson.plugins.batch__task.BatchTask'[1].'name'[0].value() == 'foo'
-            tasks[0].'hudson.plugins.batch__task.BatchTask'[1].'script'[0].value() == 'echo bar'
-        }
-        2 * jobManagement.requirePlugin('batch-task')
     }
 
     def 'delivery pipeline configuration with stage and task names'() {
