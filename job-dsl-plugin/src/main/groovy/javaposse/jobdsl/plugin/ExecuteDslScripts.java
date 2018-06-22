@@ -8,11 +8,14 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import hudson.AbortException;
 import hudson.EnvVars;
+import hudson.ExtensionList;
+import hudson.ExtensionListListener;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
+import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Items;
@@ -73,6 +76,8 @@ import static javaposse.jobdsl.plugin.actions.GeneratedObjectsAction.extractGene
 public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     private static final Logger LOGGER = Logger.getLogger(ExecuteDslScripts.class.getName());
 
+    private static volatile boolean rebootRequired;
+
     /**
      * Newline-separated list of locations to load as dsl scripts.
      */
@@ -109,6 +114,15 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     private String additionalClasspath;
 
     private Map<String, Object> additionalParameters;
+
+    static {
+        ExtensionList.lookup(Descriptor.class).addListener(new ExtensionListListener() {
+            @Override
+            public void onChange() {
+                rebootRequired = true;
+            }
+        });
+    }
 
     @DataBoundConstructor
     public ExecuteDslScripts() {
@@ -303,6 +317,10 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             jenkinsJobManagement.setFailOnMissingPlugin(failOnMissingPlugin);
             jenkinsJobManagement.setUnstableOnDeprecation(unstableOnDeprecation);
             JobManagement jobManagement = new InterruptibleJobManagement(jenkinsJobManagement);
+
+            if (rebootRequired) {
+                listener.getLogger().println(Messages.RestartRequired());
+            }
 
             try (ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env)) {
                 Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
