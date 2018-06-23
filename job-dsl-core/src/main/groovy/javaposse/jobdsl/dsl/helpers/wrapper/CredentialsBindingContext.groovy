@@ -50,6 +50,22 @@ class CredentialsBindingContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Sets variables for the keystore, password and alias of a certificate
+     *
+     * @since 1.31
+     */
+    @RequiresPlugin(id = 'credentials-binding', minimumVersion = '1.3')
+    void certificate(String keystoreVariableName, String passwordVariableName,
+                     String aliasVariableName, String credentials) {
+        nodes << new NodeBuilder().'org.jenkinsci.plugins.credentialsbinding.impl.CertificateMultiBinding' {
+            credentialsId(credentials)
+            keystoreVariable(keystoreVariableName)
+            passwordVariable(passwordVariableName)
+            aliasVariable(aliasVariableName)
+        }
+    }
+
+    /**
      * Unpacks the ZIP file given in the credentials to a temporary directory, then sets the variable to that location.
      */
     void zipFile(String variable, String credentials) {
