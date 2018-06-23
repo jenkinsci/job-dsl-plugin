@@ -440,14 +440,15 @@ abstract class Job extends Item {
     }
 
     /**
-     * Sets the stage name and task name for the delivery pipeline view. Each of the parameters can be set to
-     * {@code null} to use the job name as stage or task name.
+     * Sets the stage name, task name and description template for the delivery pipeline view.
+     * Parameters stageName and taskName can be set to {@code null} to use the job name as stage or task name.
+     * Parameter descriptionTemplate can be set to {@code null} to not use customized task description template.
      *
      * @since 1.26
      */
     @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.10.0')
-    void deliveryPipelineConfiguration(String stageName, String taskName = null) {
-        if (stageName || taskName) {
+    void deliveryPipelineConfiguration(String stageName, String taskName = null, String descriptionTemplate = null) {
+        if (stageName || taskName || descriptionTemplate) {
             configure { Node project ->
                 project / 'properties' / 'se.diabol.jenkins.pipeline.PipelineProperty' {
                     if (taskName) {
@@ -455,6 +456,9 @@ abstract class Job extends Item {
                     }
                     if (stageName) {
                         delegate.stageName(stageName)
+                    }
+                    if (descriptionTemplate) {
+                        delegate.descriptionTemplate(descriptionTemplate)
                     }
                 }
             }
