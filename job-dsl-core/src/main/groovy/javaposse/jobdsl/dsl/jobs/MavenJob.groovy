@@ -2,10 +2,10 @@ package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
-import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.NoDoc
 import javaposse.jobdsl.dsl.Preconditions
+import javaposse.jobdsl.dsl.Project
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
 import javaposse.jobdsl.dsl.helpers.properties.MavenPropertiesContext
@@ -19,7 +19,7 @@ import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
 import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COLOR_MAP
 import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_ORDINAL_MAP
 
-class MavenJob extends Job {
+class MavenJob extends Project {
     private final List<String> mavenGoals = []
     private final List<String> mavenOpts = []
 

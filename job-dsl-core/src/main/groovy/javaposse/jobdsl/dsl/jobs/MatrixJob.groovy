@@ -2,13 +2,13 @@ package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
-import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.Project
 import javaposse.jobdsl.dsl.helpers.AxisContext
 
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 
-class MatrixJob extends Job {
+class MatrixJob extends Project {
     MatrixJob(JobManagement jobManagement, String name) {
         super(jobManagement, name)
     }

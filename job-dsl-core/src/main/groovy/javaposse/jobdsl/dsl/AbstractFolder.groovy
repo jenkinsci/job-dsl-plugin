@@ -12,24 +12,6 @@ abstract class AbstractFolder extends Item {
     }
 
     /**
-     * Sets the name to display instead of the actual folder name.
-     */
-    void displayName(String displayName) {
-        configure {
-            it / methodMissing('displayName', displayName)
-        }
-    }
-
-    /**
-     * Sets a description for the folder.
-     */
-    void description(String description) {
-        configure {
-            it / methodMissing('description', description)
-        }
-    }
-
-    /**
      * Changes the initial view to show when the folder contains multiple views. Defaults to the {@code 'All'} view.
      *
      * @since 1.36

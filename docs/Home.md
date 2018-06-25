@@ -33,6 +33,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([#1129](https://github.com/jenkinsci/job-dsl-plugin/pull/1129))
   * Log warning when plugins have been installed without restarting Jenkins
     ([JENKINS-50858](https://issues.jenkins-ci.org/browse/JENKINS-50858))
+  * Deprecated unsupported methods in `pipelineJob` context, see [Migration](Migration#migrating-to-170)
+    ([JENKINS-31832](https://issues.jenkins-ci.org/browse/JENKINS-31832))
 * 1.69 (April 14 2018)
   * Delete and re-create view if type changes
     ([JENKINS-49696](https://issues.jenkins-ci.org/browse/JENKINS-49696))

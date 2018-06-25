@@ -2,11 +2,11 @@ package javaposse.jobdsl.dsl.jobs
 
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
-import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.Project
 import javaposse.jobdsl.dsl.helpers.step.MultiJobStepContext
 
-class MultiJob extends Job {
+class MultiJob extends Project {
     MultiJob(JobManagement jobManagement, String name) {
         super(jobManagement, name)
     }

@@ -11,6 +11,24 @@ abstract class Item extends AbstractContext {
     }
 
     /**
+     * Sets a description for the item.
+     */
+    void description(String descriptionString) {
+        configure { Node project ->
+            project /  methodMissing('description', descriptionString)
+        }
+    }
+
+    /**
+     * Sets the name to display instead of the actual name.
+     */
+    void displayName(String displayName) {
+        configure {
+            it / methodMissing('displayName', displayName)
+        }
+    }
+
+    /**
      * Allows direct manipulation of the generated XML.
      *
      * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
