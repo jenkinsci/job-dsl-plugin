@@ -148,6 +148,16 @@ class ArchiveXUnitContext extends AbstractContext {
     }
 
     /**
+     * Adds a NUnit3 report.
+     *
+     * @since 1.70
+     */
+    @RequiresPlugin(id = 'xunit', minimumVersion = '1.104')
+    void nUnit3(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
+        addResultFile('NUnit3TestType', resultFileClosure)
+    }
+
+    /**
      * Adds an PHPUnit report.
      */
     void phpUnit(@DslContext(ArchiveXUnitResultFileContext) Closure resultFileClosure) {
