@@ -1,5 +1,5 @@
 {
-    "version": "1.70",
+    "version": "1.69",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -3934,12 +3934,12 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "descriptionString",
+                                    "name": "description",
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets a description for the item.",
-                            "firstSentenceCommentText": "Sets a description for the item."
+                            "html": "Sets a description for the folder.",
+                            "firstSentenceCommentText": "Sets a description for the folder."
                         }
                     ],
                     "examples": "folder('project-a') {\r\n    description('Folder for project A')\r\n}"
@@ -3954,8 +3954,8 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets the name to display instead of the actual name.",
-                            "firstSentenceCommentText": "Sets the name to display instead of the actual name."
+                            "html": "Sets the name to display instead of the actual folder name.",
+                            "firstSentenceCommentText": "Sets the name to display instead of the actual folder name."
                         }
                     ],
                     "examples": "folder('project-a') {\r\n    displayName('Project A')\r\n}"
@@ -6655,234 +6655,6 @@
                 }
             ]
         },
-        "javaposse.jobdsl.dsl.helpers.step.CopyArtifactUpstreamBuildSelectorContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.step.CopyArtifactUpstreamBuildSelectorContext",
-            "methods": [
-                {
-                    "name": "allowUpstreamDependencies",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "allowUpstreamDependencies",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "plugins": [
-                                {
-                                    "id": "copyartifact",
-                                    "minimumVersion": "1.37"
-                                }
-                            ],
-                            "html": "Allow upstream build whose artifacts feed into this build. Defaults to <CODE>false</CODE>.",
-                            "firstSentenceCommentText": "Allow upstream build whose artifacts feed into this build. "
-                        }
-                    ]
-                },
-                {
-                    "name": "fallbackToLastSuccessful",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "fallbackToLastSuccessful",
-                                    "type": "boolean",
-                                    "defaultValue": "true"
-                                }
-                            ],
-                            "html": "Use \"Last successful build\" as fallback.",
-                            "firstSentenceCommentText": "Use \"Last successful build\" as fallback."
-                        }
-                    ]
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.helpers.step.CopyArtifactSelectorContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.step.CopyArtifactSelectorContext",
-            "methods": [
-                {
-                    "name": "buildNumber",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "buildNumber",
-                                    "type": "int"
-                                }
-                            ],
-                            "html": "Selects a specific build.",
-                            "firstSentenceCommentText": "Selects a specific build."
-                        },
-                        {
-                            "parameters": [
-                                {
-                                    "name": "buildNumber",
-                                    "type": "String"
-                                }
-                            ],
-                            "availableSince": "1.22",
-                            "html": "Selects a specific build.",
-                            "firstSentenceCommentText": "Selects a specific build."
-                        }
-                    ]
-                },
-                {
-                    "name": "buildParameter",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "parameterName",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Selects a build by parameter.",
-                            "firstSentenceCommentText": "Selects a build by parameter."
-                        }
-                    ]
-                },
-                {
-                    "name": "latestSaved",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                
-                            ],
-                            "html": "Selects the latest saved build (marked \"keep forever\").",
-                            "firstSentenceCommentText": "Selects the latest saved build (marked \"keep forever\")."
-                        }
-                    ]
-                },
-                {
-                    "name": "latestSuccessful",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "stable",
-                                    "type": "boolean",
-                                    "defaultValue": "false"
-                                }
-                            ],
-                            "html": "Selects the latest successful build. This is the default selector.",
-                            "firstSentenceCommentText": "Selects the latest successful build. "
-                        }
-                    ]
-                },
-                {
-                    "name": "multiJobBuild",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                
-                            ],
-                            "availableSince": "1.40",
-                            "plugins": [
-                                {
-                                    "id": "jenkins-multijob-plugin",
-                                    "minimumVersion": "1.22"
-                                }
-                            ],
-                            "html": "Selects a build triggered by the current MultiJob build.",
-                            "firstSentenceCommentText": "Selects a build triggered by the current MultiJob build."
-                        }
-                    ],
-                    "examples": "job('example') {\r\n    steps {\r\n        copyArtifacts('upstream') {\r\n            buildSelector {\r\n                multiJobBuild()\r\n            }\r\n        }\r\n    }\r\n}"
-                },
-                {
-                    "name": "permalink",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "linkName",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Selects a build by permalink.",
-                            "firstSentenceCommentText": "Selects a build by permalink."
-                        }
-                    ]
-                },
-                {
-                    "name": "upstreamBuild",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "fallback",
-                                    "type": "boolean",
-                                    "defaultValue": "false"
-                                }
-                            ],
-                            "html": "Selects the upstream build that triggered this job.",
-                            "firstSentenceCommentText": "Selects the upstream build that triggered this job."
-                        },
-                        {
-                            "parameters": [
-                                {
-                                    "name": "closure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.40",
-                            "html": "Selects the upstream build that triggered this job.",
-                            "firstSentenceCommentText": "Selects the upstream build that triggered this job.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.step.CopyArtifactUpstreamBuildSelectorContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "workspace",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                
-                            ],
-                            "html": "Copies from workspace of latest completed build.",
-                            "firstSentenceCommentText": "Copies from workspace of latest completed build."
-                        }
-                    ]
-                }
-            ]
-        },
-        "javaposse.jobdsl.dsl.helpers.BuildSelectorParameterContext": {
-            "type": "javaposse.jobdsl.dsl.helpers.BuildSelectorParameterContext",
-            "methods": [
-                {
-                    "name": "defaultBuildSelector",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "defaultSelectorClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "html": "Specifies the default build selector.",
-                            "firstSentenceCommentText": "Specifies the default build selector.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.step.CopyArtifactSelectorContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "description",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "description",
-                                    "type": "String"
-                                }
-                            ],
-                            "html": "Specifies the parameter description.",
-                            "firstSentenceCommentText": "Specifies the parameter description."
-                        }
-                    ]
-                }
-            ]
-        },
         "javaposse.jobdsl.dsl.helpers.parameter.CredentialsParameterContext": {
             "type": "javaposse.jobdsl.dsl.helpers.parameter.CredentialsParameterContext",
             "methods": [
@@ -7398,33 +7170,6 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    parameters {\r\n        booleanParam('RUN_TESTS', true, 'uncheck to disable tests')\r\n    }\r\n}"
-                },
-                {
-                    "name": "buildSelectorParam",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "parameterName",
-                                    "type": "String"
-                                },
-                                {
-                                    "name": "buildSelectorParameterClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.70",
-                            "plugins": [
-                                {
-                                    "id": "copyartifact",
-                                    "minimumVersion": "1.31"
-                                }
-                            ],
-                            "html": "Defines a parameter that allows to specify a build selector for the copy artifact plugin.",
-                            "firstSentenceCommentText": "Defines a parameter that allows to specify a build selector for the copy artifact plugin.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.BuildSelectorParameterContext"
-                        }
-                    ]
                 },
                 {
                     "name": "choiceParam",
@@ -9472,29 +9217,6 @@
                             ],
                             "html": "Adds a NUnit report.",
                             "firstSentenceCommentText": "Adds a NUnit report.",
-                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitResultFileContext"
-                        }
-                    ]
-                },
-                {
-                    "name": "nUnit3",
-                    "signatures": [
-                        {
-                            "parameters": [
-                                {
-                                    "name": "resultFileClosure",
-                                    "type": "Closure"
-                                }
-                            ],
-                            "availableSince": "1.70",
-                            "plugins": [
-                                {
-                                    "id": "xunit",
-                                    "minimumVersion": "1.104"
-                                }
-                            ],
-                            "html": "Adds a NUnit3 report.",
-                            "firstSentenceCommentText": "Adds a NUnit3 report.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.ArchiveXUnitResultFileContext"
                         }
                     ]
@@ -12723,6 +12445,198 @@
                             "html": "Adds one or more build steps which will be executed conditionally.",
                             "firstSentenceCommentText": "Adds one or more build steps which will be executed conditionally.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.step.StepContext"
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.helpers.step.CopyArtifactUpstreamBuildSelectorContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.step.CopyArtifactUpstreamBuildSelectorContext",
+            "methods": [
+                {
+                    "name": "allowUpstreamDependencies",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "allowUpstreamDependencies",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "plugins": [
+                                {
+                                    "id": "copyartifact",
+                                    "minimumVersion": "1.37"
+                                }
+                            ],
+                            "html": "Allow upstream build whose artifacts feed into this build. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Allow upstream build whose artifacts feed into this build. "
+                        }
+                    ]
+                },
+                {
+                    "name": "fallbackToLastSuccessful",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "fallbackToLastSuccessful",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "html": "Use \"Last successful build\" as fallback.",
+                            "firstSentenceCommentText": "Use \"Last successful build\" as fallback."
+                        }
+                    ]
+                }
+            ]
+        },
+        "javaposse.jobdsl.dsl.helpers.step.CopyArtifactSelectorContext": {
+            "type": "javaposse.jobdsl.dsl.helpers.step.CopyArtifactSelectorContext",
+            "methods": [
+                {
+                    "name": "buildNumber",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "buildNumber",
+                                    "type": "int"
+                                }
+                            ],
+                            "html": "Selects a specific build.",
+                            "firstSentenceCommentText": "Selects a specific build."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "buildNumber",
+                                    "type": "String"
+                                }
+                            ],
+                            "availableSince": "1.22",
+                            "html": "Selects a specific build.",
+                            "firstSentenceCommentText": "Selects a specific build."
+                        }
+                    ]
+                },
+                {
+                    "name": "buildParameter",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "parameterName",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Selects a build by parameter.",
+                            "firstSentenceCommentText": "Selects a build by parameter."
+                        }
+                    ]
+                },
+                {
+                    "name": "latestSaved",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                
+                            ],
+                            "html": "Selects the latest saved build (marked \"keep forever\").",
+                            "firstSentenceCommentText": "Selects the latest saved build (marked \"keep forever\")."
+                        }
+                    ]
+                },
+                {
+                    "name": "latestSuccessful",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "stable",
+                                    "type": "boolean",
+                                    "defaultValue": "false"
+                                }
+                            ],
+                            "html": "Selects the latest successful build. This is the default selector.",
+                            "firstSentenceCommentText": "Selects the latest successful build. "
+                        }
+                    ]
+                },
+                {
+                    "name": "multiJobBuild",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                
+                            ],
+                            "availableSince": "1.40",
+                            "plugins": [
+                                {
+                                    "id": "jenkins-multijob-plugin",
+                                    "minimumVersion": "1.22"
+                                }
+                            ],
+                            "html": "Selects a build triggered by the current MultiJob build.",
+                            "firstSentenceCommentText": "Selects a build triggered by the current MultiJob build."
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    steps {\r\n        copyArtifacts('upstream') {\r\n            buildSelector {\r\n                multiJobBuild()\r\n            }\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "permalink",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "linkName",
+                                    "type": "String"
+                                }
+                            ],
+                            "html": "Selects a build by permalink.",
+                            "firstSentenceCommentText": "Selects a build by permalink."
+                        }
+                    ]
+                },
+                {
+                    "name": "upstreamBuild",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "fallback",
+                                    "type": "boolean",
+                                    "defaultValue": "false"
+                                }
+                            ],
+                            "html": "Selects the upstream build that triggered this job.",
+                            "firstSentenceCommentText": "Selects the upstream build that triggered this job."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "availableSince": "1.40",
+                            "html": "Selects the upstream build that triggered this job.",
+                            "firstSentenceCommentText": "Selects the upstream build that triggered this job.",
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.step.CopyArtifactUpstreamBuildSelectorContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "workspace",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                
+                            ],
+                            "html": "Copies from workspace of latest completed build.",
+                            "firstSentenceCommentText": "Copies from workspace of latest completed build."
                         }
                     ]
                 }
@@ -27321,8 +27235,8 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets a description for the item.",
-                            "firstSentenceCommentText": "Sets a description for the item."
+                            "html": "Sets a description for the job.",
+                            "firstSentenceCommentText": "Sets a description for the job."
                         }
                     ],
                     "examples": "job('example') {\r\n    description('My first job')\r\n}"
@@ -27354,8 +27268,9 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets the name to display instead of the actual name.",
-                            "firstSentenceCommentText": "Sets the name to display instead of the actual name."
+                            "availableSince": "1.16",
+                            "html": "Sets a display name for the project.",
+                            "firstSentenceCommentText": "Sets a display name for the project."
                         }
                     ],
                     "examples": "job('example') {\r\n    displayName('Job DSL Example Project')\r\n}"
@@ -28077,8 +27992,8 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets a description for the item.",
-                            "firstSentenceCommentText": "Sets a description for the item."
+                            "html": "Sets a description for the job.",
+                            "firstSentenceCommentText": "Sets a description for the job."
                         }
                     ],
                     "examples": "job('example') {\r\n    description('My first job')\r\n}"
@@ -28110,8 +28025,9 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets the name to display instead of the actual name.",
-                            "firstSentenceCommentText": "Sets the name to display instead of the actual name."
+                            "availableSince": "1.16",
+                            "html": "Sets a display name for the project.",
+                            "firstSentenceCommentText": "Sets a display name for the project."
                         }
                     ],
                     "examples": "job('example') {\r\n    displayName('Job DSL Example Project')\r\n}"
@@ -29094,8 +29010,8 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets a description for the item.",
-                            "firstSentenceCommentText": "Sets a description for the item."
+                            "html": "Sets a description for the job.",
+                            "firstSentenceCommentText": "Sets a description for the job."
                         }
                     ],
                     "examples": "job('example') {\r\n    description('My first job')\r\n}"
@@ -29127,8 +29043,9 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets the name to display instead of the actual name.",
-                            "firstSentenceCommentText": "Sets the name to display instead of the actual name."
+                            "availableSince": "1.16",
+                            "html": "Sets a display name for the project.",
+                            "firstSentenceCommentText": "Sets a display name for the project."
                         }
                     ],
                     "examples": "job('example') {\r\n    displayName('Job DSL Example Project')\r\n}"
@@ -33581,8 +33498,8 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets a description for the item.",
-                            "firstSentenceCommentText": "Sets a description for the item."
+                            "html": "Sets a description for the job.",
+                            "firstSentenceCommentText": "Sets a description for the job."
                         }
                     ],
                     "examples": "job('example') {\r\n    description('My first job')\r\n}"
@@ -33632,8 +33549,9 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets the name to display instead of the actual name.",
-                            "firstSentenceCommentText": "Sets the name to display instead of the actual name."
+                            "availableSince": "1.16",
+                            "html": "Sets a display name for the project.",
+                            "firstSentenceCommentText": "Sets a display name for the project."
                         }
                     ],
                     "examples": "job('example') {\r\n    displayName('Job DSL Example Project')\r\n}"
@@ -36278,8 +36196,8 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets a description for the item.",
-                            "firstSentenceCommentText": "Sets a description for the item."
+                            "html": "Sets a description for the job.",
+                            "firstSentenceCommentText": "Sets a description for the job."
                         }
                     ],
                     "examples": "job('example') {\r\n    description('My first job')\r\n}"
@@ -36311,8 +36229,9 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets the name to display instead of the actual name.",
-                            "firstSentenceCommentText": "Sets the name to display instead of the actual name."
+                            "availableSince": "1.16",
+                            "html": "Sets a display name for the project.",
+                            "firstSentenceCommentText": "Sets a display name for the project."
                         }
                     ],
                     "examples": "job('example') {\r\n    displayName('Job DSL Example Project')\r\n}"
@@ -37357,12 +37276,12 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "descriptionString",
+                                    "name": "description",
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets a description for the item.",
-                            "firstSentenceCommentText": "Sets a description for the item."
+                            "html": "Sets a description for the folder.",
+                            "firstSentenceCommentText": "Sets a description for the folder."
                         }
                     ]
                 },
@@ -37376,8 +37295,8 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets the name to display instead of the actual name.",
-                            "firstSentenceCommentText": "Sets the name to display instead of the actual name."
+                            "html": "Sets the name to display instead of the actual folder name.",
+                            "firstSentenceCommentText": "Sets the name to display instead of the actual folder name."
                         }
                     ]
                 },
@@ -37518,12 +37437,12 @@
                         {
                             "parameters": [
                                 {
-                                    "name": "descriptionString",
+                                    "name": "description",
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets a description for the item.",
-                            "firstSentenceCommentText": "Sets a description for the item."
+                            "html": "Sets a description for the folder.",
+                            "firstSentenceCommentText": "Sets a description for the folder."
                         }
                     ]
                 },
@@ -37537,8 +37456,8 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets the name to display instead of the actual name.",
-                            "firstSentenceCommentText": "Sets the name to display instead of the actual name."
+                            "html": "Sets the name to display instead of the actual folder name.",
+                            "firstSentenceCommentText": "Sets the name to display instead of the actual folder name."
                         }
                     ]
                 },
@@ -37797,9 +37716,12 @@
                                     "type": "String"
                                 }
                             ],
-                            "deprecated": true
+                            "availableSince": "1.39",
+                            "html": "Provide an authorization token in the form of a string so that only those who know it would be able to remotely\r\n trigger this project's builds. Global security must be enabled to trigger builds remotely.\r\n\r\n For security reasons, do not use a hard-coded token. See\r\n <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials\">Handling Credentials</a> for\r\n details about handling credentials in DSL scripts.",
+                            "firstSentenceCommentText": "Provide an authorization token in the form of a string so that only those who know it would be able to remotely\r\n trigger this project's builds. "
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    authenticationToken('secret')\r\n}"
                 },
                 {
                     "name": "authorization",
@@ -37838,9 +37760,17 @@
                                     "type": "String"
                                 }
                             ],
-                            "deprecated": true
+                            "availableSince": "1.24",
+                            "plugins": [
+                                {
+                                    "id": "batch-task"
+                                }
+                            ],
+                            "html": "Adds batch tasks that are not regularly executed to projects, such as releases, integration, archiving.\r\n Can be called multiple times to add more batch tasks.",
+                            "firstSentenceCommentText": "Adds batch tasks that are not regularly executed to projects, such as releases, integration, archiving.\r\n "
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    batchTask('upload', 'curl --upload-file build/dist.zip http://www.example.com/upload')\r\n    batchTask('release', readFileFromWorkspace('scripts/release.sh'))\r\n}"
                 },
                 {
                     "name": "blockOn",
@@ -37887,9 +37817,12 @@
                             "parameters": [
                                 
                             ],
-                            "deprecated": true
+                            "availableSince": "1.16",
+                            "html": "Configures the job to block when downstream projects are building.",
+                            "firstSentenceCommentText": "Configures the job to block when downstream projects are building."
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    blockOnDownstreamProjects()\r\n}"
                 },
                 {
                     "name": "blockOnUpstreamProjects",
@@ -37898,9 +37831,12 @@
                             "parameters": [
                                 
                             ],
-                            "deprecated": true
+                            "availableSince": "1.16",
+                            "html": "Configures the job to block when upstream projects are building.",
+                            "firstSentenceCommentText": "Configures the job to block when upstream projects are building."
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    blockOnUpstreamProjects()\r\n}"
                 },
                 {
                     "name": "checkoutRetryCount",
@@ -37913,9 +37849,12 @@
                                     "defaultValue": "3"
                                 }
                             ],
-                            "deprecated": true
+                            "availableSince": "1.16",
+                            "html": "Sets the number of times the SCM checkout is retried on errors.",
+                            "firstSentenceCommentText": "Sets the number of times the SCM checkout is retried on errors."
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    checkoutRetryCount(10)\r\n}"
                 },
                 {
                     "name": "compressBuildLog",
@@ -37948,9 +37887,12 @@
                                     "defaultValue": "true"
                                 }
                             ],
-                            "deprecated": true
+                            "availableSince": "1.21",
+                            "html": "Allows Jenkins to schedule and execute multiple builds concurrently.",
+                            "firstSentenceCommentText": "Allows Jenkins to schedule and execute multiple builds concurrently."
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    concurrentBuild()\r\n}"
                 },
                 {
                     "name": "configure",
@@ -37978,9 +37920,12 @@
                                     "type": "String"
                                 }
                             ],
-                            "deprecated": true
+                            "availableSince": "1.16",
+                            "html": "Defines that a project should use the given directory as a workspace instead of the default workspace location.",
+                            "firstSentenceCommentText": "Defines that a project should use the given directory as a workspace instead of the default workspace location."
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    customWorkspace('/tmp/my-workspace')\r\n}"
                 },
                 {
                     "name": "definition",
@@ -38037,8 +37982,8 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets a description for the item.",
-                            "firstSentenceCommentText": "Sets a description for the item."
+                            "html": "Sets a description for the job.",
+                            "firstSentenceCommentText": "Sets a description for the job."
                         }
                     ],
                     "examples": "job('example') {\r\n    description('My first job')\r\n}"
@@ -38070,8 +38015,9 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "Sets the name to display instead of the actual name.",
-                            "firstSentenceCommentText": "Sets the name to display instead of the actual name."
+                            "availableSince": "1.16",
+                            "html": "Sets a display name for the project.",
+                            "firstSentenceCommentText": "Sets a display name for the project."
                         }
                     ],
                     "examples": "job('example') {\r\n    displayName('Job DSL Example Project')\r\n}"
@@ -38103,9 +38049,11 @@
                                     "type": "String"
                                 }
                             ],
-                            "deprecated": true
+                            "html": "Name of the JDK installation to use for this job. The name must match the name of a JDK installation defined in\r\n the Jenkins system configuration. The default JDK will be used when the jdk method is omitted.",
+                            "firstSentenceCommentText": "Name of the JDK installation to use for this job. "
                         }
-                    ]
+                    ],
+                    "examples": "job('jdk') {\r\n    jdk('Java 8')\r\n}"
                 },
                 {
                     "name": "keepDependencies",
@@ -38136,9 +38084,11 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true
+                            "html": "Label which specifies which nodes this job can run on. If <CODE>null</CODE> is passed in, the label is cleared out and\r\n the job can roam.",
+                            "firstSentenceCommentText": "Label which specifies which nodes this job can run on. "
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    label('x86 && ubuntu')\r\n}"
                 },
                 {
                     "name": "lockableResources",
@@ -38155,7 +38105,15 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
+                            "availableSince": "1.25",
+                            "plugins": [
+                                {
+                                    "id": "lockable-resources",
+                                    "minimumVersion": "1.7"
+                                }
+                            ],
+                            "html": "Locks resources while a job is running.",
+                            "firstSentenceCommentText": "Locks resources while a job is running.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.toplevel.LockableResourcesContext"
                         },
                         {
@@ -38166,10 +38124,19 @@
                                     "defaultValue": "null"
                                 }
                             ],
-                            "deprecated": true,
+                            "availableSince": "1.44",
+                            "plugins": [
+                                {
+                                    "id": "lockable-resources",
+                                    "minimumVersion": "1.7"
+                                }
+                            ],
+                            "html": "Locks resources while a job is running.",
+                            "firstSentenceCommentText": "Locks resources while a job is running.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.toplevel.LockableResourcesContext"
                         }
-                    ]
+                    ],
+                    "examples": "// lock single resource\r\njob('example-1') {\r\n    lockableResources('lock-resource')\r\n}\r\n\r\n// notation that locks three resources at once\r\njob('example-2') {\r\n    lockableResources('resource1 resource2 resource3')\r\n}\r\n\r\n// lock two available resources from given three and capture locked resources in the variable name\r\njob('example-3') {\r\n    lockableResources('resource1 resource2 resource3') {\r\n        resourcesVariable('LOCKED_RESOURCES')\r\n        resourceNumber(2)\r\n    }\r\n    steps {\r\n        shell('echo Following resources are locked: $LOCKED_RESOURCES')\r\n    }\r\n}\r\n\r\n// lock resource by label\r\njob('example-4') {\r\n    lockableResources {\r\n        label('heavy_resource')\r\n        resourceNumber(1)\r\n    }\r\n}"
                 },
                 {
                     "name": "logRotator",
@@ -38225,10 +38192,17 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
+                            "plugins": [
+                                {
+                                    "id": "multiple-scms"
+                                }
+                            ],
+                            "html": "Allows a job to check out sources from multiple SCM providers.",
+                            "firstSentenceCommentText": "Allows a job to check out sources from multiple SCM providers.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.ScmContext"
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    multiscm {\r\n        git {\r\n            remote {\r\n                github('jenkinsci/jenkins')\r\n            }\r\n            extensions {\r\n                relativeTargetDirectory('jenkins')\r\n            }\r\n        }\r\n        git {\r\n            remote {\r\n                github('jenkinsci/job-dsl-plugin')\r\n            }\r\n            extensions {\r\n                relativeTargetDirectory('job-dsl-plugin')\r\n            }\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "notifications",
@@ -38316,10 +38290,12 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
+                            "html": "Adds post-build actions to the job.",
+                            "firstSentenceCommentText": "Adds post-build actions to the job.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext"
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    publishers {\r\n        archiveArtifacts('build/test-output/**/*.html')\r\n        archiveJunit('**/target/surefire-reports/*.xml')\r\n    }\r\n}"
                 },
                 {
                     "name": "quietPeriod",
@@ -38349,10 +38325,12 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
+                            "html": "Allows a job to check out sources from an SCM provider.",
+                            "firstSentenceCommentText": "Allows a job to check out sources from an SCM provider.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.ScmContext"
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    scm {\r\n        github('jenkinsci/job-dsl-plugin')\r\n    }\r\n}"
                 },
                 {
                     "name": "steps",
@@ -38364,10 +38342,12 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
+                            "html": "Adds build steps to the jobs.",
+                            "firstSentenceCommentText": "Adds build steps to the jobs.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.step.StepContext"
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    steps {\r\n        shell('echo START')\r\n        gradle('check')\r\n    }\r\n}"
                 },
                 {
                     "name": "throttleConcurrentBuilds",
@@ -38435,9 +38415,18 @@
                                     "type": "int"
                                 }
                             ],
-                            "deprecated": true
+                            "availableSince": "1.36",
+                            "plugins": [
+                                {
+                                    "id": "heavy-job",
+                                    "minimumVersion": "1.1"
+                                }
+                            ],
+                            "html": "Specifies the number of executors to block for this job.",
+                            "firstSentenceCommentText": "Specifies the number of executors to block for this job."
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    weight(2)\r\n}"
                 },
                 {
                     "name": "wrappers",
@@ -38449,10 +38438,13 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
+                            "availableSince": "1.19",
+                            "html": "Adds pre/post actions to the job.",
+                            "firstSentenceCommentText": "Adds pre/post actions to the job.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext"
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    wrappers {\r\n        colorizeOutput()\r\n        timestamps()\r\n    }\r\n}"
                 }
             ]
         },
