@@ -1433,4 +1433,33 @@ class BuildParametersContextSpec extends Specification {
         then:
         thrown(DslScriptException)
     }
+
+    def 'should add buildSelectorParameter node'() {
+        when:
+        context.buildSelectorParam('myParameterName') {
+            description('myDescription')
+        }
+
+        then:
+        context.buildParameterNodes
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.plugins.copyartifact.BuildSelectorParameter'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].children().size() == 3
+        context.buildParameterNodes['myParameterName'].description.text() == 'myDescription'
+        context.buildParameterNodes['myParameterName'].defaultSelector.get(0).attributes().class ==
+                'hudson.plugins.copyartifact.StatusBuildSelector'
+    }
+
+    def 'buildSelectorParameter name should not be null, empty or previously defined'() {
+        when:
+        context.stringParam('myParameterName')
+        context.buildSelectorParam(name) {}
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        name << [null, '', 'myParameterName']
+    }
 }

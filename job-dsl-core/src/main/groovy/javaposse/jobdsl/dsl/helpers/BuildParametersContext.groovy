@@ -388,6 +388,29 @@ class BuildParametersContext extends AbstractExtensibleContext {
                 }
     }
 
+    /**
+     * Defines a parameter that allows to specify a build selector for the copy artifact plugin.
+     *
+     * @since 1.70
+     */
+    @RequiresPlugin(id = 'copyartifact', minimumVersion = '1.31')
+    void buildSelectorParam(String parameterName,
+                            @DslContext(BuildSelectorParameterContext) Closure buildSelectorParameterClosure) {
+        checkParameterName(parameterName)
+
+        BuildSelectorParameterContext selectorParameterContext = new BuildSelectorParameterContext(jobManagement, item)
+        ContextHelper.executeInContext(buildSelectorParameterClosure, selectorParameterContext)
+
+        Node selectorParameterNode = new Node(null, 'hudson.plugins.copyartifact.BuildSelectorParameter')
+        selectorParameterNode.appendNode('name', parameterName)
+        if (selectorParameterContext.description != null) {
+            selectorParameterNode.appendNode('description', selectorParameterContext.description)
+        }
+        selectorParameterNode.append(selectorParameterContext.defaultSelectorContext.selector)
+
+        buildParameterNodes[parameterName] = selectorParameterNode
+    }
+
     private void checkParameterName(String name) {
         checkNotNullOrEmpty(name, 'parameterName cannot be null')
         checkArgument(!buildParameterNodes.containsKey(name), "parameter ${name} already defined")

@@ -31,6 +31,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.70 (unreleased)
   * Enhanced support for [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
     ([#1129](https://github.com/jenkinsci/job-dsl-plugin/pull/1129))
+  * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
+    ([#1096](https://github.com/jenkinsci/job-dsl-plugin/pull/1096))
   * Log warning when plugins have been installed without restarting Jenkins
     ([JENKINS-50858](https://issues.jenkins-ci.org/browse/JENKINS-50858))
   * Deprecated unsupported methods in `pipelineJob` context, see [Migration](Migration#migrating-to-170)
