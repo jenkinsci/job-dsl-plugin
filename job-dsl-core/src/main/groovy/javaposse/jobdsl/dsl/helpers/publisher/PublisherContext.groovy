@@ -1242,7 +1242,7 @@ class PublisherContext extends AbstractExtensibleContext {
      *
      * @since 1.17
      */
-    @RequiresPlugin(id = 'warnings', minimumVersion = '4.0')
+    @RequiresPlugin(id = 'warnings', minimumVersion = '4.63')
     void warnings(List consoleParsers, Map parserConfigurations = [:],
                   @DslContext(WarningsContext) Closure warningsClosure = null) {
         WarningsContext warningsContext = new WarningsContext()
@@ -1253,6 +1253,8 @@ class PublisherContext extends AbstractExtensibleContext {
             addStaticAnalysisContext(delegate, warningsContext)
             includePattern(warningsContext.includePattern)
             excludePattern(warningsContext.excludePattern)
+            messagesPattern(warningsContext.messagesPattern)
+            categoriesPattern(warningsContext.categoriesPattern)
             nodeBuilder.consoleParsers {
                 (consoleParsers ?: []).each { name ->
                     nodeBuilder.'hudson.plugins.warnings.ConsoleParser' {

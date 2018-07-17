@@ -3,6 +3,8 @@ package javaposse.jobdsl.dsl.helpers.publisher
 class WarningsContext extends StaticAnalysisContext {
     String includePattern = ''
     String excludePattern = ''
+    String messagesPattern = ''
+    String categoriesPattern = ''
 
     /**
      * Determines if relative paths in warnings should be resolved. Defaults to {@code false}.
@@ -25,5 +27,21 @@ class WarningsContext extends StaticAnalysisContext {
      */
     void excludePattern(String excludePattern) {
         this.excludePattern = excludePattern
+    }
+
+    /**
+     * Sets a comma separated list of regular expressions that specifies the warning messages to exclude form the report
+     * (based on the warning messages).
+     */
+    void messagesPattern(String messagesPattern) {
+        this.messagesPattern = messagesPattern
+    }
+
+    /**
+     * Sets a comma separated list of regular expressions that specifies the warning categories to exclude form the
+     * report(based on the warning categories).
+     */
+    void categoriesPattern(String categoriesPattern) {
+        this.categoriesPattern = categoriesPattern
     }
 }
