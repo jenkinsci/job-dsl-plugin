@@ -16,19 +16,25 @@ class ScriptRequest {
     // Path to the script in the local filesystem, optional
     final String scriptPath
 
+    // Base path, e.g. the workspace or current working directory
+    final String basePath
+
     ScriptRequest(String body) {
         this(body, new File('.').toURI().toURL())
     }
 
-    ScriptRequest(String body, URL urlRoot, boolean ignoreExisting = false, String scriptPath = null) {
-        this(body, [urlRoot] as URL[], ignoreExisting, scriptPath)
+    ScriptRequest(String body, URL urlRoot, boolean ignoreExisting = false, String scriptPath = null,
+                  String basePath = null) {
+        this(body, [urlRoot] as URL[], ignoreExisting, scriptPath, basePath)
     }
 
-    ScriptRequest(String body, URL[] urlRoots, boolean ignoreExisting = false, String scriptPath = null) {
+    ScriptRequest(String body, URL[] urlRoots, boolean ignoreExisting = false, String scriptPath = null,
+                  String basePath = null) {
         this.body = body
         this.urlRoots = urlRoots
         this.ignoreExisting = ignoreExisting
         this.scriptPath = scriptPath
+        this.basePath = basePath
     }
 
     /**
@@ -45,6 +51,16 @@ class ScriptRequest {
         }
         int index = Math.max(scriptPath.lastIndexOf('/'), scriptPath.lastIndexOf('\\')) + 1
         scriptPath[index..-1]
+    }
+
+    /**
+     * @since 1.71
+     */
+    String getRelativeScriptPath() {
+        if (scriptPath && basePath && scriptPath.startsWith(basePath)) {
+            return scriptPath[(basePath.length() + 1)..-1]
+        }
+        scriptPath
     }
 
     /**

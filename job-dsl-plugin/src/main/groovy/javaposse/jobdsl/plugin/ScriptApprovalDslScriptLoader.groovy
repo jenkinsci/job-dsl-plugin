@@ -43,7 +43,7 @@ class ScriptApprovalDslScriptLoader extends SecureDslScriptLoader {
             }
 
             // it is not safe to use additional classpath entries
-            new ScriptRequest(it.body, new URL[0], it.ignoreExisting, it.scriptPath)
+            new ScriptRequest(it.body, new URL[0], it.ignoreExisting, it.scriptPath, it.basePath)
         }
     }
 }

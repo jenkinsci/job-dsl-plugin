@@ -49,7 +49,8 @@ class ScriptRequestGenerator implements Closeable {
                 for (FilePath filePath : filePaths) {
                     URL[] urlRoots = ([createWorkspaceUrl(filePath.parent)] + classpath) as URL[]
                     ScriptRequest request = new ScriptRequest(
-                            readFile(filePath), urlRoots, ignoreExisting, getAbsolutePath(filePath)
+                            readFile(filePath), urlRoots, ignoreExisting, getAbsolutePath(filePath),
+                            getAbsolutePath(workspace)
                     )
                     scriptRequests.add(request)
                 }

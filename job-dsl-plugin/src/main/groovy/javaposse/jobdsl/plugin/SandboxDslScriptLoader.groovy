@@ -36,7 +36,7 @@ class SandboxDslScriptLoader extends SecureDslScriptLoader {
     protected Collection<ScriptRequest> createSecureScriptRequests(Collection<ScriptRequest> scriptRequests) {
         scriptRequests.collect {
             // it is not safe to use additional classpath entries
-            new ScriptRequest(it.body, it.urlRoots[0..0] as URL[], it.ignoreExisting, it.scriptPath)
+            new ScriptRequest(it.body, it.urlRoots[0..0] as URL[], it.ignoreExisting, it.scriptPath, it.basePath)
         }
     }
 

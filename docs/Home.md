@@ -29,6 +29,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.71 (unreleased)
+  * Log path of script file
+    ([JENKINS-52550](https://issues.jenkins-ci.org/browse/JENKINS-52550))
   * Fixed support for authentication token for Pipeline jobs
     ([JENKINS-31832](https://issues.jenkins-ci.org/browse/JENKINS-31832))
 * 1.70 (July 03 2018)
