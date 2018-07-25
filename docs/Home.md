@@ -29,6 +29,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.71 (unreleased)
+  * Fixed support for authentication token for Pipeline jobs
+    ([JENKINS-31832](https://issues.jenkins-ci.org/browse/JENKINS-31832))
 * 1.70 (July 03 2018)
   * Enhanced support for [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
     ([#1129](https://github.com/jenkinsci/job-dsl-plugin/pull/1129))

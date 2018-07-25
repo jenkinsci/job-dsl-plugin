@@ -172,22 +172,6 @@ abstract class Project extends Job {
     }
 
     /**
-     * Provide an authorization token in the form of a string so that only those who know it would be able to remotely
-     * trigger this project's builds. Global security must be enabled to trigger builds remotely.
-     *
-     * For security reasons, do not use a hard-coded token. See
-     * <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials">Handling Credentials</a> for
-     * details about handling credentials in DSL scripts.
-     *
-     * @since 1.39
-     */
-    void authenticationToken(String token) {
-        configure { Node project ->
-            project / authToken(token)
-        }
-    }
-
-    /**
      * Allows a job to check out sources from an SCM provider.
      */
     void scm(@DslContext(ScmContext) Closure closure) {

@@ -89,11 +89,6 @@ class WorkflowJob extends Job {
 
     @Deprecated
     @SuppressWarnings(['EmptyMethod', 'UnusedMethodParameter'])
-    void authenticationToken(String token) {
-    }
-
-    @Deprecated
-    @SuppressWarnings(['EmptyMethod', 'UnusedMethodParameter'])
     void scm(@DslContext(ScmContext) Closure closure) {
     }
 
