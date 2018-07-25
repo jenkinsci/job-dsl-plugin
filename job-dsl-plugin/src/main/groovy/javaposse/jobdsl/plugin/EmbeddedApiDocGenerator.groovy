@@ -272,7 +272,7 @@ class EmbeddedApiDocGenerator {
 
     private static boolean isContextParameter(ParameterType parameterType) {
         parameterType instanceof HomogeneousObjectType ||
-                parameterType instanceof HeterogeneousObjectType ||
+                (parameterType instanceof HeterogeneousObjectType && parameterType.actualType != Object) ||
                 (parameterType instanceof ArrayType && isContextParameter(parameterType.elementType))
     }
 
@@ -284,8 +284,14 @@ class EmbeddedApiDocGenerator {
             return JSONObject.fromObject([name: 'value', type: getSimpleName(((AtomicType) parameterType).type)])
         } else if (parameterType instanceof EnumType) {
             return JSONObject.fromObject([name: 'value', type: 'String', enumConstants: parameterType.values])
-        } else if (parameterType instanceof HomogeneousObjectType || parameterType instanceof HeterogeneousObjectType) {
+        } else if (parameterType instanceof HomogeneousObjectType) {
             return generateOptionalClosureParameter()
+        } else if (parameterType instanceof HeterogeneousObjectType) {
+            if (parameterType.actualType == Object) {
+                return JSONObject.fromObject([name: 'value', type: 'Object'])
+            } else {
+                return generateOptionalClosureParameter()
+            }
         } else if (parameterType instanceof ArrayType) {
             ArrayType arrayType = (ArrayType) parameterType
             ParameterType elementType = arrayType.elementType

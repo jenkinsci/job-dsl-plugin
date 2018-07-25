@@ -93,7 +93,7 @@ class DescribableContext implements Context {
         } else if (parameterType instanceof HomogeneousObjectType) {
             return value instanceof Closure || value == null
         } else if (parameterType instanceof HeterogeneousObjectType) {
-            return value instanceof Closure || value == null
+            return value instanceof Closure || value == null || parameterType.actualType == Object
         }
         false
     }
