@@ -212,6 +212,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
                     uuid(randomUUID().toString())
                     type("PT_$context.type")
                     branch(context.branch ?: '')
+                    branchFilter(context.branchFilter ?: '')
                     tagFilter(context.tagFilter ?: '')
                     sortMode(context.sortMode)
                     defaultValue(context.defaultValue ?: '')
