@@ -43,13 +43,13 @@ class JenkinsJobManagementSpec extends Specification {
     private static final String JOB_NAME = 'test-job'
 
     @Rule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
-    ByteArrayOutputStream buffer
-    Job seedJob
-    Run build
-    JenkinsJobManagement jobManagement
-    JenkinsJobManagement testJobManagement
+    private ByteArrayOutputStream buffer
+    private Job seedJob
+    private Run build
+    private JenkinsJobManagement jobManagement
+    private JenkinsJobManagement testJobManagement
 
     def setup() {
         seedJob = Mock(Job)

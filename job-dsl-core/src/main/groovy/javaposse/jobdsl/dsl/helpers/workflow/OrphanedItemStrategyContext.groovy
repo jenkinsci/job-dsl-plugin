@@ -15,11 +15,6 @@ class OrphanedItemStrategyContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        orphanedItemStrategyNode = ContextHelper.toNamedNode('orphanedItemStrategy', node)
-    }
-
     /**
      * Trims dead items by the number of days or the number of items.
      */
@@ -34,5 +29,10 @@ class OrphanedItemStrategyContext extends AbstractExtensibleContext {
             daysToKeep(context.daysToKeep)
             numToKeep(context.numToKeep)
         }
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        orphanedItemStrategyNode = ContextHelper.toNamedNode('orphanedItemStrategy', node)
     }
 }

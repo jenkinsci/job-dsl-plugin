@@ -64,11 +64,6 @@ class SandboxDslScriptLoader extends SecureDslScriptLoader {
         }
 
         @Override
-        protected Class<?> findClass(String name) throws ClassNotFoundException {
-            throw new ClassNotFoundException(name)
-        }
-
-        @Override
         URL findResource(String name) {
             if (!seedJob.hasPermission(Item.WORKSPACE)) {
                 return null
@@ -84,6 +79,11 @@ class SandboxDslScriptLoader extends SecureDslScriptLoader {
             }
 
             super.findResources(name)
+        }
+
+        @Override
+        protected Class<?> findClass(String name) throws ClassNotFoundException {
+            throw new ClassNotFoundException(name)
         }
     }
 }

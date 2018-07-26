@@ -14,7 +14,7 @@ import static groovy.lang.Closure.DELEGATE_FIRST
 
 class ContextExtensionPointSpec extends Specification {
     @Rule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     @SuppressWarnings('UnnecessarySetter') // false positives for setDelegate and setResolveStrategy
     def 'executeInContext'() {

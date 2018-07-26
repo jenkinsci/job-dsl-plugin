@@ -19,11 +19,6 @@ class CopyArtifactSelectorContext extends AbstractExtensibleContext {
         latestSuccessful()
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        selector = ContextHelper.toNamedNode('selector', node)
-    }
-
     /**
      * Selects the upstream build that triggered this job.
      *
@@ -125,6 +120,11 @@ class CopyArtifactSelectorContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'jenkins-multijob-plugin', minimumVersion = '1.22')
     void multiJobBuild() {
         selector = new NodeBuilder()."$classifier"(class: 'com.tikal.jenkins.plugins.multijob.MultiJobBuildSelector')
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        selector = ContextHelper.toNamedNode('selector', node)
     }
 
     private void createSelectorNode(String type, Closure nodeBuilder = null) {

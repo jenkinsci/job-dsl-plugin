@@ -13,11 +13,6 @@ class ColumnsContext extends AbstractExtensibleContext {
         super(jobManagement, null)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        columnNodes << node
-    }
-
     /**
      * Adds a column showing the status of the last build.
      */
@@ -286,5 +281,10 @@ class ColumnsContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'extra-columns', minimumVersion = '1.4')
     void scmType() {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.SCMTypeColumn')
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        columnNodes << node
     }
 }

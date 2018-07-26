@@ -19,7 +19,8 @@ import java.lang.reflect.Method
 class ExtensionPointHelperSpec extends Specification {
     @Shared
     @ClassRule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    @SuppressWarnings('JUnitPublicField')
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     def 'find extension methods in TriggerContext'() {
         when:

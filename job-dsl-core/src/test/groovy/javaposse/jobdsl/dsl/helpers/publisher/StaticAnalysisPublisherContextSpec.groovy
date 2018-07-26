@@ -6,9 +6,9 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class StaticAnalysisPublisherContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    PublisherContext context = new PublisherContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final PublisherContext context = new PublisherContext(jobManagement, item)
 
     @Unroll
     def 'add #analysisTool with default values'(String analysisTool, Map extraNodes, String pluginId) {

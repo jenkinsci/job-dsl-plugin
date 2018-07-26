@@ -22,11 +22,6 @@ class JobFiltersContext extends AbstractExtensibleContext {
         super(jobManagement, null)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        filterNodes << node
-    }
-
     /**
      * Adds a job status filter.
      */
@@ -136,5 +131,10 @@ class JobFiltersContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'release', minimumVersion = '2.5.3')
     void release() {
         filterNodes << new NodeBuilder().'hudson.plugins.release.ReleaseJobsFilter'()
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        filterNodes << node
     }
 }

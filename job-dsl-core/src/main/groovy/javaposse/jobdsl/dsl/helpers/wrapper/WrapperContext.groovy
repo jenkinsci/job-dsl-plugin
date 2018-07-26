@@ -18,11 +18,6 @@ class WrapperContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        wrapperNodes << node
-    }
-
     /**
      * Adds timestamps to the console log.
      */
@@ -671,5 +666,10 @@ class WrapperContext extends AbstractExtensibleContext {
             jiraRelease(context.release ?: '')
             jiraFilter(context.filter ?: '')
         }
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        wrapperNodes << node
     }
 }

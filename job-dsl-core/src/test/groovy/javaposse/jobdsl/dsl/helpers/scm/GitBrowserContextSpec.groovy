@@ -5,9 +5,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class GitBrowserContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    GitBrowserContext context = new GitBrowserContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final GitBrowserContext context = new GitBrowserContext(jobManagement, item)
 
     def 'add extension'() {
         given:

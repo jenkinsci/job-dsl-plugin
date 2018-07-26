@@ -11,6 +11,8 @@ ruleset {
         // this rule does not necessarily lead to better code
         exclude 'IfStatementCouldBeTernary'
         // we don't care
+        exclude 'StaticMethodsBeforeInstanceMethods'
+        // we don't care
         exclude 'TrailingComma'
     }
 

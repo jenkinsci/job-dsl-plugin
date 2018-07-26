@@ -18,11 +18,6 @@ class DashboardPortletContext extends AbstractExtensibleContext {
         super(jobManagement, null)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        portletNodes << node
-    }
-
     /**
      * Adds a build statistics portlet.
      *
@@ -119,6 +114,11 @@ class DashboardPortletContext extends AbstractExtensibleContext {
             dateShift(context.dateShift)
             displayStatus(context.displayStatus)
         }
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        portletNodes << node
     }
 
     private static String generatePortletId() {

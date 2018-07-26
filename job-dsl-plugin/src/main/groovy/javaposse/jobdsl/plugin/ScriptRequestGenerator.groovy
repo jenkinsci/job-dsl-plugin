@@ -66,6 +66,13 @@ class ScriptRequestGenerator implements Closeable {
         }
     }
 
+    @SuppressWarnings('UnnecessaryGetter')
+    @PackageScope
+    static String getAbsolutePath(FilePath filePath) {
+        // see JENKINS-33723
+        filePath.getRemote()
+    }
+
     private URL createClasspathURL(FilePath filePath) {
         if (filePath.isRemote()) {
             if (filePath.directory) {
@@ -107,13 +114,6 @@ class ScriptRequestGenerator implements Closeable {
         } finally {
             inputStream.close()
         }
-    }
-
-    @SuppressWarnings('UnnecessaryGetter')
-    @PackageScope
-    static String getAbsolutePath(FilePath filePath) {
-        // see JENKINS-33723
-        filePath.getRemote()
     }
 
     private static class WorkspaceUrlHandler extends URLStreamHandler {

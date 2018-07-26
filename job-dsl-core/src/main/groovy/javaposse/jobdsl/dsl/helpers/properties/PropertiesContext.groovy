@@ -18,11 +18,6 @@ class PropertiesContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        propertiesNodes << node
-    }
-
     /**
      * Adds links in the sidebar of the project page.
      *
@@ -172,5 +167,10 @@ class PropertiesContext extends AbstractExtensibleContext {
                 wallDisplayBgPicture(wallDisplayContext.backgroundPicture)
             }
         }
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        propertiesNodes << node
     }
 }

@@ -19,9 +19,10 @@ import spock.lang.Specification
 class DescribableContextSpec extends Specification {
     @Shared
     @ClassRule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    @SuppressWarnings('JUnitPublicField')
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
-    JobManagement jobManagement = Mock(JobManagement)
+    private final JobManagement jobManagement = Mock(JobManagement)
 
     def 'no argument'() {
         setup:

@@ -6,9 +6,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class MultiJobStepContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    MultiJobStepContext context = new MultiJobStepContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final MultiJobStepContext context = new MultiJobStepContext(jobManagement, item)
 
     def 'call phases with minimal arguments'() {
         when:

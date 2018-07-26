@@ -13,7 +13,8 @@ import spock.lang.Specification
 class SeedJobTransientActionFactorySpec extends Specification {
     @Shared
     @ClassRule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    @SuppressWarnings('JUnitPublicField')
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     @WithoutJenkins
     def 'handles Items'() {

@@ -8,9 +8,9 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class StepContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    StepContext context = new StepContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final StepContext context = new StepContext(jobManagement, item)
 
     def 'call shell method'() {
         when:

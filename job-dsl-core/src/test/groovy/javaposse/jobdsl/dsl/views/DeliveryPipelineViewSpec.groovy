@@ -9,8 +9,75 @@ import spock.lang.Specification
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 
 class DeliveryPipelineViewSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    DeliveryPipelineView view = new DeliveryPipelineView(jobManagement, 'test')
+    private static final String DEFAULT_XML = '''<?xml version='1.0' encoding='UTF-8'?>
+<se.diabol.jenkins.pipeline.DeliveryPipelineView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <noOfPipelines>3</noOfPipelines>
+    <showAggregatedPipeline>false</showAggregatedPipeline>
+    <noOfColumns>1</noOfColumns>
+    <sorting>none</sorting>
+    <showAvatars>false</showAvatars>
+    <updateInterval>2</updateInterval>
+    <showChanges>false</showChanges>
+    <allowManualTriggers>false</allowManualTriggers>
+</se.diabol.jenkins.pipeline.DeliveryPipelineView>'''
+
+    private static final String SORTING_XML_TEMPLATE = '''<?xml version='1.0' encoding='UTF-8'?>
+<se.diabol.jenkins.pipeline.DeliveryPipelineView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View\\$PropertyList"/>
+    <noOfPipelines>3</noOfPipelines>
+    <showAggregatedPipeline>false</showAggregatedPipeline>
+    <noOfColumns>1</noOfColumns>
+    <sorting>$xmlValue</sorting>
+    <showAvatars>false</showAvatars>
+    <updateInterval>2</updateInterval>
+    <showChanges>false</showChanges>
+    <allowManualTriggers>false</allowManualTriggers>
+</se.diabol.jenkins.pipeline.DeliveryPipelineView>'''
+
+    private static final String ALL_OPTIONS_XML = '''<?xml version='1.0' encoding='UTF-8'?>
+<se.diabol.jenkins.pipeline.DeliveryPipelineView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <noOfPipelines>5</noOfPipelines>
+    <showAggregatedPipeline>true</showAggregatedPipeline>
+    <noOfColumns>2</noOfColumns>
+    <sorting>se.diabol.jenkins.pipeline.sort.NameComparator</sorting>
+    <showAvatars>true</showAvatars>
+    <updateInterval>60</updateInterval>
+    <showChanges>true</showChanges>
+    <allowManualTriggers>true</allowManualTriggers>
+    <showTotalBuildTime>true</showTotalBuildTime>
+    <allowRebuild>true</allowRebuild>
+    <allowPipelineStart>true</allowPipelineStart>
+    <showDescription>true</showDescription>
+    <showPromotions>true</showPromotions>
+    <pagingEnabled>true</pagingEnabled>
+    <showTestResults>true</showTestResults>
+    <showStaticAnalysisResults>true</showStaticAnalysisResults>
+    <linkRelative>true</linkRelative>
+    <linkToConsoleLog>true</linkToConsoleLog>
+    <theme>foo</theme>
+    <componentSpecs>
+        <se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>
+            <name>test</name>
+            <firstJob>compile-a</firstJob>
+        </se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>
+    </componentSpecs>
+    <regexpFirstJobs>
+        <se.diabol.jenkins.pipeline.DeliveryPipelineView_-RegExpSpec>
+            <regexp>compile-(.*)</regexp>
+        </se.diabol.jenkins.pipeline.DeliveryPipelineView_-RegExpSpec>
+    </regexpFirstJobs>
+</se.diabol.jenkins.pipeline.DeliveryPipelineView>'''
+
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final DeliveryPipelineView view = new DeliveryPipelineView(jobManagement, 'test')
 
     def setup() {
         XMLUnit.ignoreWhitespace = true
@@ -21,7 +88,7 @@ class DeliveryPipelineViewSpec extends Specification {
         String xml = view.xml
 
         then:
-        compareXML(defaultXml, xml).similar()
+        compareXML(DEFAULT_XML, xml).similar()
     }
 
     def 'sorting'(Sorting value, String xmlValue) {
@@ -29,7 +96,7 @@ class DeliveryPipelineViewSpec extends Specification {
         view.sorting(value)
 
         then:
-        String xml = new SimpleTemplateEngine().createTemplate(sortingXmlTemplate).make(xmlValue: xmlValue)
+        String xml = new SimpleTemplateEngine().createTemplate(SORTING_XML_TEMPLATE).make(xmlValue: xmlValue)
         compareXML(xml, view.xml).similar()
 
         where:
@@ -71,74 +138,7 @@ class DeliveryPipelineViewSpec extends Specification {
         }
 
         then:
-        compareXML(allOptionsXml, view.xml).similar()
+        compareXML(ALL_OPTIONS_XML, view.xml).similar()
         1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.3')
     }
-
-    String defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
-<se.diabol.jenkins.pipeline.DeliveryPipelineView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class="hudson.model.View$PropertyList"/>
-    <noOfPipelines>3</noOfPipelines>
-    <showAggregatedPipeline>false</showAggregatedPipeline>
-    <noOfColumns>1</noOfColumns>
-    <sorting>none</sorting>
-    <showAvatars>false</showAvatars>
-    <updateInterval>2</updateInterval>
-    <showChanges>false</showChanges>
-    <allowManualTriggers>false</allowManualTriggers>
-</se.diabol.jenkins.pipeline.DeliveryPipelineView>'''
-
-    String sortingXmlTemplate = '''<?xml version='1.0' encoding='UTF-8'?>
-<se.diabol.jenkins.pipeline.DeliveryPipelineView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class="hudson.model.View\\$PropertyList"/>
-    <noOfPipelines>3</noOfPipelines>
-    <showAggregatedPipeline>false</showAggregatedPipeline>
-    <noOfColumns>1</noOfColumns>
-    <sorting>$xmlValue</sorting>
-    <showAvatars>false</showAvatars>
-    <updateInterval>2</updateInterval>
-    <showChanges>false</showChanges>
-    <allowManualTriggers>false</allowManualTriggers>
-</se.diabol.jenkins.pipeline.DeliveryPipelineView>'''
-
-    String allOptionsXml = '''<?xml version='1.0' encoding='UTF-8'?>
-<se.diabol.jenkins.pipeline.DeliveryPipelineView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class="hudson.model.View$PropertyList"/>
-    <noOfPipelines>5</noOfPipelines>
-    <showAggregatedPipeline>true</showAggregatedPipeline>
-    <noOfColumns>2</noOfColumns>
-    <sorting>se.diabol.jenkins.pipeline.sort.NameComparator</sorting>
-    <showAvatars>true</showAvatars>
-    <updateInterval>60</updateInterval>
-    <showChanges>true</showChanges>
-    <allowManualTriggers>true</allowManualTriggers>
-    <showTotalBuildTime>true</showTotalBuildTime>
-    <allowRebuild>true</allowRebuild>
-    <allowPipelineStart>true</allowPipelineStart>
-    <showDescription>true</showDescription>
-    <showPromotions>true</showPromotions>
-    <pagingEnabled>true</pagingEnabled>
-    <showTestResults>true</showTestResults>
-    <showStaticAnalysisResults>true</showStaticAnalysisResults>
-    <linkRelative>true</linkRelative>
-    <linkToConsoleLog>true</linkToConsoleLog>
-    <theme>foo</theme>
-    <componentSpecs>
-        <se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>
-            <name>test</name>
-            <firstJob>compile-a</firstJob>
-        </se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>
-    </componentSpecs>
-    <regexpFirstJobs>
-        <se.diabol.jenkins.pipeline.DeliveryPipelineView_-RegExpSpec>
-            <regexp>compile-(.*)</regexp>
-        </se.diabol.jenkins.pipeline.DeliveryPipelineView_-RegExpSpec>
-    </regexpFirstJobs>
-</se.diabol.jenkins.pipeline.DeliveryPipelineView>'''
 }

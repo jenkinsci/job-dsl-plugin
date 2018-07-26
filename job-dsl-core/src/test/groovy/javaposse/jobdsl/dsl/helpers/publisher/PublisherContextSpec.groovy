@@ -12,9 +12,9 @@ import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.Behavior.M
 import static javaposse.jobdsl.dsl.helpers.publisher.WeblogicDeployerContext.WeblogicDeploymentStageModes
 
 class PublisherContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = new FreeStyleJob(jobManagement, 'test')
-    PublisherContext context = new PublisherContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = new FreeStyleJob(jobManagement, 'test')
+    private PublisherContext context = new PublisherContext(jobManagement, item)
 
     def 'call extendedEmail with no options'() {
         when:
@@ -1695,12 +1695,6 @@ class PublisherContextSpec extends Specification {
         assertTarget('failingTarget', 2, 'CONDITIONAL', '0')
         context.publisherNodes[0].sourceEncoding[0].value() == 'ASCII'
         1 * jobManagement.requirePlugin('cobertura')
-    }
-
-    private void assertTarget(String targetName, int position, String type, String value) {
-        def entry = context.publisherNodes[0]."${targetName}"[0].targets[0].entry[position]
-        assert entry.'hudson.plugins.cobertura.targets.CoverageMetric'[0].value() == type
-        assert entry.'int'[0].value() == value
     }
 
     def 'the closure makes it possible to override all the cobertura flags'() {
@@ -5930,5 +5924,11 @@ class PublisherContextSpec extends Specification {
         }
 
         1 * jobManagement.requireMinimumPluginVersion('log-parser', '2.0')
+    }
+
+    private void assertTarget(String targetName, int position, String type, String value) {
+        def entry = context.publisherNodes[0]."${targetName}"[0].targets[0].entry[position]
+        assert entry.'hudson.plugins.cobertura.targets.CoverageMetric'[0].value() == type
+        assert entry.'int'[0].value() == value
     }
 }

@@ -5,8 +5,8 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class ScmNavigatorsContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    ScmNavigatorsContext context = new ScmNavigatorsContext(jobManagement, Mock(Item))
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final ScmNavigatorsContext context = new ScmNavigatorsContext(jobManagement, Mock(Item))
 
     def 'has no navigators by default'() {
         expect:

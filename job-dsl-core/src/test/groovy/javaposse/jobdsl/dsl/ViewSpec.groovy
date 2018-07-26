@@ -5,8 +5,8 @@ import spock.lang.Specification
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 
 class ViewSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    View view = new TestView(jobManagement, 'test')
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final View view = new TestView(jobManagement, 'test')
 
     def 'description'() {
         when:

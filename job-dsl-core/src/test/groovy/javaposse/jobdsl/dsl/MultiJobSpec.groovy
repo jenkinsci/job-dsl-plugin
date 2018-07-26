@@ -4,8 +4,8 @@ import javaposse.jobdsl.dsl.jobs.MultiJob
 import spock.lang.Specification
 
 class MultiJobSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    MultiJob job = new MultiJob(jobManagement, 'test')
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final MultiJob job = new MultiJob(jobManagement, 'test')
 
     def 'call steps'() {
         when:

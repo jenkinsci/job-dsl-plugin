@@ -6,8 +6,56 @@ import spock.lang.Specification
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 
 class FolderSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Folder folder = new Folder(jobManagement, 'test')
+    private static final String XML = '''<?xml version='1.0' encoding='UTF-8'?>
+<com.cloudbees.hudson.plugins.folder.Folder>
+    <actions/>
+    <description>la la la</description>
+    <displayName>Test Folder</displayName>
+    <properties/>
+    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
+    <views>
+        <hudson.model.AllView>
+            <owner class="com.cloudbees.hudson.plugins.folder.Folder" reference="../../.."/>
+            <name>All</name>
+            <filterExecutors>false</filterExecutors>
+            <filterQueue>false</filterQueue>
+            <properties class="hudson.model.View$PropertyList"/>
+        </hudson.model.AllView>
+    </views>
+    <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
+    <primaryView>Some View</primaryView>
+    <healthMetrics>
+        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
+    </healthMetrics>
+</com.cloudbees.hudson.plugins.folder.Folder>'''
+
+    private static final String XML_514 = '''<?xml version='1.0' encoding='UTF-8'?>
+<com.cloudbees.hudson.plugins.folder.Folder>
+    <actions/>
+    <description>la la la</description>
+    <displayName>Test Folder</displayName>
+    <properties/>
+    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
+    <folderViews class="com.cloudbees.hudson.plugins.folder.views.DefaultFolderViewHolder">
+        <views>
+            <hudson.model.AllView>
+                <owner class="com.cloudbees.hudson.plugins.folder.Folder" reference="../../../.."/>
+                <name>All</name>
+                <filterExecutors>false</filterExecutors>
+                <filterQueue>false</filterQueue>
+                <properties class="hudson.model.View$PropertyList"/>
+            </hudson.model.AllView>
+        </views>
+        <tabBar class="hudson.views.DefaultViewsTabBar"/>
+        <primaryView>Some View</primaryView>
+    </folderViews>
+    <healthMetrics>
+        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
+    </healthMetrics>
+</com.cloudbees.hudson.plugins.folder.Folder>'''
+
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Folder folder = new Folder(jobManagement, 'test')
 
     def setupSpec() {
         XMLUnit.ignoreWhitespace = true
@@ -156,52 +204,4 @@ class FolderSpec extends Specification {
         then:
         compareXML(XML_514, xml).similar()
     }
-
-    private static final String XML = '''<?xml version='1.0' encoding='UTF-8'?>
-<com.cloudbees.hudson.plugins.folder.Folder>
-    <actions/>
-    <description>la la la</description>
-    <displayName>Test Folder</displayName>
-    <properties/>
-    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
-    <views>
-        <hudson.model.AllView>
-            <owner class="com.cloudbees.hudson.plugins.folder.Folder" reference="../../.."/>
-            <name>All</name>
-            <filterExecutors>false</filterExecutors>
-            <filterQueue>false</filterQueue>
-            <properties class="hudson.model.View$PropertyList"/>
-        </hudson.model.AllView>
-    </views>
-    <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
-    <primaryView>Some View</primaryView>
-    <healthMetrics>
-        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
-    </healthMetrics>
-</com.cloudbees.hudson.plugins.folder.Folder>'''
-
-    private static final String XML_514 = '''<?xml version='1.0' encoding='UTF-8'?>
-<com.cloudbees.hudson.plugins.folder.Folder>
-    <actions/>
-    <description>la la la</description>
-    <displayName>Test Folder</displayName>
-    <properties/>
-    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
-    <folderViews class="com.cloudbees.hudson.plugins.folder.views.DefaultFolderViewHolder">
-        <views>
-            <hudson.model.AllView>
-                <owner class="com.cloudbees.hudson.plugins.folder.Folder" reference="../../../.."/>
-                <name>All</name>
-                <filterExecutors>false</filterExecutors>
-                <filterQueue>false</filterQueue>
-                <properties class="hudson.model.View$PropertyList"/>
-            </hudson.model.AllView>
-        </views>
-        <tabBar class="hudson.views.DefaultViewsTabBar"/>
-        <primaryView>Some View</primaryView>
-    </folderViews>
-    <healthMetrics>
-        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
-    </healthMetrics>
-</com.cloudbees.hudson.plugins.folder.Folder>'''
 }

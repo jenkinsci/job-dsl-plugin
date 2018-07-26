@@ -3,8 +3,8 @@ package javaposse.jobdsl.dsl
 import spock.lang.Specification
 
 class DeprecationWarningASTTransformationSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    TestJob testJob = new TestJob(jobManagement)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final TestJob testJob = new TestJob(jobManagement)
 
     def 'logs deprecation warning'() {
         when:

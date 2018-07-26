@@ -14,39 +14,6 @@ class SectionsContext extends AbstractContext {
         super(jobManagement)
     }
 
-    /*
-     * Adds a generic section.
-     */
-    private Node generic(String type, SectionContext context) {
-        Node node = new NodeBuilder()."$type" {
-            jobNames {
-                comparator(class: 'hudson.util.CaseInsensitiveComparator')
-                for (String job : context.jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
-                    string(job)
-                }
-            }
-            jobFilters(context.jobFiltersContext.filterNodes)
-            name(context.name)
-            if (context.jobsContext.regex) {
-                includeRegex(context.jobsContext.regex)
-            }
-            width(context.width)
-            alignment(context.alignment)
-        }
-        sectionNodes << node
-        node
-    }
-
-    /*
-     * Adds a generic section.
-     */
-    private Node generic(String type, @DslContext(SectionContext) Closure sectionClosure) {
-        SectionContext context = new SectionContext(jobManagement)
-        executeInContext(sectionClosure, context)
-
-        generic(type, context)
-    }
-
     /**
      * Adds a job graphs section.
      *
@@ -107,5 +74,38 @@ class SectionsContext extends AbstractContext {
         Node node = generic('hudson.plugins.sectioned__view.ViewListingSection', context)
         node.append(views)
         node.appendNode('columns', context.columns)
+    }
+
+    /*
+     * Adds a generic section.
+     */
+    private Node generic(String type, SectionContext context) {
+        Node node = new NodeBuilder()."$type" {
+            jobNames {
+                comparator(class: 'hudson.util.CaseInsensitiveComparator')
+                for (String job : context.jobsContext.jobNames.sort(true, CASE_INSENSITIVE_ORDER)) { // see GROOVY-6900
+                    string(job)
+                }
+            }
+            jobFilters(context.jobFiltersContext.filterNodes)
+            name(context.name)
+            if (context.jobsContext.regex) {
+                includeRegex(context.jobsContext.regex)
+            }
+            width(context.width)
+            alignment(context.alignment)
+        }
+        sectionNodes << node
+        node
+    }
+
+    /*
+     * Adds a generic section.
+     */
+    private Node generic(String type, @DslContext(SectionContext) Closure sectionClosure) {
+        SectionContext context = new SectionContext(jobManagement)
+        executeInContext(sectionClosure, context)
+
+        generic(type, context)
     }
 }

@@ -20,7 +20,7 @@ import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 import static javaposse.jobdsl.dsl.Preconditions.checkState
-import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.validCloneWorkspaceCriteria
+import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.VALID_CLONE_WORKSPACE_CRITERIA
 
 @ContextType('hudson.scm.SCM')
 class ScmContext extends AbstractExtensibleContext {
@@ -30,11 +30,6 @@ class ScmContext extends AbstractExtensibleContext {
 
     ScmContext(JobManagement jobManagement, Item item) {
         super(jobManagement, item)
-    }
-
-    @Override
-    protected void addExtensionNode(Node node) {
-        scmNodes << ContextHelper.toNamedNode('scm', node)
     }
 
     /**
@@ -372,8 +367,8 @@ class ScmContext extends AbstractExtensibleContext {
     void cloneWorkspace(String parentProject, String criteria = 'Any') {
         checkNotNull(parentProject, 'parentProject must not be null')
         checkArgument(
-                validCloneWorkspaceCriteria.contains(criteria),
-                "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}"
+                VALID_CLONE_WORKSPACE_CRITERIA.contains(criteria),
+                "Clone Workspace Criteria needs to be one of these values: ${VALID_CLONE_WORKSPACE_CRITERIA.join(',')}"
         )
 
         scmNodes << new NodeBuilder().scm(class: 'hudson.plugins.cloneworkspace.CloneWorkspaceSCM') {
@@ -451,5 +446,10 @@ class ScmContext extends AbstractExtensibleContext {
             }
             avoidUsingToolkit(false)
         }
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        scmNodes << ContextHelper.toNamedNode('scm', node)
     }
 }

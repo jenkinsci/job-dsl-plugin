@@ -59,12 +59,6 @@ class NodeEnhancement {
         }
     }
 
-    private static List<Node> buildChildren(Object c) {
-        NodeBuilder b = new NodeBuilder()
-        Node newNode = (Node) b.invokeMethod('dummyNode', c)
-        newNode.children()
-    }
-
     Node leftShift(boolean boolValue) {
         leftShift(boolValue ? 'true' : 'false')
     }
@@ -87,6 +81,12 @@ class NodeEnhancement {
         List<Node> newChildren = buildChildren(configureBlock)
         newChildren.each { this.append(it) }
         this
+    }
+
+    private static List<Node> buildChildren(Object c) {
+        NodeBuilder b = new NodeBuilder()
+        Node newNode = (Node) b.invokeMethod('dummyNode', c)
+        newNode.children()
     }
 
     /**

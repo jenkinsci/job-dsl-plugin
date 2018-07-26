@@ -5,8 +5,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class MultibranchWorkflowTriggerContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    MultibranchWorkflowTriggerContext context = new MultibranchWorkflowTriggerContext(jobManagement, Mock(Item))
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final MultibranchWorkflowTriggerContext context =
+            new MultibranchWorkflowTriggerContext(jobManagement, Mock(Item))
 
     def 'call periodic folder trigger'() {
         when:

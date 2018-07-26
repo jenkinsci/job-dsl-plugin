@@ -5,9 +5,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class DownstreamTriggerParameterContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    DownstreamTriggerParameterContext context = new DownstreamTriggerParameterContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final DownstreamTriggerParameterContext context = new DownstreamTriggerParameterContext(jobManagement, item)
 
     def 'boolean parameters'() {
         when:

@@ -29,21 +29,6 @@ class BuildParametersContext extends AbstractExtensibleContext {
     }
 
     /**
-     * We expect any parameter definition node to have a <code>name</code> field containing
-     * the name of the parameter so we can add it in the map of nodes.
-     */
-    @Override
-    protected void addExtensionNode(Node node) {
-        Object nameNodes = node.get('name')
-        String name = (nameNodes instanceof NodeList && nameNodes.size() == 1) ? nameNodes.text() : null
-        if (name) {
-            buildParameterNodes[name] = node
-        } else {
-            throw new DslScriptException("Can only add nodes with a 'name' field.")
-        }
-    }
-
-    /**
      * Defines a simple boolean parameter.
      */
     void booleanParam(String parameterName, boolean defaultValue = false, String description = null) {
@@ -247,19 +232,6 @@ class BuildParametersContext extends AbstractExtensibleContext {
         simpleParam('hudson.model.TextParameterDefinition', parameterName, defaultValue, description)
     }
 
-    private void simpleParam(String type, String parameterName, Object defaultValue = null, String description = null) {
-        checkParameterName(parameterName)
-
-        Node definitionNode = new Node(null, type)
-        definitionNode.appendNode('name', parameterName)
-        definitionNode.appendNode('defaultValue', defaultValue)
-        if (description != null) {
-            definitionNode.appendNode('description', description)
-        }
-
-        buildParameterNodes[parameterName] = definitionNode
-    }
-
     /**
      * Defines a parameter that dynamically generates a list of value options for a build parameter using a Groovy
      * script or a script from the Scriptler catalog.
@@ -409,6 +381,34 @@ class BuildParametersContext extends AbstractExtensibleContext {
         selectorParameterNode.append(selectorParameterContext.defaultSelectorContext.selector)
 
         buildParameterNodes[parameterName] = selectorParameterNode
+    }
+
+    /**
+     * We expect any parameter definition node to have a <code>name</code> field containing
+     * the name of the parameter so we can add it in the map of nodes.
+     */
+    @Override
+    protected void addExtensionNode(Node node) {
+        Object nameNodes = node.get('name')
+        String name = (nameNodes instanceof NodeList && nameNodes.size() == 1) ? nameNodes.text() : null
+        if (name) {
+            buildParameterNodes[name] = node
+        } else {
+            throw new DslScriptException("Can only add nodes with a 'name' field.")
+        }
+    }
+
+    private void simpleParam(String type, String parameterName, Object defaultValue = null, String description = null) {
+        checkParameterName(parameterName)
+
+        Node definitionNode = new Node(null, type)
+        definitionNode.appendNode('name', parameterName)
+        definitionNode.appendNode('defaultValue', defaultValue)
+        if (description != null) {
+            definitionNode.appendNode('description', description)
+        }
+
+        buildParameterNodes[parameterName] = definitionNode
     }
 
     private void checkParameterName(String name) {

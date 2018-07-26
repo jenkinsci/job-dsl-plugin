@@ -5,9 +5,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class MavenPropertiesContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    MavenPropertiesContext context = new MavenPropertiesContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final MavenPropertiesContext context = new MavenPropertiesContext(jobManagement, item)
 
     def 'call mavenInfo with no options'() {
         when:

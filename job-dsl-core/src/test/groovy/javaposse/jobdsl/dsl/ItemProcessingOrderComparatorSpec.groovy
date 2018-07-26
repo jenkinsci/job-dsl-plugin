@@ -8,7 +8,8 @@ import spock.lang.Specification
 
 class ItemProcessingOrderComparatorSpec extends Specification {
     @Shared
-    JobManagement jobManagement = Mock(JobManagement)
+    @SuppressWarnings('PrivateFieldCouldBeFinal')
+    private JobManagement jobManagement = Mock(JobManagement)
 
     def 'compare'(Item o1, Item o2, int result) {
         expect:

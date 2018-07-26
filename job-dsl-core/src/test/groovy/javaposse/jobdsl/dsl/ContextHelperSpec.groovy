@@ -7,14 +7,11 @@ import java.util.logging.Level
 import java.util.logging.LogManager
 import java.util.logging.Logger
 
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertTrue
-
 /**
  * Work through the additional functionality we're offer over node
  */
 class ContextHelperSpec extends Specification {
-    static final String XML = '''<?xml version="1.0" encoding="UTF-8"?>
+    private static final String XML = '''<?xml version="1.0" encoding="UTF-8"?>
 <project>
   <actions/>
   <description></description>
@@ -35,7 +32,7 @@ class ContextHelperSpec extends Specification {
 </project>
 '''
 
-    final Node root = new XmlParser().parse(new StringReader(XML))
+    private final Node root = new XmlParser().parse(new StringReader(XML))
 
     def setup() {
         Logger.getLogger('javaposse.jobdsl').level = Level.ALL
@@ -51,8 +48,8 @@ class ContextHelperSpec extends Specification {
         when:
         def builders = 'build'
         ContextHelper.executeConfigureBlock(root) { project ->
-            assertNotNull(project)
-            assertTrue(project instanceof Node)
+            assert project != null
+            assert project instanceof Node
 
             project / builders / builder
         }

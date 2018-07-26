@@ -19,8 +19,8 @@ import javaposse.jobdsl.dsl.views.SectionedView
 import spock.lang.Specification
 
 class JobParentSpec extends Specification {
-    JobParent parent = Spy(JobParent)
-    JobManagement jobManagement = Mock(JobManagement)
+    private final JobParent parent = Spy(JobParent)
+    private final JobManagement jobManagement = Mock(JobManagement)
 
     def setup() {
         parent.jm = jobManagement

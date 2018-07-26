@@ -17,11 +17,6 @@ class IvyBuilderContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        ivyBuilderNodes << ContextHelper.toNamedNode('ivyBuilderType', node)
-    }
-
     /**
      * Uses Ant for building the modules.
      */
@@ -43,5 +38,10 @@ class IvyBuilderContext extends AbstractExtensibleContext {
                 antProperties(antContext.props.join('\n'))
             }
         }
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        ivyBuilderNodes << ContextHelper.toNamedNode('ivyBuilderType', node)
     }
 }

@@ -16,11 +16,6 @@ class DownstreamTriggerParameterFactoryContext extends AbstractExtensibleContext
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        configFactories << node
-    }
-
     /**
      * Looks for files that match the specified pattern in the current build, then for each of them trigger a build of
      * the specified project(s) by passing that file as a file parameter.
@@ -38,5 +33,10 @@ class DownstreamTriggerParameterFactoryContext extends AbstractExtensibleContext
             delegate.filePattern(filePattern)
             delegate.noFilesFoundAction(noFilesFoundAction)
         }
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        configFactories << node
     }
 }

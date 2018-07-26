@@ -9,7 +9,8 @@ import spock.lang.Specification
 class FileJobManagementSpec extends Specification {
     @Shared
     @ClassRule
-    TemporaryFolder temporaryFolder = new TemporaryFolder()
+    @SuppressWarnings('JUnitPublicField')
+    public TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     private final File tempFolder = temporaryFolder.newFolder()
     private final FileJobManagement jobManagement = new FileJobManagement(tempFolder)

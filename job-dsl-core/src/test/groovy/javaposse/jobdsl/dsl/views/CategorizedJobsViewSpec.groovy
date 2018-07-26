@@ -5,22 +5,6 @@ class CategorizedJobsViewSpec extends ListViewSpec<CategorizedJobsView> {
         view = new CategorizedJobsView(jobManagement, 'test')
     }
 
-    protected String getDefaultXml() {
-        '''<?xml version='1.0' encoding='UTF-8'?>
-<org.jenkinsci.plugins.categorizedview.CategorizedJobsView plugin="categorized-view">
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class="hudson.model.View$PropertyList"/>
-    <jobNames>
-        <comparator class="hudson.util.CaseInsensitiveComparator"/>
-    </jobNames>
-    <jobFilters/>
-    <columns/>
-    <groupingRules/>
-    <categorizationCriteria/>
-</org.jenkinsci.plugins.categorizedview.CategorizedJobsView>'''
-    }
-
     def 'do nothing on empty categorization criteria'() {
         when:
         view.categorizationCriteria {
@@ -88,5 +72,21 @@ class CategorizedJobsViewSpec extends ListViewSpec<CategorizedJobsView> {
                 namingRule[0].value() == 'naming2'
             }
         }
+    }
+
+    protected String getDefaultXml() {
+        '''<?xml version='1.0' encoding='UTF-8'?>
+<org.jenkinsci.plugins.categorizedview.CategorizedJobsView plugin="categorized-view">
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+    </jobNames>
+    <jobFilters/>
+    <columns/>
+    <groupingRules/>
+    <categorizationCriteria/>
+</org.jenkinsci.plugins.categorizedview.CategorizedJobsView>'''
     }
 }

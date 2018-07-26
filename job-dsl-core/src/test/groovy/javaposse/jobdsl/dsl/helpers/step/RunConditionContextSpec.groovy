@@ -8,8 +8,8 @@ import spock.lang.Specification
 import static javaposse.jobdsl.dsl.helpers.step.RunConditionContext.BaseDir.WORKSPACE
 
 class RunConditionContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    RunConditionContext context = new RunConditionContext(jobManagement, Mock(Item))
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final RunConditionContext context = new RunConditionContext(jobManagement, Mock(Item))
 
     def 'extension node added'() {
         setup:

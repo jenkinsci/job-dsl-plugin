@@ -5,9 +5,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class IvyBuilderContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    IvyBuilderContext context = new IvyBuilderContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final IvyBuilderContext context = new IvyBuilderContext(jobManagement, item)
 
     def 'extension node is transformed to ivyBuilderType node'() {
         Node node = new Node(null, 'org.example.CustomBuilder', [foo: 'bar'])

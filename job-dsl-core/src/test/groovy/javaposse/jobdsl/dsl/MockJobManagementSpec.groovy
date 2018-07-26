@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl
 import spock.lang.Specification
 
 class MockJobManagementSpec extends Specification {
-    MockJobManagement mockJobManagement = Spy(MockJobManagement)
+    private final MockJobManagement mockJobManagement = Spy(MockJobManagement)
 
     def 'job permissions are pre-set'() {
         when:

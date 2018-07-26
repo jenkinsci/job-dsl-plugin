@@ -5,8 +5,8 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class BranchSourcesContextsSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    BranchSourcesContext context = new BranchSourcesContext(jobManagement, Mock(Item))
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final BranchSourcesContext context = new BranchSourcesContext(jobManagement, Mock(Item))
 
     def 'node from extension is added'() {
         setup:

@@ -22,13 +22,14 @@ class ScriptRequestGeneratorSpec extends Specification {
 
     @Shared
     @ClassRule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    @SuppressWarnings('JUnitPublicField')
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     @Shared
-    AbstractBuild build
+    private AbstractBuild build
 
     @Shared
-    AbstractBuild remoteBuild
+    private AbstractBuild remoteBuild
 
     def setupSpec() {
         build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject('foo'))

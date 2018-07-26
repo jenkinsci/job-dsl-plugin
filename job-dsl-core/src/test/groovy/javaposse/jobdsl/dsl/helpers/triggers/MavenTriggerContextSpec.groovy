@@ -6,9 +6,9 @@ import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Specification
 
 class MavenTriggerContextSpec extends Specification {
-    JobManagement mockJobManagement = Mock(JobManagement)
-    Item item = new FreeStyleJob(mockJobManagement, 'test')
-    MavenTriggerContext context = new MavenTriggerContext(mockJobManagement, item)
+    private final JobManagement mockJobManagement = Mock(JobManagement)
+    private final Item item = new FreeStyleJob(mockJobManagement, 'test')
+    private final MavenTriggerContext context = new MavenTriggerContext(mockJobManagement, item)
 
     def 'call snapshotDependencies for Maven job succeeds'() {
         when:
