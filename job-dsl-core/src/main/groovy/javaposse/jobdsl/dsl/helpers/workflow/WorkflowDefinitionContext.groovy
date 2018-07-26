@@ -17,11 +17,6 @@ class WorkflowDefinitionContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        definitionNode = ContextHelper.toNamedNode('definition', node)
-    }
-
     /**
      * Defines a Groovy CPS DSL definition.
      */
@@ -58,5 +53,10 @@ class WorkflowDefinitionContext extends AbstractExtensibleContext {
             }
         }
         definitionNode.children().add(context.scmContext.scmNodes[0])
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        definitionNode = ContextHelper.toNamedNode('definition', node)
     }
 }

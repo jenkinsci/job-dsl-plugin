@@ -6,9 +6,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class PropertiesContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    PropertiesContext context = new PropertiesContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final PropertiesContext context = new PropertiesContext(jobManagement, item)
 
     def 'sideBarLinks with no options'() {
         when:

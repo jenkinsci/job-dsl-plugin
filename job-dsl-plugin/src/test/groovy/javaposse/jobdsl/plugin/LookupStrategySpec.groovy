@@ -17,13 +17,14 @@ import static javaposse.jobdsl.plugin.LookupStrategy.SEED_JOB
 class LookupStrategySpec extends Specification {
     @Shared
     @ClassRule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    @SuppressWarnings('JUnitPublicField')
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     @Shared
-    Folder folder
+    private Folder folder
 
     @Shared
-    Item seedJob
+    private Item seedJob
 
     def setupSpec() {
         folder = jenkinsRule.jenkins.createProject(Folder, 'folder')

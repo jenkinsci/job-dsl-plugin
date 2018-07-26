@@ -65,7 +65,7 @@ abstract class AbstractJobManagement implements JobManagement {
     /**
      * @since 1.36
      */
-    protected void logWarning(String message, String details = DslScriptHelper.getSourceDetails()) {
+    protected void logWarning(String message, String details = DslScriptHelper.sourceDetails) {
         String warning = "Warning: ($details) $message"
         if (warning != lastWarning) {
             outputStream.println(warning)

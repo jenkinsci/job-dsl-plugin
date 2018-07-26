@@ -34,15 +34,6 @@ class DescribableHelper {
 
     private static final Map<CacheKey, Collection<DescribableModel>> CACHE = new ConcurrentHashMap<>()
 
-    static {
-        ExtensionList.lookup(Descriptor).addListener(new ExtensionListListener() {
-            @Override
-            void onChange() {
-                CACHE.clear()
-            }
-        })
-    }
-
     /**
      * Finds {@link DescribableModel}s with the given name within the set of given models.
      *
@@ -252,6 +243,15 @@ class DescribableHelper {
     private static Map<String, DescribableModel> filterIllegalSymbols(Map<String, DescribableModel> symbols,
                                                                       Collection<String> illegalSymbols) {
         symbols.findAll { !illegalSymbols.contains(it.key) }
+    }
+
+    static {
+        ExtensionList.lookup(Descriptor).addListener(new ExtensionListListener() {
+            @Override
+            void onChange() {
+                CACHE.clear()
+            }
+        })
     }
 
     @EqualsAndHashCode

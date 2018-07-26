@@ -96,18 +96,6 @@ abstract class JobParent extends Script implements DslFactory {
         processItem(name, MultibranchWorkflowJob, closure)
     }
 
-    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
-    protected <T extends Item> T processItem(String name, Class<T> jobClass, Closure closure) {
-        checkNotNullOrEmpty(name, 'name must be specified')
-
-        T job = jobClass.newInstance(jm, name)
-        if (closure) {
-            job.with(closure)
-        }
-        referencedJobs << job
-        job
-    }
-
     /**
      * @since 1.30
      */
@@ -180,18 +168,6 @@ abstract class JobParent extends Script implements DslFactory {
         processView(name, DashboardView, closure)
     }
 
-    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
-    protected <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
-        checkNotNullOrEmpty(name, 'name must be specified')
-
-        T view = viewClass.newInstance(jm, name)
-        if (closure) {
-            view.with(closure)
-        }
-        referencedViews << view
-        view
-    }
-
     /**
      * @since 1.30
      */
@@ -255,5 +231,29 @@ abstract class JobParent extends Script implements DslFactory {
         checkNotNullOrEmpty(jobName, 'jobName must not be null or empty')
         checkNotNullOrEmpty(filePath, 'filePath must not be null or empty')
         jm.readFileInWorkspace(jobName, filePath)
+    }
+
+    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
+    protected <T extends Item> T processItem(String name, Class<T> jobClass, Closure closure) {
+        checkNotNullOrEmpty(name, 'name must be specified')
+
+        T job = jobClass.newInstance(jm, name)
+        if (closure) {
+            job.with(closure)
+        }
+        referencedJobs << job
+        job
+    }
+
+    // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
+    protected <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
+        checkNotNullOrEmpty(name, 'name must be specified')
+
+        T view = viewClass.newInstance(jm, name)
+        if (closure) {
+            view.with(closure)
+        }
+        referencedViews << view
+        view
     }
 }

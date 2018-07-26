@@ -5,9 +5,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class OrphanedItemStrategyContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    OrphanedItemStrategyContext context = new OrphanedItemStrategyContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final OrphanedItemStrategyContext context = new OrphanedItemStrategyContext(jobManagement, item)
 
     def 'extension node is transformed to orphanedItemStrategy node'() {
         Node node = new Node(null, 'org.example.CustomStrategy', [foo: 'bar'])

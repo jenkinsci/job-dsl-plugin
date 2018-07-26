@@ -16,11 +16,6 @@ class GitExtensionContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        extensions << node
-    }
-
     /**
      * Allows to perform a merge to a particular branch before building.
      * Can be called multiple times to merge more than one branch.
@@ -169,5 +164,10 @@ class GitExtensionContext extends AbstractExtensibleContext {
         extensions << NodeBuilder.newInstance().'hudson.plugins.git.extensions.impl.BuildChooserSetting'(
                 [strategyContext.buildChooser]
         )
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        extensions << node
     }
 }

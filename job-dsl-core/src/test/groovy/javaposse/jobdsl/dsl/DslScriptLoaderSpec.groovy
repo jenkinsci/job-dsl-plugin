@@ -11,14 +11,6 @@ class DslScriptLoaderSpec extends Specification {
     private final MemoryJobManagement jm = new MemoryJobManagement(ps)
     private DslScriptLoader dslScriptLoader = new DslScriptLoader(jm)
 
-    private String getContent() {
-        baos.toString()  // Could send ISO-8859-1
-    }
-
-    private static String loadScript(String scriptName) {
-        DslScriptLoader.getResource('/' + scriptName).text
-    }
-
     def 'load template from file'() {
         setup:
         Job job = new FreeStyleJob(jm, 'test')
@@ -423,5 +415,13 @@ job('foo') {
 
         then:
         content.contains('Script: test/file.dsl')
+    }
+
+    private String getContent() {
+        baos.toString()  // Could send ISO-8859-1
+    }
+
+    private static String loadScript(String scriptName) {
+        DslScriptLoader.getResource('/' + scriptName).text
     }
 }

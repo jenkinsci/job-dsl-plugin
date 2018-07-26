@@ -6,9 +6,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class WrapperContextSpec extends Specification {
-    JobManagement mockJobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    WrapperContext context = new WrapperContext(mockJobManagement, item)
+    private final JobManagement mockJobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final WrapperContext context = new WrapperContext(mockJobManagement, item)
 
     def 'call timestamps method'() {
         when:

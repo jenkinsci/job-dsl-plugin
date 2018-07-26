@@ -12,11 +12,6 @@ class EnvironmentVariableContributorsContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        contributors << node
-    }
-
     /**
      * Populates the locations of installed tools as environment variables.
      */
@@ -25,6 +20,11 @@ class EnvironmentVariableContributorsContext extends AbstractExtensibleContext {
         Node node = new NodeBuilder().'org.jenkinsci.plugins.sharedobjects.ToolInstallationJobProperty' {
             delegate.populateToolInstallation(true)
         }
+        contributors << node
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
         contributors << node
     }
 }

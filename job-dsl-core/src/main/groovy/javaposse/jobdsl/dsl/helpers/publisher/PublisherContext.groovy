@@ -20,15 +20,13 @@ import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_ORDINAL_MA
 
 @ContextType('hudson.tasks.Publisher')
 class PublisherContext extends AbstractExtensibleContext {
+    static final Set<String> VALID_CLONE_WORKSPACE_CRITERIA = ['Any', 'Not Failed', 'Successful']
+    static final Set<String> VALID_CLONE_WORKSPACE_ARCHIVE_METHODS = ['TAR', 'ZIP']
+
     List<Node> publisherNodes = []
 
     PublisherContext(JobManagement jobManagement, Item item) {
         super(jobManagement, item)
-    }
-
-    @Override
-    protected void addExtensionNode(Node node) {
-        publisherNodes << node
     }
 
     /**
@@ -468,13 +466,13 @@ class PublisherContext extends AbstractExtensibleContext {
 
         // Validate values
         checkArgument(
-                validCloneWorkspaceCriteria.contains(cloneWorkspaceContext.criteria),
-                "Clone Workspace Criteria needs to be one of these values: ${validCloneWorkspaceCriteria.join(',')}"
+                VALID_CLONE_WORKSPACE_CRITERIA.contains(cloneWorkspaceContext.criteria),
+                "Clone Workspace Criteria needs to be one of these values: ${VALID_CLONE_WORKSPACE_CRITERIA.join(',')}"
         )
         checkArgument(
-                validCloneWorkspaceArchiveMethods.contains(cloneWorkspaceContext.archiveMethod),
+                VALID_CLONE_WORKSPACE_ARCHIVE_METHODS.contains(cloneWorkspaceContext.archiveMethod),
                 'Clone Workspace Archive Method needs to be one of these values: ' +
-                        validCloneWorkspaceArchiveMethods.join(',')
+                        VALID_CLONE_WORKSPACE_ARCHIVE_METHODS.join(',')
         )
 
         publisherNodes << new NodeBuilder().'hudson.plugins.cloneworkspace.CloneWorkspacePublisher' {
@@ -485,9 +483,6 @@ class PublisherContext extends AbstractExtensibleContext {
             delegate.overrideDefaultExcludes(cloneWorkspaceContext.overrideDefaultExcludes)
         }
     }
-
-    static List<String> validCloneWorkspaceCriteria = ['Any', 'Not Failed', 'Successful']
-    Set<String> validCloneWorkspaceArchiveMethods = ['TAR', 'ZIP']
 
     /**
      * Triggers builds on other projects.
@@ -1469,16 +1464,6 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
-    private static Node createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
-                                                        String pattern) {
-        StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
-        ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
-
-        new NodeBuilder()."${publisherClassName}" {
-            addStaticAnalysisContextAndPattern(delegate, staticAnalysisContext, pattern)
-        }
-    }
-
     /**
      * Sends build status and coverage information to Pharbicator.
      *
@@ -1621,21 +1606,6 @@ class PublisherContext extends AbstractExtensibleContext {
 
         publisherNodes <<
                 createRailsTaskNode('hudson.plugins.rubyMetrics.railsStats.RailsStatsPublisher', 'stats', context)
-    }
-
-    private Node createRailsTaskNode(String publisherName, String task, RailsTaskContext context) {
-        new NodeBuilder()."$publisherName" {
-            rakeInstallation(context.rakeVersion ?: '')
-            rakeWorkingDir(context.rakeWorkingDirectory ?: '')
-            delegate.task(task)
-            rake {
-                rakeInstallation(context.rakeVersion ?: '')
-                rakeWorkingDir(context.rakeWorkingDirectory ?: '')
-                delegate.tasks(task)
-                silent(true)
-                bundleExec(true)
-            }
-        }
     }
 
     /**
@@ -1858,6 +1828,26 @@ class PublisherContext extends AbstractExtensibleContext {
         }
     }
 
+    @Override
+    protected void addExtensionNode(Node node) {
+        publisherNodes << node
+    }
+
+    private Node createRailsTaskNode(String publisherName, String task, RailsTaskContext context) {
+        new NodeBuilder()."$publisherName" {
+            rakeInstallation(context.rakeVersion ?: '')
+            rakeWorkingDir(context.rakeWorkingDirectory ?: '')
+            delegate.task(task)
+            rake {
+                rakeInstallation(context.rakeVersion ?: '')
+                rakeWorkingDir(context.rakeWorkingDirectory ?: '')
+                delegate.tasks(task)
+                silent(true)
+                bundleExec(true)
+            }
+        }
+    }
+
     protected static void addStaticAnalysisContext(Object nodeBuilder, StaticAnalysisContext context) {
         nodeBuilder.with {
             healthy(context.healthy ?: '')
@@ -1888,5 +1878,15 @@ class PublisherContext extends AbstractExtensibleContext {
                                                              String pattern) {
         addStaticAnalysisContext(nodeBuilder, context)
         addStaticAnalysisPattern(nodeBuilder, pattern)
+    }
+
+    private static Node createDefaultStaticAnalysisNode(String publisherClassName, Closure staticAnalysisClosure,
+                                                        String pattern) {
+        StaticAnalysisContext staticAnalysisContext = new StaticAnalysisContext()
+        ContextHelper.executeInContext(staticAnalysisClosure, staticAnalysisContext)
+
+        new NodeBuilder()."${publisherClassName}" {
+            addStaticAnalysisContextAndPattern(delegate, staticAnalysisContext, pattern)
+        }
     }
 }

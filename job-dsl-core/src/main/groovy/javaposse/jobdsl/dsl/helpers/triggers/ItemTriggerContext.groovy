@@ -18,11 +18,6 @@ class ItemTriggerContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        triggerNodes << node
-    }
-
     /**
      * Adds DSL for adding and configuring the URL trigger plugin to a job.
      *
@@ -115,5 +110,10 @@ class ItemTriggerContext extends AbstractExtensibleContext {
             script(context.triggerScript ?: '')
             nextBuildNum(0)
         }
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        triggerNodes << node
     }
 }

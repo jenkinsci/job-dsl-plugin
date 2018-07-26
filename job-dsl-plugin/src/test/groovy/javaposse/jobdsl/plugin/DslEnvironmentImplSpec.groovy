@@ -15,9 +15,9 @@ import javaposse.jobdsl.plugin.fixtures.UnsupportedConstructorArgContext
 import spock.lang.Specification
 
 class DslEnvironmentImplSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    DslEnvironmentImpl dslEnvironment = new DslEnvironmentImpl(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final DslEnvironmentImpl dslEnvironment = new DslEnvironmentImpl(jobManagement, item)
 
     def 'createContext with plain Context'() {
         when:

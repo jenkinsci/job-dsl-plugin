@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.DslScriptException
 import spock.lang.Specification
 
 class StaticAnalysisContextSpec extends Specification {
-    StaticAnalysisContext context = new StaticAnalysisContext()
+    private final StaticAnalysisContext context = new StaticAnalysisContext()
 
     def 'computeNew is set correctly when setting thresholds'(thresholds, dontComputeNew) {
         when:

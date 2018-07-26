@@ -6,9 +6,9 @@ import javaposse.jobdsl.dsl.helpers.AxisContext
 import spock.lang.Specification
 
 class AxisContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    AxisContext context = new AxisContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final AxisContext context = new AxisContext(jobManagement, item)
 
     def 'can set label'() {
         when:

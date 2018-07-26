@@ -27,11 +27,6 @@ class RunConditionContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        condition = node
-    }
-
     /**
      * Runs the build steps no matter what.
      */
@@ -221,6 +216,16 @@ class RunConditionContext extends AbstractExtensibleContext {
         createLogic('Or', conditionClosures)
     }
 
+    Node getCondition() {
+        Preconditions.checkNotNull(condition, 'No condition specified')
+        condition
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        condition = node
+    }
+
     private void createFileExists(String file, String baseDir) {
         this.condition = new NodeBuilder().'org.jenkins_ci.plugins.run_condition.core.FileExistsCondition' {
             delegate.file(file)
@@ -250,11 +255,6 @@ class RunConditionContext extends AbstractExtensibleContext {
                 }
             }
         }
-    }
-
-    Node getCondition() {
-        Preconditions.checkNotNull(condition, 'No condition specified')
-        condition
     }
 
     static enum BaseDir {

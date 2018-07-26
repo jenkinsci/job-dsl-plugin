@@ -59,6 +59,24 @@ class EmbeddedApiDocGenerator {
         api.toString()
     }
 
+    @PackageScope
+    static String firstSentence(String text) {
+        // remove HTML comments
+        String cleanText = text.replaceAll(/(?s)<!--.*?-->/, '')
+        // remove HTML tags
+        cleanText = cleanText.replaceAll(/<.*?>/, '')
+        // unescape HTML and remove leading/trailing spaces
+        cleanText = unescapeHtml(cleanText).trim()
+
+        if (cleanText.empty) {
+            return ''
+        }
+
+        BreakIterator iterator = BreakIterator.sentenceInstance
+        iterator.text = new StringCharacterIterator(cleanText)
+        cleanText[0..iterator.next() - 1].trim()
+    }
+
     private void addContext(DescribableModel model) {
         String contextClassName = getContextClassName(model)
         if (!knownContexts.contains(contextClassName)) {
@@ -374,24 +392,6 @@ class EmbeddedApiDocGenerator {
                 }
             }
         }
-    }
-
-    @PackageScope
-    static String firstSentence(String text) {
-        // remove HTML comments
-        String cleanText = text.replaceAll(/(?s)<!--.*?-->/, '')
-        // remove HTML tags
-        cleanText = cleanText.replaceAll(/<.*?>/, '')
-        // unescape HTML and remove leading/trailing spaces
-        cleanText = unescapeHtml(cleanText).trim()
-
-        if (cleanText.empty) {
-            return ''
-        }
-
-        BreakIterator iterator = BreakIterator.sentenceInstance
-        iterator.text = new StringCharacterIterator(cleanText)
-        cleanText[0..iterator.next() - 1].trim()
     }
 
     private static Map<String, List<Method>> findUniqueMethods(Set<Method> methods) {

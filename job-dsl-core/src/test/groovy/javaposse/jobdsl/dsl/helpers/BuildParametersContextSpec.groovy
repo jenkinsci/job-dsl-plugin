@@ -6,9 +6,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class BuildParametersContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    BuildParametersContext context = new BuildParametersContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final BuildParametersContext context = new BuildParametersContext(jobManagement, item)
 
     def 'base booleanParam usage'() {
         when:

@@ -16,11 +16,6 @@ class BranchSourcesContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        branchSourceNodes << node
-    }
-
     /**
      * Adds a Git branch source. Can be called multiple times to add more branch sources.
      */
@@ -77,5 +72,10 @@ class BranchSourcesContext extends AbstractExtensibleContext {
                 properties(class: 'empty-list')
             }
         }
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        branchSourceNodes << node
     }
 }

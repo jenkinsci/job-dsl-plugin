@@ -23,11 +23,6 @@ class StepContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        stepNodes << node
-    }
-
     /**
      * Runs a shell script.
      *
@@ -345,36 +340,6 @@ class StepContext extends AbstractExtensibleContext {
     @RequiresPlugin(id = 'groovy')
     void groovyScriptFile(String fileName, String groovyName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(fileName, false, groovyName, groovyClosure)
-    }
-
-    protected Node groovyScriptSource(String commandOrFileName, boolean isCommand) {
-        new NodeBuilder().scriptSource(class: "hudson.plugins.groovy.${isCommand ? 'String' : 'File'}ScriptSource") {
-            if (isCommand) {
-                command commandOrFileName
-            } else {
-                scriptFile commandOrFileName
-            }
-        }
-    }
-
-    protected void groovy(String commandOrFileName, boolean isCommand, String groovyInstallation,
-                          Closure groovyClosure) {
-        jobManagement.logPluginDeprecationWarning('groovy', '2.0')
-
-        GroovyContext groovyContext = new GroovyContext()
-        ContextHelper.executeInContext(groovyClosure, groovyContext)
-
-        Node groovyNode = new NodeBuilder().'hudson.plugins.groovy.Groovy' {
-            groovyName groovyInstallation ?: groovyContext.groovyInstallation ?: '(Default)'
-            parameters groovyContext.groovyParams.join(' ')
-            scriptParameters groovyContext.scriptParams.join(' ')
-            javaOpts groovyContext.javaOpts.join(' ')
-            classPath groovyContext.classpathEntries.join(File.pathSeparator)
-        }
-        groovyNode.append(groovyScriptSource(commandOrFileName, isCommand))
-        groovyNode.appendNode('properties', groovyContext.props.join('\n'))
-
-        stepNodes << groovyNode
     }
 
     /**
@@ -834,17 +799,6 @@ class StepContext extends AbstractExtensibleContext {
         }
     }
 
-    private void vSphereBuildStep(String server, String builder, Closure configuration) {
-        Integer hash = jobManagement.getVSphereCloudHash(server)
-        Preconditions.checkNotNull(hash, "vSphere server ${server} does not exist")
-
-        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer' {
-            buildStep(class: "org.jenkinsci.plugins.vsphere.builders.${builder}", configuration)
-            serverName(server)
-            serverHash(hash)
-        }
-    }
-
     /**
      * Adds a step which performs a HTTP request.
      *
@@ -1234,17 +1188,63 @@ class StepContext extends AbstractExtensibleContext {
     }
 
     /**
+     * @since 1.47
+     */
+    @PackageScope
+    Item getItem() {
+        super.item
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        stepNodes << node
+    }
+
+    /**
      * @since 1.35
      */
     protected StepContext newInstance() {
         new StepContext(jobManagement, item)
     }
 
-    /**
-     * @since 1.47
-     */
-    @PackageScope
-    Item getItem() {
-        super.item
+    protected Node groovyScriptSource(String commandOrFileName, boolean isCommand) {
+        new NodeBuilder().scriptSource(class: "hudson.plugins.groovy.${isCommand ? 'String' : 'File'}ScriptSource") {
+            if (isCommand) {
+                command commandOrFileName
+            } else {
+                scriptFile commandOrFileName
+            }
+        }
+    }
+
+    protected void groovy(String commandOrFileName, boolean isCommand, String groovyInstallation,
+                          Closure groovyClosure) {
+        jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+
+        GroovyContext groovyContext = new GroovyContext()
+        ContextHelper.executeInContext(groovyClosure, groovyContext)
+
+        Node groovyNode = new NodeBuilder().'hudson.plugins.groovy.Groovy' {
+            groovyName groovyInstallation ?: groovyContext.groovyInstallation ?: '(Default)'
+            parameters groovyContext.groovyParams.join(' ')
+            scriptParameters groovyContext.scriptParams.join(' ')
+            javaOpts groovyContext.javaOpts.join(' ')
+            classPath groovyContext.classpathEntries.join(File.pathSeparator)
+        }
+        groovyNode.append(groovyScriptSource(commandOrFileName, isCommand))
+        groovyNode.appendNode('properties', groovyContext.props.join('\n'))
+
+        stepNodes << groovyNode
+    }
+
+    private void vSphereBuildStep(String server, String builder, Closure configuration) {
+        Integer hash = jobManagement.getVSphereCloudHash(server)
+        Preconditions.checkNotNull(hash, "vSphere server ${server} does not exist")
+
+        stepNodes << new NodeBuilder().'org.jenkinsci.plugins.vsphere.VSphereBuildStepContainer' {
+            buildStep(class: "org.jenkinsci.plugins.vsphere.builders.${builder}", configuration)
+            serverName(server)
+            serverHash(hash)
+        }
     }
 }

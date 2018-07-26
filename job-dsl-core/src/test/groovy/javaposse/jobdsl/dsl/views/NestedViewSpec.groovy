@@ -8,8 +8,58 @@ import spock.lang.Specification
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 
 class NestedViewSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    NestedView view = new NestedView(jobManagement, 'test')
+    private static final String DEFAULT_XML = '''<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.nested__view.NestedView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class='hudson.model.View$PropertyList'></properties>
+    <views></views>
+</hudson.plugins.nested__view.NestedView>'''
+
+    private static final String NESTED_VIEW_COLUMNS_XML = '''<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.nested__view.NestedView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class='hudson.model.View$PropertyList'></properties>
+    <views></views>
+    <columns>
+        <columns>
+            <hudson.views.StatusColumn></hudson.views.StatusColumn>
+            <hudson.views.WeatherColumn></hudson.views.WeatherColumn>
+        </columns>
+    </columns>
+</hudson.plugins.nested__view.NestedView>'''
+
+    private static final String NESTED_VIEW_VIEWS_XML = '''<hudson.plugins.nested__view.NestedView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class='hudson.model.View$PropertyList'></properties>
+    <views>
+        <hudson.model.ListView>
+            <filterExecutors>false</filterExecutors>
+            <filterQueue>false</filterQueue>
+            <properties class='hudson.model.View$PropertyList'></properties>
+            <jobNames class='tree-set'>
+                <comparator class='hudson.util.CaseInsensitiveComparator'></comparator>
+            </jobNames>
+            <jobFilters></jobFilters>
+            <columns></columns>
+            <name>foo</name>
+            <owner class='hudson.plugins.nested_view.NestedView' reference='../../..'></owner>
+        </hudson.model.ListView>
+        <hudson.plugins.sectioned__view.SectionedView>
+            <filterExecutors>false</filterExecutors>
+            <filterQueue>false</filterQueue>
+            <properties class='hudson.model.View$PropertyList'></properties>
+            <sections></sections>
+            <name>bar</name>
+            <owner class='hudson.plugins.nested_view.NestedView' reference='../../..'></owner>
+        </hudson.plugins.sectioned__view.SectionedView>
+    </views>
+</hudson.plugins.nested__view.NestedView>'''
+
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final NestedView view = new NestedView(jobManagement, 'test')
 
     def setup() {
         XMLUnit.ignoreWhitespace = true
@@ -20,7 +70,7 @@ class NestedViewSpec extends Specification {
         String xml = view.xml
 
         then:
-        compareXML(defaultXml, xml).similar()
+        compareXML(DEFAULT_XML, xml).similar()
     }
 
     def 'nested view columns'() {
@@ -31,7 +81,7 @@ class NestedViewSpec extends Specification {
         }
 
         then:
-        compareXML(nestedViewColumnsXml, view.xml).similar()
+        compareXML(NESTED_VIEW_COLUMNS_XML, view.xml).similar()
     }
 
     def 'nested view with views'() {
@@ -42,7 +92,7 @@ class NestedViewSpec extends Specification {
         }
 
         then:
-        compareXML(nestedViewViewsXml, view.xml).similar()
+        compareXML(NESTED_VIEW_VIEWS_XML, view.xml).similar()
     }
 
     def 'nested list view'() {
@@ -288,54 +338,4 @@ class NestedViewSpec extends Specification {
         view.node.views[0].children()[0].name() == 'se.diabol.jenkins.pipeline.DeliveryPipelineView'
         1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.0', true)
     }
-
-    String defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
-<hudson.plugins.nested__view.NestedView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class='hudson.model.View$PropertyList'></properties>
-    <views></views>
-</hudson.plugins.nested__view.NestedView>'''
-
-    String nestedViewColumnsXml = '''<?xml version='1.0' encoding='UTF-8'?>
-<hudson.plugins.nested__view.NestedView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class='hudson.model.View$PropertyList'></properties>
-    <views></views>
-    <columns>
-        <columns>
-            <hudson.views.StatusColumn></hudson.views.StatusColumn>
-            <hudson.views.WeatherColumn></hudson.views.WeatherColumn>
-        </columns>
-    </columns>
-</hudson.plugins.nested__view.NestedView>'''
-
-    String nestedViewViewsXml = '''<hudson.plugins.nested__view.NestedView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class='hudson.model.View$PropertyList'></properties>
-    <views>
-        <hudson.model.ListView>
-            <filterExecutors>false</filterExecutors>
-            <filterQueue>false</filterQueue>
-            <properties class='hudson.model.View$PropertyList'></properties>
-            <jobNames class='tree-set'>
-                <comparator class='hudson.util.CaseInsensitiveComparator'></comparator>
-            </jobNames>
-            <jobFilters></jobFilters>
-            <columns></columns>
-            <name>foo</name>
-            <owner class='hudson.plugins.nested_view.NestedView' reference='../../..'></owner>
-        </hudson.model.ListView>
-        <hudson.plugins.sectioned__view.SectionedView>
-            <filterExecutors>false</filterExecutors>
-            <filterQueue>false</filterQueue>
-            <properties class='hudson.model.View$PropertyList'></properties>
-            <sections></sections>
-            <name>bar</name>
-            <owner class='hudson.plugins.nested_view.NestedView' reference='../../..'></owner>
-        </hudson.plugins.sectioned__view.SectionedView>
-    </views>
-</hudson.plugins.nested__view.NestedView>'''
 }

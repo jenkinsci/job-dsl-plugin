@@ -14,9 +14,9 @@ import static javaposse.jobdsl.dsl.helpers.scm.GitMergeOptionsContext.FastForwar
 class ScmContextSpec extends Specification {
     private static final String GIT_REPO_URL = 'git://github.com/Netflix/curator.git'
 
-    JobManagement mockJobManagement = Mock(JobManagement)
-    Item item = new FreeStyleJob(mockJobManagement, 'test')
-    ScmContext context = new ScmContext(mockJobManagement, item)
+    private final JobManagement mockJobManagement = Mock(JobManagement)
+    private final Item item = new FreeStyleJob(mockJobManagement, 'test')
+    private final ScmContext context = new ScmContext(mockJobManagement, item)
 
     def 'extension node is transformed to SCM node'() {
         Node node = new Node(null, 'org.example.CustomSCM', [foo: 'bar'])
@@ -1691,12 +1691,6 @@ class ScmContextSpec extends Specification {
         (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
-    private static void isValidSvnScmNode(scmNode) {
-        assert scmNode != null
-        assert scmNode.attributes()['class'] == 'hudson.scm.SubversionSCM'
-        assert scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() > 0
-    }
-
     def 'call p4 with all parameters'() {
         setup:
         def viewspec = '//depot/Tools/build/...\n//depot/webapplications/helloworld/...'
@@ -1995,5 +1989,11 @@ class ScmContextSpec extends Specification {
             avoidUsingToolkit[0].value() == false
         }
         1 * mockJobManagement.requirePlugin('teamconcert')
+    }
+
+    private static void isValidSvnScmNode(scmNode) {
+        assert scmNode != null
+        assert scmNode.attributes()['class'] == 'hudson.scm.SubversionSCM'
+        assert scmNode.locations[0].'hudson.scm.SubversionSCM_-ModuleLocation'.size() > 0
     }
 }

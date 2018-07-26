@@ -15,11 +15,6 @@ class AxisContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        axisNodes << node
-    }
-
     /**
      * Adds a user-defined axis. Can be called multiple times to add more axes.
      */
@@ -106,6 +101,11 @@ class AxisContext extends AbstractExtensibleContext {
      */
     void configure(Closure configureBlock) {
         configureBlocks << configureBlock
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        axisNodes << node
     }
 
     private void simpleAxis(String axisType, String axisName, Iterable<String> axisValues) {

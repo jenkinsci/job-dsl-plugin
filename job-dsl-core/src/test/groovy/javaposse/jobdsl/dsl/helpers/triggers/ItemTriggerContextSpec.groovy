@@ -6,9 +6,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class ItemTriggerContextSpec extends Specification {
-    JobManagement mockJobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    ItemTriggerContext context = new ItemTriggerContext(mockJobManagement, item)
+    private final JobManagement mockJobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final ItemTriggerContext context = new ItemTriggerContext(mockJobManagement, item)
 
     def 'node from extension is added'() {
         setup:

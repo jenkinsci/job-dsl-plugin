@@ -7,6 +7,7 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
         view = new DashboardView(jobManagement, 'test')
     }
 
+    @SuppressWarnings('ChainedTest')
     def 'portlets added'() {
         when:
         view."$position" {
@@ -129,6 +130,7 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
         }
     }
 
+    @SuppressWarnings('ChainedTest')
     def 'test statistics chart with no options'() {
         when:
         view.topPortlets {
@@ -161,6 +163,7 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
         }
     }
 
+    @SuppressWarnings('ChainedTest')
     def 'test statistics grid with no options'() {
         when:
         view.topPortlets {
@@ -204,6 +207,7 @@ class DashboardViewSpec extends ListViewSpec<DashboardView> {
         }
     }
 
+    @SuppressWarnings('ChainedTest')
     def 'test trend chart with no options'() {
         when:
         view.topPortlets {

@@ -4,9 +4,9 @@ import javaposse.jobdsl.dsl.jobs.FreeStyleJob
 import spock.lang.Specification
 
 class PluginASTTransformationSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    FreeStyleJob job = new FreeStyleJob(jobManagement, 'test')
-    JobParent jobParent = Spy(JobParent)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final FreeStyleJob job = new FreeStyleJob(jobManagement, 'test')
+    private final JobParent jobParent = Spy(JobParent)
 
     def 'require plugin'() {
         when:

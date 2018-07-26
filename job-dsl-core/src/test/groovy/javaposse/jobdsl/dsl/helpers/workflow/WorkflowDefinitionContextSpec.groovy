@@ -5,9 +5,9 @@ import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
 
 class WorkflowDefinitionContextSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    WorkflowDefinitionContext context = new WorkflowDefinitionContext(jobManagement, item)
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final WorkflowDefinitionContext context = new WorkflowDefinitionContext(jobManagement, item)
 
     def 'add extension'() {
         given:

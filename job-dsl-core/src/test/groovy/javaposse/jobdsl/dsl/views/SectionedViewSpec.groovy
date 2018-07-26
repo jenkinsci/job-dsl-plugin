@@ -8,8 +8,8 @@ import spock.lang.Specification
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 
 class SectionedViewSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    SectionedView view = new SectionedView(jobManagement, 'test')
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final SectionedView view = new SectionedView(jobManagement, 'test')
 
     def setup() {
         XMLUnit.ignoreWhitespace = true

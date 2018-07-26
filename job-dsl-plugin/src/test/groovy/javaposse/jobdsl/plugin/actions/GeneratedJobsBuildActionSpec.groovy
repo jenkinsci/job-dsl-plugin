@@ -15,7 +15,8 @@ import hudson.model.FreeStyleProject
 class GeneratedJobsBuildActionSpec extends Specification {
     @Shared
     @ClassRule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    @SuppressWarnings('JUnitPublicField')
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     def 'interface methods'() {
         setup:

@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class ApiViewerActionFactorySpec extends Specification {
     @Rule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     def 'type is Project'() {
         expect:

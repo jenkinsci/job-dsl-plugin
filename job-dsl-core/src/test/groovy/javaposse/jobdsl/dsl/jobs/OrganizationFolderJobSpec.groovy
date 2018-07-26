@@ -6,8 +6,8 @@ import javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext
 import spock.lang.Specification
 
 class OrganizationFolderJobSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    OrganizationFolderJob job = new OrganizationFolderJob(jobManagement, 'test')
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final OrganizationFolderJob job = new OrganizationFolderJob(jobManagement, 'test')
 
     def 'can construct an organization folder job with default settings'() {
         expect:

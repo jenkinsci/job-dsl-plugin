@@ -30,11 +30,6 @@ class DownstreamTriggerParameterContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        extensionNodes << node
-    }
-
     /**
      * Adds a boolean parameter. Can be called multiple times to add more parameters.
      */
@@ -179,5 +174,10 @@ class DownstreamTriggerParameterContext extends AbstractExtensibleContext {
         result.addAll(extensionNodes)
 
         result
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        extensionNodes << node
     }
 }

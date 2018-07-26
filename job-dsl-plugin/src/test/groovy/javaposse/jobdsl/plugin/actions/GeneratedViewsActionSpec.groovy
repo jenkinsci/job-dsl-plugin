@@ -10,12 +10,12 @@ import spock.lang.Specification
 import static hudson.util.RunList.fromRuns
 
 class GeneratedViewsActionSpec extends Specification {
-    GeneratedViewsBuildAction buildAction = Mock(GeneratedViewsBuildAction)
-    AbstractBuild build1 = Mock(AbstractBuild)
-    AbstractBuild build2 = Mock(AbstractBuild)
-    AbstractProject project = Mock(AbstractProject)
-    Collection<GeneratedView> modifiedViews = [Mock(GeneratedView), Mock(GeneratedView)]
-    List<View> views = [Mock(View), Mock(View)]
+    private final GeneratedViewsBuildAction buildAction = Mock(GeneratedViewsBuildAction)
+    private final AbstractBuild build1 = Mock(AbstractBuild)
+    private final AbstractBuild build2 = Mock(AbstractBuild)
+    private final AbstractProject project = Mock(AbstractProject)
+    private final Collection<GeneratedView> modifiedViews = [Mock(GeneratedView), Mock(GeneratedView)]
+    private final List<View> views = [Mock(View), Mock(View)]
 
     def 'interface methods'() {
         when:

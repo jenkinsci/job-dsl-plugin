@@ -33,7 +33,8 @@ import javaposse.jobdsl.plugin.ExecuteDslScripts
 class DescribableHelperSpec extends Specification {
     @Shared
     @ClassRule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    @SuppressWarnings('JUnitPublicField')
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     def 'find descriptors for unknown name'() {
         when:

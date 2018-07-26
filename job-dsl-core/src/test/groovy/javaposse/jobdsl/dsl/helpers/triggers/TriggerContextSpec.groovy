@@ -12,9 +12,9 @@ import static javaposse.jobdsl.dsl.helpers.triggers.BuildResultTriggerContext.Bu
 import static javaposse.jobdsl.dsl.helpers.triggers.BuildResultTriggerContext.BuildResult.UNSTABLE
 
 class TriggerContextSpec extends Specification {
-    JobManagement mockJobManagement = Mock(JobManagement)
-    Item item = Mock(Item)
-    TriggerContext context = new TriggerContext(mockJobManagement, item)
+    private final JobManagement mockJobManagement = Mock(JobManagement)
+    private final Item item = Mock(Item)
+    private final TriggerContext context = new TriggerContext(mockJobManagement, item)
 
     def 'node from extension is added'() {
         setup:

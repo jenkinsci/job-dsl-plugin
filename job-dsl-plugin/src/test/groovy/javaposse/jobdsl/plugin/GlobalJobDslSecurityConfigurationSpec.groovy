@@ -11,9 +11,10 @@ import spock.lang.Specification
 class GlobalJobDslSecurityConfigurationSpec extends Specification {
     @Shared
     @ClassRule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    @SuppressWarnings('JUnitPublicField')
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
-    GlobalJobDslSecurityConfiguration config
+    private GlobalJobDslSecurityConfiguration config
 
     def setup() {
         config = jenkinsRule.instance.getDescriptorByType(GlobalJobDslSecurityConfiguration)

@@ -14,11 +14,6 @@ class GitBrowserContext extends AbstractExtensibleContext {
         super(jobManagement, item)
     }
 
-    @Override
-    protected void addExtensionNode(Node node) {
-        browser = ContextHelper.toNamedNode('browser', node)
-    }
-
     /**
      * Use Stash as repository browser.
      */
@@ -83,5 +78,10 @@ class GitBrowserContext extends AbstractExtensibleContext {
         browser = NodeBuilder.newInstance().browser(class: 'hudson.plugins.git.browser.GogsGit') {
             delegate.url(url)
         }
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        browser = ContextHelper.toNamedNode('browser', node)
     }
 }

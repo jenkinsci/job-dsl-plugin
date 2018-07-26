@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 class EmbeddedApiDocGeneratorSpec extends Specification {
     @Rule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     def 'generate API'() {
         when:

@@ -11,8 +11,25 @@ import static javaposse.jobdsl.dsl.views.BuildPipelineView.OutputStyle.ThisWindo
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 
 class BuildPipelineViewSpec extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    BuildPipelineView view = new BuildPipelineView(jobManagement, 'test')
+    private static final String DEFAULT_XML = '''<?xml version='1.0' encoding='UTF-8'?>
+<au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <noOfDisplayedBuilds>1</noOfDisplayedBuilds>
+    <buildViewTitle/>
+    <consoleOutputLinkStyle>Lightbox</consoleOutputLinkStyle>
+    <cssUrl/>
+    <triggerOnlyLatestJob>false</triggerOnlyLatestJob>
+    <alwaysAllowManualTrigger>false</alwaysAllowManualTrigger>
+    <showPipelineParameters>false</showPipelineParameters>
+    <showPipelineParametersInHeaders>false</showPipelineParametersInHeaders>
+    <refreshFrequency>3</refreshFrequency>
+    <showPipelineDefinitionHeader>false</showPipelineDefinitionHeader>
+</au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView>'''
+
+    private final JobManagement jobManagement = Mock(JobManagement)
+    private final BuildPipelineView view = new BuildPipelineView(jobManagement, 'test')
 
     def setup() {
         XMLUnit.ignoreWhitespace = true
@@ -23,7 +40,7 @@ class BuildPipelineViewSpec extends Specification {
         String xml = view.xml
 
         then:
-        compareXML(defaultXml, xml).similar()
+        compareXML(DEFAULT_XML, xml).similar()
     }
 
     def 'displayedBuilds'() {
@@ -356,21 +373,4 @@ class BuildPipelineViewSpec extends Specification {
         root.rowHeaders[0].attribute('class') == 'org.example.Foo'
         root.rowHeaders[0].children().size() == 0
     }
-
-    String defaultXml = '''<?xml version='1.0' encoding='UTF-8'?>
-<au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView>
-    <filterExecutors>false</filterExecutors>
-    <filterQueue>false</filterQueue>
-    <properties class="hudson.model.View$PropertyList"/>
-    <noOfDisplayedBuilds>1</noOfDisplayedBuilds>
-    <buildViewTitle/>
-    <consoleOutputLinkStyle>Lightbox</consoleOutputLinkStyle>
-    <cssUrl/>
-    <triggerOnlyLatestJob>false</triggerOnlyLatestJob>
-    <alwaysAllowManualTrigger>false</alwaysAllowManualTrigger>
-    <showPipelineParameters>false</showPipelineParameters>
-    <showPipelineParametersInHeaders>false</showPipelineParametersInHeaders>
-    <refreshFrequency>3</refreshFrequency>
-    <showPipelineDefinitionHeader>false</showPipelineDefinitionHeader>
-</au.com.centrumsystems.hudson.plugin.buildpipeline.BuildPipelineView>'''
 }

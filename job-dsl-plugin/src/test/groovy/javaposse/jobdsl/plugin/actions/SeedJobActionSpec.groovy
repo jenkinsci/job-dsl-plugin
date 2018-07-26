@@ -13,18 +13,19 @@ import spock.lang.Specification
 class SeedJobActionSpec extends Specification {
     @Shared
     @ClassRule
-    JenkinsRule jenkinsRule = new JenkinsRule()
+    @SuppressWarnings('JUnitPublicField')
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     @Shared
-    AbstractItem item
+    private AbstractItem item
 
     @Shared
-    Item seedJob
+    private Item seedJob
 
     @Shared
-    Item templateJob
+    private Item templateJob
 
-    SeedReference seedReference = Mock(SeedReference)
+    private final SeedReference seedReference = Mock(SeedReference)
 
     def setupSpec() {
         item = jenkinsRule.createFreeStyleProject('test')

@@ -21,8 +21,8 @@ import static javaposse.jobdsl.dsl.views.jobfilter.MatchType.INCLUDE_UNMATCHED
 import static org.custommonkey.xmlunit.XMLUnit.compareXML
 
 class ListViewSpec<T extends ListView> extends Specification {
-    JobManagement jobManagement = Mock(JobManagement)
-    T view = new ListView(jobManagement, 'test')
+    protected final JobManagement jobManagement = Mock(JobManagement)
+    protected T view = new ListView(jobManagement, 'test')
 
     def setup() {
         XMLUnit.ignoreWhitespace = true

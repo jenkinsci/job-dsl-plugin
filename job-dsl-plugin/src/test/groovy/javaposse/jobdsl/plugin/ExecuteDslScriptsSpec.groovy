@@ -49,21 +49,72 @@ import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
 import static hudson.model.Result.FAILURE
 import static hudson.model.Result.SUCCESS
 import static hudson.model.Result.UNSTABLE
-import static org.junit.Assert.assertTrue
 
 @Unroll
 class ExecuteDslScriptsSpec extends Specification {
     private static final String UTF_8 = 'UTF-8'
 
+    private static final String SCRIPT = """job('test-job') {
+}"""
+
+    private static final String EXTENSION_SCRIPT = """job('example-extension') {
+    properties {
+        example('foo', 'bar')
+    }
+}"""
+
+    private static final String UTIL_SCRIPT = '''import util.Util
+
+def u = new Util().getName()
+
+job(u) {
+}'''
+
+    private static final String UTIL_CLASS = '''package util
+
+public class Util {
+    String getName() { return "test-job" }
+}'''
+
+    private static final String JOB_IN_FOLDER_SCRIPT = """folder('folder-a') {
+}
+
+job('folder-a/test-job') {
+  description('lorem ipsum')
+}"""
+
+    private static final String VIEW_SCRIPT = """listView('test-view') {
+  description('lorem ipsum')
+}"""
+
+    private static final String VIEW_IN_FOLDER_SCRIPT = """folder('folder-a') {
+}
+
+listView('folder-a/test-view') {
+  description('lorem ipsum')
+}"""
+
+    private static final String FOLDER_SCRIPT = """folder('test-folder') {
+  description('lorem ipsum')
+}"""
+
+    private static final String FOLDER_IN_FOLDER_SCRIPT = """folder('folder-a') {
+}
+
+folder('folder-a/folder-b') {
+  description('lorem ipsum')
+}"""
+
     @Shared
     @ClassRule
+    @SuppressWarnings('JUnitPublicField')
     public BuildWatcher buildWatcher = new BuildWatcher()
 
     @Rule
     public JenkinsRule jenkinsRule = new JenkinsRule()
 
     @Rule
-    TemporaryFolder temporaryFolder = new TemporaryFolder()
+    public TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     @WithoutJenkins
     def 'targets'() {
@@ -426,7 +477,7 @@ class ExecuteDslScriptsSpec extends Specification {
         runBuild(job, builder1)
 
         then:
-        assertTrue(jenkinsRule.jenkins.getItemByFullName('test-job') instanceof FreeStyleProject)
+        jenkinsRule.jenkins.getItemByFullName('test-job') instanceof FreeStyleProject
 
         when:
         String script2 = 'job("different-job")'
@@ -451,7 +502,7 @@ class ExecuteDslScriptsSpec extends Specification {
         runBuild(job, builder1)
 
         then:
-        assertTrue(jenkinsRule.jenkins.getItemByFullName('/folder/test-job') instanceof FreeStyleProject)
+        jenkinsRule.jenkins.getItemByFullName('/folder/test-job') instanceof FreeStyleProject
 
         when:
         String script2 = 'job("/folder/different-job")'
@@ -477,7 +528,7 @@ class ExecuteDslScriptsSpec extends Specification {
         runBuild(job, builder1)
 
         then:
-        assertTrue(jenkinsRule.jenkins.getItemByFullName('/folder/test-job') instanceof FreeStyleProject)
+        jenkinsRule.jenkins.getItemByFullName('/folder/test-job') instanceof FreeStyleProject
 
         when:
         String script2 = 'job("different-job")'
@@ -502,7 +553,7 @@ class ExecuteDslScriptsSpec extends Specification {
         runBuild(job, builder1)
 
         then:
-        assertTrue(jenkinsRule.jenkins.getItemByFullName('test-job') instanceof FreeStyleProject)
+        jenkinsRule.jenkins.getItemByFullName('test-job') instanceof FreeStyleProject
 
         when:
         String script2 = 'job("different-job")'
@@ -576,16 +627,6 @@ class ExecuteDslScriptsSpec extends Specification {
         then:
         build.result == SUCCESS
         jenkinsRule.jenkins.getItemByFullName('/folder/test-job', FreeStyleProject).description == description
-    }
-
-    private static FreeStyleBuild runBuild(FreeStyleProject job, ExecuteDslScripts builder) {
-        job.buildersList.clear()
-        job.buildersList.add(builder)
-
-        FreeStyleBuild build = job.scheduleBuild2(0).get()
-
-        assert build.result == SUCCESS
-        build
     }
 
     def "SeedJobAction is added to created jobs"() {
@@ -792,7 +833,7 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         freeStyleBuild.result == SUCCESS
-        assertTrue(jenkinsRule.instance.getView('test-view') instanceof ListView)
+        jenkinsRule.instance.getView('test-view') instanceof ListView
 
         when:
         GeneratedViewsBuildAction buildAction = freeStyleBuild.getAction(GeneratedViewsBuildAction)
@@ -1006,7 +1047,7 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         freeStyleBuild.result == SUCCESS
-        assertTrue(jenkinsRule.instance.getItem('test-folder') instanceof Folder)
+        jenkinsRule.instance.getItem('test-folder') instanceof Folder
 
         when:
         GeneratedJobsBuildAction buildAction = freeStyleBuild.getAction(GeneratedJobsBuildAction)
@@ -1372,29 +1413,6 @@ class ExecuteDslScriptsSpec extends Specification {
 
         then:
         build.result == SUCCESS
-    }
-
-    private void setupQIA(String user, FreeStyleProject job) {
-        QueueItemAuthenticatorConfiguration.get().authenticators.add(new QIA(user, job.fullName))
-    }
-
-    private static final class QIA extends QueueItemAuthenticator {
-        private final String user
-        private final String item
-
-        QIA(String user, String item) {
-            this.user = user
-            this.item = item
-        }
-
-        @Override
-        Authentication authenticate(Queue.Task task) {
-            if (task instanceof Item && ((Item) task).fullName == item) {
-                return User.get(user).impersonate()
-            } else {
-                return null
-            }
-        }
     }
 
     def 'run script in sandbox'() {
@@ -1775,54 +1793,36 @@ class ExecuteDslScriptsSpec extends Specification {
         freeStyleBuild.getLog(100).contains(value)
     }
 
-    private static final String SCRIPT = """job('test-job') {
-}"""
-
-    private static final String EXTENSION_SCRIPT = """job('example-extension') {
-    properties {
-        example('foo', 'bar')
+    private static void setupQIA(String user, FreeStyleProject job) {
+        QueueItemAuthenticatorConfiguration.get().authenticators.add(new QIA(user, job.fullName))
     }
-}"""
 
-    private static final String UTIL_SCRIPT = '''import util.Util
+    private static FreeStyleBuild runBuild(FreeStyleProject job, ExecuteDslScripts builder) {
+        job.buildersList.clear()
+        job.buildersList.add(builder)
 
-def u = new Util().getName()
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
 
-job(u) {
-}'''
+        assert build.result == SUCCESS
+        build
+    }
 
-    private static final String UTIL_CLASS = '''package util
+    private static final class QIA extends QueueItemAuthenticator {
+        private final String user
+        private final String item
 
-public class Util {
-    String getName() { return "test-job" }
-}'''
+        QIA(String user, String item) {
+            this.user = user
+            this.item = item
+        }
 
-    private static final String JOB_IN_FOLDER_SCRIPT = """folder('folder-a') {
-}
-
-job('folder-a/test-job') {
-  description('lorem ipsum')
-}"""
-
-    private static final String VIEW_SCRIPT = """listView('test-view') {
-  description('lorem ipsum')
-}"""
-
-    private static final String VIEW_IN_FOLDER_SCRIPT = """folder('folder-a') {
-}
-
-listView('folder-a/test-view') {
-  description('lorem ipsum')
-}"""
-
-    private static final String FOLDER_SCRIPT = """folder('test-folder') {
-  description('lorem ipsum')
-}"""
-
-    private static final String FOLDER_IN_FOLDER_SCRIPT = """folder('folder-a') {
-}
-
-folder('folder-a/folder-b') {
-  description('lorem ipsum')
-}"""
+        @Override
+        Authentication authenticate(Queue.Task task) {
+            if (task instanceof Item && ((Item) task).fullName == item) {
+                return User.get(user).impersonate()
+            } else {
+                return null
+            }
+        }
+    }
 }
