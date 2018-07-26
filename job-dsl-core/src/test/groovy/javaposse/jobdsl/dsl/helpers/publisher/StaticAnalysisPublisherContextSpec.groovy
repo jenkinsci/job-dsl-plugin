@@ -66,13 +66,15 @@ class StaticAnalysisPublisherContextSpec extends Specification {
                 thresholds: [],
                 parserConfigurations: [],
                 includePattern: '',
-                excludePattern: ''
+                excludePattern: '',
+                messagesPattern: '',
+                categoriesPattern: ''
         )
 
         def consoleParsers = warningsNode.consoleParsers.'hudson.plugins.warnings.ConsoleParser'
         assertValues(consoleParsers, parserName: 'Java Compiler (javac)')
 
-        1 * jobManagement.requireMinimumPluginVersion('warnings', '4.0')
+        1 * jobManagement.requireMinimumPluginVersion('warnings', '4.63')
     }
 
     @Unroll
@@ -142,6 +144,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         context.warnings(['Java Compiler (javac)'], ['Java Compiler (javac)': '**/*.log']) {
             includePattern '.*include.*'
             excludePattern '.*exclude.*'
+            messagesPattern '.*exclude_msg.*'
+            categoriesPattern '.*exclude_cat.*'
             resolveRelativePaths true
             healthLimits 3, 20
             thresholdLimit 'high'
@@ -165,6 +169,8 @@ class StaticAnalysisPublisherContextSpec extends Specification {
         assertValues(analysisNode, ['consoleParsers', 'parserConfigurations', 'thresholds'],
                 includePattern: '.*include.*',
                 excludePattern: '.*exclude.*',
+                messagesPattern: '.*exclude_msg.*',
+                categoriesPattern: '.*exclude_cat.*',
                 healthy: 3, unHealthy: 20,
                 thresholdLimit: 'high',
                 defaultEncoding: 'UTF-8',
@@ -192,7 +198,7 @@ class StaticAnalysisPublisherContextSpec extends Specification {
                 parserName: 'Java Compiler (javac)'
         )
 
-        1 * jobManagement.requireMinimumPluginVersion('warnings', '4.0')
+        1 * jobManagement.requireMinimumPluginVersion('warnings', '4.63')
     }
 
     def 'add analysis collector with default values'() {
