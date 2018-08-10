@@ -74,6 +74,30 @@ class BranchSourcesContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Adds an SVN branch source. Can be called multiple times to add more branch sources.
+     *
+     * @since 1.71
+     */
+    @RequiresPlugin(id = 'subversion', minimumVersion = '2.11.1')
+    void svn(@DslContext(SvnBranchSourceContext) Closure branchSourceClosure) {
+        SvnBranchSourceContext context = new SvnBranchSourceContext()
+        ContextHelper.executeInContext(branchSourceClosure, context)
+
+        branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
+            source(class: 'jenkins.scm.impl.subversion.SubversionSCMSource') {
+                id(context.id)
+                remoteBase(context.remoteBase ?: '')
+                credentialsId(context.credentialsId ?: '')
+                includes(context.includes ?: '')
+                excludes(context.excludes ?: '')
+            }
+            strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
+                properties(class: 'empty-list')
+            }
+        }
+    }
+
     @Override
     protected void addExtensionNode(Node node) {
         branchSourceNodes << node

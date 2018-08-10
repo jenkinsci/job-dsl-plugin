@@ -167,4 +167,64 @@ class BranchSourcesContextsSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.8')
     }
+
+    def 'svn with minimal options'() {
+        when:
+        context.svn {}
+
+        then:
+        context.branchSourceNodes.size() == 1
+        with(context.branchSourceNodes[0]) {
+            name() == 'jenkins.branch.BranchSource'
+            children().size() == 2
+            with(source[0]) {
+                children().size() == 5
+                id[0].value() instanceof String
+                remoteBase[0].value().empty
+                credentialsId[0].value().empty
+                includes[0].value() == '*'
+                excludes[0].value().empty
+            }
+            with(strategy[0]) {
+                children().size() == 1
+                attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
+                properties[0].value() == []
+                properties[0].attribute('class') == 'empty-list'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('subversion', '2.11.1')
+    }
+
+    def 'svn with all options'() {
+        when:
+        context.svn {
+            id('test')
+            remoteBase('foo')
+            credentialsId('bar')
+            includes('lorem')
+            excludes('ipsum')
+        }
+
+        then:
+        context.branchSourceNodes.size() == 1
+        with(context.branchSourceNodes[0]) {
+            name() == 'jenkins.branch.BranchSource'
+            children().size() == 2
+            with(source[0]) {
+                children().size() == 5
+                id[0].value() == 'test'
+                remoteBase[0].value() == 'foo'
+                credentialsId[0].value() == 'bar'
+                includes[0].value() == 'lorem'
+                excludes[0].value() == 'ipsum'
+            }
+            with(strategy[0]) {
+                children().size() == 1
+                attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
+                properties[0].value() == []
+                properties[0].attribute('class') == 'empty-list'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('subversion', '2.11.1')
+    }
 }

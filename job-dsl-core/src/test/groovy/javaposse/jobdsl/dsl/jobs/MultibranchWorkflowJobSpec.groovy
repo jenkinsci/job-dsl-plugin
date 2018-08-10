@@ -21,13 +21,18 @@ class MultibranchWorkflowJobSpec extends Specification {
         when:
         job.branchSources {
             git {}
+            svn {}
         }
 
         then:
         job.node.sources[0].data.size() == 1
+        job.node.sources[0].data[0].'jenkins.branch.BranchSource'.size() == 2
         job.node.sources[0].data[0].'jenkins.branch.BranchSource'[0].children().size() == 2
         job.node.sources[0].data[0].'jenkins.branch.BranchSource'[0]
                 .'source'[0].attribute('class') == 'jenkins.plugins.git.GitSCMSource'
+        job.node.sources[0].data[0].'jenkins.branch.BranchSource'[1].children().size() == 2
+        job.node.sources[0].data[0].'jenkins.branch.BranchSource'[1]
+                .'source'[0].attribute('class') == 'jenkins.scm.impl.subversion.SubversionSCMSource'
     }
 
     def 'can add orphanedItemStrategy'() {

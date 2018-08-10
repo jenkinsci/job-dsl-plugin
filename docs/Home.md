@@ -29,6 +29,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.71 (unreleased)
+  * Add support for Subversion branch sources in `multibranchPipelineJob` ([JENKINS-52985](https://issues.jenkins-ci.org/browse/JENKINS-52985))
   * Log path of script file
     ([JENKINS-52550](https://issues.jenkins-ci.org/browse/JENKINS-52550))
   * Fixed support for authentication token for Pipeline jobs
