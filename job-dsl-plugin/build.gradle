@@ -95,6 +95,7 @@ dependencies {
     }
     optionalJenkinsPlugins 'org.jenkins-ci.plugins:config-file-provider:2.15.4'
     optionalJenkinsPlugins 'org.jenkinsci.plugins:managed-scripts:1.3'
+    optionalJenkinsPlugins 'io.jenkins:configuration-as-code:1.1-20180926.061808-1'
     jenkinsTest 'org.jenkins-ci.plugins:cloudbees-folder:5.12'
     jenkinsTest 'org.jenkins-ci.plugins:matrix-auth:1.3'
     jenkinsTest 'org.jenkins-ci.plugins:nested-view:1.14'
