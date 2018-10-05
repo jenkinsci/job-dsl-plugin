@@ -92,20 +92,14 @@ class BranchSourcesContextsSpec extends Specification {
             name() == 'jenkins.branch.BranchSource'
             children().size() == 2
             with(source[0]) {
-                children().size() == 13
+                children().size() == 5
                 id[0].value() instanceof String
-                scanCredentialsId[0].value().empty
-                checkoutCredentialsId[0].value() == 'SAME'
+                credentialsId[0].value().empty
                 repoOwner[0].value().empty
                 repository[0].value().empty
-                includes[0].value() == '*'
-                excludes[0].value().empty
-                buildOriginBranch[0].value() == true
-                buildOriginBranchWithPR[0].value() == true
-                buildOriginPRMerge[0].value() == false
-                buildOriginPRHead[0].value() == false
-                buildForkPRMerge[0].value() == true
-                buildForkPRHead[0].value() == false
+                with(traits[0]) {
+                    children().size() == 3
+                }
             }
             with(strategy[0]) {
                 children().size() == 1
@@ -114,7 +108,7 @@ class BranchSourcesContextsSpec extends Specification {
                 properties[0].attribute('class') == 'empty-list'
             }
         }
-        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.8')
+        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '2.2.0')
     }
 
     def 'github with all options'() {
@@ -142,21 +136,15 @@ class BranchSourcesContextsSpec extends Specification {
             name() == 'jenkins.branch.BranchSource'
             children().size() == 2
             with(source[0]) {
-                children().size() == 14
+                children().size() == 6
                 id[0].value() == 'test'
                 apiUri[0].value() == 'https://custom.url'
-                scanCredentialsId[0].value() == 'scanCreds'
-                checkoutCredentialsId[0].value() == 'checkoutCreds'
+                credentialsId[0].value() == 'scanCreds'
                 repoOwner[0].value() == 'ownerName'
                 repository[0].value() == 'repoName'
-                includes[0].value() == 'lorem'
-                excludes[0].value() == 'ipsum'
-                buildOriginBranch[0].value() == false
-                buildOriginBranchWithPR[0].value() == false
-                buildOriginPRMerge[0].value() == true
-                buildOriginPRHead[0].value() == true
-                buildForkPRMerge[0].value() == false
-                buildForkPRHead[0].value() == true
+                with(traits[0]) {
+                    children().size() == 4
+                }
             }
             with(strategy[0]) {
                 children().size() == 1
@@ -165,6 +153,6 @@ class BranchSourcesContextsSpec extends Specification {
                 properties[0].attribute('class') == 'empty-list'
             }
         }
-        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.8')
+        1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '2.2.0')
     }
 }
