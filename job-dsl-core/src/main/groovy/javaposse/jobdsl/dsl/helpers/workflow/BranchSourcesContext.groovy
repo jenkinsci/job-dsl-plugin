@@ -44,7 +44,7 @@ class BranchSourcesContext extends AbstractExtensibleContext {
      *
      * @since 1.46
      */
-    @RequiresPlugin(id = 'github-branch-source', minimumVersion = '1.8')
+    @RequiresPlugin(id = 'github-branch-source', minimumVersion = '2.2.0')
     void github(@DslContext(GitHubBranchSourceContext) Closure branchSourceClosure) {
         GitHubBranchSourceContext context = new GitHubBranchSourceContext(jobManagement)
         ContextHelper.executeInContext(branchSourceClosure, context)
@@ -55,18 +55,54 @@ class BranchSourcesContext extends AbstractExtensibleContext {
                 if (context.apiUri) {
                     apiUri(context.apiUri)
                 }
-                scanCredentialsId(context.scanCredentialsId ?: '')
-                checkoutCredentialsId(context.checkoutCredentialsId ?: '')
+                credentialsId(context.scanCredentialsId ?: '')
                 repoOwner(context.repoOwner ?: '')
                 repository(context.repository ?: '')
-                includes(context.includes ?: '')
-                excludes(context.excludes ?: '')
-                buildOriginBranch(context.buildOriginBranch)
-                buildOriginBranchWithPR(context.buildOriginBranchWithPR)
-                buildOriginPRMerge(context.buildOriginPRMerge)
-                buildOriginPRHead(context.buildOriginPRHead)
-                buildForkPRMerge(context.buildForkPRMerge)
-                buildForkPRHead(context.buildForkPRHead)
+                traits {
+                    if (context.buildOriginBranch || context.buildOriginBranchWithPR) {
+                        'org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait' {
+                            strategyId((context.buildOriginBranch ? 1 : 0) + (context.buildOriginBranchWithPR ? 2 : 0))
+                        }
+                    }
+                    if (context.buildOriginPRMerge || context.buildOriginPRHead) {
+                        'org.jenkinsci.plugins.github__branch__source.OriginPullRequestDiscoveryTrait' {
+                            strategyId((context.buildOriginPRMerge ? 1 : 0) + (context.buildOriginPRHead ? 2 : 0))
+                        }
+                    }
+                    if (context.buildForkPRMerge || context.buildForkPRHead) {
+                        'org.jenkinsci.plugins.github__branch__source.ForkPullRequestDiscoveryTrait' {
+                            strategyId((context.buildForkPRMerge ? 1 : 0) + (context.buildForkPRHead ? 2 : 0))
+                            trust(class:
+                            'org.jenkinsci.plugins.github_branch_source.ForkPullRequestDiscoveryTrait$TrustPermission')
+                        }
+                    }
+                    if (context.checkoutCredentialsId != null &&
+                            'SAME' != context.scanCredentialsId &&
+                            context.checkoutCredentialsId != context.scanCredentialsId) {
+                        'org.jenkinsci.plugins.github__branch__source.SSHCheckoutTrait' {
+                            credentialsId(context.checkoutCredentialsId)
+                        }
+                    }
+                    if ((context.includes != null && '*' != context.includes) ||
+                            (context.excludes != null && '' != context.excludes)) {
+                        'jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait' {
+                            includes(context.includes ?: '*')
+                            excludes(context.excludes ?: '')
+                        }
+                    }
+                    if (context.pattern != null && '.*' != context.pattern) {
+                        'jenkins.scm.impl.trait.RegexSCMSourceFilterTrait' {
+                            regex(context.pattern)
+                        }
+                    }
+                    if (!context.noTags) {
+                        'jenkins.plugins.git.traits.CloneOptionTrait' {
+                            extension(class: 'hudson.plugins.git.extensions.impl.CloneOption') {
+                                noTags(context.noTags)
+                            }
+                        }
+                    }
+                }
             }
             strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
                 properties(class: 'empty-list')
