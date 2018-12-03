@@ -5,6 +5,7 @@ import javaposse.jobdsl.dsl.Context
 class GerritEventContext implements Context {
     final List<String> eventShortNames = []
 
+    String addedCommentContains = ''
     /**
      * Trigger when a change is abandoned.
      *
@@ -39,6 +40,17 @@ class GerritEventContext implements Context {
      */
     void commentAdded() {
         eventShortNames << 'CommentAdded'
+    }
+
+    /**
+     * Trigger when a review comment containing regexp is left.
+     *
+     * @since 1.26
+     */
+    void commentAddedContains(String addedCommentContains) {
+        eventShortNames << 'CommentAddedContains'
+
+        this.addedCommentContains = addedCommentContains
     }
 
     /**

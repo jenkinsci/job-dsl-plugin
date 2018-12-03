@@ -87,7 +87,13 @@ class TriggerContext extends ItemTriggerContext {
             if (gerritContext.eventContext.eventShortNames) {
                 triggerOnEvents {
                     gerritContext.eventContext.eventShortNames.each {
+                        if ("${it}" == 'CommentAddedContains') {
+                            "com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin${it}Event" {
+                                commentAddedCommentContains  gerritContext.eventContext.addedCommentContains
+                            }
+                        } else {
                         "com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.events.Plugin${it}Event" ''
+                        }
                     }
                 }
             }
