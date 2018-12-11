@@ -136,6 +136,19 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             createNewItem(path, dslItem);
             return true;
         } else if (!ignoreExisting) {
+            // fail if the item being created is already managed by another seed job
+            String seedJobName = project.getName();
+            if (seedJobName != null) {
+                DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
+                SeedReference seedReference = descriptor.getGeneratedJobMap().get(jobName);
+                if (seedReference != null) {
+                    String existingSeedJobName = seedReference.getSeedJobName();
+                    if (!seedJobName.equals(existingSeedJobName) &&
+                            Jenkins.getInstance().getItemByFullName(existingSeedJobName) != null) {
+                        throw new DslException(format(Messages.CreateOrUpdateConfigFile_SeedCollision(), jobName, existingSeedJobName));
+                    }
+                }
+            }
             return updateExistingItem(item, dslItem);
         }
         return false;
