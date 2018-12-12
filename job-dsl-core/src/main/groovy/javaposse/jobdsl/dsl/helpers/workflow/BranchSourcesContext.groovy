@@ -74,6 +74,30 @@ class BranchSourcesContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Adds a GitHub branch source. Can be called multiple times to add more branch sources.
+     *
+     * @since 1.53
+     */
+    @RequiresPlugin(id = 'gerrit-code-review', minimumVersion = '0.3.2')
+    void gerrit(@DslContext(GerritBranchSourceContext) Closure branchSourceClosure) {
+        GerritBranchSourceContext context = new GerritBranchSourceContext()
+        ContextHelper.executeInContext(branchSourceClosure, context)
+
+        branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
+            source(class: 'jenkins.plugins.gerrit.GerritSCMSource') {
+                id(context.id)
+                remote(context.remote ?: '')
+                credentialsId(context.credentialsId ?: '')
+                includes(context.includes ?: '')
+                excludes(context.excludes ?: '')
+            }
+            strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
+                properties(class: 'empty-list')
+            }
+        }
+    }
+
     @Override
     protected void addExtensionNode(Node node) {
         branchSourceNodes << node
