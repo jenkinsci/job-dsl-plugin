@@ -36,7 +36,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Added support for `Object` typed options to [[Dynamic DSL]]
     ([JENKINS-52546](https://issues.jenkins-ci.org/browse/JENKINS-52546))
   * Require `workflow-job` and `workflow-cps` plugins instead of `workflow-aggregator`
-    ([#1145](https://github.com/jenkinsci/job-dsl-plugin/pull/1145))
+    ([#1145](https://github.com/jenkinsci/job-dsl-plugin/pull/1145  ))
+  * Fixed serialization issue in `GlobalJobDslSecurityConfiguration`
+    ([JENKINS-53830](https://issues.jenkins-ci.org/browse/JENKINS-53830))
 * 1.70 (July 03 2018)
   * Enhanced support for [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
     ([#1129](https://github.com/jenkinsci/job-dsl-plugin/pull/1129))
