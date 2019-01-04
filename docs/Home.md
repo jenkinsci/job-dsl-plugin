@@ -35,6 +35,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([JENKINS-31832](https://issues.jenkins-ci.org/browse/JENKINS-31832))
   * Added support for `Object` typed options to [[Dynamic DSL]]
     ([JENKINS-52546](https://issues.jenkins-ci.org/browse/JENKINS-52546))
+  * Require `workflow-job` and `workflow-cps` plugins instead of `workflow-aggregator`
+    ([#1145](https://github.com/jenkinsci/job-dsl-plugin/pull/1145))
 * 1.70 (July 03 2018)
   * Enhanced support for [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
     ([#1129](https://github.com/jenkinsci/job-dsl-plugin/pull/1129))
