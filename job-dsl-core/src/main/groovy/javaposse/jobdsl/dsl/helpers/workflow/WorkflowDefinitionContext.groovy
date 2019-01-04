@@ -20,6 +20,7 @@ class WorkflowDefinitionContext extends AbstractExtensibleContext {
     /**
      * Defines a Groovy CPS DSL definition.
      */
+    @RequiresPlugin(id = 'workflow-cps')
     void cps(@DslContext(CpsContext) Closure cpsClosure) {
         CpsContext context = new CpsContext()
         ContextHelper.executeInContext(cpsClosure, context)

@@ -117,7 +117,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.47
      * @see #pipelineJob(java.lang.String, groovy.lang.Closure)
      */
-    @RequiresPlugin(id = 'workflow-aggregator', failIfMissing = true)
+    @RequiresPlugin(id = 'workflow-job', failIfMissing = true)
     WorkflowJob pipelineJob(String name)
 
     /**
@@ -126,7 +126,7 @@ interface DslFactory extends ViewFactory {
      *
      * @since 1.47
      */
-    @RequiresPlugin(id = 'workflow-aggregator', failIfMissing = true)
+    @RequiresPlugin(id = 'workflow-job', failIfMissing = true)
     WorkflowJob pipelineJob(String name, @DslContext(WorkflowJob) Closure closure)
 
     /**
