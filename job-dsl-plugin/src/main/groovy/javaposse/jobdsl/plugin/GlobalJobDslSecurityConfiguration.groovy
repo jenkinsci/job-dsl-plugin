@@ -8,7 +8,10 @@ import org.kohsuke.stapler.StaplerRequest
 
 @Extension
 class GlobalJobDslSecurityConfiguration extends GlobalConfiguration {
-    final GlobalConfigurationCategory category = GlobalConfigurationCategory.get(GlobalConfigurationCategory.Security)
+
+    GlobalConfigurationCategory getCategory() {
+        GlobalConfigurationCategory.get(GlobalConfigurationCategory.Security)
+    }
 
     boolean useScriptSecurity = true
 
