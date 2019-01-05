@@ -157,8 +157,7 @@ class StepContextSpec extends Specification {
         gradleStep.name() == 'hudson.plugins.gradle.Gradle'
         gradleStep.tasks[0].value() == 'build'
         gradleStep.useWrapper[0].value() == true
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.28')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.28')
 
         when:
         context.gradle('build', '-I init.gradle', false)
@@ -168,8 +167,7 @@ class StepContextSpec extends Specification {
         def gradleStep2 = context.stepNodes[1]
         gradleStep2.switches[0].value() == '-I init.gradle'
         gradleStep2.useWrapper[0].value() == false
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.28')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.28')
 
         when:
         context.gradle('build', '-I init.gradle', false) {
@@ -180,37 +178,10 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 3
         def gradleStep3 = context.stepNodes[2]
         gradleStep3.node1[0].value() == 'value1'
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.28')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.28')
     }
 
     def 'call gradle methods with defaults'() {
-        when:
-        context.gradle()
-
-        then:
-        context.stepNodes.size() == 1
-        with(context.stepNodes[0]) {
-            children().size() == 10
-            tasks[0].value() == ''
-            switches[0].value() == ''
-            useWrapper[0].value() == true
-            rootBuildScriptDir[0].value() == ''
-            buildFile[0].value() == ''
-            gradleName[0].value() == '(Default)'
-            fromRootBuildScriptDir[0].value() == true
-            makeExecutable[0].value() == false
-            useWorkspaceAsHome[0].value() == false
-            passAsProperties[0].value() == false
-        }
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.28')
-    }
-
-    def 'call gradle methods with defaults and newer plugin version'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.27') >> true
-
         when:
         context.gradle()
 
@@ -230,51 +201,10 @@ class StepContextSpec extends Specification {
             passAllAsProjectProperties[0].value() == false
             passAllAsSystemProperties[0].value() == false
         }
-        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.28')
+        (1.._) * jobManagement.requireMinimumPluginVersion('gradle', '1.28')
     }
 
     def 'call gradle methods with context'() {
-        when:
-        context.gradle {
-            tasks 'clean'
-            tasks 'build'
-            switches '--info'
-            switches '--stacktrace'
-            useWrapper false
-            rootBuildScriptDir 'rbsd'
-            buildFile 'bf'
-            gradleName 'gn'
-            fromRootBuildScriptDir true
-            makeExecutable true
-            useWorkspaceAsHome true
-            passAsProperties true
-        }
-
-        then:
-        context.stepNodes.size() == 1
-        with(context.stepNodes[0]) {
-            children().size() == 10
-            tasks[0].value() == 'clean build'
-            switches[0].value() == '--info --stacktrace'
-            useWrapper[0].value() == false
-            rootBuildScriptDir[0].value() == 'rbsd'
-            buildFile[0].value() == 'bf'
-            gradleName[0].value() == 'gn'
-            fromRootBuildScriptDir[0].value() == true
-            makeExecutable[0].value() == true
-            useWorkspaceAsHome[0].value() == true
-            passAsProperties[0].value() == true
-        }
-        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.28')
-        1 * jobManagement.logDeprecationWarning()
-    }
-
-    def 'call gradle methods with context and newer plugin version'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('gradle', '1.27') >> true
-
         when:
         context.gradle {
             tasks 'clean'
@@ -308,9 +238,7 @@ class StepContextSpec extends Specification {
             passAllAsSystemProperties[0].value() == true
             passAllAsProjectProperties[0].value() == true
         }
-        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.26')
-        2 * jobManagement.requireMinimumPluginVersion('gradle', '1.27')
-        1 * jobManagement.logPluginDeprecationWarning('gradle', '1.28')
+        1 * jobManagement.requireMinimumPluginVersion('gradle', '1.28')
     }
 
     def 'call maven methods'() {
@@ -615,8 +543,7 @@ class StepContextSpec extends Specification {
         scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
         scriptSourceNode.command.size() == 1
         scriptSourceNode.command[0].value() == "println 'Hello World!'"
-        1 * jobManagement.requirePlugin('groovy')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
 
         when:
         context.groovyCommand('acme.Acme.doSomething()', 'Groovy 2.0') {
@@ -653,8 +580,7 @@ class StepContextSpec extends Specification {
         acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
         acmeScriptSourceNode.command.size() == 1
         acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
-        1 * jobManagement.requirePlugin('groovy')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
     }
 
     def 'call groovyScriptFile methods'() {
@@ -682,8 +608,7 @@ class StepContextSpec extends Specification {
         scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
         scriptSourceNode.scriptFile.size() == 1
         scriptSourceNode.scriptFile[0].value() == 'scripts/hello.groovy'
-        1 * jobManagement.requirePlugin('groovy')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
 
         when:
         context.groovyScriptFile('acme.groovy', 'Groovy 2.0') {
@@ -720,7 +645,7 @@ class StepContextSpec extends Specification {
         acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
         acmeScriptSourceNode.scriptFile.size() == 1
         acmeScriptSourceNode.scriptFile[0].value() == 'acme.groovy'
-        1 * jobManagement.requirePlugin('groovy')
+        1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
 
         when:
         context.groovyScriptFile('foo.groovy') {
@@ -732,104 +657,10 @@ class StepContextSpec extends Specification {
         def groovy21Node = context.stepNodes[2]
         groovy21Node.groovyName.size() == 1
         groovy21Node.groovyName[0].value() == 'Groovy 2.1'
-        1 * jobManagement.requirePlugin('groovy')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
     }
 
     def 'call systemGroovyCommand methods'() {
-        when:
-        context.systemGroovyCommand("println 'Hello World!'")
-
-        then:
-        context.stepNodes.size() == 1
-        def systemGroovyNode = context.stepNodes[0]
-        systemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
-        systemGroovyNode.bindings.size() == 1
-        systemGroovyNode.bindings[0].value() == ''
-        systemGroovyNode.classpath.size() == 1
-        systemGroovyNode.classpath[0].value() == ''
-        systemGroovyNode.scriptSource.size() == 1
-        def scriptSourceNode = systemGroovyNode.scriptSource[0]
-        scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
-        scriptSourceNode.command.size() == 1
-        scriptSourceNode.command[0].value() == "println 'Hello World!'"
-        1 * jobManagement.requirePlugin('groovy')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
-
-        when:
-        context.systemGroovyCommand('acme.Acme.doSomething()') {
-            binding('foo', 'bar')
-            binding('test', '0815')
-            classpath('/foo/acme.jar')
-            classpath('/foo/test.jar')
-        }
-
-        then:
-        context.stepNodes.size() == 2
-        def acmeSystemGroovyNode = context.stepNodes[1]
-        acmeSystemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
-        acmeSystemGroovyNode.bindings.size() == 1
-        acmeSystemGroovyNode.bindings[0].value() == 'foo=bar\ntest=0815'
-        acmeSystemGroovyNode.classpath.size() == 1
-        acmeSystemGroovyNode.classpath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
-        acmeSystemGroovyNode.scriptSource.size() == 1
-        def acmeScriptSourceNode = acmeSystemGroovyNode.scriptSource[0]
-        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.StringScriptSource'
-        acmeScriptSourceNode.command.size() == 1
-        acmeScriptSourceNode.command[0].value() == 'acme.Acme.doSomething()'
-        1 * jobManagement.requirePlugin('groovy')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
-    }
-
-    def 'call systemGroovyScriptFile methods'() {
-        when:
-        context.systemGroovyScriptFile('scripts/hello.groovy')
-
-        then:
-        context.stepNodes.size() == 1
-        def systemGroovyNode = context.stepNodes[0]
-        systemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
-        systemGroovyNode.bindings.size() == 1
-        systemGroovyNode.bindings[0].value() == ''
-        systemGroovyNode.classpath.size() == 1
-        systemGroovyNode.classpath[0].value() == ''
-        systemGroovyNode.scriptSource.size() == 1
-        def scriptSourceNode = systemGroovyNode.scriptSource[0]
-        scriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
-        scriptSourceNode.scriptFile.size() == 1
-        scriptSourceNode.scriptFile[0].value() == 'scripts/hello.groovy'
-        1 * jobManagement.requirePlugin('groovy')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
-
-        when:
-        context.systemGroovyScriptFile('acme.groovy') {
-            binding('foo', 'bar')
-            binding('test', '0815')
-            classpath('/foo/acme.jar')
-            classpath('/foo/test.jar')
-        }
-
-        then:
-        context.stepNodes.size() == 2
-        def acmeSystemGroovyNode = context.stepNodes[1]
-        acmeSystemGroovyNode.name() == 'hudson.plugins.groovy.SystemGroovy'
-        acmeSystemGroovyNode.bindings.size() == 1
-        acmeSystemGroovyNode.bindings[0].value() == 'foo=bar\ntest=0815'
-        acmeSystemGroovyNode.classpath.size() == 1
-        acmeSystemGroovyNode.classpath[0].value() == "/foo/acme.jar${File.pathSeparator}/foo/test.jar"
-        acmeSystemGroovyNode.scriptSource.size() == 1
-        def acmeScriptSourceNode = acmeSystemGroovyNode.scriptSource[0]
-        acmeScriptSourceNode.attribute('class') == 'hudson.plugins.groovy.FileScriptSource'
-        acmeScriptSourceNode.scriptFile.size() == 1
-        acmeScriptSourceNode.scriptFile[0].value() == 'acme.groovy'
-        1 * jobManagement.requirePlugin('groovy')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
-    }
-
-    def 'call systemGroovyCommand methods with plugin version 2.0'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0') >> true
-
         when:
         context.systemGroovyCommand("println 'Hello World!'")
 
@@ -849,8 +680,7 @@ class StepContextSpec extends Specification {
                 script[0].classpath[0].children().size() == 0
             }
         }
-        1 * jobManagement.requirePlugin('groovy')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
 
         when:
         context.systemGroovyCommand('acme.Acme.doSomething()') {
@@ -880,15 +710,10 @@ class StepContextSpec extends Specification {
                 script[0].classpath[0].entry[1].url[0].value() == 'file:/foo/test.jar'
             }
         }
-        1 * jobManagement.requirePlugin('groovy')
         1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
     }
 
-    def 'call systemGroovyCommand with invalid classpath and plugin version 2.0'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0') >> true
-
+    def 'call systemGroovyCommand with invalid classpath'() {
         when:
         context.systemGroovyCommand('acme.Acme.doSomething()') {
             classpath('/foo/acme.jar')
@@ -898,10 +723,7 @@ class StepContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    def 'call systemGroovyScriptFile methods with plugin version 2.0'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0') >> true
-
+    def 'call systemGroovyScriptFile methods'() {
         when:
         context.systemGroovyScriptFile('scripts/hello.groovy')
 
@@ -918,8 +740,7 @@ class StepContextSpec extends Specification {
                 scriptFile[0].value() == 'scripts/hello.groovy'
             }
         }
-        1 * jobManagement.requirePlugin('groovy')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
 
         when:
         context.systemGroovyScriptFile('acme.groovy') {
@@ -942,8 +763,7 @@ class StepContextSpec extends Specification {
                 scriptFile[0].value() == 'acme.groovy'
             }
         }
-        1 * jobManagement.requirePlugin('groovy')
-        1 * jobManagement.logPluginDeprecationWarning('groovy', '2.0')
+        1 * jobManagement.requireMinimumPluginVersion('groovy', '2.0')
     }
 
     def 'call copyArtifacts selector variants'() {

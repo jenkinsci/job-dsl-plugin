@@ -14,7 +14,7 @@ class MultibranchWorkflowJobSpec extends Specification {
 
         then:
         xml.name() == 'org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject'
-        xml.children().size() == 12
+        xml.children().size() == 8
     }
 
     def 'can add branchSource'() {

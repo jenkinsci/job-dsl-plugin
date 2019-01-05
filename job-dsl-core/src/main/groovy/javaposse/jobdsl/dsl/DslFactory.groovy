@@ -144,7 +144,7 @@ interface DslFactory extends ViewFactory {
      * @since 1.58
      * @see #organizationFolder(java.lang.String)
      */
-    @RequiresPlugin(id = 'branch-api', minimumVersion = '1.11', failIfMissing = true)
+    @RequiresPlugin(id = 'branch-api', minimumVersion = '2.0.0', failIfMissing = true)
     OrganizationFolderJob organizationFolder(String name, @DslContext(OrganizationFolderJob) Closure closure)
 
     /**
@@ -152,7 +152,7 @@ interface DslFactory extends ViewFactory {
      *
      * @since 1.58
      */
-    @RequiresPlugin(id = 'branch-api', minimumVersion = '1.11', failIfMissing = true)
+    @RequiresPlugin(id = 'branch-api', minimumVersion = '2.0.0', failIfMissing = true)
     OrganizationFolderJob organizationFolder(String name)
 
     /**
@@ -160,7 +160,7 @@ interface DslFactory extends ViewFactory {
      *
      * @since 1.47
      */
-    @RequiresPlugin(id = 'workflow-multibranch', minimumVersion = '1.12', failIfMissing = true)
+    @RequiresPlugin(id = 'workflow-multibranch', minimumVersion = '2.10', failIfMissing = true)
     MultibranchWorkflowJob multibranchPipelineJob(String name, @DslContext(MultibranchWorkflowJob) Closure closure)
 
     /**
@@ -177,7 +177,7 @@ interface DslFactory extends ViewFactory {
      *
      * @since 1.31
      */
-    @RequiresPlugin(id = 'cloudbees-folder', minimumVersion = '5.0', failIfMissing = true)
+    @RequiresPlugin(id = 'cloudbees-folder', minimumVersion = '5.14', failIfMissing = true)
     Folder folder(String name, @DslContext(Folder) Closure closure)
 
     /**

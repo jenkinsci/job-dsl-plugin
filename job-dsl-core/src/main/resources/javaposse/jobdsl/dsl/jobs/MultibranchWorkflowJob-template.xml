@@ -1,23 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject>
-    <actions/>
-    <description/>
     <properties/>
-    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
-    <views>
-        <hudson.model.AllView>
-            <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../../.."/>
-            <name>All</name>
-            <filterExecutors>false</filterExecutors>
-            <filterQueue>false</filterQueue>
-            <properties class="hudson.model.View$PropertyList"/>
-        </hudson.model.AllView>
-    </views>
-    <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
-    <primaryView>All</primaryView>
+    <folderViews class="jenkins.branch.MultiBranchProjectViewHolder">
+        <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+    </folderViews>
     <healthMetrics>
-        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
+        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
+            <nonRecursive>false</nonRecursive>
+        </com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
     </healthMetrics>
+    <icon class="jenkins.branch.MetadataActionFolderIcon">
+        <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+    </icon>
     <orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy">
         <pruneDeadBranches>false</pruneDeadBranches>
         <daysToKeep>-1</daysToKeep>

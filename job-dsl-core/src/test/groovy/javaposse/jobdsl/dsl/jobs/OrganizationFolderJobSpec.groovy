@@ -13,8 +13,6 @@ class OrganizationFolderJobSpec extends Specification {
         expect:
         with(job.node) {
             name() == 'jenkins.branch.OrganizationFolder'
-            actions.size() == 1
-            actions[0].children().size() == 0
             orphanedItemStrategy[0].attribute('class') ==
                     'com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy'
             projectFactories.size() == 1
@@ -26,8 +24,6 @@ class OrganizationFolderJobSpec extends Specification {
             triggers[0].children().size() == 0
             healthMetrics.size() == 1
             healthMetrics[0].'com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric'.size() == 1
-            viewsTabBar.size() == 1
-            viewsTabBar[0].attribute('class') == 'hudson.views.DefaultViewsTabBar'
         }
     }
 

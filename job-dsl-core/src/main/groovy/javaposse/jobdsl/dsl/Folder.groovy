@@ -35,7 +35,6 @@ class Folder extends AbstractFolder {
 
     @Override
     protected Node getNodeTemplate() {
-        String version = jobManagement.isMinimumPluginVersionInstalled('cloudbees-folder', '5.14') ? '-5.14' : ''
-        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}${version}-template.xml"))
+        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
     }
 }

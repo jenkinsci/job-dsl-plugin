@@ -29,6 +29,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.72 (unreleased)
+  * Removed anything that has been deprecated in 1.70, see [Migration](Migration#migrating-to-170)
+  * Removed anything that has been deprecated in 1.69, see [Migration](Migration#migrating-to-169)
+  * Removed anything that has been deprecated in 1.68, see [Migration](Migration#migrating-to-168)
+  * Removed anything that has been deprecated in 1.67, see [Migration](Migration#migrating-to-167)
 * 1.71 (January 05 2019)
   * Log path of script file
     ([JENKINS-52550](https://issues.jenkins-ci.org/browse/JENKINS-52550))

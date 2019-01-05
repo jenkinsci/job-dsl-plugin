@@ -85,38 +85,6 @@ class GitLabTriggerContext extends AbstractContext {
     }
 
     /**
-     * If set, adds a note with build status on merge requests. Defaults to {@code true}.
-     */
-    @Deprecated
-    void addNoteOnMergeRequest(boolean addNoteOnMergeRequest = true) {
-        this.addNoteOnMergeRequest = addNoteOnMergeRequest
-    }
-
-    /**
-     * If set, adds a vote to note with build status on merge requests. Defaults to {@code true}.
-     */
-    @Deprecated
-    void addVoteOnMergeRequest(boolean addVoteOnMergeRequest = true) {
-        this.addVoteOnMergeRequest = addVoteOnMergeRequest
-    }
-
-    /**
-     * If set, enables GitLab 8.1 CI features. Defaults to {@code false}.
-     */
-    @Deprecated
-    void useCiFeatures(boolean useCiFeatures = true) {
-        this.useCiFeatures = useCiFeatures
-    }
-
-    /**
-     * If set, accepts merge request on success. Defaults to {@code false}.
-     */
-    @Deprecated
-    void acceptMergeRequestOnSuccess(boolean acceptMergeRequestOnSuccess = true) {
-        this.acceptMergeRequestOnSuccess = acceptMergeRequestOnSuccess
-    }
-
-    /**
      * Only rebuild open Merge Requests. Defaults to {@code 'never'}.
      *
      * Possible values are {@code 'never'}, {@code 'source'} and {@code 'both'}.

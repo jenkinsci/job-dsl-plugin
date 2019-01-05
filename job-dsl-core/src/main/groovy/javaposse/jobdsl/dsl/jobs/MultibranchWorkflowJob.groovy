@@ -47,7 +47,6 @@ class MultibranchWorkflowJob extends ComputedFolder {
 
     @Override
     protected Node getNodeTemplate() {
-        String version = jobManagement.isMinimumPluginVersionInstalled('workflow-multibranch', '2.10') ? '-2.10' : ''
-        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}${version}-template.xml"))
+        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
     }
 }

@@ -20,7 +20,7 @@ class WorkflowDefinitionContext extends AbstractExtensibleContext {
     /**
      * Defines a Groovy CPS DSL definition.
      */
-    @RequiresPlugin(id = 'workflow-cps')
+    @RequiresPlugin(id = 'workflow-cps', minimumVersion = '2.29')
     void cps(@DslContext(CpsContext) Closure cpsClosure) {
         CpsContext context = new CpsContext()
         ContextHelper.executeInContext(cpsClosure, context)
@@ -36,10 +36,8 @@ class WorkflowDefinitionContext extends AbstractExtensibleContext {
      *
      * @since 1.44
      */
-    @RequiresPlugin(id = 'workflow-cps', minimumVersion = '1.2')
+    @RequiresPlugin(id = 'workflow-cps', minimumVersion = '2.29')
     void cpsScm(@DslContext(CpsScmContext) Closure cpsScmClosure) {
-        jobManagement.logPluginDeprecationWarning('workflow-cps', '2.29')
-
         CpsScmContext context = new CpsScmContext(jobManagement, item)
         ContextHelper.executeInContext(cpsScmClosure, context)
 
@@ -49,9 +47,7 @@ class WorkflowDefinitionContext extends AbstractExtensibleContext {
         definitionNode = new NodeBuilder().
                 definition(class: 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition') {
             scriptPath(context.scriptPath)
-            if (jobManagement.isMinimumPluginVersionInstalled('workflow-cps', '2.29')) {
-                lightweight(context.lightweight)
-            }
+            lightweight(context.lightweight)
         }
         definitionNode.children().add(context.scmContext.scmNodes[0])
     }
