@@ -31,7 +31,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.71 (unreleased)
   * Log path of script file
     ([JENKINS-52550](https://issues.jenkins-ci.org/browse/JENKINS-52550))
-  * Fixed support for authentication token for Pipeline jobs
+  * Fixed support for authentication token and disabling concurrent builds for Pipeline jobs
     ([JENKINS-31832](https://issues.jenkins-ci.org/browse/JENKINS-31832))
   * Added support for `Object` typed options to [[Dynamic DSL]]
     ([JENKINS-52546](https://issues.jenkins-ci.org/browse/JENKINS-52546))
