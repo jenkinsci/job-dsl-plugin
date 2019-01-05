@@ -1,5 +1,5 @@
 {
-    "version": "1.71",
+    "version": "1.70",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -37751,11 +37751,6 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "plugins": [
-                                {
-                                    "id": "workflow-cps"
-                                }
-                            ],
                             "html": "Defines a Groovy CPS DSL definition.",
                             "firstSentenceCommentText": "Defines a Groovy CPS DSL definition.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.workflow.CpsContext"
@@ -37802,9 +37797,7 @@
                                     "type": "String"
                                 }
                             ],
-                            "availableSince": "1.39",
-                            "html": "Provide an authorization token in the form of a string so that only those who know it would be able to remotely\r\n trigger this project's builds. Global security must be enabled to trigger builds remotely.\r\n\r\n For security reasons, do not use a hard-coded token. See\r\n <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials\">Handling Credentials</a> for\r\n details about handling credentials in DSL scripts.",
-                            "firstSentenceCommentText": "Provide an authorization token in the form of a string so that only those who know it would be able to remotely\r\n trigger this project's builds. "
+                            "deprecated": true
                         }
                     ]
                 },
@@ -37955,9 +37948,7 @@
                                     "defaultValue": "true"
                                 }
                             ],
-                            "availableSince": "1.21",
-                            "html": "Allows Jenkins to schedule and execute multiple builds concurrently.",
-                            "firstSentenceCommentText": "Allows Jenkins to schedule and execute multiple builds concurrently."
+                            "deprecated": true
                         }
                     ]
                 },
@@ -39168,7 +39159,7 @@
                             "availableSince": "1.47",
                             "plugins": [
                                 {
-                                    "id": "workflow-job"
+                                    "id": "workflow-aggregator"
                                 }
                             ],
                             "html": "Create or updates a pipeline job.\r\n Alias for #workflowJob(java.lang.String).",
@@ -39188,7 +39179,7 @@
                             "availableSince": "1.47",
                             "plugins": [
                                 {
-                                    "id": "workflow-job"
+                                    "id": "workflow-aggregator"
                                 }
                             ],
                             "html": "Create or updates a pipeline job.\r\n Alias for #workflowJob(java.lang.String, groovy.lang.Closure)",
