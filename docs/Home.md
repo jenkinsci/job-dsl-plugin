@@ -29,6 +29,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.72 (unreleased)
+  * Increased the minimum supported Jenkins version to 2.121
   * Removed anything that has been deprecated in 1.70, see [Migration](Migration#migrating-to-170)
   * Removed anything that has been deprecated in 1.69, see [Migration](Migration#migrating-to-169)
   * Removed anything that has been deprecated in 1.68, see [Migration](Migration#migrating-to-168)
