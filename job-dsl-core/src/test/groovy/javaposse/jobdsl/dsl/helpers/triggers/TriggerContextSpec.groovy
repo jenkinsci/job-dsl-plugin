@@ -307,21 +307,17 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
-            children().size() == 17
+            children().size() == 13
             spec[0].value() == []
             triggerOnPush[0].value() == true
             triggerOnMergeRequest[0].value() == true
             triggerOpenMergeRequestOnPush[0].value() == 'never'
             ciSkip[0].value() == true
             setBuildDescription[0].value() == true
-            addNoteOnMergeRequest[0].value() == true
-            addCiMessage[0].value() == false
-            addVoteOnMergeRequest[0].value() == true
             branchFilterType[0].value() == 'All'
             includeBranchesSpec[0].value().empty
             excludeBranchesSpec[0].value().empty
             targetBranchRegex[0].value().empty
-            acceptMergeRequestOnSuccess[0].value() == false
             triggerOnNoteRequest[0].value() == true
             noteRegex[0].value() == 'Jenkins please retry a build'
             skipWorkInProgressMergeRequest[0].value() == true
@@ -337,11 +333,7 @@ class TriggerContextSpec extends Specification {
             buildOnPushEvents(value)
             enableCiSkip(value)
             setBuildDescription(value)
-            addNoteOnMergeRequest(value)
             rebuildOpenMergeRequest('both')
-            addVoteOnMergeRequest(value)
-            useCiFeatures(value)
-            acceptMergeRequestOnSuccess(value)
             includeBranches('include1,include2')
             excludeBranches('exclude1,exclude2')
             commentTrigger(null)
@@ -351,21 +343,17 @@ class TriggerContextSpec extends Specification {
         then:
         with(context.triggerNodes[0]) {
             name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
-            children().size() == 17
+            children().size() == 13
             spec[0].value() == []
             triggerOnPush[0].value() == value
             triggerOnMergeRequest[0].value() == value
             triggerOpenMergeRequestOnPush[0].value() == 'both'
             ciSkip[0].value() == value
             setBuildDescription[0].value() == value
-            addNoteOnMergeRequest[0].value() == value
-            addCiMessage[0].value() == value
-            addVoteOnMergeRequest[0].value() == value
             branchFilterType[0].value() == 'NameBasedFilter'
             includeBranchesSpec[0].value() == 'include1,include2'
             excludeBranchesSpec[0].value() == 'exclude1,exclude2'
             targetBranchRegex[0].value().empty
-            acceptMergeRequestOnSuccess[0].value() == value
             triggerOnNoteRequest[0].value() == false
             noteRegex[0].value() == ''
             skipWorkInProgressMergeRequest[0].value() == value
@@ -384,32 +372,24 @@ class TriggerContextSpec extends Specification {
             buildOnPushEvents(value)
             enableCiSkip(value)
             setBuildDescription(value)
-            addNoteOnMergeRequest(value)
             rebuildOpenMergeRequest('both')
-            addVoteOnMergeRequest(value)
-            useCiFeatures(value)
-            acceptMergeRequestOnSuccess(value)
             targetBranchRegex('(.*debug.*|.*release.*)')
         }
 
         then:
         with(context.triggerNodes[0]) {
             name() == 'com.dabsquared.gitlabjenkins.GitLabPushTrigger'
-            children().size() == 17
+            children().size() == 13
             spec[0].value() == []
             triggerOnPush[0].value() == value
             triggerOnMergeRequest[0].value() == value
             triggerOpenMergeRequestOnPush[0].value() == 'both'
             ciSkip[0].value() == value
             setBuildDescription[0].value() == value
-            addNoteOnMergeRequest[0].value() == value
-            addCiMessage[0].value() == value
-            addVoteOnMergeRequest[0].value() == value
             branchFilterType[0].value() == 'RegexBasedFilter'
             includeBranchesSpec[0].value().empty
             excludeBranchesSpec[0].value().empty
             targetBranchRegex[0].value() == '(.*debug.*|.*release.*)'
-            acceptMergeRequestOnSuccess[0].value() == value
             triggerOnNoteRequest[0].value() == true
             noteRegex[0].value() == 'Jenkins please retry a build'
             skipWorkInProgressMergeRequest[0].value() == true

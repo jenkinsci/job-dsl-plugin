@@ -75,7 +75,6 @@ project(':job-dsl-core') {
 
     dependencies {
         astCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-        compile 'commons-codec:commons-codec:1.8' // for Perforce
         compile 'xmlunit:xmlunit:1.4' // for runtime use, not just for testing
         compile('org.jvnet.hudson:xstream:1.4.7-jenkins-1') {
             exclude group: 'xmlpull'

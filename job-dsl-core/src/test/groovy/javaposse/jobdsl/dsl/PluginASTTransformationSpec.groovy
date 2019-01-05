@@ -37,7 +37,7 @@ class PluginASTTransformationSpec extends Specification {
         jobParent.folder('test')
 
         then:
-        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.0', true)
+        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.14', true)
     }
 
     def 'require plugin on interface of interface'() {

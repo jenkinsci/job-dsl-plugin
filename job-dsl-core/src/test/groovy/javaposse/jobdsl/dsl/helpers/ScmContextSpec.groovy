@@ -1691,29 +1691,6 @@ class ScmContextSpec extends Specification {
         (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.1')
     }
 
-    def 'call p4 with all parameters'() {
-        setup:
-        def viewspec = '//depot/Tools/build/...\n//depot/webapplications/helloworld/...'
-
-        when:
-        context.p4(viewspec, 'roleoe', 'secret') { p4Node ->
-            p4Node / alwaysForceSync << 'true'
-        }
-
-        then:
-        context.scmNodes[0] != null
-        context.scmNodes[0].attributes()['class'] == 'hudson.plugins.perforce.PerforceSCM'
-        context.scmNodes[0].p4User[0].value() == 'roleoe'
-        context.scmNodes[0].p4Passwd[0].value() == '0f0kqlwajkEPwz8Yp+A=' // Using PerforcePasswordEncryptor
-        context.scmNodes[0].p4Port[0].value() == 'perforce:1666'
-        context.scmNodes[0].alwaysForceSync.size() == 1 // Double check there's only one
-        context.scmNodes[0].alwaysForceSync[0].value() == 'true'
-        context.scmNodes[0].projectPath.size() == 1
-        context.scmNodes[0].projectPath[0].value().contains('//depot')
-        1 * mockJobManagement.requirePlugin('perforce')
-        1 * mockJobManagement.logDeprecationWarning()
-    }
-
     def 'call perforceP4 with all options'() {
         when:
         context.perforceP4('p4-user-creds') {

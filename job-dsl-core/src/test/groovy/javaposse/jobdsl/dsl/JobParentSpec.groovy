@@ -234,8 +234,7 @@ class JobParentSpec extends Specification {
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
         folder.node.displayName[0].text() == 'foo'
-        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.0', true)
-        1 * jobManagement.logPluginDeprecationWarning('cloudbees-folder', '5.14')
+        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.14', true)
     }
 
     def 'folder without closure'() {
@@ -245,8 +244,7 @@ class JobParentSpec extends Specification {
         then:
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
-        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.0', true)
-        1 * jobManagement.logPluginDeprecationWarning('cloudbees-folder', '5.14')
+        1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.14', true)
     }
 
     def 'readFileInWorkspace from seed job'() {
@@ -421,8 +419,7 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
-        1 * jobManagement.requireMinimumPluginVersion('workflow-multibranch', '1.12', true)
-        1 * jobManagement.logPluginDeprecationWarning('workflow-multibranch', '2.10')
+        1 * jobManagement.requireMinimumPluginVersion('workflow-multibranch', '2.10', true)
     }
 
     def 'organization folder job'() {
@@ -433,7 +430,6 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
-        1 * jobManagement.requireMinimumPluginVersion('branch-api', '1.11', true)
-        1 * jobManagement.logPluginDeprecationWarning('branch-api', '2.0.0')
+        1 * jobManagement.requireMinimumPluginVersion('branch-api', '2.0.0', true)
     }
 }

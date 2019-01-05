@@ -92,7 +92,6 @@ abstract class JobParent extends Script implements DslFactory {
     @Override
     MultibranchWorkflowJob multibranchPipelineJob(String name,
                                                   @DslContext(MultibranchWorkflowJob) Closure closure = null) {
-        jm.logPluginDeprecationWarning('workflow-multibranch', '2.10')
         processItem(name, MultibranchWorkflowJob, closure)
     }
 
@@ -132,7 +131,6 @@ abstract class JobParent extends Script implements DslFactory {
      * @since 1.58
      */
     OrganizationFolderJob organizationFolder(String name, @DslContext(OrganizationFolderJob) Closure closure = null) {
-        jm.logPluginDeprecationWarning('branch-api', '2.0.0')
         processItem(name, OrganizationFolderJob, closure)
     }
 
@@ -173,8 +171,6 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     Folder folder(String name, @DslContext(Folder) Closure closure = null) {
-        jm.logPluginDeprecationWarning('cloudbees-folder', '5.14')
-
         processItem(name, Folder, closure)
     }
 

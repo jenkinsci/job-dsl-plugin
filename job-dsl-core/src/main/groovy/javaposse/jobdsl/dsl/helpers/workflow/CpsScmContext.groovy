@@ -5,7 +5,6 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.ScmContext
 
 class CpsScmContext extends AbstractContext {
@@ -41,7 +40,6 @@ class CpsScmContext extends AbstractContext {
      *
      * @since 1.68
      */
-    @RequiresPlugin(id = 'workflow-cps', minimumVersion = '2.29')
     void lightweight(boolean lightweight = true) {
         this.lightweight = lightweight
     }

@@ -11,7 +11,7 @@ import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
 import javaposse.jobdsl.dsl.helpers.scm.HgContext
 import javaposse.jobdsl.dsl.helpers.scm.P4Context
-import javaposse.jobdsl.dsl.helpers.scm.PerforcePasswordEncryptor
+
 import javaposse.jobdsl.dsl.helpers.scm.RTCContext
 import javaposse.jobdsl.dsl.helpers.scm.SvnContext
 
@@ -24,8 +24,6 @@ import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.VALID_CLON
 
 @ContextType('hudson.scm.SCM')
 class ScmContext extends AbstractExtensibleContext {
-    private static final PerforcePasswordEncryptor PERFORCE_ENCRYPTOR = new PerforcePasswordEncryptor()
-
     final List<Node> scmNodes = []
 
     ScmContext(JobManagement jobManagement, Item item) {
@@ -249,76 +247,6 @@ class ScmContext extends AbstractExtensibleContext {
         ContextHelper.executeConfigureBlock(svnNode, svnContext.configureBlock)
 
         scmNodes << svnNode
-    }
-
-    /**
-     * Add Perforce SCM source.
-     *
-     * @see #p4(java.lang.String, java.lang.String, java.lang.String, groovy.lang.Closure)
-     */
-    @RequiresPlugin(id = 'perforce')
-    @Deprecated
-    void p4(String viewspec, String user, Closure configure = null) {
-        p4(viewspec, user, '', configure)
-    }
-
-    /**
-     * Add Perforce SCM source.
-     *
-     * The client name will be set to {@code builds-${JOB_NAME}}.
-     *
-     * For security reasons, do not use a hard-coded password. See
-     * <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials">Handling Credentials</a> for
-     * details about handling credentials in DSL scripts.
-     *
-     * The closure parameter expects a configure block for direct manipulation of the generated XML. The {@code scm}
-     * node is passed into the configure block.
-     *
-     * The configure block must be used to set additional options.
-     *
-     * @see <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block">The Configure Block</a>
-     */
-    @RequiresPlugin(id = 'perforce')
-    @Deprecated
-    void p4(String viewspec, String user, String password, Closure configureBlock = null) {
-        checkNotNull(viewspec, 'viewspec must not be null')
-
-        Node p4Node = new NodeBuilder().scm(class: 'hudson.plugins.perforce.PerforceSCM') {
-            p4User user
-            p4Passwd PERFORCE_ENCRYPTOR.isEncrypted(password) ? password : PERFORCE_ENCRYPTOR.encrypt(password)
-            p4Port 'perforce:1666'
-            p4Client 'builds-${JOB_NAME}'
-            projectPath "${viewspec}"
-            projectOptions 'noallwrite clobber nocompress unlocked nomodtime rmdir'
-            p4Tool 'p4'
-            p4SysDrive 'C:'
-            p4SysRoot 'C:\\WINDOWS'
-            useClientSpec 'false'
-            forceSync 'false'
-            alwaysForceSync 'false'
-            dontUpdateServer 'false'
-            disableAutoSync 'false'
-            disableSyncOnly 'false'
-            useOldClientName 'false'
-            updateView 'true'
-            dontRenameClient 'false'
-            updateCounterValue 'false'
-            dontUpdateClient 'false'
-            exposeP4Passwd 'false'
-            wipeBeforeBuild 'true'
-            wipeRepoBeforeBuild 'false'
-            firstChange '-1'
-            slaveClientNameFormat '${basename}-${nodename}'
-            lineEndValue ''
-            useViewMask 'false'
-            useViewMaskForPolling 'false'
-            useViewMaskForSyncing 'false'
-            pollOnlyOnMaster 'true'
-        }
-
-        ContextHelper.executeConfigureBlock(p4Node, configureBlock)
-
-        scmNodes << p4Node
     }
 
     /**

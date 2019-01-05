@@ -115,10 +115,8 @@ class StepContext extends AbstractExtensibleContext {
      *
      * @since 1.27
      */
-    @RequiresPlugin(id = 'gradle', minimumVersion = '1.26')
+    @RequiresPlugin(id = 'gradle', minimumVersion = '1.28')
     void gradle(@DslContext(GradleContext) Closure gradleClosure) {
-        jobManagement.logPluginDeprecationWarning('gradle', '1.28')
-
         GradleContext gradleContext = new GradleContext(jobManagement)
         ContextHelper.executeInContext(gradleClosure, gradleContext)
 
@@ -132,12 +130,8 @@ class StepContext extends AbstractExtensibleContext {
             makeExecutable gradleContext.makeExecutable
             fromRootBuildScriptDir gradleContext.fromRootBuildScriptDir
             useWorkspaceAsHome gradleContext.useWorkspaceAsHome
-            if (jobManagement.isMinimumPluginVersionInstalled('gradle', '1.27')) {
-                passAllAsSystemProperties gradleContext.passAllAsSystemProperties
-                passAllAsProjectProperties gradleContext.passAllAsProjectProperties
-            } else {
-                passAsProperties gradleContext.passAsProperties
-            }
+            passAllAsSystemProperties gradleContext.passAllAsSystemProperties
+            passAllAsProjectProperties gradleContext.passAllAsProjectProperties
         }
 
         ContextHelper.executeConfigureBlock(gradleNode, gradleContext.configureBlock)
@@ -151,7 +145,7 @@ class StepContext extends AbstractExtensibleContext {
      * The closure parameter expects a configure block for direct manipulation of the generated XML. The
      * {@code hudson.plugins.gradle.Gradle} node is passed into the configure block.
      */
-    @RequiresPlugin(id = 'gradle', minimumVersion = '1.26')
+    @RequiresPlugin(id = 'gradle', minimumVersion = '1.28')
     void gradle(String tasks = null, String switches = null, Boolean useWrapper = true, Closure configure = null) {
         gradle {
             if (tasks != null) {
@@ -313,7 +307,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a Groovy script.
      */
-    @RequiresPlugin(id = 'groovy')
+    @RequiresPlugin(id = 'groovy', minimumVersion = '2.0')
     void groovyCommand(String command, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(command, true, null, groovyClosure)
     }
@@ -321,7 +315,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a Groovy script.
      */
-    @RequiresPlugin(id = 'groovy')
+    @RequiresPlugin(id = 'groovy', minimumVersion = '2.0')
     void groovyCommand(String command, String groovyName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(command, true, groovyName, groovyClosure)
     }
@@ -329,7 +323,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a Groovy script.
      */
-    @RequiresPlugin(id = 'groovy')
+    @RequiresPlugin(id = 'groovy', minimumVersion = '2.0')
     void groovyScriptFile(String fileName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(fileName, false, null, groovyClosure)
     }
@@ -337,7 +331,7 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a Groovy script.
      */
-    @RequiresPlugin(id = 'groovy')
+    @RequiresPlugin(id = 'groovy', minimumVersion = '2.0')
     void groovyScriptFile(String fileName, String groovyName, @DslContext(GroovyContext) Closure groovyClosure = null) {
         groovy(fileName, false, groovyName, groovyClosure)
     }
@@ -345,22 +339,14 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a system Groovy script.
      */
-    @RequiresPlugin(id = 'groovy')
+    @RequiresPlugin(id = 'groovy', minimumVersion = '2.0')
     void systemGroovyCommand(String command, @DslContext(SystemGroovyCommandContext) Closure closure = null) {
-        jobManagement.logPluginDeprecationWarning('groovy', '2.0')
-
         SystemGroovyCommandContext systemGroovyContext = new SystemGroovyCommandContext(jobManagement)
         ContextHelper.executeInContext(closure, systemGroovyContext)
 
         Node systemGroovyNode = new NodeBuilder().'hudson.plugins.groovy.SystemGroovy' {
             bindings systemGroovyContext.bindings.collect { key, value -> "${key}=${value}" }.join('\n')
-            if (!jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0')) {
-                classpath systemGroovyContext.classpathEntries.join(File.pathSeparator)
-            }
-        }
-        Node scriptSource
-        if (jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0')) {
-            scriptSource = new NodeBuilder().source(class: 'hudson.plugins.groovy.StringSystemScriptSource') {
+            source(class: 'hudson.plugins.groovy.StringSystemScriptSource') {
                 script {
                     script(command)
                     sandbox(systemGroovyContext.sandbox)
@@ -373,10 +359,7 @@ class StepContext extends AbstractExtensibleContext {
                     }
                 }
             }
-        } else {
-            scriptSource = groovyScriptSource(command, true)
         }
-        systemGroovyNode.append(scriptSource)
 
         stepNodes << systemGroovyNode
     }
@@ -384,28 +367,17 @@ class StepContext extends AbstractExtensibleContext {
     /**
      * Executes a system Groovy script.
      */
-    @RequiresPlugin(id = 'groovy')
+    @RequiresPlugin(id = 'groovy', minimumVersion = '2.0')
     void systemGroovyScriptFile(String fileName, @DslContext(SystemGroovyContext) Closure systemGroovyClosure = null) {
-        jobManagement.logPluginDeprecationWarning('groovy', '2.0')
-
         SystemGroovyContext systemGroovyContext = new SystemGroovyContext()
         ContextHelper.executeInContext(systemGroovyClosure, systemGroovyContext)
 
         Node systemGroovyNode = new NodeBuilder().'hudson.plugins.groovy.SystemGroovy' {
             bindings systemGroovyContext.bindings.collect { key, value -> "${key}=${value}" }.join('\n')
-            if (!jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0')) {
-                classpath systemGroovyContext.classpathEntries.join(File.pathSeparator)
-            }
-        }
-        Node scriptSource
-        if (jobManagement.isMinimumPluginVersionInstalled('groovy', '2.0')) {
-            scriptSource = new NodeBuilder().source(class: 'hudson.plugins.groovy.FileSystemScriptSource') {
+            source(class: 'hudson.plugins.groovy.FileSystemScriptSource') {
                 scriptFile fileName
             }
-        } else {
-            scriptSource = groovyScriptSource(fileName, false)
         }
-        systemGroovyNode.append(scriptSource)
 
         stepNodes << systemGroovyNode
     }
@@ -1219,8 +1191,6 @@ class StepContext extends AbstractExtensibleContext {
 
     protected void groovy(String commandOrFileName, boolean isCommand, String groovyInstallation,
                           Closure groovyClosure) {
-        jobManagement.logPluginDeprecationWarning('groovy', '2.0')
-
         GroovyContext groovyContext = new GroovyContext()
         ContextHelper.executeInContext(groovyClosure, groovyContext)
 

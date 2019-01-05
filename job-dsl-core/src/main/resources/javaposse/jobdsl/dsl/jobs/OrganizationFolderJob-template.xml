@@ -1,22 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <jenkins.branch.OrganizationFolder>
-    <actions/>
-    <description/>
     <properties/>
-    <views>
-        <hudson.model.AllView>
-            <owner class="jenkins.branch.OrganizationFolder" reference="../../.."/>
-            <name>All</name>
-            <filterExecutors>false</filterExecutors>
-            <filterQueue>false</filterQueue>
-            <properties class="hudson.model.View$PropertyList"/>
-        </hudson.model.AllView>
-    </views>
-    <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
+    <folderViews class="jenkins.branch.OrganizationFolderViewHolder">
+        <owner reference="../.."/>
+    </folderViews>
     <healthMetrics>
-        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric/>
+        <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
+            <nonRecursive>false</nonRecursive>
+        </com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
     </healthMetrics>
-    <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
+    <icon class="jenkins.branch.MetadataActionFolderIcon">
+        <owner class="jenkins.branch.OrganizationFolder" reference="../.."/>
+    </icon>
     <orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy">
         <pruneDeadBranches>true</pruneDeadBranches>
         <daysToKeep>0</daysToKeep>

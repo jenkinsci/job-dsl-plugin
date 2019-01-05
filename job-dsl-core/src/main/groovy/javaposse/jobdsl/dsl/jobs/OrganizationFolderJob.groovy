@@ -50,7 +50,6 @@ class OrganizationFolderJob extends ComputedFolder {
 
     @Override
     protected Node getNodeTemplate() {
-        String version = jobManagement.isMinimumPluginVersionInstalled('branch-api', '2.0.0') ? '-2.0.0' : ''
-        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}${version}-template.xml"))
+        new XmlParser().parse(this.class.getResourceAsStream("${this.class.simpleName}-template.xml"))
     }
 }

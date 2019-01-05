@@ -11,12 +11,6 @@ abstract class ComputedFolder extends AbstractFolder {
         super(jobManagement, name)
     }
 
-    @Override
-    @Deprecated
-    void primaryView(String primaryViewArg) {
-        super.primaryView(primaryViewArg)
-    }
-
     /**
      * Adds build triggers to the job.
      */

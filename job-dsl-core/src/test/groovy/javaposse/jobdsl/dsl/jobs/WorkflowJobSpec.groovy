@@ -64,68 +64,16 @@ class WorkflowJobSpec extends Specification {
         then:
         with(job.node.definition[0]) {
             attribute('class') == 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition'
-            children().size() == 2
-            scm[0].attribute('class') == 'hudson.plugins.git.GitSCM'
-            scm[0].children().size() == 6
-            scriptPath[0].value() == 'Jenkinsfile'
-        }
-        1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
-        1 * jobManagement.logPluginDeprecationWarning('workflow-cps', '2.29')
-    }
-
-    def 'minimal cps scm workflow with newer plugin version'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('workflow-cps', '2.29') >> true
-
-        when:
-        job.definition {
-            cpsScm {
-                scm {
-                    git('https://github.com/jenkinsci/job-dsl-plugin.git')
-                }
-            }
-        }
-
-        then:
-        with(job.node.definition[0]) {
-            attribute('class') == 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition'
             children().size() == 3
             scm[0].attribute('class') == 'hudson.plugins.git.GitSCM'
             scm[0].children().size() == 6
             scriptPath[0].value() == 'Jenkinsfile'
             lightweight[0].value() == false
         }
-        1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
-        1 * jobManagement.logPluginDeprecationWarning('workflow-cps', '2.29')
+        1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '2.29')
     }
 
     def 'full cps scm workflow'() {
-        when:
-        job.definition {
-            cpsScm {
-                scm {
-                    git('https://github.com/jenkinsci/job-dsl-plugin.git')
-                }
-                scriptPath('.jenkins/Jenkinsfile')
-            }
-        }
-
-        then:
-        with(job.node.definition[0]) {
-            attribute('class') == 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition'
-            children().size() == 2
-            scm[0].attribute('class') == 'hudson.plugins.git.GitSCM'
-            scm[0].children().size() == 6
-            scriptPath[0].value() == '.jenkins/Jenkinsfile'
-        }
-        1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
-        1 * jobManagement.logPluginDeprecationWarning('workflow-cps', '2.29')
-    }
-
-    def 'full cps scm workflow with newer plugin version'() {
-        setup:
-        jobManagement.isMinimumPluginVersionInstalled('workflow-cps', '2.29') >> true
-
         when:
         job.definition {
             cpsScm {
@@ -146,9 +94,7 @@ class WorkflowJobSpec extends Specification {
             scriptPath[0].value() == '.jenkins/Jenkinsfile'
             lightweight[0].value() == true
         }
-        1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '1.2')
         1 * jobManagement.requireMinimumPluginVersion('workflow-cps', '2.29')
-        1 * jobManagement.logPluginDeprecationWarning('workflow-cps', '2.29')
     }
 
     def 'cps scm workflow without scm'() {

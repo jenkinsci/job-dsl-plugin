@@ -18,11 +18,7 @@ abstract class AbstractFolder extends Item {
      */
     void primaryView(String primaryViewArg) {
         configure {
-            Node node = it
-            if (jobManagement.isMinimumPluginVersionInstalled('cloudbees-folder', '5.14')) {
-                node = node / 'folderViews'
-            }
-            node / methodMissing('primaryView', primaryViewArg)
+            it / 'folderViews' / methodMissing('primaryView', primaryViewArg)
         }
     }
 
