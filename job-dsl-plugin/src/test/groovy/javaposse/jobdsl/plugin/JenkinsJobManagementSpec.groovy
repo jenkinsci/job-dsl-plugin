@@ -678,7 +678,7 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'create view with invalid config'() {
         when:
-        jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView>', false)
+        jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView', false)
 
         then:
         thrown(DslException)

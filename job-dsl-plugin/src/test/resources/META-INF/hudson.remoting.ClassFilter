@@ -1,0 +1,9 @@
+javaposse.jobdsl.plugin.ExecuteDslScripts
+javaposse.jobdsl.plugin.actions.GeneratedConfigFilesBuildAction
+javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction
+javaposse.jobdsl.plugin.actions.GeneratedUserContentsBuildAction
+javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction
+javaposse.jobdsl.plugin.fixtures.DeprecatedTrigger
+javaposse.jobdsl.plugin.fixtures.ExampleJobDslExtension$SomeValueObject
+javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint$MyColumn
+javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint$SomeValueObject
