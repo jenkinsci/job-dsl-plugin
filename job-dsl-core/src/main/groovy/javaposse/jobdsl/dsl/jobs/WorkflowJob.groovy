@@ -79,11 +79,6 @@ class WorkflowJob extends Job {
 
     @Deprecated
     @SuppressWarnings(['EmptyMethod', 'UnusedMethodParameter'])
-    void concurrentBuild(boolean allowConcurrentBuild = true) {
-    }
-
-    @Deprecated
-    @SuppressWarnings(['EmptyMethod', 'UnusedMethodParameter'])
     void batchTask(String name, String script) {
     }
 
