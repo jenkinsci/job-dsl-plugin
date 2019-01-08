@@ -16,7 +16,7 @@ public enum LookupStrategy {
     /**
      * Using this naming strategy jobs with relative path names are absolute names.
      */
-    JENKINS_ROOT("Jenkins Root", (seedJob) -> Jenkins.getInstance()),
+    JENKINS_ROOT("Jenkins Root", (seedJob) -> Jenkins.get()),
 
     /**
      * Using this naming strategy jobs with relative path names are created relative
@@ -44,7 +44,7 @@ public enum LookupStrategy {
         if (normalizePath == null) {
             return null;
         }
-        return Jenkins.getInstance().getItemByFullName(normalizePath, type);
+        return Jenkins.get().getItemByFullName(normalizePath, type);
     }
 
     /**
@@ -65,7 +65,7 @@ public enum LookupStrategy {
      * @return parent {@link hudson.model.ItemGroup} of the item with the given path
      */
     public ItemGroup getParent(Item seedJob, String path) {
-        Jenkins jenkins = Jenkins.getInstance();
+        Jenkins jenkins = Jenkins.get();
 
         String absolutePath;
         if (path.startsWith("/")) {
@@ -91,7 +91,7 @@ public enum LookupStrategy {
     private final Function<Item, ItemGroup> context;
 
     private static ItemGroup getItemGroup(String path) {
-        Jenkins instance = Jenkins.getInstance();
+        Jenkins instance = Jenkins.get();
         String normalizedPath = normalizePath(path);
         if (normalizedPath == null) {
             return null;

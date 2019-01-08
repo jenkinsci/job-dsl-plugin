@@ -58,6 +58,6 @@ public abstract class ContextExtensionPoint implements ExtensionPoint {
      * @return a list of all registered JobDslContextExtensionPoints.
      */
     public static ExtensionList<ContextExtensionPoint> all() {
-        return Jenkins.getInstance().getExtensionList(ContextExtensionPoint.class);
+        return Jenkins.get().getExtensionList(ContextExtensionPoint.class);
     }
 }

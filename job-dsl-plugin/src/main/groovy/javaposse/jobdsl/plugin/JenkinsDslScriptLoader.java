@@ -21,12 +21,12 @@ public class JenkinsDslScriptLoader extends AbstractDslScriptLoader<JenkinsJobPa
     protected void extractGeneratedItems(GeneratedItems generatedItems, JenkinsJobParent jobParent, ScriptRequest scriptRequest) {
         super.extractGeneratedItems(generatedItems, jobParent, scriptRequest);
 
-        if (Jenkins.getInstance().getPluginManager().getPlugin("config-file-provider") != null) {
+        if (Jenkins.get().getPluginManager().getPlugin("config-file-provider") != null) {
             GlobalConfigFiles globalConfigFiles = GlobalConfigFiles.get();
             for (Object o : jobParent.getReferencedConfigs()) {
                 Config config = (Config) o;
                 if (!(scriptRequest.getIgnoreExisting() && globalConfigFiles.getById(config.id) != null)) {
-                    Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
+                    Jenkins.get().checkPermission(Jenkins.ADMINISTER);
                     globalConfigFiles.save(config);
                 }
                 generatedItems.getConfigFiles().add(new GeneratedConfigFile(config.id, config.name));

@@ -39,7 +39,7 @@ public class MonitorTemplateJobs extends SaveableListener {
         AbstractItem project = (AbstractItem) saveable;
         String possibleTemplateName = project.getName();
 
-        DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
+        DescriptorImpl descriptor = Jenkins.get().getDescriptorByType(DescriptorImpl.class);
         Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(possibleTemplateName);
 
         if (seedJobReferences.isEmpty()) {
@@ -88,7 +88,7 @@ public class MonitorTemplateJobs extends SaveableListener {
     private static class LookupProjectFunction implements Function<SeedReference, BuildableItem> {
         @Override
         public BuildableItem apply(SeedReference input) {
-            return (BuildableItem) Jenkins.getInstance().getItem(input.getSeedJobName());
+            return (BuildableItem) Jenkins.get().getItem(input.getSeedJobName());
         }
     }
 }

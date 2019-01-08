@@ -20,7 +20,7 @@ class SeedJobTransientActionFactory extends TransientActionFactory<Item> {
     @Nonnull
     @Override
     Collection<? extends Action> createFor(@Nonnull Item target) {
-        DescriptorImpl descriptor = Jenkins.instance.getDescriptorByType(DescriptorImpl)
+        DescriptorImpl descriptor = Jenkins.get().getDescriptorByType(DescriptorImpl)
         SeedReference seedReference = descriptor.generatedJobMap[target.fullName]
         seedReference != null ? [new SeedJobAction(target, seedReference)] : []
     }

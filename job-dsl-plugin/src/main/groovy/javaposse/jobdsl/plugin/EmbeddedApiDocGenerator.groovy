@@ -165,7 +165,7 @@ class EmbeddedApiDocGenerator {
                 .element('parameters', generateParameters(method))
                 .element('extension', true)
 
-        PluginWrapper plugin = Jenkins.instance.pluginManager.whichPlugin(method.declaringClass)
+        PluginWrapper plugin = Jenkins.get().pluginManager.whichPlugin(method.declaringClass)
         if (plugin) {
             signature.element('plugin', [id: plugin.shortName])
         }
@@ -216,7 +216,7 @@ class EmbeddedApiDocGenerator {
 
         generateHelp(signature, model.help)
 
-        PluginWrapper plugin = Jenkins.instance.pluginManager.whichPlugin(model.type)
+        PluginWrapper plugin = Jenkins.get().pluginManager.whichPlugin(model.type)
         if (plugin) {
             signature.element('plugin', [id: plugin.shortName])
         }

@@ -381,7 +381,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
         // Collect information about the templates we loaded
         final String seedJobName = seedJob.getName();
-        DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
+        DescriptorImpl descriptor = Jenkins.get().getDescriptorByType(DescriptorImpl.class);
         boolean descriptorMutated = false;
 
         // Clean up
@@ -466,7 +466,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private void updateGeneratedJobMap(Job seedJob, Set<GeneratedJob> createdOrUpdatedJobs,
                                        Set<GeneratedJob> removedJobs) throws IOException {
-        DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
+        DescriptorImpl descriptor = Jenkins.get().getDescriptorByType(DescriptorImpl.class);
         boolean descriptorMutated = false;
         Map<String, SeedReference> generatedJobMap = descriptor.getGeneratedJobMap();
 
@@ -549,10 +549,10 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         logItems(listener, "Existing config files", existing);
         logItems(listener, "Unreferenced config files", unreferenced);
 
-        if (removedConfigFilesAction == RemovedConfigFilesAction.DELETE && Jenkins.getInstance().getPluginManager().getPlugin("config-file-provider") != null) {
+        if (removedConfigFilesAction == RemovedConfigFilesAction.DELETE && Jenkins.get().getPluginManager().getPlugin("config-file-provider") != null) {
             GlobalConfigFiles globalConfigFiles = GlobalConfigFiles.get();
             for (GeneratedConfigFile unreferencedConfigFile : unreferenced) {
-                Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
+                Jenkins.get().checkPermission(Jenkins.ADMINISTER);
                 globalConfigFiles.remove(unreferencedConfigFile.getId());
             }
         }
