@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.triggers
 
 import javaposse.jobdsl.dsl.ContextHelper
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
@@ -11,6 +12,7 @@ import javaposse.jobdsl.dsl.AbstractExtensibleContext
 /**
  * @since 1.42
  */
+@ContextType('hudson.triggers.Trigger')
 class ItemTriggerContext extends AbstractExtensibleContext {
     final List<Node> triggerNodes = []
 

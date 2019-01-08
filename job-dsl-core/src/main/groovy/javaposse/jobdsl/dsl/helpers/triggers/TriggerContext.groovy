@@ -6,11 +6,9 @@ import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
-import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.helpers.common.Threshold
 import javaposse.jobdsl.dsl.helpers.triggers.GerritContext.GerritSpec
 
-@ContextType('hudson.triggers.Trigger')
 class TriggerContext extends ItemTriggerContext {
     TriggerContext(JobManagement jobManagement, Item item) {
         super(jobManagement, item)

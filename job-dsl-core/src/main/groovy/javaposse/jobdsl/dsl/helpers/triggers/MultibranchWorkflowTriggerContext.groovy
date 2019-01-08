@@ -15,6 +15,7 @@ class MultibranchWorkflowTriggerContext extends ItemTriggerContext {
      * @since 1.42
      */
     @RequiresPlugin(id = 'cloudbees-folder', minimumVersion = '5.1')
+    @Deprecated
     void periodic(int minutes) {
         triggerNodes << new NodeBuilder().'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger' {
             spec('* * * * *')
