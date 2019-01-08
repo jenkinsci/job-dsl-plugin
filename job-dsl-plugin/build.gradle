@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-    id 'org.jenkins-ci.jpi' version '0.27.0'
+    id 'org.jenkins-ci.jpi' version '0.28.1'
 }
 
 description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
@@ -69,11 +69,6 @@ test {
     */
 }
 
-configurations {
-    // workaround for JENKINS-32978
-    compile.exclude group: 'org.kohsuke', module: 'windows-package-checker'
-}
-
 war {
     into('api-viewer') {
         from(project(':job-dsl-api-viewer').projectDir) {
@@ -85,6 +80,11 @@ war {
 }
 
 dependencies {
+    annotationProcessor 'net.java.sezpoz:sezpoz:1.13'
+    annotationProcessor 'org.jenkins-ci:annotation-indexer:1.12'
+    testAnnotationProcessor 'net.java.sezpoz:sezpoz:1.13'
+    testAnnotationProcessor 'org.jenkins-ci:annotation-indexer:1.12'
+
     compile(project(':job-dsl-core'))  {
         exclude group: 'org.jvnet.hudson', module:'xstream'
     }
