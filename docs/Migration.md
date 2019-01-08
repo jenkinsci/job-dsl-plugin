@@ -1,3 +1,32 @@
+## Migrating to 1.72
+
+### CloudBees Folders Plugin
+
+The `periodic` trigger is broken ([JENKINS-55429](https://issues.jenkins-ci.org/browse/JENKINS-55429)) and will be
+removed. It can be replaced by [[Dynamic DSL]]:
+
+DSL prior to 1.72
+```
+organizationFolder('example') {
+    triggers {
+        periodicFolderTrigger {
+            interval(2)
+        }
+    }
+}
+```
+
+DSL since 1.72
+```
+organizationFolder('example') {
+    triggers {
+        periodicFolderTrigger {
+            interval('2m')
+        }
+    }
+}
+```
+
 ## Migrating to 1.70
 
 The following methods in the `pipelineJob` are [[deprecated|Deprecation-Policy]] and will be removed because they are

@@ -30,6 +30,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 ## Release Notes
 * 1.72 (unreleased)
   * Increased the minimum supported Jenkins version to 2.121
+  * Replaced built-in support for periodic folder trigger, see [Migration](Migration#migrating-to-172)
+    ([JENKINS-55429](https://issues.jenkins-ci.org/browse/JENKINS-55429))
   * Removed anything that has been deprecated in 1.70, see [Migration](Migration#migrating-to-170)
   * Removed anything that has been deprecated in 1.69, see [Migration](Migration#migrating-to-169)
   * Removed anything that has been deprecated in 1.68, see [Migration](Migration#migrating-to-168)
