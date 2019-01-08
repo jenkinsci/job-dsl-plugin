@@ -181,9 +181,9 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     @Override
     public void createOrUpdateUserContent(UserContent userContent, boolean ignoreExisting) {
         // As in git-userContent-plugin:
-        Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         try {
-            FilePath file = Jenkins.getInstance().getRootPath().child("userContent").child(userContent.getPath());
+            FilePath file = Jenkins.get().getRootPath().child("userContent").child(userContent.getPath());
             if (!(file.exists() && ignoreExisting)) {
                 file.getParent().mkdirs();
                 file.copyFrom(userContent.getContent());
@@ -236,7 +236,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public String readFileInWorkspace(String jobName, String relLocation) throws IOException, InterruptedException {
-        Item item = Jenkins.getInstance().getItemByFullName(jobName);
+        Item item = Jenkins.get().getItemByFullName(jobName);
         if (item instanceof AbstractProject) {
             item.checkPermission(Item.WORKSPACE);
             FilePath workspace = ((AbstractProject) item).getSomeWorkspace();
@@ -257,7 +257,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public void logPluginDeprecationWarning(String pluginShortName, String minimumVersion) {
-        Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
+        Plugin plugin = Jenkins.get().getPlugin(pluginShortName);
         if (plugin != null && plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(minimumVersion))) {
             logDeprecationWarning(
                     "support for " + plugin.getWrapper().getDisplayName() + " versions older than " + minimumVersion
@@ -280,7 +280,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public void requirePlugin(String pluginShortName, boolean failIfMissing) {
-        Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
+        Plugin plugin = Jenkins.get().getPlugin(pluginShortName);
         if (plugin == null) {
             failOrMarkBuildAsUnstable(
                     "plugin '" + pluginShortName + "' needs to be installed",
@@ -296,7 +296,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public void requireMinimumPluginVersion(String pluginShortName, String version, boolean failIfMissing) {
-        Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
+        Plugin plugin = Jenkins.get().getPlugin(pluginShortName);
         if (plugin == null) {
             failOrMarkBuildAsUnstable(
                     "version " + version + " or later of plugin '" + pluginShortName + "' needs to be installed",
@@ -319,7 +319,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public boolean isMinimumPluginVersionInstalled(String pluginShortName, String version) {
-        Plugin plugin = Jenkins.getInstance().getPlugin(pluginShortName);
+        Plugin plugin = Jenkins.get().getPlugin(pluginShortName);
         return plugin != null && !plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(version));
     }
 
@@ -330,7 +330,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     @Override
     public Integer getVSphereCloudHash(String name) {
-        Jenkins jenkins = Jenkins.getInstance();
+        Jenkins jenkins = Jenkins.get();
         if (jenkins.getPlugin("vsphere-cloud") != null) {
             for (Cloud cloud : jenkins.clouds) {
                 if (cloud instanceof vSphereCloud && ((vSphereCloud) cloud).getVsDescription().equals(name)) {
@@ -344,7 +344,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     @Override
     public void renameJobMatching(final String previousNames, String destination) throws IOException {
         final ItemGroup context = lookupStrategy.getContext(project);
-        Collection<Job> items = Jenkins.getInstance().getAllItems(Job.class);
+        Collection<Job> items = Jenkins.get().getAllItems(Job.class);
         Collection<Job> matchingJobs = Collections2.filter(items, new Predicate<Job>() {
             @Override
             public boolean apply(Job topLevelItem) {

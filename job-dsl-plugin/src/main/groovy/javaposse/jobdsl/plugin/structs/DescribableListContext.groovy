@@ -28,7 +28,7 @@ class DescribableListContext implements Context {
      */
     DescribableListContext(String type, JobManagement jobManagement) {
         this(
-                Jenkins.instance.getExtensionList(type).collect { Descriptor d -> DescribableModel.of(d.clazz) },
+                Jenkins.get().getExtensionList(type).collect { Descriptor d -> DescribableModel.of(d.clazz) },
                 jobManagement
         )
     }

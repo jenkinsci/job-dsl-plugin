@@ -18,6 +18,6 @@ class ApiViewerActionFactory extends TransientActionFactory<Project> {
 
     @Override
     Collection<? extends Action> createFor(@Nonnull Project target) {
-        target.buildersList.contains(Jenkins.instance.getDescriptor(ExecuteDslScripts)) ? [new ApiViewerAction()] : []
+        target.buildersList.contains(Jenkins.get().getDescriptor(ExecuteDslScripts)) ? [new ApiViewerAction()] : []
     }
 }

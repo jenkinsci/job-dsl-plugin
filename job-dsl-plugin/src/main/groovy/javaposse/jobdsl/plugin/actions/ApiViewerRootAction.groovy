@@ -53,7 +53,7 @@ class ApiViewerRootAction implements RootAction {
     }
 
     private CachedFile generatePlugins() {
-        Collection<UpdateSite> sites = Jenkins.instance.updateCenter.sites.findAll { it.JSONObject != null }
+        Collection<UpdateSite> sites = Jenkins.get().updateCenter.sites.findAll { it.JSONObject != null }
         long lastModified = sites*.dataTimestamp.max() ?: 0
         CachedFile updateCenter = cachedPlugins
         if (updateCenter == null || lastModified > updateCenter.timestamp) {
@@ -70,7 +70,7 @@ class ApiViewerRootAction implements RootAction {
             }
 
             // add plugins that are not available in the Update Center
-            jenkins.model.Jenkins.instance.pluginManager.plugins.each { PluginWrapper plugin ->
+            jenkins.model.Jenkins.get().pluginManager.plugins.each { PluginWrapper plugin ->
                 if (!plugins.containsKey(plugin.shortName)) {
                     JSONObject pluginJson = new JSONObject()
                     pluginJson.put('name', plugin.shortName)

@@ -109,7 +109,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
     }
 
     public String getScriptApprovalWarning() {
-        return isSecurityEnabled() && !Jenkins.getInstance().hasPermission(Jenkins.RUN_SCRIPTS) ? Messages.ScriptSecurity_ScriptApprovalWarning() : "";
+        return isSecurityEnabled() && !Jenkins.get().hasPermission(Jenkins.RUN_SCRIPTS) ? Messages.ScriptSecurity_ScriptApprovalWarning() : "";
     }
 
     @Initializer(before = InitMilestone.PLUGINS_STARTED)
@@ -126,12 +126,12 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
     }
 
     public boolean isSecurityEnabled() {
-        Jenkins jenkins = Jenkins.getInstance();
+        Jenkins jenkins = Jenkins.get();
         return jenkins.isUseSecurity() && jenkins.getDescriptorByType(GlobalJobDslSecurityConfiguration.class).isUseScriptSecurity();
     }
 
     private static void removeSeedReference(String key) {
-        DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
+        DescriptorImpl descriptor = Jenkins.get().getDescriptorByType(DescriptorImpl.class);
         SeedReference seedReference = descriptor.getGeneratedJobMap().remove(key);
         if (seedReference != null) {
             descriptor.save();

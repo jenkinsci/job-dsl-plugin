@@ -21,12 +21,12 @@ class SeedJobAction implements Action {
     }
 
     Item getSeedJob() {
-        Jenkins.instance.getItemByFullName(seedReference.seedJobName)
+        Jenkins.get().getItemByFullName(seedReference.seedJobName)
     }
 
     Item getTemplateJob() {
         String templateJobName = seedReference.templateJobName
-        templateJobName == null ? null : Jenkins.instance.getItemByFullName(templateJobName)
+        templateJobName == null ? null : Jenkins.get().getItemByFullName(templateJobName)
     }
 
     String getDigest() {

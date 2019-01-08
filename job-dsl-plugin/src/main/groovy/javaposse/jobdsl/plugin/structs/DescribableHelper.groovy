@@ -157,7 +157,7 @@ class DescribableHelper {
     }
 
     private static Class getTypeForLookup(DescribableModel model) {
-        Describable.isAssignableFrom(model.type) ? Jenkins.instance.getDescriptor(model.type)?.class : model.type
+        Describable.isAssignableFrom(model.type) ? Jenkins.get().getDescriptor(model.type)?.class : model.type
     }
 
     private static List<Descriptor> getDescriptors(Class<?> contextType) {
@@ -168,9 +168,9 @@ class DescribableHelper {
 
         String className = contextTypeAnnotation.value()
         try {
-            ClassLoader classLoader = Jenkins.instance.pluginManager.uberClassLoader
+            ClassLoader classLoader = Jenkins.get().pluginManager.uberClassLoader
             Class<? extends Describable> type = classLoader.loadClass(className).asSubclass(Describable)
-            return Jenkins.instance.getDescriptorList(type)
+            return Jenkins.get().getDescriptorList(type)
         } catch (ClassNotFoundException ignore) {
             LOGGER.fine("can not get descriptors for '$className', class not found")
             return []
