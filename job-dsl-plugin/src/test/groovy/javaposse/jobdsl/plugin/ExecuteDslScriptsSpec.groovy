@@ -1515,6 +1515,35 @@ folder('folder-a/folder-b') {
         assert ScriptApproval.get().pendingScripts*.script == []
     }
 
+    def 'run scripts in sandbox with import from workspace JENKINS-55479'() {
+        setup:
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+                .grant(Jenkins.READ, Item.READ, Item.CONFIGURE, Item.CREATE, Computer.BUILD, Item.WORKSPACE)
+                .everywhere().to('dev')
+
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
+        build.workspace.child('a.groovy').write('new C()', 'UTF-8')
+        build.workspace.child('b.groovy').write('new C()', 'UTF-8')
+        build.workspace.child('C.groovy').write('class C {}', 'UTF-8')
+        job.buildersList.add(new ExecuteDslScripts(targets: 'a.groovy\nb.groovy', sandbox: true))
+        setupQIA('dev', job)
+
+        when:
+        jenkinsRule.submit(jenkinsRule.createWebClient().login('dev').getPage(job, 'configure').getFormByName('config'))
+
+        then:
+        assert ScriptApproval.get().pendingScripts*.script == []
+
+        when:
+        build = job.scheduleBuild2(0).get()
+
+        then:
+        build.result == SUCCESS
+        assert ScriptApproval.get().pendingScripts*.script == []
+    }
+
     def 'cannot run script in sandbox with import from workspace without WORKSPACE permission'() {
         setup:
         String script = 'import Helper\njob(Helper.computeName()) { description("foo") }'
