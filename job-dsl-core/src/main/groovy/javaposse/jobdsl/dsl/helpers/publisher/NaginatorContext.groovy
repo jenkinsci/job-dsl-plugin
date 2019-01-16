@@ -3,7 +3,9 @@ package javaposse.jobdsl.dsl.helpers.publisher
 import javaposse.jobdsl.dsl.Context
 
 class NaginatorContext implements Context {
+    String regexpForRerun = ''
     boolean rerunIfUnstable
+    boolean checkRegexp
     int retryLimit
     Node delay
 
@@ -42,5 +44,19 @@ class NaginatorContext implements Context {
         this.delay = new NodeBuilder().delay(class: 'com.chikli.hudson.plugin.naginator.FixedDelay') {
             delegate.delay(delay)
         }
+    }
+
+    /**
+     * Specifies if we should evaluate the regex for re-run
+     */
+    void checkRegexp(boolean checkRegexp = true) {
+        this.checkRegexp = checkRegexp
+    }
+
+    /**
+     * Specifies the regexp to evaluate
+     */
+    void regexpForRerun(String regexpForRerun) {
+        this.regexpForRerun = regexpForRerun
     }
 }

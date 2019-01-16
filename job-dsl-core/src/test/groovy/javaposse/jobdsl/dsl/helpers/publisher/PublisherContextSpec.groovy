@@ -4538,7 +4538,7 @@ class PublisherContextSpec extends Specification {
         with(context.publisherNodes[0]) {
             name() == 'com.chikli.hudson.plugin.naginator.NaginatorPublisher'
             children().size() == 6
-            regexpForRerun[0].value() == []
+            regexpForRerun[0].value() == ''
             rerunIfUnstable[0].value() == false
             rerunMatrixPart[0].value() == false
             checkRegexp[0].value() == false
@@ -4557,16 +4557,18 @@ class PublisherContextSpec extends Specification {
             rerunIfUnstable()
             retryLimit(3)
             fixedDelay(30)
+            checkRegexp()
+            regexpForRerun('.*')
         }
 
         then:
         with(context.publisherNodes[0]) {
             name() == 'com.chikli.hudson.plugin.naginator.NaginatorPublisher'
             children().size() == 6
-            regexpForRerun[0].value() == []
+            regexpForRerun[0].value() == '.*'
             rerunIfUnstable[0].value() == true
             rerunMatrixPart[0].value() == false
-            checkRegexp[0].value() == false
+            checkRegexp[0].value() == true
             maxSchedule[0].value() == 3
             delay[0].@class == 'com.chikli.hudson.plugin.naginator.FixedDelay'
             delay[0].children().size() == 1
