@@ -10,6 +10,8 @@ class SauceOnDemandContext extends AbstractContext {
     boolean enableSauceConnect
     boolean launchSauceConnectOnSlave
     boolean useLatestVersion
+    boolean useLatestSauceConnect
+    boolean forceCleanup
     boolean verboseLogging
     String nativeAppPackage
     String sauceConnectPath
@@ -98,7 +100,21 @@ class SauceOnDemandContext extends AbstractContext {
     void useLatestVersion(boolean useLatestVersion = true) {
         this.useLatestVersion = useLatestVersion
     }
+    /**
+     * If set, indicates whether the latest version of Sauce Connect should always be used. Defaults to {@code false}.
+     */
+    void useLatestSauceConnect(boolean useLatestSauceConnect = true) {
+        this.useLatestSauceConnect = useLatestSauceConnect
+    }
 
+    /**
+     * If set, indicates whether to force cleanup for jobs/tunnels instead of waiting for timeout. Defaults to {@code false}.
+     */
+    void forceCleanup(boolean forceCleanup = true) {
+        this.forceCleanup = forceCleanup
+    }
+
+    
     /**
      * If set, launches Sauce Connect on the slave. Defaults to {@code false}.
      */
