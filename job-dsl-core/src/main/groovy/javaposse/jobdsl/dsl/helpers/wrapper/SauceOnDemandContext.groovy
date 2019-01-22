@@ -10,6 +10,8 @@ class SauceOnDemandContext extends AbstractContext {
     boolean enableSauceConnect
     boolean launchSauceConnectOnSlave
     boolean useLatestVersion
+    boolean useLatestSauceConnect
+    boolean forceCleanup
     boolean verboseLogging
     String nativeAppPackage
     String sauceConnectPath
@@ -97,6 +99,14 @@ class SauceOnDemandContext extends AbstractContext {
      */
     void useLatestVersion(boolean useLatestVersion = true) {
         this.useLatestVersion = useLatestVersion
+    }
+    
+    void useLatestSauceConnect(boolean useLatestSauceConnect = true) {
+        this.useLatestSauceConnect = useLatestSauceConnect
+    }
+    
+    void forceCleanup(boolean forceCleanup = true) {
+        this.forceCleanup = forceCleanup
     }
 
     /**
