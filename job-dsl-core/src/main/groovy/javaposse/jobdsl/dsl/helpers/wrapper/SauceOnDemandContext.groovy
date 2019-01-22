@@ -98,6 +98,8 @@ class SauceOnDemandContext extends AbstractContext {
     void useLatestVersion(boolean useLatestVersion = true) {
         this.useLatestVersion = useLatestVersion
     }
+    
+    /** useLatestSauceConnect*/
 
     /**
      * If set, launches Sauce Connect on the slave. Defaults to {@code false}.
