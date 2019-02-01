@@ -7,6 +7,7 @@ class WrapperEnvironmentVariableContext extends StepEnvironmentVariableContext {
     String script = ''
     String scriptFilePath = ''
     String groovyScript = ''
+    boolean groovyScriptSandboxed = false
     boolean loadFilesFromMaster = false
 
     WrapperEnvironmentVariableContext(JobManagement jobManagement) {
@@ -36,6 +37,14 @@ class WrapperEnvironmentVariableContext extends StepEnvironmentVariableContext {
         groovyScript = script
     }
 
+    /**
+     * Runs the Groovy script in a sandbox with limited privileges.
+     * @since 1.73
+     */
+    void sandbox(boolean sandbox) {
+        groovyScriptSandboxed = sandbox
+    }
+
     @Override
     protected void addInfoContentToBuilder(Object builder) {
         super.addInfoContentToBuilder(builder)
@@ -46,7 +55,10 @@ class WrapperEnvironmentVariableContext extends StepEnvironmentVariableContext {
             builder.scriptContent(script)
         }
         if (groovyScript) {
-            builder.groovyScriptContent(groovyScript)
+            builder.secureGroovyScript {
+                builder.script(groovyScript)
+                builder.sandbox(groovyScriptSandboxed)
+            }
         }
         builder.loadFilesFromMaster(loadFilesFromMaster)
     }

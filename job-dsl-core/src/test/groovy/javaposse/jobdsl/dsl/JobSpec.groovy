@@ -260,7 +260,8 @@ class JobSpec extends Specification {
         }
 
         then:
-        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0]
+                .secureGroovyScript[0].script[0].value() == '[foo: "bar"]'
         1 * jobManagement.requirePlugin('envinject')
     }
 
@@ -276,7 +277,8 @@ class JobSpec extends Specification {
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key1=val1')
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key2=val2')
         job.node.properties[0].'EnvInjectJobProperty'[0].info[0].propertiesContent[0].value().contains('key3=val3')
-        job.node.properties[0].'EnvInjectJobProperty'[0].info[0].groovyScriptContent[0].value() == '[foo: "bar"]'
+        job.node.properties[0].'EnvInjectJobProperty'[0].info[0]
+                .secureGroovyScript[0].script[0].value() == '[foo: "bar"]'
         1 * jobManagement.requirePlugin('envinject')
     }
 

@@ -496,6 +496,7 @@ class WrapperContextSpec extends Specification {
             script 'echo Test'
             scriptFile '/var/lib/jenkins'
             groovy 'println "Hello"'
+            sandbox true
         }
         Node envNode = context.wrapperNodes[0]
 
@@ -507,7 +508,8 @@ class WrapperContextSpec extends Specification {
         infoNode.propertiesContent[0].value() == 'test=some\nother=any\nsome=value'
         infoNode.scriptFilePath[0].value() == '/var/lib/jenkins'
         infoNode.scriptContent[0].value() == 'echo Test'
-        infoNode.groovyScriptContent[0].value() == 'println "Hello"'
+        infoNode.secureGroovyScript[0].script[0].value() == 'println "Hello"'
+        infoNode.secureGroovyScript[0].sandbox[0].value() == true
         infoNode.loadFilesFromMaster[0].value() == false
         1 * mockJobManagement.requirePlugin('envinject')
     }
