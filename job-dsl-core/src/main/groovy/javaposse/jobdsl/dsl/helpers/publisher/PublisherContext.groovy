@@ -254,6 +254,9 @@ class PublisherContext extends AbstractExtensibleContext {
             maximumLineCoverage jacocoContext.maximumLineCoverage
             maximumMethodCoverage jacocoContext.maximumMethodCoverage
             maximumClassCoverage jacocoContext.maximumClassCoverage
+            sourceInclusionPattern jacocoContext.sourceInclusionPattern
+            sourceExclusionPattern jacocoContext.sourceExclusionPattern
+            skipCopyOfSrcFiles jacocoContext.skipCopyOfSrcFiles
             if (jacocoContext.changeBuildStatus != null) {
                 changeBuildStatus jacocoContext.changeBuildStatus
             }
