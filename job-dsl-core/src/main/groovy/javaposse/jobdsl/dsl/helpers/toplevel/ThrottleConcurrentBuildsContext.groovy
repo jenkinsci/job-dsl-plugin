@@ -17,6 +17,8 @@ class ThrottleConcurrentBuildsContext extends AbstractContext {
     int maxConcurrentTotal
     boolean throttleMatrixBuilds = true
     boolean throttleMatrixConfigurations = true
+    boolean limitOneJobWithMatchingParams = false
+    String paramsToUseForLimit = ''
 
     ThrottleConcurrentBuildsContext(JobManagement jobManagement, Item item) {
         super(jobManagement)
@@ -75,4 +77,36 @@ class ThrottleConcurrentBuildsContext extends AbstractContext {
 
         this.throttleMatrixConfigurations = throttleMatrixConfigurations
     }
+
+    /**
+     * If this box is checked, only one instance of the job with matching parameter values will be allowed
+     * to run at a given time. Other instances of this job with different parameter values will be allowed
+     * to run concurrently.
+     *
+     * Optionally, provide a comma-separated list of parameters to use when comparing jobs. If blank,
+     * all parameters must match for a job to be limited to one running instance.
+     *
+     * Defaults to {@code false}.
+     *
+     * @since 1.72
+     */
+    @RequiresPlugin(id = 'throttle-concurrents', minimumVersion = '1.8.5')
+    void limitOneJobWithMatchingParams(boolean limitOneJobWithMatchingParams = false) {
+        this.limitOneJobWithMatchingParams = limitOneJobWithMatchingParams
+    }
+
+    /**
+     * List of parameters to check (using whitespace as the separator).
+     *
+     * Used if limitOneJobWithMatchingParams set to true.
+     *
+     * Defaults to {@code ''}.
+     *
+     * @since 1.72
+     */
+    @RequiresPlugin(id = 'throttle-concurrents', minimumVersion = '1.8.5')
+    void paramsToUseForLimit(String paramsToUseForLimit = '') {
+        this.paramsToUseForLimit = paramsToUseForLimit
+    }
+
 }

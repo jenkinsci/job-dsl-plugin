@@ -3,6 +3,8 @@ job('example-1') {
     throttleConcurrentBuilds {
         maxPerNode(1)
         maxTotal(2)
+        limitOneJobWithMatchingParams(true)
+        paramsToUseForLimit('PARAMETER_1 PARAMETER_2')
     }
 }
 

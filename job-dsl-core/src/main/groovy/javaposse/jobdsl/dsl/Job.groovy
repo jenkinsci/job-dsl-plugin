@@ -103,6 +103,10 @@ abstract class Job extends Item {
                         throttleMatrixConfigurations(throttleContext.throttleMatrixConfigurations)
                     }
                 }
+                if (jobManagement.isMinimumPluginVersionInstalled('throttle-concurrents', '1.8.5')) {
+                    limitOneJobWithMatchingParams(throttleContext.limitOneJobWithMatchingParams)
+                    paramsToUseForLimit(throttleContext.paramsToUseForLimit)
+                }
             }
         }
     }

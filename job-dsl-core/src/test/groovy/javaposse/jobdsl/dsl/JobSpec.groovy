@@ -338,6 +338,9 @@ class JobSpec extends Specification {
     }
 
     def 'throttle concurrents enabled as project alone'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('throttle-concurrents', '1.8.5') >> true
+
         when:
         job.throttleConcurrentBuilds {
             maxPerNode(1)
@@ -346,17 +349,22 @@ class JobSpec extends Specification {
 
         then:
         with(job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]) {
-            children().size() == 5
+            children().size() == 7
             maxConcurrentPerNode[0].value() == 1
             maxConcurrentTotal[0].value() == 2
             throttleEnabled[0].value() == true
             throttleOption[0].value() == 'project'
             categories[0].children().size() == 0
+            limitOneJobWithMatchingParams[0].value() == false
+            paramsToUseForLimit[0].value() == ''
         }
         1 * jobManagement.requirePlugin('throttle-concurrents')
     }
 
     def 'throttle concurrents disabled'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('throttle-concurrents', '1.8.5') >> false
+
         when:
         job.throttleConcurrentBuilds {
             throttleDisabled()
@@ -374,17 +382,22 @@ class JobSpec extends Specification {
         1 * jobManagement.requirePlugin('throttle-concurrents')
     }
 
-    def 'throttle concurrents enabled as part of categories'() {
+    def 'throttle concurrents enabled as part of categories and limit to one job'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('throttle-concurrents', '1.8.5') >> true
+
         when:
         job.throttleConcurrentBuilds {
             maxPerNode(1)
             maxTotal(2)
             categories(['cat-1', 'cat-2'])
+            limitOneJobWithMatchingParams(true)
+            paramsToUseForLimit('param1 param2')
         }
 
         then:
         with(job.node.properties[0].'hudson.plugins.throttleconcurrents.ThrottleJobProperty'[0]) {
-            children().size() == 5
+            children().size() == 7
             maxConcurrentPerNode[0].value() == 1
             maxConcurrentTotal[0].value() == 2
             throttleEnabled[0].value() == true
@@ -392,6 +405,8 @@ class JobSpec extends Specification {
             categories[0].children().size() == 2
             categories[0].string[0].value() == 'cat-1'
             categories[0].string[1].value() == 'cat-2'
+            limitOneJobWithMatchingParams[0].value() == true
+            paramsToUseForLimit[0].value() == 'param1 param2'
         }
         1 * jobManagement.requirePlugin('throttle-concurrents')
     }
