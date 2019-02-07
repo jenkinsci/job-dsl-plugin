@@ -516,7 +516,7 @@ class JenkinsJobManagementSpec extends Specification {
         jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
 
         then:
-        0 * saveableListener.onChange(job, _)
+        1 * saveableListener.onChange(job, _)
     }
 
     def 'createOrUpdateConfig should fail if item type does not match'() {
