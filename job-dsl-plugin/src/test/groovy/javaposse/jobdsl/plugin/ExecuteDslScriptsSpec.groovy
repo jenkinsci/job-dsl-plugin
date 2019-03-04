@@ -1502,7 +1502,8 @@ folder('folder-a/folder-b') {
 
         then:
         build.result == FAILURE
-        ScriptApproval.get().pendingSignatures*.signature == ['new java.io.File java.lang.String']
+        ScriptApproval.get().pendingSignatures*.signature == ['staticMethod jenkins.model.Jenkins get']
+        jenkinsRule.instance.getItem('should-not-exist') == null
     }
 
     def 'run script in sandbox with import from workspace'() {
