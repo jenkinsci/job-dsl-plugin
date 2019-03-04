@@ -53,7 +53,9 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
                             new Binding(),
                             config
                     )
-                    groovyShellCache[key] = groovyShell
+                    if (isGroovyShellCacheEnabled()) {
+                        groovyShellCache[key] = groovyShell
+                    }
                 }
 
                 S jobParent = runScriptEngine(scriptRequest, groovyShell)
@@ -130,6 +132,10 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
 
     protected void runScript(Script script) {
         script.run()
+    }
+
+    protected boolean isGroovyShellCacheEnabled() {
+        true
     }
 
     private static boolean isValidScriptName(ScriptRequest scriptRequest) {

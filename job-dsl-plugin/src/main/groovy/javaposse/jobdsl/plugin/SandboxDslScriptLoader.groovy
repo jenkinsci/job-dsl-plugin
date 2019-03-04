@@ -55,6 +55,10 @@ class SandboxDslScriptLoader extends SecureDslScriptLoader {
         }
     }
 
+    protected boolean isGroovyShellCacheEnabled() {
+        false
+    }
+
     private static class WorkspaceClassLoader extends URLClassLoader {
         private final Item seedJob
 
