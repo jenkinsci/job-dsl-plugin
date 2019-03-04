@@ -6,6 +6,7 @@ import javaposse.jobdsl.plugin.structs.DescribableContext
 import javaposse.jobdsl.plugin.structs.DescribableListContext
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.AbstractWhitelist
 
+import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 
 /**
@@ -16,6 +17,11 @@ class JobDslWhitelist extends AbstractWhitelist {
     private static final Set<Class> DYNAMIC_CONTEXTS = [
             AbstractExtensibleContext, DescribableContext, DescribableListContext
     ]
+
+    @Override
+    boolean permitsConstructor(Constructor<?> constructor, Object[] args) {
+        constructor.declaringClass == JenkinsJobParent
+    }
 
     @Override
     boolean permitsMethod(Method method, Object receiver, Object[] args) {

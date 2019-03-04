@@ -98,7 +98,7 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
                 logger.println('Processing provided DSL script')
             }
 
-            Script script = groovyShell.parse(createGroovyCodeSource(scriptRequest))
+            Script script = parseScript(groovyShell, createGroovyCodeSource(scriptRequest))
             script.binding = createBinding(scriptRequest)
             script.binding.setVariable('jobFactory', script)
 
@@ -128,6 +128,10 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
 
     protected GroovyCodeSource createGroovyCodeSource(ScriptRequest scriptRequest) {
         new GroovyCodeSource(scriptRequest.body, scriptRequest.scriptName ?: 'script', DEFAULT_CODE_BASE)
+    }
+
+    protected Script parseScript(GroovyShell groovyShell, GroovyCodeSource codeSource) {
+        groovyShell.parse(codeSource)
     }
 
     protected void runScript(Script script) {

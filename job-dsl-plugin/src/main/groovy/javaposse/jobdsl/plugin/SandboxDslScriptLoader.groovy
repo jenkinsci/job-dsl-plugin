@@ -10,10 +10,13 @@ import org.acegisecurity.AccessDeniedException
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException
 import org.jenkinsci.plugins.scriptsecurity.sandbox.Whitelist
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.ClassLoaderWhitelist
 import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.GroovySandbox
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.ProxyWhitelist
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
+
+import java.util.concurrent.Callable
 
 class SandboxDslScriptLoader extends SecureDslScriptLoader {
     private final Item seedJob
@@ -41,22 +44,47 @@ class SandboxDslScriptLoader extends SecureDslScriptLoader {
     }
 
     @Override
-    protected void runScript(Script script) {
+    protected JenkinsJobParent runScriptEngine(ScriptRequest scriptRequest, GroovyShell groovyShell) {
         if (ACL.SYSTEM == Jenkins.authentication) {
             // the build must run as an actual user
             throw new AccessDeniedException(Messages.SandboxDslScriptLoader_NotAuthenticated())
         }
 
         try {
-            GroovySandbox.run(script, new ProxyWhitelist(Whitelist.all(), new JobDslWhitelist()))
+            return super.runScriptEngine(scriptRequest, groovyShell)
         } catch (RejectedAccessException e) {
             ScriptApproval.get().accessRejected(e, ApprovalContext.create().withItem(seedJob))
             throw new DslException(e.message, e)
         }
     }
 
+    @Override
+    protected Script parseScript(GroovyShell groovyShell, GroovyCodeSource codeSource) {
+        GroovySandbox.runInSandbox(new Callable<Script>() {
+            @Override
+            Script call() throws Exception {
+                groovyShell.parse(codeSource)
+            }
+        }, createWhitelist())
+    }
+
+    @Override
+    protected void runScript(Script script) {
+        GroovySandbox.runInSandbox(new Callable<Object>() {
+            @Override
+            Object call() throws Exception {
+                script.run()
+            }
+        }, new ProxyWhitelist(new ClassLoaderWhitelist(script.class.classLoader), createWhitelist()))
+    }
+
+    @Override
     protected boolean isGroovyShellCacheEnabled() {
         false
+    }
+
+    private static ProxyWhitelist createWhitelist() {
+        new ProxyWhitelist(Whitelist.all(), new JobDslWhitelist())
     }
 
     private static class WorkspaceClassLoader extends URLClassLoader {

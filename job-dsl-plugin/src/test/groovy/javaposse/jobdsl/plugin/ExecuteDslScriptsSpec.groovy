@@ -1486,6 +1486,25 @@ folder('folder-a/folder-b') {
         ScriptApproval.get().pendingSignatures*.signature == ['staticMethod java.lang.System exit int']
     }
 
+    def 'run script in sandbox with no-arg constructor'() {
+        setup:
+        String script = this.class.getResourceAsStream('security1342.groovy').text
+
+        jenkinsRule.instance.securityRealm = jenkinsRule.createDummySecurityRealm()
+        jenkinsRule.instance.authorizationStrategy = new MockAuthorizationStrategy()
+                .grant(Jenkins.ADMINISTER).everywhere().to('admin')
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(scriptText: script, sandbox: true))
+        setupQIA('admin', job)
+
+        when:
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
+
+        then:
+        build.result == FAILURE
+        ScriptApproval.get().pendingSignatures*.signature == ['new java.io.File java.lang.String']
+    }
+
     def 'run script in sandbox with import from workspace'() {
         setup:
         String script = 'import Helper\njob(Helper.computeName()) { description("foo") }'
