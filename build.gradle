@@ -151,9 +151,9 @@ project(':job-dsl-core') {
             maven {
                 name 'jenkins'
                 if (project.version.toString().endsWith('-SNAPSHOT')) {
-                    url 'https://repo.jenkins-ci.org/snapshots'
+                    url System.properties['jpi.snapshotRepoUrl'] ?: 'https://repo.jenkins-ci.org/snapshots'
                 } else {
-                    url 'https://repo.jenkins-ci.org/releases'
+                    url System.properties['jpi.repoUrl'] ?: 'https://repo.jenkins-ci.org/releases'
                 }
             }
         }

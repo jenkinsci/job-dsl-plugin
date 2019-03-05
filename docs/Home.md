@@ -28,6 +28,7 @@ scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Suppo
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
+* 1.73 (unreleased)
 * 1.72 (March 06 2019)
   * Increased the minimum supported Jenkins version to 2.121
   * Replaced built-in support for periodic folder trigger, see [Migration](Migration#migrating-to-172)
