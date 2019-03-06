@@ -6,7 +6,7 @@ class PhabricatorContext implements Context {
     boolean createCommit
     boolean applyToMaster
     boolean showBuildStartedMessage = true
-    String workDir
+    String workDir = ''
 
     /**
      * Create a git commit with the patch. Defaults to {@code false}.

@@ -651,7 +651,7 @@ class WrapperContextSpec extends Specification {
         then:
         with(context.wrapperNodes[0]) {
             name() == 'com.uber.jenkins.phabricator.PhabricatorBuildWrapper'
-            children().size() == 3
+            children().size() == 4
             createCommit[0].value() == false
             applyToMaster[0].value() == false
             showBuildStartedMessage[0].value() == true
@@ -672,7 +672,7 @@ class WrapperContextSpec extends Specification {
         then:
         with(context.wrapperNodes[0]) {
             name() == 'com.uber.jenkins.phabricator.PhabricatorBuildWrapper'
-            children().size() == 3
+            children().size() == 4
             createCommit[0].value() == true
             applyToMaster[0].value() == true
             showBuildStartedMessage[0].value() == false
