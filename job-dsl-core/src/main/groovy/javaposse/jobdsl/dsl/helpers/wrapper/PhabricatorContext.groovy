@@ -6,6 +6,7 @@ class PhabricatorContext implements Context {
     boolean createCommit
     boolean applyToMaster
     boolean showBuildStartedMessage = true
+    String workDir
 
     /**
      * Create a git commit with the patch. Defaults to {@code false}.
@@ -26,5 +27,12 @@ class PhabricatorContext implements Context {
      */
     void showBuildStartedMessage(boolean showBuildStartedMessage = true) {
         this.showBuildStartedMessage = showBuildStartedMessage
+    }
+
+    /**
+     * Sets the relative working directory in the workspace for arcanist commands.
+     */
+    void workDir(String workDir) {
+        this.workDir = workDir
     }
 }

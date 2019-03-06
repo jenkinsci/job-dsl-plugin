@@ -340,6 +340,7 @@ class WrapperContext extends AbstractExtensibleContext {
             createCommit(context.createCommit)
             applyToMaster(context.applyToMaster)
             showBuildStartedMessage(context.showBuildStartedMessage)
+            workDir(context.workDir)
         }
     }
 

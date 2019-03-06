@@ -4,6 +4,7 @@ job('example') {
             createCommit()
             applyToMaster()
             showBuildStartedMessage()
+            workDir('source')
         }
     }
 }

@@ -655,6 +655,7 @@ class WrapperContextSpec extends Specification {
             createCommit[0].value() == false
             applyToMaster[0].value() == false
             showBuildStartedMessage[0].value() == true
+            workDir[0].value() == ''
         }
         1 * mockJobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
     }
@@ -665,6 +666,7 @@ class WrapperContextSpec extends Specification {
             createCommit()
             applyToMaster()
             showBuildStartedMessage(false)
+            workDir('source')
         }
 
         then:
@@ -674,6 +676,7 @@ class WrapperContextSpec extends Specification {
             createCommit[0].value() == true
             applyToMaster[0].value() == true
             showBuildStartedMessage[0].value() == false
+            workDir[0].value() == 'source'
         }
         1 * mockJobManagement.requireMinimumPluginVersion('phabricator-plugin', '1.8.1')
     }
