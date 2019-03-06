@@ -1,5 +1,5 @@
 {
-    "version": "1.72",
+    "version": "1.71",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -6099,6 +6099,66 @@
                         }
                     ],
                     "examples": "// checkout feature_branch1\r\njob('example-1') {\r\n    scm {\r\n        hg('http://scm', 'feature_branch1')\r\n    }\r\n}\r\n\r\n// clean checkout module1 from feature_branch1\r\njob('example-2') {\r\n    scm {\r\n        hg('http://scm') {\r\n            branch('feature_branch1')\r\n            modules('module1')\r\n            clean(true)\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "p4",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "viewspec",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "user",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "configure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugins": [
+                                {
+                                    "id": "perforce"
+                                }
+                            ],
+                            "html": "Add Perforce SCM source.",
+                            "firstSentenceCommentText": "Add Perforce SCM source."
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "viewspec",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "user",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "password",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "configureBlock",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "plugins": [
+                                {
+                                    "id": "perforce"
+                                }
+                            ],
+                            "html": "Add Perforce SCM source.\r\n\r\n The client name will be set to <CODE>builds-${JOB_NAME</CODE>}.\r\n\r\n For security reasons, do not use a hard-coded password. See\r\n <a href=\"https://github.com/jenkinsci/job-dsl-plugin/wiki/Handling-Credentials\">Handling Credentials</a> for\r\n details about handling credentials in DSL scripts.\r\n\r\n The closure parameter expects a configure block for direct manipulation of the generated XML. The <CODE>scm</CODE>\r\n node is passed into the configure block.\r\n\r\n The configure block must be used to set additional options.",
+                            "firstSentenceCommentText": "Add Perforce SCM source."
+                        }
+                    ],
+                    "examples": "job('example') {\r\n    scm {\r\n        p4('//depot/Tools/build', 'rolem') { node ->\r\n            node / p4Port('perforce:1666')\r\n            node / p4Tool('/usr/bin/p4')\r\n            node / exposeP4Passwd('false')\r\n            node / pollOnlyOnMaster('true')\r\n        }\r\n    }\r\n}"
                 },
                 {
                     "name": "perforceP4",
@@ -13524,6 +13584,12 @@
                                 }
                             ],
                             "availableSince": "1.68",
+                            "plugins": [
+                                {
+                                    "id": "gradle",
+                                    "minimumVersion": "1.27"
+                                }
+                            ],
                             "html": "Passes all job parameters as Gradle project properties. Defaults to <CODE>false</CODE>.",
                             "firstSentenceCommentText": "Passes all job parameters as Gradle project properties. "
                         }
@@ -13541,8 +13607,32 @@
                                 }
                             ],
                             "availableSince": "1.68",
+                            "plugins": [
+                                {
+                                    "id": "gradle",
+                                    "minimumVersion": "1.27"
+                                }
+                            ],
                             "html": "Passes all job parameters as System properties. Defaults to <CODE>false</CODE>.",
                             "firstSentenceCommentText": "Passes all job parameters as System properties. "
+                        }
+                    ]
+                },
+                {
+                    "name": "passAsProperties",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "passAsProperties",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "deprecated": true,
+                            "availableSince": "1.49",
+                            "html": "Passes job parameters as Gradle properties. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "Passes job parameters as Gradle properties. "
                         }
                     ]
                 },
@@ -15444,6 +15534,12 @@
                                 }
                             ],
                             "availableSince": "1.67",
+                            "plugins": [
+                                {
+                                    "id": "groovy",
+                                    "minimumVersion": "2.0"
+                                }
+                            ],
                             "html": "If set, run the Groovy script in a sandbox with limited abilities. Defaults to <CODE>false</CODE>.",
                             "firstSentenceCommentText": "If set, run the Groovy script in a sandbox with limited abilities. "
                         }
@@ -16196,7 +16292,7 @@
                             "plugins": [
                                 {
                                     "id": "gradle",
-                                    "minimumVersion": "1.28"
+                                    "minimumVersion": "1.26"
                                 }
                             ],
                             "html": "Invokes a Gradle build script.",
@@ -16229,7 +16325,7 @@
                             "plugins": [
                                 {
                                     "id": "gradle",
-                                    "minimumVersion": "1.28"
+                                    "minimumVersion": "1.26"
                                 }
                             ],
                             "html": "Invokes a Gradle build script.\r\n\r\n The closure parameter expects a configure block for direct manipulation of the generated XML. The\r\n <CODE>hudson.plugins.gradle.Gradle</CODE> node is passed into the configure block.",
@@ -16255,8 +16351,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a Groovy script.",
@@ -16281,8 +16376,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a Groovy script.",
@@ -16309,8 +16403,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a Groovy script.",
@@ -16335,8 +16428,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a Groovy script.",
@@ -16967,8 +17059,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a system Groovy script.",
@@ -16995,8 +17086,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a system Groovy script.",
@@ -23710,6 +23800,57 @@
             "type": "javaposse.jobdsl.dsl.helpers.triggers.GitLabTriggerContext",
             "methods": [
                 {
+                    "name": "acceptMergeRequestOnSuccess",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "acceptMergeRequestOnSuccess",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "deprecated": true,
+                            "html": "If set, accepts merge request on success. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "If set, accepts merge request on success. "
+                        }
+                    ]
+                },
+                {
+                    "name": "addNoteOnMergeRequest",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "addNoteOnMergeRequest",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "deprecated": true,
+                            "html": "If set, adds a note with build status on merge requests. Defaults to <CODE>true</CODE>.",
+                            "firstSentenceCommentText": "If set, adds a note with build status on merge requests. "
+                        }
+                    ]
+                },
+                {
+                    "name": "addVoteOnMergeRequest",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "addVoteOnMergeRequest",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "deprecated": true,
+                            "html": "If set, adds a vote to note with build status on merge requests. Defaults to <CODE>true</CODE>.",
+                            "firstSentenceCommentText": "If set, adds a vote to note with build status on merge requests. "
+                        }
+                    ]
+                },
+                {
                     "name": "buildOnMergeRequestEvents",
                     "signatures": [
                         {
@@ -23848,6 +23989,23 @@
                             "availableSince": "1.47",
                             "html": "The target branch regex allows to limit the execution of this job to\r\n certain branches. Any branch matching the specified pattern triggers the\r\n job.",
                             "firstSentenceCommentText": "The target branch regex allows to limit the execution of this job to\r\n certain branches. "
+                        }
+                    ]
+                },
+                {
+                    "name": "useCiFeatures",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "useCiFeatures",
+                                    "type": "boolean",
+                                    "defaultValue": "true"
+                                }
+                            ],
+                            "deprecated": true,
+                            "html": "If set, enables GitLab 8.1 CI features. Defaults to <CODE>false</CODE>.",
+                            "firstSentenceCommentText": "If set, enables GitLab 8.1 CI features. "
                         }
                     ]
                 }
@@ -34823,7 +34981,7 @@
                             "plugins": [
                                 {
                                     "id": "gradle",
-                                    "minimumVersion": "1.28"
+                                    "minimumVersion": "1.26"
                                 }
                             ],
                             "html": "Invokes a Gradle build script.",
@@ -34856,7 +35014,7 @@
                             "plugins": [
                                 {
                                     "id": "gradle",
-                                    "minimumVersion": "1.28"
+                                    "minimumVersion": "1.26"
                                 }
                             ],
                             "html": "Invokes a Gradle build script.\r\n\r\n The closure parameter expects a configure block for direct manipulation of the generated XML. The\r\n <CODE>hudson.plugins.gradle.Gradle</CODE> node is passed into the configure block.",
@@ -34882,8 +35040,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a Groovy script.",
@@ -34908,8 +35065,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a Groovy script.",
@@ -34936,8 +35092,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a Groovy script.",
@@ -34962,8 +35117,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a Groovy script.",
@@ -35646,8 +35800,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a system Groovy script.",
@@ -35674,8 +35827,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "groovy",
-                                    "minimumVersion": "2.0"
+                                    "id": "groovy"
                                 }
                             ],
                             "html": "Executes a system Groovy script.",
@@ -37105,7 +37257,6 @@
                                     "type": "int"
                                 }
                             ],
-                            "deprecated": true,
                             "availableSince": "1.42",
                             "plugins": [
                                 {
@@ -37273,7 +37424,7 @@
                                     "type": "String"
                                 }
                             ],
-                            "availableSince": "1.36",
+                            "deprecated": true,
                             "html": "Changes the initial view to show when the folder contains multiple views. Defaults to the <CODE>'All'</CODE> view.",
                             "firstSentenceCommentText": "Changes the initial view to show when the folder contains multiple views. "
                         }
@@ -37433,7 +37584,7 @@
                                     "type": "String"
                                 }
                             ],
-                            "availableSince": "1.36",
+                            "deprecated": true,
                             "html": "Changes the initial view to show when the folder contains multiple views. Defaults to the <CODE>'All'</CODE> view.",
                             "firstSentenceCommentText": "Changes the initial view to show when the folder contains multiple views. "
                         }
@@ -37543,6 +37694,12 @@
                                 }
                             ],
                             "availableSince": "1.68",
+                            "plugins": [
+                                {
+                                    "id": "workflow-cps",
+                                    "minimumVersion": "2.29"
+                                }
+                            ],
                             "html": "If selected, try to obtain the Pipeline script contents directly from the SCM without performing\r\n a full checkout. Defaults to <CODE>false</CODE>.",
                             "firstSentenceCommentText": "If selected, try to obtain the Pipeline script contents directly from the SCM without performing\r\n a full checkout. "
                         }
@@ -37596,8 +37753,7 @@
                             ],
                             "plugins": [
                                 {
-                                    "id": "workflow-cps",
-                                    "minimumVersion": "2.29"
+                                    "id": "workflow-cps"
                                 }
                             ],
                             "html": "Defines a Groovy CPS DSL definition.",
@@ -37621,7 +37777,7 @@
                             "plugins": [
                                 {
                                     "id": "workflow-cps",
-                                    "minimumVersion": "2.29"
+                                    "minimumVersion": "1.2"
                                 }
                             ],
                             "html": "Loads a pipeline script from SCM.",
@@ -37676,6 +37832,24 @@
                     "examples": "// add a permission for the special authenticated group to see the workspace of the job\r\njob('example-1') {\r\n    authorization {\r\n        permission('hudson.model.Item.Workspace:authenticated')\r\n    }\r\n}\r\n\r\n// adds the build permission for the special anonymous user\r\njob('example-2') {\r\n    authorization {\r\n        permission('hudson.model.Item.Build', 'anonymous')\r\n    }\r\n}\r\n\r\n// add all permissions for user joe, blocking inheritance of the global\r\n// authorization matrix\r\njob('example-3') {\r\n    authorization {\r\n        permissionAll('joe')\r\n        blocksInheritance()\r\n    }\r\n}\r\n\r\n// gives the hudson.model.Item.Discover and hudson.model.Item.Create permission to jill\r\njob('example-4') {\r\n    authorization {\r\n        permissions('jill', [\r\n            'hudson.model.Item.Create',\r\n            'hudson.model.Item.Discover'\r\n        ])\r\n    }\r\n}"
                 },
                 {
+                    "name": "batchTask",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "name",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "script",
+                                    "type": "String"
+                                }
+                            ],
+                            "deprecated": true
+                        }
+                    ]
+                },
+                {
                     "name": "blockOn",
                     "signatures": [
                         {
@@ -37712,6 +37886,43 @@
                         }
                     ],
                     "examples": "job('example-1') {\r\n    blockOn('project-a')\r\n}\r\n\r\njob('example-2') {\r\n    blockOn(['project-a', 'project-b']) {\r\n        blockLevel('GLOBAL')\r\n        scanQueueFor('ALL')\r\n    }\r\n}"
+                },
+                {
+                    "name": "blockOnDownstreamProjects",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                
+                            ],
+                            "deprecated": true
+                        }
+                    ]
+                },
+                {
+                    "name": "blockOnUpstreamProjects",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                
+                            ],
+                            "deprecated": true
+                        }
+                    ]
+                },
+                {
+                    "name": "checkoutRetryCount",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "times",
+                                    "type": "int",
+                                    "defaultValue": "3"
+                                }
+                            ],
+                            "deprecated": true
+                        }
+                    ]
                 },
                 {
                     "name": "compressBuildLog",
@@ -37765,6 +37976,20 @@
                         }
                     ],
                     "examples": "job('example-1') {\r\n    configure { project ->\r\n        project / 'properties' / 'com.example.Test' {\r\n            'switch'('on')\r\n        }\r\n    }\r\n}"
+                },
+                {
+                    "name": "customWorkspace",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "workspacePath",
+                                    "type": "String"
+                                }
+                            ],
+                            "deprecated": true
+                        }
+                    ]
                 },
                 {
                     "name": "definition",
@@ -37878,6 +38103,20 @@
                     "examples": "job('example-1') {\r\n    environmentVariables(FOO: 'bar', TEST: '123')\r\n}\r\n\r\njob('example-2') {\r\n    environmentVariables {\r\n        env('ONE', '1')\r\n        propertiesFile('env.properties')\r\n        keepBuildVariables(true)\r\n    }\r\n}"
                 },
                 {
+                    "name": "jdk",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "jdk",
+                                    "type": "String"
+                                }
+                            ],
+                            "deprecated": true
+                        }
+                    ]
+                },
+                {
                     "name": "keepDependencies",
                     "signatures": [
                         {
@@ -37894,6 +38133,52 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    keepDependencies()\r\n}"
+                },
+                {
+                    "name": "label",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "labelExpression",
+                                    "type": "String",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true
+                        }
+                    ]
+                },
+                {
+                    "name": "lockableResources",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "resources",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "lockClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.toplevel.LockableResourcesContext"
+                        },
+                        {
+                            "parameters": [
+                                {
+                                    "name": "lockClosure",
+                                    "type": "Closure",
+                                    "defaultValue": "null"
+                                }
+                            ],
+                            "deprecated": true,
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.toplevel.LockableResourcesContext"
+                        }
+                    ]
                 },
                 {
                     "name": "logRotator",
@@ -37938,6 +38223,21 @@
                         }
                     ],
                     "examples": "job('example-1') {\r\n    logRotator(30, -1, 1, -1)\r\n}\r\n\r\njob('example-2') {\r\n    logRotator {\r\n        numToKeep(5)\r\n        artifactNumToKeep(1)\r\n    }\r\n}"
+                },
+                {
+                    "name": "multiscm",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.ScmContext"
+                        }
+                    ]
                 },
                 {
                     "name": "notifications",
@@ -38016,6 +38316,21 @@
                     "examples": "job('example') {\r\n    properties {\r\n        customIcon('job.png')\r\n        sidebarLinks {\r\n            link('https://jira.acme.org/', 'JIRA', 'notepad.png')\r\n        }\r\n        rebuild {\r\n            autoRebuild()\r\n        }\r\n    }\r\n}"
                 },
                 {
+                    "name": "publishers",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.publisher.PublisherContext"
+                        }
+                    ]
+                },
+                {
                     "name": "quietPeriod",
                     "signatures": [
                         {
@@ -38032,6 +38347,36 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    quietPeriod(120)\r\n}"
+                },
+                {
+                    "name": "scm",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.ScmContext"
+                        }
+                    ]
+                },
+                {
+                    "name": "steps",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.step.StepContext"
+                        }
+                    ]
                 },
                 {
                     "name": "throttleConcurrentBuilds",
@@ -38088,6 +38433,35 @@
                         }
                     ],
                     "examples": "job('example') {\r\n    using('project-template')\r\n}"
+                },
+                {
+                    "name": "weight",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "weight",
+                                    "type": "int"
+                                }
+                            ],
+                            "deprecated": true
+                        }
+                    ]
+                },
+                {
+                    "name": "wrappers",
+                    "signatures": [
+                        {
+                            "parameters": [
+                                {
+                                    "name": "closure",
+                                    "type": "Closure"
+                                }
+                            ],
+                            "deprecated": true,
+                            "contextClass": "javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext"
+                        }
+                    ]
                 }
             ]
         },
@@ -38365,7 +38739,7 @@
                             "plugins": [
                                 {
                                     "id": "cloudbees-folder",
-                                    "minimumVersion": "5.14"
+                                    "minimumVersion": "5.0"
                                 }
                             ],
                             "html": "Creates or updates a folder.",
@@ -38685,7 +39059,7 @@
                             "plugins": [
                                 {
                                     "id": "workflow-multibranch",
-                                    "minimumVersion": "2.10"
+                                    "minimumVersion": "1.12"
                                 }
                             ],
                             "html": "Creates or updates a multibranch pipeline job.",
@@ -38754,7 +39128,7 @@
                             "plugins": [
                                 {
                                     "id": "branch-api",
-                                    "minimumVersion": "2.0.0"
+                                    "minimumVersion": "1.11"
                                 }
                             ],
                             "html": "Creates or updates an organization folder job.",
@@ -38772,7 +39146,7 @@
                             "plugins": [
                                 {
                                     "id": "branch-api",
-                                    "minimumVersion": "2.0.0"
+                                    "minimumVersion": "1.11"
                                 }
                             ],
                             "html": "Creates or updates an organization folder job.",
