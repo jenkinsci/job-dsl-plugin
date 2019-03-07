@@ -221,8 +221,10 @@ class BuildParametersContext extends AbstractExtensibleContext {
     /**
      * Defines a simple text parameter, where users can enter a string value.
      */
-    void stringParam(String parameterName, String defaultValue = null, String description = null) {
+    void stringParam(String parameterName, String defaultValue = null, String description = null,
+                     boolean isTrim = false) {
         simpleParam('hudson.model.StringParameterDefinition', parameterName, defaultValue, description)
+        buildParameterNodes[parameterName].appendNode('trim', isTrim)
     }
 
     /**

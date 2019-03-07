@@ -531,7 +531,7 @@ class BuildParametersContextSpec extends Specification {
 
     def 'base stringParam usage'() {
         when:
-        context.stringParam('myParameterName', 'my default stringParam value', 'myStringParameterDescription')
+        context.stringParam('myParameterName', 'my default stringParam value', 'myStringParameterDescription', true)
 
         then:
         context.buildParameterNodes != null
@@ -540,6 +540,7 @@ class BuildParametersContextSpec extends Specification {
         context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
         context.buildParameterNodes['myParameterName'].defaultValue.text() == 'my default stringParam value'
         context.buildParameterNodes['myParameterName'].description.text() == 'myStringParameterDescription'
+        context.buildParameterNodes['myParameterName'].trim.text() == 'true'
     }
 
     def 'simplified stringParam usage'() {
