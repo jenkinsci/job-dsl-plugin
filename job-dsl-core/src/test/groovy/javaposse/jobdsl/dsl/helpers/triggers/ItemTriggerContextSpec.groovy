@@ -298,7 +298,7 @@ class ItemTriggerContextSpec extends Specification {
 
         then:
         Exception e = thrown(DslScriptException)
-        e.message ==~ /\(.+, line \d+\) cronString must be specified/
+        e.message =~ /cronString must be specified/
 
         where:
         schedule << [null, '']
