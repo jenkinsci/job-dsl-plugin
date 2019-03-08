@@ -17,12 +17,15 @@ class DslScriptHelper {
             'javaposse.jobdsl.plugin.InterruptibleJobManagement',
     ]
 
+    private static final boolean IS_JAVA_9_OR_LATER
+
     private DslScriptHelper() {
     }
 
     static List<StackTraceElement> getStackTrace() {
         currentThread().stackTrace.findAll { StackTraceElement element ->
             isApplicationClass(element.className) &&
+                    (!IS_JAVA_9_OR_LATER || (IS_JAVA_9_OR_LATER && element.moduleName != 'java.base')) &&
                     !(element.className in CLASS_FILTER) &&
                     !CLASS_FILTER.any { element.className.startsWith(it + '$') }
         }
@@ -40,7 +43,8 @@ class DslScriptHelper {
         StackTraceElement source = stackTrace.find {
             isApplicationClass(it.className) && !it.className.startsWith('javaposse.jobdsl.') &&
                     !it.className.startsWith('org.kohsuke.groovy.sandbox.') &&
-                    !it.className.startsWith('org.jenkinsci.plugins.scriptsecurity.sandbox.')
+                    !it.className.startsWith('org.jenkinsci.plugins.scriptsecurity.sandbox.') &&
+                    (!IS_JAVA_9_OR_LATER || (IS_JAVA_9_OR_LATER && it.moduleName != 'java.base'))
         }
         getSourceDetails(source?.fileName, source == null ? -1 : source.lineNumber)
     }
@@ -54,5 +58,14 @@ class DslScriptHelper {
             }
         }
         details
+    }
+
+    static {
+        try {
+            DslScriptHelper.classLoader.loadClass('java.lang.Module')
+            IS_JAVA_9_OR_LATER = true
+        } catch (ClassNotFoundException ignore) {
+            IS_JAVA_9_OR_LATER = false
+        }
     }
 }
