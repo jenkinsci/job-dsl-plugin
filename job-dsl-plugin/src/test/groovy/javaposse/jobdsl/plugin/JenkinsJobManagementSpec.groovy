@@ -520,7 +520,27 @@ class JenkinsJobManagementSpec extends Specification {
         0 * saveableListener.onChange(job, _)
     }
 
-    def 'createOrUpdateConfig should fail if generated job is already managed by another seed'() {
+    def 'createOrUpdateConfig should fail if item is managed by another seed and failOnSeedCollision is enabled'() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        seedJob.buildersList.add(new ExecuteDslScripts('job("project")'))
+        jenkinsRule.buildAndAssertSuccess(seedJob)
+        FreeStyleProject seedJob2 = jenkinsRule.createFreeStyleProject('seed2')
+        AbstractBuild build = seedJob2.scheduleBuild2(0).get()
+        JobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.JENKINS_ROOT
+        )
+        jobManagement.failOnSeedCollision = true
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
+
+        then:
+        Exception e = thrown(DslException)
+        e.message == 'Could not create item project, item is already managed by seed job seed'
+    }
+
+    def 'createOrUpdateConfig should pass if item is managed by another seed and failOnSeedCollision is disabled'() {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         seedJob.buildersList.add(new ExecuteDslScripts('job("project")'))
@@ -535,11 +555,10 @@ class JenkinsJobManagementSpec extends Specification {
         jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
 
         then:
-        Exception e = thrown(DslException)
-        e.message == 'Could not create job project, job is already managed by seed job seed'
+        ContextExtensionPoint.all().get(TestContextExtensionPoint).isItemUpdated('project')
     }
 
-    def 'createOrUpdateConfig should work if generated job was managed by a deleted seed'() {
+    def 'createOrUpdateConfig should work if generated item was managed by a deleted seed'() {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         seedJob.buildersList.add(new ExecuteDslScripts('job("project")'))

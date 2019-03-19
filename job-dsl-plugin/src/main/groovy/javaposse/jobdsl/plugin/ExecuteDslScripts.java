@@ -101,6 +101,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private boolean failOnMissingPlugin;
 
+    private boolean failOnSeedCollision;
+
     private boolean unstableOnDeprecation;
 
     private RemovedJobAction removedJobAction = RemovedJobAction.IGNORE;
@@ -133,6 +135,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.scriptText = scriptText;
         this.targets = null;
         this.ignoreExisting = false;
+        this.failOnSeedCollision = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
         this.removedViewAction = RemovedViewAction.IGNORE;
         this.lookupStrategy = LookupStrategy.JENKINS_ROOT;
@@ -210,6 +213,15 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     @DataBoundSetter
     public void setFailOnMissingPlugin(boolean failOnMissingPlugin) {
         this.failOnMissingPlugin = failOnMissingPlugin;
+    }
+
+    public boolean isFailOnSeedCollision() {
+        return failOnSeedCollision;
+    }
+
+    @DataBoundSetter
+    public void setFailOnSeedCollision(boolean failOnSeedCollision) {
+        this.failOnSeedCollision = failOnSeedCollision;
     }
 
     public boolean isUnstableOnDeprecation() {
@@ -315,6 +327,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                     listener.getLogger(), binding, run, workspace, getLookupStrategy()
             );
             jenkinsJobManagement.setFailOnMissingPlugin(failOnMissingPlugin);
+            jenkinsJobManagement.setFailOnSeedCollision(failOnSeedCollision);
             jenkinsJobManagement.setUnstableOnDeprecation(unstableOnDeprecation);
             JobManagement jobManagement = new InterruptibleJobManagement(jenkinsJobManagement);
 
