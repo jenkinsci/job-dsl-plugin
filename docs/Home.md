@@ -29,6 +29,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.73 (unreleased)
+  * Added option to fail seed job if an item is managed by another seed job
+    ([#1147](https://github.com/jenkinsci/job-dsl-plugin/pull/1147))
+  * Fixed line detection for JDK 9+
+    ([JENKINS-54942](https://issues.jenkins-ci.org/browse/JENKINS-54942))
 * 1.72 (March 06 2019)
   * Increased the minimum supported Jenkins version to 2.121
   * Replaced built-in support for periodic folder trigger, see [Migration](Migration#migrating-to-172)
