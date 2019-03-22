@@ -214,6 +214,7 @@ Marionette.Renderer.render = function(template, data) {
 
         showHome: function() {
             var homeView = new App.HomeView({
+                config: this.config,
                 settings: this.settings,
                 dsl: this.dsl,
                 plugins: this.plugins

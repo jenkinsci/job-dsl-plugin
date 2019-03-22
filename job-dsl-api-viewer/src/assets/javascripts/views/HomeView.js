@@ -7,6 +7,7 @@ App.HomeView = Marionette.LayoutView.extend({
     },
 
     initialize: function(options) {
+        this.config = options.config;
         this.settings = options.settings;
         this.dsl = options.dsl;
         this.plugins = options.plugins;
@@ -25,6 +26,6 @@ App.HomeView = Marionette.LayoutView.extend({
     },
 
     serializeData: function() {
-        return {plugins: this.plugins};
+        return {plugins: this.plugins, config: this.config};
     }
 });

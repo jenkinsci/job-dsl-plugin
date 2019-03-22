@@ -3,6 +3,7 @@
         <h2>Jenkins Job DSL API</h2>
 
         <div class="intro">
+{{#if config.embedded}}
             <p>
                 Welcome to the Job DSL API Viewer. This is the Job DSL reference, showing all available DSL methods. Use the navigation
                 on the left to browse all methods starting from the methods available in the script context.
@@ -11,6 +12,20 @@
                 The Job DSL API currently supports {{plugins.length}} Jenkins plugins. Click the <span class="glyphicon glyphicon-filter"></span>
                 on the top-right to filter methods by plugin.
             </p>
+{{else}}
+            <p>
+                Welcome to the Job DSL API Viewer. This is the Job DSL reference, showing the built-in DSL methods. Use the navigation
+                on the left to browse all methods starting from the methods available in the script context.
+            </p>
+            <p>
+                The built-in Job DSL API currently supports {{plugins.length}} Jenkins plugins. Click the <span class="glyphicon glyphicon-filter"></span>
+                on the top-right to filter methods by plugin.
+            </p>
+            <p class="info">
+                Apart from the limited built-in API, Job DSL supports many more Jenkins plugins at runtime. The complete API reference is available in your
+                Jenkins installation at <code>https://your.jenkins.installation/plugin/job-dsl/api-viewer/index.html</code>.
+            </p>
+{{/if}}
             <p>
                 For further documentation, please go to the <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki">Job DSL Wiki</a>.
             </p>
