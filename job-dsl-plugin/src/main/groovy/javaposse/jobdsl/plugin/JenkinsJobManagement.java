@@ -74,6 +74,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private final LookupStrategy lookupStrategy;
     private final Map<javaposse.jobdsl.dsl.Item, DslEnvironment> environments = new HashMap<>();
     private boolean failOnMissingPlugin;
+    private boolean failOnSeedCollision;
     private boolean unstableOnDeprecation;
 
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, Run<?, ?> run,
@@ -93,6 +94,10 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     @SuppressWarnings("WeakerAccess") // JENKINS-45921
     public void setFailOnMissingPlugin(boolean failOnMissingPlugin) {
         this.failOnMissingPlugin = failOnMissingPlugin;
+    }
+
+    void setFailOnSeedCollision(boolean failOnSeedCollision) {
+        this.failOnSeedCollision = failOnSeedCollision;
     }
 
     void setUnstableOnDeprecation(boolean unstableOnDeprecation) {
@@ -136,6 +141,21 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             createNewItem(path, dslItem);
             return true;
         } else if (!ignoreExisting) {
+            if (failOnSeedCollision) {
+                // fail if the item being created is already managed by another seed job
+                String seedJobName = project.getName();
+                if (seedJobName != null) {
+                    DescriptorImpl descriptor = Jenkins.getInstance().getDescriptorByType(DescriptorImpl.class);
+                    SeedReference seedReference = descriptor.getGeneratedJobMap().get(jobName);
+                    if (seedReference != null) {
+                        String existingSeedJobName = seedReference.getSeedJobName();
+                        if (!seedJobName.equals(existingSeedJobName) &&
+                                Jenkins.getInstance().getItemByFullName(existingSeedJobName) != null) {
+                            throw new DslException(format(Messages.CreateOrUpdateConfigFile_SeedCollision(), jobName, existingSeedJobName));
+                        }
+                    }
+                }
+            }
             return updateExistingItem(item, dslItem);
         }
         return false;

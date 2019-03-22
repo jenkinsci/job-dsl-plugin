@@ -28,6 +28,7 @@ import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.views.ColumnsContext
 import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint
 import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint2
+import jenkins.model.Jenkins
 import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
@@ -517,6 +518,63 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         0 * saveableListener.onChange(job, _)
+    }
+
+    def 'createOrUpdateConfig should fail if item is managed by another seed and failOnSeedCollision is enabled'() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        seedJob.buildersList.add(new ExecuteDslScripts('job("project")'))
+        jenkinsRule.buildAndAssertSuccess(seedJob)
+        FreeStyleProject seedJob2 = jenkinsRule.createFreeStyleProject('seed2')
+        AbstractBuild build = seedJob2.scheduleBuild2(0).get()
+        JobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.JENKINS_ROOT
+        )
+        jobManagement.failOnSeedCollision = true
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
+
+        then:
+        Exception e = thrown(DslException)
+        e.message == 'Could not create item project, item is already managed by seed job seed'
+    }
+
+    def 'createOrUpdateConfig should pass if item is managed by another seed and failOnSeedCollision is disabled'() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        seedJob.buildersList.add(new ExecuteDslScripts('job("project")'))
+        jenkinsRule.buildAndAssertSuccess(seedJob)
+        FreeStyleProject seedJob2 = jenkinsRule.createFreeStyleProject('seed2')
+        AbstractBuild build = seedJob2.scheduleBuild2(0).get()
+        JobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.JENKINS_ROOT
+        )
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
+
+        then:
+        ContextExtensionPoint.all().get(TestContextExtensionPoint).isItemUpdated('project')
+    }
+
+    def 'createOrUpdateConfig should work if generated item was managed by a deleted seed'() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        seedJob.buildersList.add(new ExecuteDslScripts('job("project")'))
+        jenkinsRule.buildAndAssertSuccess(seedJob)
+        Jenkins.instance.getItemByFullName('seed').delete()
+        FreeStyleProject seedJob2 = jenkinsRule.createFreeStyleProject('seed2')
+        AbstractBuild build = seedJob2.scheduleBuild2(0).get()
+        JobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.JENKINS_ROOT
+        )
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
+
+        then:
+        ContextExtensionPoint.all().get(TestContextExtensionPoint).isItemUpdated('project')
     }
 
     def 'createOrUpdateConfig should fail if item type does not match'() {
