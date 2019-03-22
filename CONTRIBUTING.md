@@ -1,5 +1,13 @@
 # Contributing to the job-dsl-plugin Project
 
+---
+**NOTE**
+
+The built-in DSL is in [Maintenance Mode](https://en.wikipedia.org/wiki/Maintenance_mode). If a feature is available in
+[Dynamic DSL](docs/Dynamic-DSL.md), it will not be added to the built-in DSL. Any pull requests or JIRA tickets for
+adding support for features that are available in Dynamic DSL will be rejected.
+---
+
 ## Ways To Help
 
 We are always happy for folk to help us out on this project. Please follow these guidelines.
