@@ -29,6 +29,7 @@ import static javaposse.jobdsl.plugin.ExtensionPointHelper.isVisibleParameterTyp
 import static javaposse.jobdsl.plugin.structs.DescribableHelper.findDescribableModels
 import static javaposse.jobdsl.plugin.structs.DescribableHelper.getClassName
 import static javaposse.jobdsl.plugin.structs.DescribableHelper.getSimpleName
+import static javaposse.jobdsl.plugin.structs.DescribableHelper.isContextParameter
 import static org.apache.commons.lang.StringEscapeUtils.unescapeHtml
 
 class EmbeddedApiDocGenerator {
@@ -286,12 +287,6 @@ class EmbeddedApiDocGenerator {
         generateHelp(signature, parameter.help)
 
         signature
-    }
-
-    private static boolean isContextParameter(ParameterType parameterType) {
-        parameterType instanceof HomogeneousObjectType ||
-                (parameterType instanceof HeterogeneousObjectType && parameterType.actualType != Object) ||
-                (parameterType instanceof ArrayType && isContextParameter(parameterType.elementType))
     }
 
     /**
