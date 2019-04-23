@@ -4,8 +4,10 @@ import lib.FormTagLib
 
 def f = namespace(FormTagLib)
 
-f.optionalBlock(
-        field: 'useScriptSecurity',
-        title: 'Enable script security for Job DSL scripts',
-        checked: descriptor.useScriptSecurity
-)
+f.section(_('Job DSL Security')) {
+    f.optionalBlock(
+            field: 'useScriptSecurity',
+            title: 'Enable script security for Job DSL scripts',
+            checked: descriptor.useScriptSecurity
+    )
+}
