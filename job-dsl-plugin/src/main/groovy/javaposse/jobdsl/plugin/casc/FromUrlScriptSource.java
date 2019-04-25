@@ -9,9 +9,6 @@ import org.jenkinsci.Symbol;
 import java.io.IOException;
 import java.net.URI;
 
-/**
- * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
- */
 public class FromUrlScriptSource extends ConfigurableScriptSource implements Configurable {
 
     public String url;

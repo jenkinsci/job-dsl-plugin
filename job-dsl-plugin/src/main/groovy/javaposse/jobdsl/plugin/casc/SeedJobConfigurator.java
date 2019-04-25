@@ -27,9 +27,6 @@ import java.util.Set;
 import static io.vavr.API.Try;
 import static io.vavr.API.unchecked;
 
-/**
- * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
- */
 @Extension(optional = true, ordinal = -50) // Ordinal -50 Ensure it is loaded after GlobalJobDslSecurityConfiguration
 @Restricted(NoExternalUse.class)
 public class SeedJobConfigurator implements RootElementConfigurator<GeneratedItems[]> {
@@ -73,7 +70,6 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
 
     @Override
     public GeneratedItems[] check(CNode config, ConfigurationContext context) throws ConfiguratorException {
-        // Any way to dry-run a job-dsl script ?
         return new GeneratedItems[0];
     }
 

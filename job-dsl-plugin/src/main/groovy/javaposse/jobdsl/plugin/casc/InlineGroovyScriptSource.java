@@ -7,9 +7,6 @@ import org.jenkinsci.Symbol;
 
 import java.io.IOException;
 
-/**
- * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
- */
 public class InlineGroovyScriptSource extends ConfigurableScriptSource implements Configurable {
 
     public String script;

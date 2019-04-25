@@ -9,9 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-/**
- * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
- */
 public class FromFileScriptSource extends ConfigurableScriptSource {
 
     public String path;

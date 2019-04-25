@@ -4,9 +4,6 @@ import io.jenkins.plugins.casc.Configurable;
 import io.jenkins.plugins.casc.ConfiguratorException;
 import io.jenkins.plugins.casc.model.CNode;
 
-/**
- * @author <a href="mailto:nicolas.deloof@gmail.com">Nicolas De Loof</a>
- */
 public abstract class ConfigurableScriptSource extends ScriptSource implements Configurable {
 
     @Override
