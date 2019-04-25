@@ -17,7 +17,7 @@ class FolderSpec extends Specification {
         <views>
             <hudson.model.AllView>
                 <owner class="com.cloudbees.hudson.plugins.folder.Folder" reference="../../../.."/>
-                <name>All</name>
+                <name>all</name>
                 <filterExecutors>false</filterExecutors>
                 <filterQueue>false</filterQueue>
                 <properties class="hudson.model.View$PropertyList"/>
