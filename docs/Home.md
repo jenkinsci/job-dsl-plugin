@@ -13,6 +13,10 @@ Highly recommended starting point is [[the tutorial|Tutorial - Using the Jenkins
 Once you know how to create a "seed" job from the tutorial, start looking at the [[real world examples|Real World Examples]] for examples to steal from.
 After you get familiar with some of the commands, try them out at the [Job DSL Playground](http://job-dsl.herokuapp.com/).
 
+Instead of creating a seed job manually, the
+[Configuration as Code plugin](https://github.com/jenkinsci/configuration-as-code-plugin/) can be used to execute Job
+DSL scripts. See [[JCasC]] for details.
+
 Job DSL provides a secure environment for executing DSL scripts. See [[Script Security]] for details.
 
 Not all of the 1000+ Jenkins plugins are supported by the built-in DSL. If the
@@ -29,6 +33,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.73 (unreleased)
+  * Support job creation in [Configuration as Code](https://github.com/jenkinsci/configuration-as-code-plugin/)
+    ([#1173](https://github.com/jenkinsci/job-dsl-plugin/pull/1173))
   * Added option to fail seed job if an item is managed by another seed job
     ([#1147](https://github.com/jenkinsci/job-dsl-plugin/pull/1147))
   * Fixed line detection for JDK 9+
