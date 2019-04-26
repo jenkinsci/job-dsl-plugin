@@ -139,9 +139,8 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'hudson.plugins.descriptionsetter.DescriptionSetterBuilder'
-            children().size() == 2
+            children().size() == 1
             regexp[0].value() == '[version] (.*)'
-            description[0].value() == ''
         }
         1 * jobManagement.requireMinimumPluginVersion('description-setter', '1.9')
     }

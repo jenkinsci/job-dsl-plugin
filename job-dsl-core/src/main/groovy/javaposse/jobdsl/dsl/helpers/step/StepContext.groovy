@@ -106,7 +106,9 @@ class StepContext extends AbstractExtensibleContext {
     void buildDescription(String regexp, String description = null) {
         stepNodes << new NodeBuilder().'hudson.plugins.descriptionsetter.DescriptionSetterBuilder' {
             delegate.regexp(regexp ?: '')
-            delegate.description(description ?: '')
+            if (description) {
+                delegate.description(description)
+            }
         }
     }
 
