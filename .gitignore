@@ -19,7 +19,7 @@ gradle-app.setting
 /local*
 build
 generated
-/out
+*/out/
 /classes
 .DS_Store
 
