@@ -21,7 +21,7 @@ public class InlineGroovyScriptSource extends ConfigurableScriptSource implement
         return script;
     }
 
-    @Extension
+    @Extension(optional = true)
     @Symbol("script")
     public static class DescriptorImpl extends Descriptor<ScriptSource> {
 

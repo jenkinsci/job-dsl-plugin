@@ -23,7 +23,7 @@ public class FromUrlScriptSource extends ConfigurableScriptSource implements Con
         return IOUtils.toString(URI.create(url));
     }
 
-    @Extension
+    @Extension(optional = true)
     @Symbol("url")
     public static class DescriptorImpl extends Descriptor<ScriptSource> {
 
