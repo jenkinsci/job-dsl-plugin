@@ -264,6 +264,21 @@ folder('folder-a/folder-b') {
     }
 
     @WithoutJenkins
+    def 'removed job action shelve'() {
+        setup:
+        ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
+
+        expect:
+        executeDslScripts.removedJobAction == RemovedJobAction.IGNORE
+
+        when:
+        executeDslScripts.removedJobAction = RemovedJobAction.SHELVE
+
+        then:
+        executeDslScripts.removedJobAction == RemovedJobAction.SHELVE
+    }
+
+    @WithoutJenkins
     def 'removed view action'() {
         setup:
         ExecuteDslScripts executeDslScripts = new ExecuteDslScripts()
@@ -579,7 +594,31 @@ folder('folder-a/folder-b') {
         jenkinsRule.jenkins.getItemByFullName('/folder/test-job') == null
     }
 
-    def 'only use last build to calculate items to be deleted'() {
+    def 'shelve a project instead of deleting it'() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+
+        when:
+        String script1 = 'job("test-job")'
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(script1)
+        builder1.removedJobAction = RemovedJobAction.DELETE
+        runBuild(job, builder1)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('test-job') instanceof FreeStyleProject
+
+        when:
+        String script2 = 'job("different-job")'
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(script2)
+        builder2.removedJobAction = RemovedJobAction.SHELVE
+        runBuild(job, builder2)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('different-job') instanceof FreeStyleProject
+       // jenkinsRule.jenkins.getItemByFullName('test-job') == null
+    }
+
+     def 'only use last build to calculate items to be deleted'() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
 

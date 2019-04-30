@@ -15,6 +15,7 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
+import hudson.model.BuildableItem;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
@@ -51,6 +52,7 @@ import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
+import org.jvnet.hudson.plugins.shelveproject.ShelveProjectTask;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -78,6 +80,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     private static final Logger LOGGER = Logger.getLogger(ExecuteDslScripts.class.getName());
 
     private static volatile boolean rebootRequired;
+
+    public static final String SHELVE_PLUGIN_ID = "shelve-project-plugin";
 
     /**
      * Newline-separated list of locations to load as dsl scripts.
@@ -457,6 +461,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
         Set<GeneratedJob> unreferenced = Sets.difference(generatedJobs, freshJobs);
         Set<GeneratedJob> removed = new HashSet<>();
+        Set<GeneratedJob> shelved = new HashSet<>();
         Set<GeneratedJob> disabled = new HashSet<>();
 
         logItems(listener, "Added items", added);
@@ -470,6 +475,9 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     removedItem.delete();
                     removed.add(unreferencedJob);
+                } else if (removedJobAction == RemovedJobAction.SHELVE) {
+                    shelve(removedItem);
+                    shelved.add(unreferencedJob);
                 } else {
                     if (removedItem instanceof ParameterizedJob) {
                         ParameterizedJob project = (ParameterizedJob) removedItem;
@@ -484,8 +492,23 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         // print what happened with unreferenced jobs
         logItems(listener, "Disabled items", disabled);
         logItems(listener, "Removed items", removed);
+        logItems(listener, "Shelved items", shelved);
 
         updateGeneratedJobMap(seedJob, Sets.union(added, existing), unreferenced);
+    }
+
+    private void shelve(Item project) {
+       Jenkins jenkins = Jenkins.get();
+       if (! (project instanceof BuildableItem)) {
+           LOGGER.log(Level.WARNING, "Unable to shelve " + project + " since it is not a BuildableItem");
+           return;
+       }
+       BuildableItem item = (BuildableItem) project;
+        if (jenkins.getPlugin(SHELVE_PLUGIN_ID) == null) {
+            LOGGER.log(Level.WARNING, "Unable to shelve project " + item + " since the " + SHELVE_PLUGIN_ID + " plugin is not installed.");
+            return;
+        }
+        jenkins.getQueue().schedule(new ShelveProjectTask(item), 0);
     }
 
     private void updateGeneratedJobMap(Job seedJob, Set<GeneratedJob> createdOrUpdatedJobs,
