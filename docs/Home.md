@@ -33,6 +33,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.74 (unreleased)
+  * Fixed [Configuration as Code](https://github.com/jenkinsci/configuration-as-code-plugin/) extension
+    ([JENKINS-57218](https://issues.jenkins-ci.org/browse/JENKINS-57218))
 * 1.73 (April 26 2019)
   * Support job creation in [Configuration as Code](https://github.com/jenkinsci/configuration-as-code-plugin/)
     ([#1173](https://github.com/jenkinsci/job-dsl-plugin/pull/1173))

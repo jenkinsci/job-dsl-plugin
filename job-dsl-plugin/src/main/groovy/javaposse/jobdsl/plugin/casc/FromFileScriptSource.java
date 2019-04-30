@@ -23,7 +23,7 @@ public class FromFileScriptSource extends ConfigurableScriptSource {
         return FileUtils.readFileToString(new File(path), StandardCharsets.UTF_8);
     }
 
-    @Extension
+    @Extension(optional = true)
     @Symbol("file")
     public static class DescriptorImpl extends Descriptor<ScriptSource> {
 
