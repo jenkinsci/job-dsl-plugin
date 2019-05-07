@@ -1,4 +1,4 @@
-Via [configuratin-as-code-plugin](https://plugins.jenkins.io/configuration-as-code) also known as JCasC
+Via [configuration-as-code-plugin](https://plugins.jenkins.io/configuration-as-code) also known as JCasC
 
 It is possible to configure initial seed jobs through a yaml config file.  
 The basics for job dsl is you have a root element called `jobs` that will be parsed to configure via job dsl
