@@ -33,6 +33,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.75 (unreleased)
+  * Fixed [[Dynamic DSL]] problem
+    ([JENKINS-57817](https://issues.jenkins-ci.org/browse/JENKINS-57817))
 * 1.74 (May 01 2019)
   * Fixed [Configuration as Code](https://github.com/jenkinsci/configuration-as-code-plugin/) extension
     ([JENKINS-57218](https://issues.jenkins-ci.org/browse/JENKINS-57218))
