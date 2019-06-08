@@ -64,6 +64,9 @@ class DescribableHelper {
         if (result == null) {
             Collection<Descriptor> descriptors = getDescriptors(contextClass)
             Collection<Descriptor> symbols = descriptors.findAll { SymbolLookup.get().find(it.class, name) }
+            symbols = symbols.findAll { d ->
+                !symbols.any { other -> d != other && d.class.isAssignableFrom(other.class) }
+            }
             result = getDescribableModels(symbols ?: descriptors.findAll { uncapitalize(it.clazz) == name })
             result = unmodifiableCollection(result)
             CACHE.put(cacheKey, result)

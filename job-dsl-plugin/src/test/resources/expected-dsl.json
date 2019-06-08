@@ -249,6 +249,15 @@
               "firstSentenceCommentText": "Configure Jenkins to poll changes in SCM."
             }
           ]
+        },
+        {
+          "name": "sub",
+          "signatures": [
+            {
+              "parameters": [],
+              "generated": true
+            }
+          ]
         }
       ]
     },
