@@ -35,9 +35,8 @@ import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.Specification
 
-import static com.google.common.base.Charsets.UTF_8
-import static com.google.common.io.Resources.getResource
 import static hudson.model.Result.UNSTABLE
+import static java.nio.charset.StandardCharsets.UTF_8
 
 class JenkinsJobManagementSpec extends Specification {
     private static final String FILE_NAME = 'test.txt'
@@ -347,7 +346,7 @@ class JenkinsJobManagementSpec extends Specification {
     def 'create view with nonexisting parent'() {
         when:
         jobManagement.createOrUpdateView(
-                'nonexistingfolder/view', Resources.toString(getResource('minimal-view.xml'), UTF_8), true
+                'nonexistingfolder/view', loadResource('minimal-view.xml'), true
         )
 
         then:
@@ -479,7 +478,7 @@ class JenkinsJobManagementSpec extends Specification {
         )
 
         when:
-        jobManagement.createOrUpdateView('view', Resources.toString(getResource('minimal-view.xml'), UTF_8), true)
+        jobManagement.createOrUpdateView('view', loadResource('minimal-view.xml'), true)
 
         then:
         folder.getView('view') != null
@@ -925,7 +924,7 @@ class JenkinsJobManagementSpec extends Specification {
     }
 
     private static String loadResource(String resourceName) {
-        Resources.toString(getResource(resourceName), UTF_8)
+        Resources.toString(Resources.getResource(resourceName), UTF_8)
     }
 
     private Item createItem(String name, String config) {
