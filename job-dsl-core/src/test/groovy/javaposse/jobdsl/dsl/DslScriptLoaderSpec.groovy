@@ -191,7 +191,7 @@ println content
         content.count('bar') == 3
     }
 
-    def 'read nonexistant file'() {
+    def 'read nonexistent file'() {
         setup:
         def scriptStr = '''
 readFileFromWorkspace('bar.txt')

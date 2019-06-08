@@ -24,7 +24,7 @@ job('example-2') {
 job('example-3') {
     publishers {
         plotBuildData {
-            plot('Exciting plots', 'excitment.csv') {
+            plot('Exciting plots', 'excitement.csv') {
                 title('X vs Y')
                 yAxis('Y')
                 numberOfBuilds(42)

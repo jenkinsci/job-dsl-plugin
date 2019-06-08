@@ -101,7 +101,7 @@ dependencies this can be achieved by using the _Artifact Resolver_ build step of
 _Process Job DSLs_ build step. For more complex setups, an extra [Gradle](http://www.gradle.org/) build step
 ([Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)) can be used.
 
-For example, to use [Koshuke's GitHub API](http://github-api.kohsuke.org/), the following `build.gradle` will copy all
+For example, to use [Kohsuke's GitHub API](http://github-api.kohsuke.org/), the following `build.gradle` will copy all
 necessary libraries to a `lib` directory:
 
 ```groovy

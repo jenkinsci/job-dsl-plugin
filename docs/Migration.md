@@ -2691,7 +2691,7 @@ job {
     rvm 'ruby-1.9.2-p290'
     timeout 60
     allocatePorts('PORT_A', 'PORT_B')
-    sshAgent 'deloy-key'
+    sshAgent 'deploy-key'
     ...
 }
 ```
@@ -2706,7 +2706,7 @@ job {
         rvm 'ruby-1.9.2-p290'
         timeout 60
         allocatePorts('PORT_A', 'PORT_B')
-        sshAgent 'deloy-key'
+        sshAgent 'deploy-key'
     }
     ...
 }

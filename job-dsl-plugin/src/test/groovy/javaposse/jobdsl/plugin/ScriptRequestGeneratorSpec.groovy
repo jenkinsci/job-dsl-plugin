@@ -391,7 +391,7 @@ class ScriptRequestGeneratorSpec extends Specification {
         e.message == 'no Job DSL script(s) found at *.foo'
     }
 
-    def 'ignore empty wildcared'() {
+    def 'ignore empty wildcard'() {
         setup:
         EnvVars env = new EnvVars()
         ScriptRequestGenerator generator = new ScriptRequestGenerator(build.workspace, env)
