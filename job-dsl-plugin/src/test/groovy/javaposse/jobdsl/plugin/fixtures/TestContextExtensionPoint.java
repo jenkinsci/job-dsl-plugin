@@ -17,8 +17,8 @@ import java.util.List;
 
 @Extension(optional = true)
 public class TestContextExtensionPoint extends ContextExtensionPoint {
-    private List<String> createdItems = new ArrayList<String>();
-    private List<String> updatedItems = new ArrayList<String>();
+    private List<String> createdItems = new ArrayList<>();
+    private List<String> updatedItems = new ArrayList<>();
 
     @DslExtensionMethod(context = StepContext.class)
     public Object test() {

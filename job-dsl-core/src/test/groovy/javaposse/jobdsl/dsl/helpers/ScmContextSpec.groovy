@@ -323,7 +323,6 @@ class ScmContextSpec extends Specification {
         }
 
         then:
-        then:
         context.scmNodes[0] != null
         with(context.scmNodes[0]) {
             extensions.size() == 1
@@ -435,7 +434,6 @@ class ScmContextSpec extends Specification {
             }
         }
 
-        then:
         then:
         context.scmNodes[0] != null
         with(context.scmNodes[0]) {
