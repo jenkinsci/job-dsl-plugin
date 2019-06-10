@@ -185,25 +185,25 @@ class ProjectSpec extends Specification {
 
     def 'can run jdk'() {
         when:
-        job.jdk('JDK1.6.0_32')
+        job.jdk('JDK1.8.0_212')
 
         then:
-        job.node.jdk[0].value() == 'JDK1.6.0_32'
+        job.node.jdk[0].value() == 'JDK1.8.0_212'
     }
 
     def 'can run jdk twice'() {
         when:
-        job.jdk('JDK1.6.0_16')
+        job.jdk('JDK1.8.0_211')
 
         then:
-        job.node.jdk[0].value() == 'JDK1.6.0_16'
+        job.node.jdk[0].value() == 'JDK1.8.0_211'
 
         when:
-        job.jdk('JDK1.6.0_17')
+        job.jdk('JDK1.8.0_212')
 
         then:
         job.node.jdk.size() == 1
-        job.node.jdk[0].value() == 'JDK1.6.0_17'
+        job.node.jdk[0].value() == 'JDK1.8.0_212'
     }
 
     def 'add SCM retry count'() {

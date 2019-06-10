@@ -1,3 +1,3 @@
 matrixJob('example') {
-    combinationFilter('jdk=="jdk-6" || label=="linux"')
+    combinationFilter('jdk=="jdk-8" || label=="linux"')
 }

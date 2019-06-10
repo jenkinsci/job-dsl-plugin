@@ -1,7 +1,7 @@
 matrixJob('example') {
     axes {
         label('label', 'linux', 'windows')
-        jdk('jdk6', 'jdk7')
+        jdk('jdk8', 'jdk11')
         configure { axes ->
             axes << 'org.acme.FooAxis'()
         }

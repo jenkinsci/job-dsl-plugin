@@ -11,8 +11,8 @@ job('example') {
                 builtResourceRegexToDeploy('myApp\\.ear')
                 taskName('Deploy myApp to DEV Server')
 
-                jdkName('JDK_7')
-                jdkHome('C:\\Program Files\\Java\\jdk1.7.0_65')
+                jdkName('JDK_8')
+                jdkHome('C:\\Program Files\\Java\\jdk1.8.0_212')
 
                 stageMode(WeblogicDeploymentStageModes.STAGE)
 

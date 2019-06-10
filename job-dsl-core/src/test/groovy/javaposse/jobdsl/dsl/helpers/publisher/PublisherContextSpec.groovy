@@ -5193,7 +5193,7 @@ class PublisherContextSpec extends Specification {
                 builtResourceRegexToDeploy('myApp.ear')
                 baseResourcesGeneratedDirectory('foo')
                 taskName('test_deploy_task')
-                jdkName('JDK 7')
+                jdkName('JDK 8')
                 jdkHome('lala')
                 stageMode(stageModeEnum)
                 commandLine('one;')
@@ -5236,7 +5236,7 @@ class PublisherContextSpec extends Specification {
                 baseResourcesGeneratedDirectory[0].value() == 'foo'
                 taskName[0].value() == 'test_deploy_task'
                 jdk[0].children().size() == 2
-                jdk[0].name[0].value() == 'JDK 7'
+                jdk[0].name[0].value() == 'JDK 8'
                 jdk[0].home[0].value() == 'lala'
                 stageMode[0].value() == stageModeString
                 commandLine[0].value() == 'one;\ntwo;'

@@ -65,7 +65,7 @@
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <jdk>JDK 6</jdk>
+  <jdk>JDK 8</jdk>
   <triggers class="vector">
     <hudson.triggers.SCMTrigger>
       <spec>*/10 * * * *</spec>

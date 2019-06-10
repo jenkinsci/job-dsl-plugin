@@ -1,6 +1,6 @@
 matrixJob('example') {
     axes {
-        jdk('jdk6', 'jdk7')
+        jdk('jdk8', 'jdk11')
     }
     scm {
         github('jenkinsci/job-dsl-plugin', 'master')

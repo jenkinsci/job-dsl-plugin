@@ -111,7 +111,7 @@ which have been successfully created
 Building
 --------
 Prerequisites:
-* JDK 7 (or above)
+* JDK 8 (or above)
 
 To build the plugin from source:
 

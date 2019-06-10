@@ -81,7 +81,7 @@ class DslSampleSpec extends Specification {
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <jdk>JDK 6</jdk>
+  <jdk>JDK 8</jdk>
   <concurrentBuild>false</concurrentBuild>
   <builders>
   </builders>
@@ -258,7 +258,7 @@ mavenJob('PROJ-maven-with-template') {
     goals 'install'
     mavenOpts '-Xms128m'
     mavenOpts '-Xmx512m'
-    jdk 'JDK1.7.0_12'
+    jdk 'JDK1.8.0_212'
 }
 '''
 
@@ -333,7 +333,7 @@ mavenJob('PROJ-maven-with-template') {
     <rootPOM>other_module/pom.xml</rootPOM>
     <goals>clean install</goals>
     <mavenOpts>-Xms128m -Xmx512m</mavenOpts>
-    <jdk>JDK1.7.0_12</jdk>
+    <jdk>JDK1.8.0_212</jdk>
     <scm class='hudson.plugins.git.GitSCM'>
         <configVersion>2</configVersion>
         <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
