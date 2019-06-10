@@ -33,7 +33,7 @@ class AntContext implements Context {
     }
 
     /**
-     * Specifies properties for the Ant build. Can be called multiple times to add more properites.
+     * Specifies properties for the Ant build. Can be called multiple times to add more properties.
      */
     void props(Map<String, String> map) {
         map.entrySet().each {

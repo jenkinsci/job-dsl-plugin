@@ -1400,7 +1400,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * p4(viewspec, user, password, closure)
 * 1.3
   * Support for Node as argument to div(), meaning that more complex structures can be used in div statements.
-  * multiscm(closure) - Supoprt multi-scm plugin, alternative to scm tag to allow multiple SCMs
+  * multiscm(closure) - Support multi-scm plugin, alternative to scm tag to allow multiple SCMs
 * 1.2
   * permissionAll(String userName) - Add all available permissions for a user
 * 1.1

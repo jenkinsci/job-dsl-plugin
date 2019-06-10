@@ -2,7 +2,7 @@ These are the steps to release a gradle-based Jenkins plugin, assuming the relea
 
 * Ensure you have the latest code from origin: _git pull origin_
 * Make sure tests still run: _./gradlew test_
-* Run locally to perform santity check: _./gradlew :job-dsl-plugin:server_
+* Run locally to perform sanity check: _./gradlew :job-dsl-plugin:server_
 * Edit gradle.properties to strip -SNAPSHOT from version: _vi gradle.properties_
 * Set `compatibleSinceVersion` to the new version if deprecated features have been removed
 * Update the release notes, set the release date: `* 1.14 (Mar 31 2013)`

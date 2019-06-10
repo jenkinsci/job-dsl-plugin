@@ -92,42 +92,42 @@ class CoberturaContext implements Context {
     }
 
     /**
-     * Sets health reporting thresholds for method level converage.
+     * Sets health reporting thresholds for method level coverage.
      */
     void methodTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.METHOD.name(), healthy, unhealthy, failing)
     }
 
     /**
-     * Sets health reporting thresholds for line level converage.
+     * Sets health reporting thresholds for line level coverage.
      */
     void lineTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.LINE.name(), healthy, unhealthy, failing)
     }
 
     /**
-     * Sets health reporting thresholds for conditional level converage.
+     * Sets health reporting thresholds for conditional level coverage.
      */
     void conditionalTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.CONDITIONAL.name(), healthy, unhealthy, failing)
     }
 
     /**
-     * Sets health reporting thresholds for file level converage.
+     * Sets health reporting thresholds for file level coverage.
      */
     void fileTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.FILES.name(), healthy, unhealthy, failing)
     }
 
     /**
-     * Sets health reporting thresholds for class level converage.
+     * Sets health reporting thresholds for class level coverage.
      */
     void classTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.CLASSES.name(), healthy, unhealthy, failing)
     }
 
     /**
-     * Sets health reporting thresholds for package level converage.
+     * Sets health reporting thresholds for package level coverage.
      */
     void packageTarget(Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         this.target(TargetType.PACKAGES.name(), healthy, unhealthy, failing)
@@ -137,9 +137,9 @@ class CoberturaContext implements Context {
     void target(String targetType, Integer healthy = 8000000, Integer unhealthy = 0, Integer failing = 0) {
         checkArgument(TargetType.values().any { it.toString() == targetType },
                 "Invalid target type: $targetType, available target types: ${TargetType.values()}")
-        checkArgument((0..100).contains(healthy), 'Invalid healthyTarget treshold, percentage (0-100) expected')
-        checkArgument((0..100).contains(unhealthy), 'Invalid unhealthyTarget treshold, percentage (0-100) expected')
-        checkArgument((0..100).contains(failing), 'Invalid failingTarget treshold, percentage (0-100) expected')
+        checkArgument((0..100).contains(healthy), 'Invalid healthyTarget threshold, percentage (0-100) expected')
+        checkArgument((0..100).contains(unhealthy), 'Invalid unhealthyTarget threshold, percentage (0-100) expected')
+        checkArgument((0..100).contains(failing), 'Invalid failingTarget threshold, percentage (0-100) expected')
         this.targets.put(targetType, new CoberturaTarget(
             targetType: targetType,
             healthyTarget: healthy * 100000,

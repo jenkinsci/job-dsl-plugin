@@ -841,14 +841,14 @@ class StepContextSpec extends Specification {
         when:
         context.copyArtifacts('upstream') {
             buildSelector {
-                buildNumber('$SOME_PARAMTER')
+                buildNumber('$SOME_PARAMETER')
             }
         }
 
         then:
         def selectorNode7 = context.stepNodes[6].selector[0]
         selectorNode7.attribute('class') == 'hudson.plugins.copyartifact.SpecificBuildSelector'
-        selectorNode7.buildNumber[0].value() == '$SOME_PARAMTER'
+        selectorNode7.buildNumber[0].value() == '$SOME_PARAMETER'
 
         when:
         context.copyArtifacts('upstream') {
