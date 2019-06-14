@@ -51,9 +51,9 @@ mavenJob(String name, Closure closure = null)     // since 1.30
 
 multiJob(String name, Closure closure = null)     // since 1.30
 
-workflowJob(String name, Closure closure = null)  // since 1.30
+pipelineJob(String name, Closure closure = null)  // since 1.47
 
-multibranchWorkflowJob(String name, Closure closure = null) // since 1.42
+multibranchPipelineJob(String name, Closure closure = null) // since 1.47
 ```
 
 These methods will return a job object that can be re-used and passed around. E.g.
