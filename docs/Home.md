@@ -33,6 +33,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.75 (unreleased)
+  * Enhanced support for the [Branch API Plugin](https://plugins.jenkins.io/branch-api)
+    ([JENKINS-54877](https://issues.jenkins-ci.org/browse/JENKINS-54877))
   * Fixed [[Dynamic DSL]] problem
     ([JENKINS-57817](https://issues.jenkins-ci.org/browse/JENKINS-57817))
 * 1.74 (May 01 2019)
