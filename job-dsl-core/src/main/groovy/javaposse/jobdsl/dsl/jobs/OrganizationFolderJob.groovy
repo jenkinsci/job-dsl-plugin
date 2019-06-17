@@ -4,6 +4,8 @@ import javaposse.jobdsl.dsl.ComputedFolder
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.RequiresPlugin
+import javaposse.jobdsl.dsl.helpers.workflow.BuildStrategiesContext
 import javaposse.jobdsl.dsl.helpers.workflow.MultiBranchProjectFactoryContext
 import javaposse.jobdsl.dsl.helpers.workflow.ScmNavigatorsContext
 
@@ -44,6 +46,24 @@ class OrganizationFolderJob extends ComputedFolder {
             factories.children().clear()
             context.projectFactoryNodes.each {
                 factories << it
+            }
+        }
+    }
+
+    /**
+     * Sets the build strategies for this folder.
+     *
+     * @since 1.75
+     */
+    @RequiresPlugin(id = 'branch-api', minimumVersion = '2.0.12')
+    void buildStrategies(@DslContext(BuildStrategiesContext) Closure closure) {
+        BuildStrategiesContext context = new BuildStrategiesContext(jobManagement, this)
+        ContextHelper.executeInContext(closure, context)
+
+        configure { Node project ->
+            Node node = project / buildStrategies
+            context.buildStrategyNodes.each {
+                node << it
             }
         }
     }
