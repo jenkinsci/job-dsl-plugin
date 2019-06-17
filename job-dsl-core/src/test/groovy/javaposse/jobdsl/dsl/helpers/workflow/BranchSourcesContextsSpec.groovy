@@ -1,5 +1,6 @@
 package javaposse.jobdsl.dsl.helpers.workflow
 
+import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import spock.lang.Specification
@@ -19,9 +20,20 @@ class BranchSourcesContextsSpec extends Specification {
         context.branchSourceNodes[0] == node
     }
 
-    def 'git with minimal options'() {
+    def 'git with missing id'() {
         when:
         context.git {}
+
+        then:
+        Exception e = thrown DslException
+        e.message =~ 'id must be specified'
+    }
+
+    def 'git with minimal options'() {
+        when:
+        context.git {
+            id('test')
+        }
 
         then:
         context.branchSourceNodes.size() == 1
@@ -30,7 +42,7 @@ class BranchSourcesContextsSpec extends Specification {
             children().size() == 2
             with(source[0]) {
                 children().size() == 6
-                id[0].value() instanceof String
+                id[0].value() == 'test'
                 remote[0].value().empty
                 credentialsId[0].value().empty
                 includes[0].value() == '*'
@@ -82,9 +94,20 @@ class BranchSourcesContextsSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('git', '2.5.3')
     }
 
-    def 'github with minimal options'() {
+    def 'github with missing id'() {
         when:
         context.github {}
+
+        then:
+        Exception e = thrown DslException
+        e.message =~ 'id must be specified'
+    }
+
+    def 'github with minimal options'() {
+        when:
+        context.github {
+            id('test')
+        }
 
         then:
         context.branchSourceNodes.size() == 1
@@ -93,7 +116,7 @@ class BranchSourcesContextsSpec extends Specification {
             children().size() == 2
             with(source[0]) {
                 children().size() == 13
-                id[0].value() instanceof String
+                id[0].value() == 'test'
                 scanCredentialsId[0].value().empty
                 checkoutCredentialsId[0].value() == 'SAME'
                 repoOwner[0].value().empty

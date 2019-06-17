@@ -130,6 +130,8 @@ interface DslFactory extends ViewFactory {
     /**
      * Create or updates a multibranch pipeline job.
      *
+     * <b>IMPORTANT</b>: Make sure that each branch source has a constant and unique identifier.
+     *
      * @since 1.47
      * @see #multibranchPipelineJob(java.lang.String, groovy.lang.Closure)
      */
@@ -155,6 +157,8 @@ interface DslFactory extends ViewFactory {
 
     /**
      * Creates or updates a multibranch pipeline job.
+     *
+     * <b>IMPORTANT</b>: Make sure that each branch source has a constant and unique identifier.
      *
      * @since 1.47
      */

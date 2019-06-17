@@ -1,3 +1,29 @@
+## Migrating to 1.75
+
+The `id` option in the Git and GitHub branch source contexts is now mandatory
+([JENKINS-43693](https://issues.jenkins-ci.org/browse/JENKINS-43693)).
+
+DSL prior to 1.75
+```groovy
+multibranchPipelineJob('example') {
+    branchSources {
+        github {
+        }
+    }
+}
+```
+
+DSL since 1.75
+```groovy
+multibranchPipelineJob('example') {
+    branchSources {
+        github {
+            id('12312313') // IMPORTANT: use a constant and unique identifier
+        }
+    }
+}
+```
+
 ## Migrating to 1.72
 
 ### CloudBees Folders Plugin

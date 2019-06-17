@@ -20,7 +20,9 @@ class MultibranchWorkflowJobSpec extends Specification {
     def 'can add branchSource'() {
         when:
         job.branchSources {
-            git {}
+            git {
+                id('test')
+            }
         }
 
         then:

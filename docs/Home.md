@@ -33,6 +33,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.75 (unreleased)
+  * Added documentation about mandatory identifier in multi-branch Pipeline job branch sources, the identifier will no
+    longer be generated and must be set to a constant and unique value, see [Migration](Migration#migrating-to-175)
+    ([JENKINS-43693](https://issues.jenkins-ci.org/browse/JENKINS-43693))
   * Enhanced support for the [Branch API Plugin](https://plugins.jenkins.io/branch-api)
     ([JENKINS-54877](https://issues.jenkins-ci.org/browse/JENKINS-54877))
   * Fixed [[Dynamic DSL]] problem
