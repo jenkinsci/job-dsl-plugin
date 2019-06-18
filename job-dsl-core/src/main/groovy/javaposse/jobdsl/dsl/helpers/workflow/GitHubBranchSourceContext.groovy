@@ -12,12 +12,14 @@ class GitHubBranchSourceContext extends AbstractContext {
     String repository
     String includes = '*'
     String excludes
+    String pattern = '.*'
     boolean buildOriginBranch = true
     boolean buildOriginBranchWithPR = true
     boolean buildOriginPRMerge = false
     boolean buildOriginPRHead = false
     boolean buildForkPRMerge = true
     boolean buildForkPRHead = false
+    boolean noTags = true
 
     GitHubBranchSourceContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -82,6 +84,15 @@ class GitHubBranchSourceContext extends AbstractContext {
     }
 
     /**
+     * Regex for project names to include. Defaults to {@code .*}.
+     *
+     * @since 1.71
+     */
+    void pattern(String pattern) {
+        this.pattern = pattern
+    }
+
+    /**
      * Build origin branches. Defaults to {@code true}.
      *
      * @since 1.54
@@ -133,5 +144,14 @@ class GitHubBranchSourceContext extends AbstractContext {
      */
     void buildForkPRHead(boolean buildForkPRHead = true) {
         this.buildForkPRHead = buildForkPRHead
+    }
+
+    /**
+     * Do not clone tags. Defaults to {@code true}.
+     *
+     * @since 1.71
+     */
+    void noTags(boolean noTags = true) {
+        this.noTags = noTags
     }
 }
