@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.JobManagement
 
 class GitHubBranchSourceContext extends AbstractContext {
-    String id = UUID.randomUUID()
+    String id
     String apiUri
     String scanCredentialsId
     String checkoutCredentialsId = 'SAME'

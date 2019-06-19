@@ -3,7 +3,7 @@ package javaposse.jobdsl.dsl.helpers.workflow
 import javaposse.jobdsl.dsl.Context
 
 class GitBranchSourceContext implements Context {
-    String id = UUID.randomUUID()
+    String id
     String remote
     String credentialsId
     String includes = '*'

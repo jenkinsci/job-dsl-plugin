@@ -6,6 +6,7 @@ import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
+import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 
 @ContextType('jenkins.branch.BranchSource')
@@ -23,6 +24,8 @@ class BranchSourcesContext extends AbstractExtensibleContext {
     void git(@DslContext(GitBranchSourceContext) Closure branchSourceClosure) {
         GitBranchSourceContext context = new GitBranchSourceContext()
         ContextHelper.executeInContext(branchSourceClosure, context)
+
+        Preconditions.checkNotNullOrEmpty(context.id, 'id must be specified')
 
         branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
             source(class: 'jenkins.plugins.git.GitSCMSource') {
@@ -48,6 +51,8 @@ class BranchSourcesContext extends AbstractExtensibleContext {
     void github(@DslContext(GitHubBranchSourceContext) Closure branchSourceClosure) {
         GitHubBranchSourceContext context = new GitHubBranchSourceContext(jobManagement)
         ContextHelper.executeInContext(branchSourceClosure, context)
+
+        Preconditions.checkNotNullOrEmpty(context.id, 'id must be specified')
 
         branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
             source(class: 'org.jenkinsci.plugins.github_branch_source.GitHubSCMSource') {

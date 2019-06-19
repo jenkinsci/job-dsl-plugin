@@ -14,6 +14,8 @@ class MultibranchWorkflowJob extends ComputedFolder {
 
     /**
      * Adds branch sources.
+     *
+     * <b>IMPORTANT</b>: Make sure that each branch source has a constant and unique identifier.
      */
     void branchSources(@DslContext(BranchSourcesContext) Closure sourcesClosure) {
         BranchSourcesContext context = new BranchSourcesContext(jobManagement, this)
