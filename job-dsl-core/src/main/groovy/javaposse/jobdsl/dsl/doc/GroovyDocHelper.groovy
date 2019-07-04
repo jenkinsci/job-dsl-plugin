@@ -24,6 +24,16 @@ class GroovyDocHelper {
         Method method = clazz.methods.findAll { it.name == methodDoc.name() }.find { Method method ->
             List docParamNames = methodDoc.parameters().collect {
                 String name = it.type()?.qualifiedTypeName() ?: it.typeName()
+                if (name.contains('<')) {
+                    name = name[0..(name.indexOf('<') - 1)]
+                    if (name in ['Map', 'List']) {
+                        name = 'java.util.' + name
+                    } else if (name in ['Iterable']) {
+                        name = 'java.lang.' + name
+                    } else {
+                        throw new UnsupportedOperationException(name)
+                    }
+                }
                 if (name.startsWith('.')) {
                     name = name[1..-1]
                 }
