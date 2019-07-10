@@ -41,6 +41,7 @@ import javaposse.jobdsl.plugin.actions.GeneratedUserContentsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedUserContentsBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
+import javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction;
 import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
 import jenkins.tasks.SimpleBuildStep;
@@ -357,17 +358,17 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 Set<GeneratedConfigFile> freshConfigFiles = generatedItems.getConfigFiles();
                 Set<GeneratedUserContent> freshUserContents = generatedItems.getUserContents();
 
-                updateTemplates(run.getParent(), listener, freshJobs);
-                updateGeneratedJobs(run.getParent(), listener, freshJobs);
-                updateGeneratedViews(run.getParent(), listener, freshViews);
-                updateGeneratedConfigFiles(run.getParent(), listener, freshConfigFiles);
-                updateGeneratedUserContents(run.getParent(), listener, freshUserContents);
-
                 // Save onto Builder, which belongs to a Project.
-                run.addAction(new GeneratedJobsBuildAction(freshJobs, getLookupStrategy()));
-                run.addAction(new GeneratedViewsBuildAction(freshViews, getLookupStrategy()));
-                run.addAction(new GeneratedConfigFilesBuildAction(freshConfigFiles));
-                run.addAction(new GeneratedUserContentsBuildAction(freshUserContents));
+                addJobAction(run, new GeneratedJobsBuildAction(freshJobs, getLookupStrategy()));
+                addJobAction(run, new GeneratedViewsBuildAction(freshViews, getLookupStrategy()));
+                addJobAction(run, new GeneratedConfigFilesBuildAction(freshConfigFiles));
+                addJobAction(run, new GeneratedUserContentsBuildAction(freshUserContents));
+
+                updateTemplates(run.getParent(), listener, new HashSet<GeneratedJob>(run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
+                updateGeneratedJobs(run.getParent(), listener, new HashSet<GeneratedJob>(run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
+                updateGeneratedViews(run.getParent(), listener, new HashSet<GeneratedView>(run.getAction(GeneratedViewsBuildAction.class).getModifiedObjects()));
+                updateGeneratedConfigFiles(run.getParent(), listener, new HashSet<GeneratedConfigFile>(run.getAction(GeneratedConfigFilesBuildAction.class).getModifiedObjects()));
+                updateGeneratedUserContents(run.getParent(), listener, new HashSet<GeneratedUserContent>(run.getAction(GeneratedUserContentsBuildAction.class).getModifiedObjects()));
             }
         } catch (RuntimeException e) {
             if (!(e instanceof DslException) && !(e instanceof AccessDeniedException)) {
@@ -375,6 +376,16 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             }
             LOGGER.log(Level.FINE, String.format("Exception while processing DSL scripts: %s", e.getMessage()), e);
             throw new AbortException(e.getMessage());
+        }
+    }
+
+    private void addJobAction(Run run, GeneratedObjectsRunAction action){
+        GeneratedObjectsRunAction generatedJobsBuildAction = run.getAction(action.getClass());
+        if (generatedJobsBuildAction == null) {
+            run.addAction(action);
+        }
+        else {
+            generatedJobsBuildAction.addModifiedObjects(action.getModifiedObjects());
         }
     }
 

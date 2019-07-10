@@ -490,6 +490,43 @@ folder('folder-a/folder-b') {
         jenkinsRule.jenkins.getItemByFullName('test-job') == null
     }
 
+    def oneActionForMultipleStep() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+
+        when:
+        List builders = []
+        builders.add(new ExecuteDslScripts('job("test-job")'))
+        builders.add(new ExecuteDslScripts('job("test-job2")'))
+        //builder1.removedJobAction = RemovedJobAction.DELETE
+        runBuild(job, builders)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('seed').getActions(GeneratedJobsAction).size() == 1
+    }
+
+    def doNotGetRemoveJobActionFromRunningBuild() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+
+        when:
+        List builders = []
+        builders.add(new ExecuteDslScripts('job("test-job")'))
+        builders.add(new ExecuteDslScripts('job("test-job2")'))
+        ExecuteDslScripts builder = new ExecuteDslScripts('job("test-job3")')
+        builder.removedJobAction = RemovedJobAction.DELETE
+        builders.add(builder)
+
+        runBuild(job, builders)
+        builders.remove(0)
+        runBuild(job, builders)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('test-job2') != null
+        jenkinsRule.jenkins.getItemByFullName('test-job3') != null
+        jenkinsRule.jenkins.getItemByFullName('test-job') == null
+    }
+
     def deleteJobInFolder() {
         setup:
         jenkinsRule.jenkins.createProject(Folder, 'folder')
@@ -1849,6 +1886,16 @@ folder('folder-a/folder-b') {
     private static FreeStyleBuild runBuild(FreeStyleProject job, ExecuteDslScripts builder) {
         job.buildersList.clear()
         job.buildersList.add(builder)
+
+        FreeStyleBuild build = job.scheduleBuild2(0).get()
+
+        assert build.result == SUCCESS
+        build
+    }
+
+    private static FreeStyleBuild runBuild(FreeStyleProject job, List<ExecuteDslScripts> builders) {
+        job.buildersList.clear()
+        job.buildersList.addAll(builders)
 
         FreeStyleBuild build = job.scheduleBuild2(0).get()
 
