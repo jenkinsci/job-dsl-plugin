@@ -24,6 +24,41 @@ multibranchPipelineJob('example') {
 }
 ```
 
+### Pipeline: Job Plugin
+
+The `concurrentBuild` field was deprecated and replaced by
+`DisableConcurrentBuildsJobProperty` in
+[jenkinsci/workflow-job-plugin#8](https://github.com/jenkinsci/workflow-job-plugin/pull/8),
+which was released in Pipeline: Job 2.4. Use of this deprecated field causes
+[JENKINS-53775](https://issues.jenkins-ci.org/browse/JENKINS-53775) and should
+be replaced with the [[Dynamic DSL]].
+
+#### Disabling concurrent Pipeline builds
+
+DSL prior to 1.75
+```groovy
+concurrentBuild false
+```
+
+DSL since 1.75
+```groovy
+properties {
+    disableConcurrentBuilds()
+}
+```
+
+#### Enabling concurrent Pipeline builds
+
+DSL prior to 1.75
+```groovy
+concurrentBuild true
+```
+
+DSL since 1.75
+
+Simply delete any usages of `concurrentBuild true`. Concurrent builds are
+enabled for Pipeline jobs by default.
+
 ## Migrating to 1.72
 
 ### CloudBees Folders Plugin
