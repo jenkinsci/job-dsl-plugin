@@ -1417,6 +1417,7 @@ class ScmContextSpec extends Specification {
 
         where:
         strategy                               | workspaceUpdaterClass
+        SvnCheckoutStrategy.NOOP               | 'hudson.scm.subversion.NoopUpdater'
         SvnCheckoutStrategy.UPDATE             | 'hudson.scm.subversion.UpdateUpdater'
         SvnCheckoutStrategy.CHECKOUT           | 'hudson.scm.subversion.CheckoutUpdater'
         SvnCheckoutStrategy.UPDATE_WITH_CLEAN  | 'hudson.scm.subversion.UpdateWithCleanUpdater'
