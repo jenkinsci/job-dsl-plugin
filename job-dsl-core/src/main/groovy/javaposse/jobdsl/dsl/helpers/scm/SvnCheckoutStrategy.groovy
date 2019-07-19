@@ -8,7 +8,7 @@ enum SvnCheckoutStrategy {
      * Do not touch the working copy, it is updated by another script.
      */
     NOOP('hudson.scm.subversion.NoopUpdater'),
-        
+
     /**
      * Use <code>svn update</code> whenever possible, making the build faster. But this causes the artifacts from the
      * previous build to remain when a new build starts.
