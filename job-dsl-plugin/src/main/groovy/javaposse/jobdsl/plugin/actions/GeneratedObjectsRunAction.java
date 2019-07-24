@@ -48,7 +48,11 @@ public abstract class GeneratedObjectsRunAction<T> implements RunAction2, Simple
     }
 
     public void addModifiedObjects(Collection<T> modifiedObjects) {
-        this.modifiedObjects.addAll(modifiedObjects);
+        if (this.modifiedObjects == null) {
+            this.modifiedObjects = new LinkedHashSet<>(modifiedObjects);
+        } else {
+            this.modifiedObjects.addAll(modifiedObjects);
+        }
     }
 
 }
