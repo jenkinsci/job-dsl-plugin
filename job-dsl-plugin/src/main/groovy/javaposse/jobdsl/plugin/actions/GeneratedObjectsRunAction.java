@@ -49,7 +49,7 @@ public abstract class GeneratedObjectsRunAction<T> implements RunAction2, Simple
 
     public void addModifiedObjects(Collection<T> modifiedObjects) {
         if (this.modifiedObjects == null) {
-            this.modifiedObjects = new LinkedHashSet<>(modifiedObjects);
+            throw new IllegalStateException("Modified object should not be null. Probably wrong state after serialization/deserialization");
         } else {
             this.modifiedObjects.addAll(modifiedObjects);
         }
