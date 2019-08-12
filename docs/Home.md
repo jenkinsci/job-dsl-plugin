@@ -32,7 +32,7 @@ scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Suppo
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.75 (unreleased)
+* 1.75 (August 12 2019)
   * Added documentation about mandatory identifier in multi-branch Pipeline job branch sources, the identifier will no
     longer be generated and must be set to a constant and unique value, see [Migration](Migration#migrating-to-175)
     ([JENKINS-43693](https://issues.jenkins-ci.org/browse/JENKINS-43693))
