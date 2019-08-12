@@ -14,7 +14,7 @@ class SvnLocationContext extends AbstractContext {
     }
 
     /**
-     * The directoy to checkout to. By default, files are checked out into the workspace directory.
+     * The directory to checkout to. By default, files are checked out into the workspace directory.
      */
     void directory(String directory) {
         this.directory = directory
