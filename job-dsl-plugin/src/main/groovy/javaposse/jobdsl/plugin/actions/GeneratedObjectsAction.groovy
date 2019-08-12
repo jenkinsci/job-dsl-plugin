@@ -19,6 +19,9 @@ abstract class GeneratedObjectsAction<T, B extends GeneratedObjectsRunAction<T>>
 
     Set<T> findLastGeneratedObjects() {
         for (Run run = job.lastBuild; run != null; run = run.previousBuild) {
+            if (run.isBuilding()) {
+                continue
+            }
             B action = run.getAction(buildActionClass)
             if (action != null && action.modifiedObjects != null) {
                 return action.modifiedObjects

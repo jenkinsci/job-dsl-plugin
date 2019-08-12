@@ -42,6 +42,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([JENKINS-51202](https://issues.jenkins-ci.org/browse/JENKINS-51202))
   * Fixed [[Dynamic DSL]] problem
     ([JENKINS-57817](https://issues.jenkins-ci.org/browse/JENKINS-57817))
+  * Fixed problems when using multiple Job DSL steps in a single seed job
+    ([JENKINS-29784](https://issues.jenkins-ci.org/browse/JENKINS-29784),
+    [JENKINS-44142](https://issues.jenkins-ci.org/browse/JENKINS-44142))
 * 1.74 (May 01 2019)
   * Fixed [Configuration as Code](https://github.com/jenkinsci/configuration-as-code-plugin/) extension
     ([JENKINS-57218](https://issues.jenkins-ci.org/browse/JENKINS-57218))

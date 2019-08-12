@@ -46,4 +46,13 @@ public abstract class GeneratedObjectsRunAction<T> implements RunAction2, Simple
     public Collection<T> getModifiedObjects() {
         return modifiedObjects == null ? null : new TreeSet<>(modifiedObjects);
     }
+
+    public void addModifiedObjects(Collection<T> modifiedObjects) {
+        if (this.modifiedObjects == null) {
+            throw new IllegalStateException("Modified object should not be null. Probably wrong state after serialization/deserialization");
+        } else {
+            this.modifiedObjects.addAll(modifiedObjects);
+        }
+    }
+
 }
