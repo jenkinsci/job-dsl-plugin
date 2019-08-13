@@ -33,6 +33,7 @@ import org.acegisecurity.Authentication
 import org.jenkinsci.plugins.configfiles.GlobalConfigFiles
 import org.jenkinsci.plugins.configfiles.custom.CustomConfig
 import org.jenkinsci.plugins.managedscripts.PowerShellConfig
+import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage
 import org.junit.ClassRule
 import org.junit.Rule
@@ -44,8 +45,6 @@ import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
-
 import static hudson.model.Result.FAILURE
 import static hudson.model.Result.SUCCESS
 import static hudson.model.Result.UNSTABLE
@@ -601,7 +600,7 @@ folder('folder-a/folder-b') {
         when:
         String script1 = 'job("test-job")'
         ExecuteDslScripts builder1 = new ExecuteDslScripts(script1)
-        builder1.removedJobAction = RemovedJobAction.DELETE
+        builder1.removedJobAction = RemovedJobAction.SHELVE
         runBuild(job, builder1)
 
         then:
@@ -615,7 +614,34 @@ folder('folder-a/folder-b') {
 
         then:
         jenkinsRule.jenkins.getItemByFullName('different-job') instanceof FreeStyleProject
-       // jenkinsRule.jenkins.getItemByFullName('test-job') == null
+        jenkinsRule.jenkins.getItemByFullName('test-job') == null
+    }
+
+    def shelveJobInFolder() {
+        setup:
+        jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+
+        when:
+        String script1 = 'job("/folder/test-job")'
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(script1)
+        builder1.removedJobAction = RemovedJobAction.DELETE
+        runBuild(job, builder1)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('/folder/test-job') instanceof FreeStyleProject
+
+        when:
+        String script2 = 'job("/folder/different-job")'
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(script2)
+        builder2.removedJobAction = RemovedJobAction.SHELVE
+        runBuild(job, builder2)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('/folder/different-job') instanceof FreeStyleProject
+        jenkinsRule.jenkins.getItemByFullName('/folder/test-job') == null
+        // how to make sure there are no further jobs in /folder so that we can test that /folder gets deleted?
+        //jenkinsRule.jenkins.getItemByFullName('/folder') == null
     }
 
      def 'only use last build to calculate items to be deleted'() {
