@@ -238,3 +238,22 @@ Options:
 * `sandbox`: optional, defaults to `false`, if `false` the DSL script needs to be approved by an administrator; set to
              `true` to run the DSL scripts in a sandbox with limited abilities (see [[Script Security]]); this option
               will be ignored when script security for Job DSL is disabled on the "Configure Global Security" page
+
+
+# Creating a job during Jenkins start up
+There could be multiple ways to do this. But the one which I found out is, to use the below code snippet in one of the 
+groovy files in /usr/share/jenkins/ref/init.groovy.d directory, (tested with job-dsl version 1.66 and Jenkins version 2.89.3)
+
+```
+    File jobDSLscript = new File('my-job-dsl-script.groovy')
+    FilePath workspace = new FilePath(new File('.').getAbsoluteFile())
+    JenkinsJobManagement jenkinsJobManagement = new JenkinsJobManagement(System.out, [:], null, workspace, LookupStrategy.JENKINS_ROOT);
+    jenkinsJobManagement.setFailOnMissingPlugin(true);
+    jenkinsJobManagement.setUnstableOnDeprecation(false);
+    JobManagement jobManagement = new InterruptibleJobManagement(jenkinsJobManagement);
+    JenkinsDslScriptLoader dslScriptLoader = new JenkinsDslScriptLoader(jobManagement);
+    EnvVars env = new EnvVars()
+    ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env)
+    Set<ScriptRequest> scriptRequests = generator.getScriptRequests(null, true, jobDSLscript.text, true, false, null);
+    GeneratedItems generatedItems = dslScriptLoader.runScripts(scriptRequests);
+```
