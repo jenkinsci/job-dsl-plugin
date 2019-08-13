@@ -90,6 +90,7 @@ The content of the following code block must be saved in a file called `src/test
 The test specification will locate all Job DSL scripts within the `jobs` directory and create a test for each file.
 The test will then run each script file to check the script for problems.
 
+    import groovy.util.FileNameFinder
     import javaposse.jobdsl.dsl.DslScriptLoader
     import javaposse.jobdsl.plugin.JenkinsJobManagement
     import org.junit.ClassRule
@@ -119,13 +120,7 @@ The test will then run each script file to check the script for problems.
         }
 
         static List<File> getJobFiles() {
-            List<File> files = []
-            new File('jobs').eachFileRecurse {
-                if (it.name.endsWith('.groovy')) {
-                    files << it
-                }
-            }
-            files
+            new FileNameFinder().getFileNames('jobs', '**/*.groovy').collect { new File(it) }
         }
     }
 
