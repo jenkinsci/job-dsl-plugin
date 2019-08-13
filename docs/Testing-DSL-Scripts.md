@@ -55,7 +55,8 @@ when running the DSL scripts, e.g. for testing [[extensions|Extending the DSL]] 
         // Job DSL plugin including plugin dependencies
         testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}"
         testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}@jar"
-        testCompile 'org.jenkins-ci.plugins:structs:1.6@jar'
+        testCompile 'org.jenkins-ci.plugins:structs:1.19@jar'
+        testCompile 'org.jenkins-ci.plugins:script-security:1.54@jar'
 
         // plugins to install in test instance
         testPlugins 'org.jenkins-ci.plugins:ghprb:1.31.4'
@@ -116,11 +117,7 @@ The test will then run each script file to check the script for problems.
             noExceptionThrown()
 
             where:
-            file << jobFiles
-        }
-
-        static List<File> getJobFiles() {
-            new FileNameFinder().getFileNames('jobs', '**/*.groovy').collect { new File(it) }
+            file << new FileNameFinder().getFileNames('jobs', '**/*.groovy').collect { new File(it) }
         }
     }
 
