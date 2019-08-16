@@ -41,11 +41,11 @@ import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesAction;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedJobsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction;
+import javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction;
 import javaposse.jobdsl.plugin.actions.GeneratedUserContentsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedUserContentsBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
-import javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction;
 import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
 import jenkins.tasks.SimpleBuildStep;
@@ -517,6 +517,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private void shelve(Run<?,?> run, Item project, TaskListener listener) throws InterruptedException {
        Jenkins jenkins = Jenkins.get();
+       jenkins.checkPermission(Item.DELETE);
+
        if (! (project instanceof BuildableItem)) {
            failBuild(run, "Unable to shelve " + project + " since it is not a BuildableItem", listener, null);
            return;
