@@ -15,15 +15,19 @@ import hudson.Launcher;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractItem;
+import hudson.model.BuildableItem;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Items;
 import hudson.model.Job;
+import hudson.model.Queue;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.model.View;
 import hudson.model.ViewGroup;
+import hudson.model.queue.QueueTaskFuture;
 import hudson.tasks.Builder;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
@@ -37,11 +41,11 @@ import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesAction;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedJobsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction;
+import javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction;
 import javaposse.jobdsl.plugin.actions.GeneratedUserContentsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedUserContentsBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
-import javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction;
 import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
 import jenkins.tasks.SimpleBuildStep;
@@ -51,21 +55,23 @@ import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext;
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
+import org.jvnet.hudson.plugins.shelveproject.ShelveProjectTask;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import static hudson.Util.fixEmptyAndTrim;
 import static java.lang.String.format;
 import static javaposse.jobdsl.plugin.actions.GeneratedObjectsAction.extractGeneratedObjects;
@@ -78,6 +84,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     private static final Logger LOGGER = Logger.getLogger(ExecuteDslScripts.class.getName());
 
     private static volatile boolean rebootRequired;
+
+    public static final String SHELVE_PLUGIN_ID = "shelve-project-plugin";
 
     /**
      * Newline-separated list of locations to load as dsl scripts.
@@ -365,7 +373,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 addJobAction(run, new GeneratedUserContentsBuildAction(freshUserContents));
 
                 updateTemplates(run.getParent(), listener, new HashSet<GeneratedJob>(run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
-                updateGeneratedJobs(run.getParent(), listener, new HashSet<GeneratedJob>(run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
+                updateGeneratedJobs(run, run.getParent(), listener, new HashSet<GeneratedJob>(run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
                 updateGeneratedViews(run.getParent(), listener, new HashSet<GeneratedView>(run.getAction(GeneratedViewsBuildAction.class).getModifiedObjects()));
                 updateGeneratedConfigFiles(run.getParent(), listener, new HashSet<GeneratedConfigFile>(run.getAction(GeneratedConfigFilesBuildAction.class).getModifiedObjects()));
                 updateGeneratedUserContents(run.getParent(), listener, new HashSet<GeneratedUserContent>(run.getAction(GeneratedUserContentsBuildAction.class).getModifiedObjects()));
@@ -449,7 +457,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         return freshTemplates;
     }
 
-    private void updateGeneratedJobs(final Job seedJob, TaskListener listener,
+    private void updateGeneratedJobs(final Run<?, ?> run, final Job seedJob, TaskListener listener,
                                      Set<GeneratedJob> freshJobs) throws IOException, InterruptedException {
         // Update Project
         Set<GeneratedJob> generatedJobs = extractGeneratedObjects(seedJob, GeneratedJobsAction.class);
@@ -457,7 +465,9 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
         Set<GeneratedJob> unreferenced = Sets.difference(generatedJobs, freshJobs);
         Set<GeneratedJob> removed = new HashSet<>();
+        Set<GeneratedJob> shelved = new HashSet<>();
         Set<GeneratedJob> disabled = new HashSet<>();
+        Map<Item,GeneratedJob> folders = new IdentityHashMap<>();
 
         logItems(listener, "Added items", added);
         logItems(listener, "Existing items", existing);
@@ -467,9 +477,17 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         for (GeneratedJob unreferencedJob : unreferenced) {
             Item removedItem = getLookupStrategy().getItem(seedJob, unreferencedJob.getJobName(), Item.class);
             if (removedItem != null && removedJobAction != RemovedJobAction.IGNORE) {
+                if ("com.cloudbees.hudson.plugins.folder.Folder".equals(removedItem.getClass().getName())) {
+                    folders.put(removedItem, unreferencedJob);
+                    continue;
+                }
+
                 if (removedJobAction == RemovedJobAction.DELETE) {
                     removedItem.delete();
                     removed.add(unreferencedJob);
+                } else if (removedJobAction == RemovedJobAction.SHELVE) {
+                    shelve(run, removedItem, listener);
+                    shelved.add(unreferencedJob);
                 } else {
                     if (removedItem instanceof ParameterizedJob) {
                         ParameterizedJob project = (ParameterizedJob) removedItem;
@@ -481,11 +499,51 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             }
         }
 
+        // remove extraneous folders after jobs have been deleted/shelved
+        if (removedJobAction == RemovedJobAction.DELETE || removedJobAction == RemovedJobAction.SHELVE) {
+            for (Map.Entry<Item, GeneratedJob> folder : folders.entrySet()) {
+                folder.getKey().delete();
+                removed.add(folder.getValue());
+            }
+        }
+
         // print what happened with unreferenced jobs
         logItems(listener, "Disabled items", disabled);
         logItems(listener, "Removed items", removed);
+        logItems(listener, "Shelved items", shelved);
 
         updateGeneratedJobMap(seedJob, Sets.union(added, existing), unreferenced);
+    }
+
+    private void shelve(Run<?,?> run, Item project, TaskListener listener) throws InterruptedException {
+       Jenkins jenkins = Jenkins.get();
+       jenkins.checkPermission(Item.DELETE);
+
+       if (! (project instanceof BuildableItem)) {
+           failBuild(run, "Unable to shelve " + project + " since it is not a BuildableItem", listener, null);
+           return;
+       }
+       BuildableItem item = (BuildableItem) project;
+        if (jenkins.getPlugin(SHELVE_PLUGIN_ID) == null) {
+            failBuild(run, "Unable to shelve project " + item + " since the " + SHELVE_PLUGIN_ID + " plugin is not installed.", listener, null);
+            return;
+        }
+
+        Queue.WaitingItem waitingItem = jenkins.getQueue().schedule(new ShelveProjectTask(item), 0);
+        QueueTaskFuture<Queue.Executable> future = waitingItem.getFuture();
+        try {
+            future.get(); // wait for completion so that upper folders can be deleted
+        } catch (ExecutionException ex) {
+            failBuild(run, "Error shelving project " + project, listener, ex);
+        }
+    }
+
+    private void failBuild(Run<?,?> run, String message, TaskListener listener, @Nullable Exception ex) {
+        listener.error(message);
+        if (ex != null) {
+            ex.printStackTrace(listener.getLogger());
+        }
+        run.setResult(Result.UNSTABLE);
     }
 
     private void updateGeneratedJobMap(Job seedJob, Set<GeneratedJob> createdOrUpdatedJobs,

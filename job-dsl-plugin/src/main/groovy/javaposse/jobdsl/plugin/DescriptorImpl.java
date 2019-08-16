@@ -64,6 +64,9 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
     public ListBoxModel doFillRemovedJobActionItems() {
         ListBoxModel items = new ListBoxModel();
         for (RemovedJobAction action : RemovedJobAction.values()) {
+            if (action == RemovedJobAction.SHELVE && Jenkins.get().getPlugin(ExecuteDslScripts.SHELVE_PLUGIN_ID) == null) {
+                continue;
+            }
             items.add(action.getDisplayName(), action.name());
         }
         return items;
