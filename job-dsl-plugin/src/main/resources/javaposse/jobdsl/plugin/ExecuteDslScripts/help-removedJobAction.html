@@ -1,3 +1,10 @@
 <div>
     Specifies what to do when a previously generated job is not referenced anymore.
+
+    <p>
+        <b>Note:</b> when using multiple Job DSL build steps in a single job, set this to "Delete" or "Disable" only for
+        the last Job DSL build step. Otherwise jobs will be deleted and re-created or disabled and re-enabled and you
+        may loose the job history of generated jobs. See
+        <a href="https://issues.jenkins-ci.org/browse/JENKINS-44142">JENKINS-44142</a> for details.
+    </p>
 </div>

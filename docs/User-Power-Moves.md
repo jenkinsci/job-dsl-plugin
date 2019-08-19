@@ -238,3 +238,8 @@ Options:
 * `sandbox`: optional, defaults to `false`, if `false` the DSL script needs to be approved by an administrator; set to
              `true` to run the DSL scripts in a sandbox with limited abilities (see [[Script Security]]); this option
               will be ignored when script security for Job DSL is disabled on the "Configure Global Security" page
+
+> ⚠ **Note**: when using multiple Job DSL build steps in a single pipeline, set `removedJobAction`, `removedViewAction`
+> or `removedConfigFilesAction` to `DELETE` (or `DISABLE`) only for the Job DSL build step. Otherwise jobs, views or
+> config files may be deleted and re-created (or disabled and re-enabled) and you may loose the job history of generated
+> jobs. See [JENKINS-44142](https://issues.jenkins-ci.org/browse/JENKINS-44142) for details.
