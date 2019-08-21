@@ -95,6 +95,17 @@ class DescribableHelperSpec extends Specification {
         describableModels != null
         describableModels.size() == 1
         describableModels.first().type == SubTrigger
+
+        when:
+        describableModels = DescribableHelper.findDescribableModels(
+                [DescribableModel.of(FooTrigger), DescribableModel.of(SubTrigger)],
+                'sub'
+        )
+
+        then:
+        describableModels != null
+        describableModels.size() == 1
+        describableModels.first().type == SubTrigger
     }
 
     def 'find descriptors for context without type'() {

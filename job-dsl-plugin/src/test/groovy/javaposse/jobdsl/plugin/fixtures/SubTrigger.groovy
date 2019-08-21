@@ -1,12 +1,10 @@
 package javaposse.jobdsl.plugin.fixtures
 
 import hudson.Extension
-import hudson.model.Job
-import hudson.triggers.Trigger
 import org.jenkinsci.Symbol
 import org.kohsuke.stapler.DataBoundConstructor
 
-class SubTrigger extends Trigger<Job> {
+class SubTrigger extends FooTrigger {
     @DataBoundConstructor
     SubTrigger() {
     }
