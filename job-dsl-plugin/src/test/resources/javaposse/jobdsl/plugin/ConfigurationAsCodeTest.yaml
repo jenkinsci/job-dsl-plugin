@@ -13,3 +13,13 @@ jobs:
       }
 
   - file: ./src/test/resources/javaposse/jobdsl/plugin/testjob.groovy
+
+  - providedEnv:
+      JOB_NAME_FROM_ENV: testJob3
+
+  - script: >
+      job(JOB_NAME_FROM_ENV) {
+          steps {
+              shell('echo hello world')
+          }
+      }

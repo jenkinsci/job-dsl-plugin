@@ -30,7 +30,7 @@ jobs:
   - url: https://raw.githubusercontent.com/jenkinsci/job-dsl-plugin/master/job-dsl-plugin/src/test/resources/javaposse/jobdsl/plugin/testjob.groovy
 ```
 
-you can reference multiple scripts, files, and urls
+You can reference multiple scripts, files, and urls
 
 ```yml
 jobs:
@@ -62,4 +62,20 @@ jobs:
 
   - file: ./jobdsl/job1.groovy
   - file: ./jobdsl/job2.groovy
+```
+
+You can pass values from the yaml file to the job dsl script
+
+```yml
+jobs:
+  - providedEnv:
+      SUPERHERO: 'Midnighter'
+  - file: ./jobdsl/job.groovy
+```
+
+```groovy
+//job.groovy
+job('awesome-job') {
+    description("favorite job of ${SUPERHERO}")
+}
 ```
