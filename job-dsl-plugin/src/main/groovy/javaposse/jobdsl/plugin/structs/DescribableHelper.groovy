@@ -47,6 +47,9 @@ class DescribableHelper {
             Class type = getTypeForLookup(it)
             type == null ? null : SymbolLookup.get().find(type, name)
         }
+        result = result.findAll { d ->
+            !result.any { other -> d != other && d.type.isAssignableFrom(other.type) }
+        }
         result ?: models.findAll { uncapitalize(it.type) == name }
     }
 
