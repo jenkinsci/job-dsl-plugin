@@ -19,15 +19,15 @@ class GeneratedJobsBuildAction extends GeneratedObjectsRunAction<GeneratedJob> {
         this.lookupStrategy = lookupStrategy
     }
 
-    Set<Item> getItems() {
-        Set<Item> result = new TreeSet<>(Comparators.ITEM_COMPARATOR)
+    Iterable<Item> getItems() {
+        Set<Item> result = []
         for (GeneratedJob job : modifiedObjects) {
             Item item = lookupStrategy.getItem(owner.parent, job.jobName, Item)
             if (item != null) {
                 result << item
             }
         }
-        result
+        result.toSorted(Comparators.ITEM_COMPARATOR)
     }
 
     @Override

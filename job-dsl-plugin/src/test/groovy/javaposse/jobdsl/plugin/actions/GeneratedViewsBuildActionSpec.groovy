@@ -46,11 +46,11 @@ class GeneratedViewsBuildActionSpec extends Specification {
         action.onLoad(run)
 
         when:
-        Set<View> views = action.views
+        Iterable<View> views = action.views
 
         then:
         views != null
-        views.empty
+        views.size() == 0
     }
 
     def 'get views'() {

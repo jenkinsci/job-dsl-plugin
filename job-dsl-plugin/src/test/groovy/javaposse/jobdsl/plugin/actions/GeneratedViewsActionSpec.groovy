@@ -82,11 +82,11 @@ class GeneratedViewsActionSpec extends Specification {
         project.builds >> fromRuns([])
 
         when:
-        Set<View> views = new GeneratedViewsAction(project).views
+        Iterable<View> views = new GeneratedViewsAction(project).views
 
         then:
         views != null
-        views.isEmpty()
+        views.size() == 0
     }
 
     def 'getViews no build action'() {
@@ -95,11 +95,11 @@ class GeneratedViewsActionSpec extends Specification {
         project.builds >> fromRuns([build1])
 
         when:
-        Set<View> views = new GeneratedViewsAction(project).views
+        Iterable<View> views = new GeneratedViewsAction(project).views
 
         then:
         views != null
-        views.isEmpty()
+        views.size() == 0
     }
 
     def 'getViews'() {
@@ -116,7 +116,7 @@ class GeneratedViewsActionSpec extends Specification {
         project.builds >> fromRuns([build1, build2])
 
         when:
-        Set<View> views = new GeneratedViewsAction(project).views
+        Iterable<View> views = new GeneratedViewsAction(project).views
 
         then:
         views != null

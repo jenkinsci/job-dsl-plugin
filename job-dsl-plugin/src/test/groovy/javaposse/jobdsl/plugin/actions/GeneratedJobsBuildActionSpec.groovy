@@ -46,11 +46,11 @@ class GeneratedJobsBuildActionSpec extends Specification {
         action.onLoad(run)
 
         when:
-        Set<Item> items = action.items
+        Iterable<Item> items = action.items
 
         then:
         items != null
-        items.empty
+        items.size() == 0
     }
 
     def 'get items'() {
