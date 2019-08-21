@@ -225,18 +225,6 @@ abstract class Job extends Item {
     }
 
     /**
-     * Allows Jenkins to schedule and execute multiple builds concurrently.
-     *
-     * @since 1.21
-     */
-    void concurrentBuild(boolean allowConcurrentBuild = true) {
-        configure { Node project ->
-            Node node = methodMissing('concurrentBuild', allowConcurrentBuild)
-            project / node
-        }
-    }
-
-    /**
      * Compresses the log file after build completion.
      *
      * @since 1.36

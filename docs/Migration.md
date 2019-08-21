@@ -1,3 +1,37 @@
+## Migrating to 1.76
+
+### Pipeline: Job Plugin
+
+Support for versions older than 2.4 of the [Pipeline Job Plugin](https://plugins.jenkins.io/workflow-job) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
+The `concurrentBuild` option for Pipeline jobs causes problems
+([JENKINS-53775](https://issues.jenkins-ci.org/browse/JENKINS-53775)). It is [[deprecated|Deprecation-Policy]] and will
+be removed. It should be replaced by the `disableConcurrentBuilds` job property.
+
+DSL prior to 1.76
+```groovy
+pipelineJob('example-1') {
+    concurrentBuild(false)
+}
+
+pipelineJob('example-2') {
+    concurrentBuild()
+}
+```
+
+DSL since 1.76
+```groovy
+pipelineJob('example-1') {
+    properties {
+        disableConcurrentBuilds()
+    }
+}
+
+pipelineJob('example-2') {
+}
+```
+
 ## Migrating to 1.75
 
 The `id` option in the Git and GitHub branch source contexts is now mandatory

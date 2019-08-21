@@ -35,6 +35,12 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.76 (unreleased)
   * added documentation for pitfalls when using multiple Job DSL build steps in a single job
     ([JENKINS-44142](https://issues.jenkins-ci.org/browse/JENKINS-44142))
+  * Fixed [[Dynamic DSL]] problem
+    ([JENKINS-57817](https://issues.jenkins-ci.org/browse/JENKINS-57817))
+  * Deprecated `concurrentBuild` method in `pipelineJob` context, see [Migration](Migration#migrating-to-176)
+    ([JENKINS-53775](https://issues.jenkins-ci.org/browse/JENKINS-53775))
+  * Support for older versions of the [Pipeline Job Plugin](https://plugins.jenkins.io/workflow-job) is deprecated, see
+    [Migration](Migration#migrating-to-169)
 * 1.75 (August 12 2019)
   * Added documentation about mandatory identifier in multi-branch Pipeline job branch sources, the identifier will no
     longer be generated and must be set to a constant and unique value, see [Migration](Migration#migrating-to-175)
@@ -43,8 +49,6 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([JENKINS-54877](https://issues.jenkins-ci.org/browse/JENKINS-54877))
   * Fixed problem with API viewer
     ([JENKINS-51202](https://issues.jenkins-ci.org/browse/JENKINS-51202))
-  * Fixed [[Dynamic DSL]] problem
-    ([JENKINS-57817](https://issues.jenkins-ci.org/browse/JENKINS-57817))
   * Fixed problems when using multiple Job DSL steps in a single seed job
     ([JENKINS-29784](https://issues.jenkins-ci.org/browse/JENKINS-29784),
     [JENKINS-44142](https://issues.jenkins-ci.org/browse/JENKINS-44142))

@@ -26,4 +26,12 @@ class WorkflowJob extends Job {
             project << context.definitionNode
         }
     }
+
+    @Deprecated
+    void concurrentBuild(boolean allowConcurrentBuild = true) {
+        configure { Node project ->
+            Node node = methodMissing('concurrentBuild', allowConcurrentBuild)
+            project / node
+        }
+    }
 }

@@ -143,6 +143,18 @@ abstract class Project extends Job {
     }
 
     /**
+     * Allows Jenkins to schedule and execute multiple builds concurrently.
+     *
+     * @since 1.21
+     */
+    void concurrentBuild(boolean allowConcurrentBuild = true) {
+        configure { Node project ->
+            Node node = methodMissing('concurrentBuild', allowConcurrentBuild)
+            project / node
+        }
+    }
+
+    /**
      * Adds batch tasks that are not regularly executed to projects, such as releases, integration, archiving.
      * Can be called multiple times to add more batch tasks.
      *
