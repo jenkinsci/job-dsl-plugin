@@ -10,9 +10,8 @@ import io.jenkins.plugins.casc.SecretSourceResolver;
 import io.jenkins.plugins.casc.impl.attributes.MultivaluedAttribute;
 import io.jenkins.plugins.casc.model.CNode;
 import io.jenkins.plugins.casc.model.Mapping;
-
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.Map;
+import java.util.HashMap;
 
 import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.plugin.JenkinsDslScriptLoader;
@@ -23,6 +22,10 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.CheckForNull;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static io.vavr.API.Try;
 import static io.vavr.API.unchecked;
