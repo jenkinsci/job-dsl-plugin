@@ -10,14 +10,14 @@ class GeneratedViewsAction extends GeneratedObjectsAction<GeneratedView, Generat
         super(job, GeneratedViewsBuildAction)
     }
 
-    Set<View> getViews() {
-        Set<View> result = new TreeSet<>(Comparators.VIEW_COMPARATOR)
+    Iterable<View> getViews() {
+        Set<View> result = []
         for (Run run : job.builds) {
             GeneratedViewsBuildAction action = run.getAction(GeneratedViewsBuildAction)
             if (action != null) {
                 result.addAll(action.views)
             }
         }
-        result
+        result.toSorted(Comparators.VIEW_COMPARATOR)
     }
 }

@@ -37,6 +37,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([JENKINS-44142](https://issues.jenkins-ci.org/browse/JENKINS-44142))
   * Fixed [[Dynamic DSL]] problem
     ([JENKINS-57817](https://issues.jenkins-ci.org/browse/JENKINS-57817))
+  * Show items with same display name on job and build pages
+    ([JENKINS-54231](https://issues.jenkins-ci.org/browse/JENKINS-54231))
   * Deprecated `concurrentBuild` method in `pipelineJob` context, see [Migration](Migration#migrating-to-176)
     ([JENKINS-53775](https://issues.jenkins-ci.org/browse/JENKINS-53775))
   * Support for older versions of the [Pipeline Job Plugin](https://plugins.jenkins.io/workflow-job) is deprecated, see

@@ -22,8 +22,8 @@ class GeneratedViewsBuildAction extends GeneratedObjectsRunAction<GeneratedView>
         this.lookupStrategy = lookupStrategy
     }
 
-    Set<View> getViews() {
-        Set<View> allGeneratedViews = new TreeSet<>(Comparators.VIEW_COMPARATOR)
+    Iterable<View> getViews() {
+        Set<View> allGeneratedViews = []
         for (GeneratedView generatedView : modifiedObjects) {
             ItemGroup itemGroup = lookupStrategy.getParent(owner.parent, generatedView.name)
             if (itemGroup instanceof ViewGroup) {
@@ -34,7 +34,7 @@ class GeneratedViewsBuildAction extends GeneratedObjectsRunAction<GeneratedView>
                 }
             }
         }
-        allGeneratedViews
+        allGeneratedViews.toSorted(Comparators.VIEW_COMPARATOR)
     }
 
     @Override
