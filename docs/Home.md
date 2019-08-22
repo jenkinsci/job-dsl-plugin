@@ -42,7 +42,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Deprecated `concurrentBuild` method in `pipelineJob` context, see [Migration](Migration#migrating-to-176)
     ([JENKINS-53775](https://issues.jenkins-ci.org/browse/JENKINS-53775))
   * Support for older versions of the [Pipeline Job Plugin](https://plugins.jenkins.io/workflow-job) is deprecated, see
-    [Migration](Migration#migrating-to-169)
+    [Migration](Migration#migrating-to-176)
+  * Support for older versions of the [Subversion Plugin](https://plugins.jenkins.io/subversion) is deprecated, see
+    [Migration](Migration#migrating-to-176)
 * 1.75 (August 12 2019)
   * Added documentation about mandatory identifier in multi-branch Pipeline job branch sources, the identifier will no
     longer be generated and must be set to a constant and unique value, see [Migration](Migration#migrating-to-175)

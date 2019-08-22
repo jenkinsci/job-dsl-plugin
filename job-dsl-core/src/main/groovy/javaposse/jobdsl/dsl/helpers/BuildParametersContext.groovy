@@ -59,6 +59,8 @@ class BuildParametersContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
     void listTagsParam(String parameterName, String scmUrl, @DslContext(ListTagsParamContext) Closure closure = null) {
+        jobManagement.logPluginDeprecationWarning('subversion', '2.8')
+
         checkParameterName(parameterName)
         checkNotNullOrEmpty(scmUrl, 'scmUrl cannot be null or empty')
 

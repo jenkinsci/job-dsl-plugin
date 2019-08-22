@@ -32,6 +32,11 @@ pipelineJob('example-2') {
 }
 ```
 
+### Subversion Plugin
+
+Support for versions older than 2.8 of the [Subversion Plugin](https://plugins.jenkins.io/subversion) is
+[[deprecated|Deprecation-Policy]] and will be removed.
+
 ## Migrating to 1.75
 
 The `id` option in the Git and GitHub branch source contexts is now mandatory
