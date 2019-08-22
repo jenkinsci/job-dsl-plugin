@@ -1,5 +1,5 @@
 {
-    "version": "1.76",
+    "version": "1.75",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -5725,8 +5725,8 @@
                                     "type": "String"
                                 }
                             ],
-                            "html": "The directory to checkout to. By default, files are checked out into the workspace directory.",
-                            "firstSentenceCommentText": "The directory to checkout to. "
+                            "html": "The directoy to checkout to. By default, files are checked out into the workspace directory.",
+                            "firstSentenceCommentText": "The directoy to checkout to. "
                         }
                     ]
                 },
@@ -38652,7 +38652,9 @@
                                     "defaultValue": "true"
                                 }
                             ],
-                            "deprecated": true
+                            "availableSince": "1.21",
+                            "html": "Allows Jenkins to schedule and execute multiple builds concurrently.",
+                            "firstSentenceCommentText": "Allows Jenkins to schedule and execute multiple builds concurrently."
                         }
                     ]
                 },
