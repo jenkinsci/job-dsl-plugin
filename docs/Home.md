@@ -32,6 +32,7 @@ scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Suppo
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
+* 1.77 (unreleased)
 * 1.76 (August 22 2019)
   * Added documentation for pitfalls when using multiple Job DSL build steps in a single job
     ([JENKINS-44142](https://issues.jenkins-ci.org/browse/JENKINS-44142))
