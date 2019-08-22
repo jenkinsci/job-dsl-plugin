@@ -1,4 +1,4 @@
-Via [configuration-as-code-plugin](https://plugins.jenkins.io/configuration-as-code) also known as JCasC
+~~~~Via [configuration-as-code-plugin](https://plugins.jenkins.io/configuration-as-code) also known as JCasC
 
 It is possible to configure initial seed jobs through a yaml config file.  
 The basics for job dsl is you have a root element called `jobs` that will be parsed to configure via job dsl
@@ -30,7 +30,7 @@ jobs:
   - url: https://raw.githubusercontent.com/jenkinsci/job-dsl-plugin/master/job-dsl-plugin/src/test/resources/javaposse/jobdsl/plugin/testjob.groovy
 ```
 
-you can reference multiple scripts, files, and urls
+You can reference multiple scripts, files, and urls
 
 ```yml
 jobs:
@@ -62,4 +62,20 @@ jobs:
 
   - file: ./jobdsl/job1.groovy
   - file: ./jobdsl/job2.groovy
+```
+
+You can pass values from the yaml file to the job dsl script
+
+```yml
+jobs:
+  - providedEnv:
+      SUPERHERO: 'Midnighter'
+  - file: ./jobdsl/job.groovy
+```
+
+```groovy
+//job.groovy
+job('awesome-job') {
+    description("favorite job of ${SUPERHERO}")
+}
 ```

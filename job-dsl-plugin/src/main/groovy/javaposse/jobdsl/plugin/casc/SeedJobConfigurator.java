@@ -3,14 +3,13 @@ package javaposse.jobdsl.plugin.casc;
 import hudson.Extension;
 import io.jenkins.plugins.casc.Attribute;
 import io.jenkins.plugins.casc.ConfigurationContext;
-import io.jenkins.plugins.casc.ConfiguratorException;
 import io.jenkins.plugins.casc.Configurator;
+import io.jenkins.plugins.casc.ConfiguratorException;
 import io.jenkins.plugins.casc.RootElementConfigurator;
 import io.jenkins.plugins.casc.SecretSourceResolver;
 import io.jenkins.plugins.casc.impl.attributes.MultivaluedAttribute;
 import io.jenkins.plugins.casc.model.CNode;
 import io.jenkins.plugins.casc.model.Mapping;
-import java.util.Map;
 import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.plugin.JenkinsDslScriptLoader;
 import javaposse.jobdsl.plugin.JenkinsJobManagement;
@@ -18,11 +17,14 @@ import javaposse.jobdsl.plugin.LookupStrategy;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-import javax.annotation.Nonnull;
 import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static io.vavr.API.Try;
 import static io.vavr.API.unchecked;
@@ -59,9 +61,11 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
     @Override
     @SuppressWarnings("unchecked")
     public GeneratedItems[] configure(CNode config, ConfigurationContext context) throws ConfiguratorException {
-        JenkinsJobManagement management = new JenkinsJobManagement(System.out, System.getenv(), null, null, LookupStrategy.JENKINS_ROOT);
+        Map<String, String> env = new HashMap<>(System.getenv());
+        JenkinsJobManagement management = new JenkinsJobManagement(System.out, env, null, null, LookupStrategy.JENKINS_ROOT);
         Configurator<ScriptSource> configurator = context.lookupOrFail(ScriptSource.class);
         return config.asSequence().stream()
+            .flatMap(source -> processProvidedEnv(source, context, env))
             .map(source -> getActualValue(source, context))
             .map(source -> getScriptFromSource(source, context, configurator))
             .map(script -> generateFromScript(script, management))
@@ -83,6 +87,16 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
     @Override
     public CNode describe(GeneratedItems[] instance, ConfigurationContext context) throws Exception {
         return null;
+    }
+
+    private Stream<CNode> processProvidedEnv(CNode source, ConfigurationContext context, Map<String, String> env) {
+        Map.Entry<String, CNode> entry = unchecked(() -> source.asMapping().entrySet().iterator().next()).apply();
+        if (entry.getKey().equals("providedEnv")) {
+            unchecked(entry.getValue()::asMapping).apply().entrySet().forEach(envEntry ->
+                env.put(envEntry.getKey(), revealSourceOrGetValue(envEntry, context)));
+            return Stream.empty();
+        }
+        return Stream.of(source);
     }
 
     private CNode getActualValue(CNode config, ConfigurationContext context) {

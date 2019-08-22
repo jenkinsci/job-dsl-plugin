@@ -33,8 +33,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.76 (unreleased)
-  * added documentation for pitfalls when using multiple Job DSL build steps in a single job
+  * Added documentation for pitfalls when using multiple Job DSL build steps in a single job
     ([JENKINS-44142](https://issues.jenkins-ci.org/browse/JENKINS-44142))
+  * Pass environment from CasC file to Job DSL script
+    ([JENKINS-59037](https://issues.jenkins-ci.org/browse/JENKINS-59037))
   * Fixed [[Dynamic DSL]] problem
     ([JENKINS-57817](https://issues.jenkins-ci.org/browse/JENKINS-57817))
   * Show items with same display name on job and build pages

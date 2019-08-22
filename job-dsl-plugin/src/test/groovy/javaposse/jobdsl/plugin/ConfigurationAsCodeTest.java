@@ -17,5 +17,6 @@ public class ConfigurationAsCodeTest {
     public void configure_seed_job() {
         assertNotNull(j.jenkins.getItem("testJob1"));
         assertNotNull(j.jenkins.getItem("testJob2"));
+        assertNotNull(j.jenkins.getItem("testJob3"));
     }
 }
