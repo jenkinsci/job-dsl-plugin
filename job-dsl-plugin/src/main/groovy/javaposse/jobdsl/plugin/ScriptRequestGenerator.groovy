@@ -50,7 +50,7 @@ class ScriptRequestGenerator implements Closeable {
                     URL[] urlRoots = ([createWorkspaceUrl(filePath.parent)] + classpath) as URL[]
                     ScriptRequest request = new ScriptRequest(
                             readFile(filePath), urlRoots, ignoreExisting, getAbsolutePath(filePath),
-                            FilenameUtils.normalize(getAbsolutePath(workspace))
+                            getAbsolutePath(workspace)
                     )
                     scriptRequests.add(request)
                 }
@@ -70,7 +70,7 @@ class ScriptRequestGenerator implements Closeable {
     @PackageScope
     static String getAbsolutePath(FilePath filePath) {
         // see JENKINS-33723
-        filePath.getRemote()
+        FilenameUtils.normalize(filePath.getRemote(), true)
     }
 
     private URL createClasspathURL(FilePath filePath) {
@@ -95,10 +95,7 @@ class ScriptRequestGenerator implements Closeable {
     }
 
     private URL createWorkspaceUrl(FilePath filePath) {
-        // workspace and filePath may have differing separators in their common base
-        String normalizedWorkspace = FilenameUtils.normalize(getAbsolutePath(workspace))
-        String relativePath = getAbsolutePath(filePath) - normalizedWorkspace
-        relativePath = relativePath.replaceAll('\\\\', '/') // normalize for Windows
+        String relativePath = getAbsolutePath(filePath) - getAbsolutePath(workspace)
         String slash = filePath.directory ? '/' : ''
         new URL(createWorkspaceUrl(), "$relativePath$slash")
     }
