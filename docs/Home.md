@@ -33,6 +33,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.77 (unreleased)
+  * Fixed problem with paths on Windows
+    ([JENKINS-53840](https://issues.jenkins-ci.org/browse/JENKINS-53840))
 * 1.76 (August 22 2019)
   * Added documentation for pitfalls when using multiple Job DSL build steps in a single job
     ([JENKINS-44142](https://issues.jenkins-ci.org/browse/JENKINS-44142))

@@ -8,6 +8,8 @@ import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.ScriptRequest
 import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
+import hudson.FilePath
+import spock.lang.Requires
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -401,5 +403,27 @@ class ScriptRequestGeneratorSpec extends Specification {
 
         then:
         requests.empty
+    }
+
+    @Requires({ os.isWindows() })
+    def 'allow differing separators in base path of workspace and target (on Windows)'() {
+        setup:
+        EnvVars env = new EnvVars()
+        // input a workspace that has forward slash separators where the target will get backward slashes
+        String crookedRemote = build.workspace.remote.replace('\\', '/')
+        FilePath customWorkspace = new FilePath(new FilePath(new File('')), crookedRemote)
+        ScriptRequestGenerator generator = new ScriptRequestGenerator(customWorkspace, env)
+
+        when:
+        List<ScriptRequest> requests = generator.getScriptRequests('a.groovy', false, null, false, null).toList()
+
+        then:
+        requests.size() == 1
+        requests[0].body == SCRIPT_A
+        requests[0].urlRoots.length == 1
+        requests[0].urlRoots[0].toString() == 'workspace:/'
+        !requests[0].ignoreExisting
+        requests[0].scriptPath == getAbsolutePath(build.workspace.child('a.groovy'))
+        requests[0].relativeScriptPath == 'a.groovy'
     }
 }
