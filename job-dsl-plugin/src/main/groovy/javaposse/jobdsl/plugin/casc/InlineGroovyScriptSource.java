@@ -17,7 +17,7 @@ public class InlineGroovyScriptSource extends ConfigurableScriptSource implement
     }
 
     @Override
-    public String getScript() throws IOException {
+    public String getScript() {
         return script;
     }
 

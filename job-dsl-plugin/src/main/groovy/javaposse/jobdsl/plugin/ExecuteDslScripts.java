@@ -1,6 +1,5 @@
 package javaposse.jobdsl.plugin;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -138,8 +137,6 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         this.ignoreExisting = false;
         this.failOnSeedCollision = false;
         this.removedJobAction = RemovedJobAction.DISABLE;
-        this.removedViewAction = RemovedViewAction.IGNORE;
-        this.lookupStrategy = LookupStrategy.JENKINS_ROOT;
         this.additionalClasspath = null;
     }
 
@@ -318,8 +315,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 env.putAll(((AbstractBuild<?, ?>) run).getBuildVariables());
             }
 
-            Map<String, Object> binding = new HashMap<>();
-            binding.putAll(env);
+            Map<String, Object> binding = new HashMap<>(env);
             if (additionalParameters != null) {
                 binding.putAll(additionalParameters);
             }
@@ -364,11 +360,11 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 addJobAction(run, new GeneratedConfigFilesBuildAction(freshConfigFiles));
                 addJobAction(run, new GeneratedUserContentsBuildAction(freshUserContents));
 
-                updateTemplates(run.getParent(), listener, new HashSet<GeneratedJob>(run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
-                updateGeneratedJobs(run.getParent(), listener, new HashSet<GeneratedJob>(run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
-                updateGeneratedViews(run.getParent(), listener, new HashSet<GeneratedView>(run.getAction(GeneratedViewsBuildAction.class).getModifiedObjects()));
-                updateGeneratedConfigFiles(run.getParent(), listener, new HashSet<GeneratedConfigFile>(run.getAction(GeneratedConfigFilesBuildAction.class).getModifiedObjects()));
-                updateGeneratedUserContents(run.getParent(), listener, new HashSet<GeneratedUserContent>(run.getAction(GeneratedUserContentsBuildAction.class).getModifiedObjects()));
+                updateTemplates(run.getParent(), listener, new HashSet<>(run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
+                updateGeneratedJobs(run.getParent(), listener, new HashSet<>(run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
+                updateGeneratedViews(run.getParent(), listener, new HashSet<>(run.getAction(GeneratedViewsBuildAction.class).getModifiedObjects()));
+                updateGeneratedConfigFiles(run.getParent(), listener, new HashSet<>(run.getAction(GeneratedConfigFilesBuildAction.class).getModifiedObjects()));
+                updateGeneratedUserContents(run.getParent(), listener, new HashSet<>(run.getAction(GeneratedUserContentsBuildAction.class).getModifiedObjects()));
             }
         } catch (RuntimeException e) {
             if (!(e instanceof DslException) && !(e instanceof AccessDeniedException)) {
@@ -604,12 +600,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     }
 
     private static Set<String> getTemplates(Collection<GeneratedJob> jobs) {
-        Collection<String> templateNames = Collections2.transform(jobs, new Function<GeneratedJob, String>() {
-            @Override
-            public String apply(GeneratedJob input) {
-                return input.getTemplateName();
-            }
-        });
+        Collection<String> templateNames = Collections2.transform(jobs, GeneratedJob::getTemplateName);
         return new LinkedHashSet<>(Collections2.filter(templateNames, Predicates.notNull()));
     }
 

@@ -13,7 +13,6 @@ import hudson.model.Label
 import hudson.model.ListView
 import hudson.model.Project
 import hudson.model.Queue
-import hudson.model.Result
 import hudson.model.Run
 import hudson.model.User
 import hudson.model.View
@@ -1283,8 +1282,8 @@ folder('folder-a/folder-b') {
 
         where:
         unstableOnDeprecation || result
-        true                  || Result.UNSTABLE
-        false                 || Result.SUCCESS
+        true                  || UNSTABLE
+        false                 || SUCCESS
     }
 
     def 'unstable or failure on missing plugin'() {

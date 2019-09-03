@@ -19,7 +19,7 @@ public abstract class ConfigurableScriptSource extends ScriptSource implements C
     }
 
     @Override
-    public CNode describe() throws Exception {
+    public CNode describe() {
         return null; // Not relevant here
     }
 

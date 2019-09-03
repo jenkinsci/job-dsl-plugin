@@ -562,7 +562,7 @@ class JenkinsJobManagementSpec extends Specification {
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         seedJob.buildersList.add(new ExecuteDslScripts('job("project")'))
         jenkinsRule.buildAndAssertSuccess(seedJob)
-        Jenkins.instance.getItemByFullName('seed').delete()
+        Jenkins.get().getItemByFullName('seed').delete()
         FreeStyleProject seedJob2 = jenkinsRule.createFreeStyleProject('seed2')
         AbstractBuild build = seedJob2.scheduleBuild2(0).get()
         JobManagement jobManagement = new JenkinsJobManagement(

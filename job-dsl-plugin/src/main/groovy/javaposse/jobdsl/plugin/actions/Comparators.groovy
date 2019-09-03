@@ -20,7 +20,7 @@ class Comparators {
         }
 
         private static String getFullDisplayName(View view) {
-            String ownerDisplayName = view.ownerItemGroup.fullDisplayName
+            String ownerDisplayName = view.owner.itemGroup.fullDisplayName
             ownerDisplayName.length() == 0 ? view.displayName : "${ownerDisplayName} » ${view.displayName}"
         }
     }
