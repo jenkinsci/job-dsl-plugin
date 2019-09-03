@@ -33,6 +33,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.77 (unreleased)
+  * Increased the minimum supported Jenkins version to 2.138
   * Fixed problem with paths on Windows
     ([JENKINS-53840](https://issues.jenkins-ci.org/browse/JENKINS-53840))
 * 1.76 (August 22 2019)
