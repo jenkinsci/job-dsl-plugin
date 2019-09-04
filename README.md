@@ -1,162 +1,145 @@
-Jenkins Job DSL / Plugin
-========================
+Jenkins Job DSL Plugin
+======================
 
-The Jenkins "Job DSL / Plugin" is made up of two parts: The Domain Specific Language (DSL) itself that allows users to
-describe jobs using a Groovy-based language, and a Jenkins plugin which manages the scripts and the updating of the
-Jenkins jobs which are created and maintained as a result.
+Introduction
+------------
 
-Background
-----------
-Jenkins is a wonderful system for managing builds, and people love using its UI to configure jobs.  Unfortunately, as
+Jenkins is a wonderful system for managing builds, and people love using its UI to configure jobs. Unfortunately, as
 the number of jobs grows, maintaining them becomes tedious, and the paradigm of using a UI falls apart. Additionally,
 the common pattern in this situation is to copy jobs to create new ones, these "children" have a habit of
 diverging from their original "template" and consequently it becomes difficult to maintain consistency between these
 jobs.
 
-The Jenkins job-dsl-plugin attempts to solve this problem by allowing jobs to be defined with the absolute minimum
-effort in a programmatic form.  The goal is for your team to be able to define all the jobs they wish to be related to
-their project, declaring their intent for the jobs programmatically, and leaving the common elements in each of them
-hidden behind the DSL.
+The Job DSL plugin attempts to solve this problem by allowing jobs to be defined in a programmatic form in a human
+readable file. Writing such a file is feasible without being a Jenkins expert as the configuration from the web UI
+translates intuitively into code.
 
-For example, your project might require a unit test job, a nightly SonarQube build, an integration test job, and a
-promotion job. Permission to run the release job should be limited to certain users. Here's the example DSL script:
+![configuration form](docs/images/pipeline.png)
 
-```groovy
-def gitUrl = 'git://github.com/jenkinsci/job-dsl-plugin.git'
+The job configuration above can be generated from the following code.
 
-job('PROJ-unit-tests') {
-    scm {
-        git(gitUrl)
+    pipelineJob('job-dsl-plugin') {
+      definition {
+        cpsScm {
+          scm {
+            git {
+              remote {
+                url('https://github.com/jenkinsci/job-dsl-plugin.git')
+              }
+              branch('*/master')
+            }
+          }
+          lightweight()
+        }
+      }
     }
-    triggers {
-        scm('*/15 * * * *')
+
+Job DSL was one of the first popular plugins for Jenkins which allows managing configuration as code and many other
+plugins dealing with this aspect have been created since then, most notably the
+[Jenkins Pipeline](https://jenkins.io/doc/book/pipeline/) and
+[Configuration as Code](https://jenkins.io/projects/jcasc/) plugins. It is important to understand the differences
+between these plugins and Job DSL for managing Jenkins configuration efficiently.
+
+The Pipeline plugins support implementing and integrating continuous delivery pipelines via the Pipeline DSL. While it
+is possible to use Job DSL to create complex pipelines using freestyle jobs in combination with many plugins from the
+Jenkins ecosystem, creating and maintaining these pipeline, including generating jobs for individual SCM branches and
+possibly running steps in parallel to improve build performance, poses a significant challenge. Jenkins Pipeline is
+often the better choice for creating complex automated processes. Job DSL can be used to create Pipeline and Multibranch
+Pipeline jobs. Do not confuse Job DSL with Pipeline DSL, both have their own syntax and scope of application.
+
+The Configuration as Code plugin can be used to manage the global system configuration of Jenkins. It is comes with an
+integration for Job DSL to create an initial set of jobs.
+
+
+Getting Started
+---------------
+
+First, start a Jenkins instance with the Job DSL plugin installed.
+
+Then create a freestyle project named "seed".
+
+![configuration form](docs/images/create-seed-job.png)
+
+Add a "Process Job DSLs" build step and paste the script below into the "DSL Script" field.
+
+    job('example') {
+      steps {
+        shell('echo Hello World!')
+      }
     }
-    steps {
-        maven('-e clean test')
+
+When running Jenkins on Windows, replace the `shell` step by a `batchFile` step.
+
+    job('example') {
+      steps {
+        batchFile('echo Hello World!')
+      }
     }
-}
 
-job('PROJ-sonar') {
-    scm {
-        git(gitUrl)
-    }
-    triggers {
-        cron('15 13 * * *')
-    }
-    steps {
-        maven('sonar:sonar')
-    }
-}
+![configuration form](docs/images/build-step.png)
 
-job('PROJ-integration-tests') {
-    scm {
-        git(gitUrl)
-    }
-    triggers {
-        cron('15 1,13 * * *')
-    }
-    steps {
-        maven('-e clean integration-test')
-    }
-}
+Save the configuration, start a build and inspect the console output.
 
-job('PROJ-release') {
-    scm {
-        git(gitUrl)
-    }
-    // no trigger
-    authorization {
-        // limit builds to just Jack and Jill
-        permission('hudson.model.Item.Build', 'jill')
-        permission('hudson.model.Item.Build', 'jack')
-    }
-    steps {
-        maven('-B release:prepare release:perform')
-        shell('cleanup.sh')
-    }
-}
-```
+    Started by user admin
+    Running as SYSTEM
+    Building in workspace /var/jenkins_home/workspace/seed
+    Processing provided DSL script
+    Added items:
+        GeneratedJob{name='example'}
+    Finished: SUCCESS
 
-NOTE: This example requires additional Jenkins plugins to be installed, and hence won't run "out of the box". Read
-the [wiki](https://github.com/jenkinsci/job-dsl-plugin/wiki) for isolated examples and step-by-step guides to get this
-example working.
+The seed job has generated the "example" job. Verify the result on the job's configuration page.
 
-Manually creating these jobs wouldn't be too hard, but doing the same thing all over again for every new branch or for
-a hundred other projects is where it gets interesting (and by "interesting" we mean "difficult"). An anti-pattern that
-people use in Jenkins to minimize the amount of job configuration, they make a single parameterized job to do all these
-things in one job, but then the history of the job is skewed and they were limited in some settings like triggers. This
-provides a much more powerful way of defining them.
+![generated job](docs/images/result.png)
 
-Please refer to the [Job DSL wiki](https://github.com/jenkinsci/job-dsl-plugin/wiki) for further documentation and
-examples.
+Instead of creating a seed job manually, consider using the
+[Configuration as Code](https://plugins.jenkins.io/configuration-as-code) plugin. See the
+[Wiki](https://github.com/jenkinsci/job-dsl-plugin/wiki/JCasC) for details.
 
-Features
---------
-* DSL - Scriptable via Groovy
-* DSL - Direct control of XML, so that anything possible in a config.xml is possible via the DSL
-* DSL - Helper methods for common job configurations, e.g. scm, triggers, build steps
-* Plugin - DSL can be put directly in a job
-* Plugin - DSL can be put into SCM and polled using standard SCM triggering
-* Plugin - Multiple DSLs can be referenced at a time
 
-Basic Usage
------------
-See the [wiki](https://github.com/jenkinsci/job-dsl-plugin/wiki) for specific steps and other examples.
+Documentation
+-------------
 
-1. Create a Jenkins Job using the Free-style project style to run your DSL Scripts. This is called a "Seed" job
-2. Configure the seed job, by adding a "Build Step" of type "Process Job DSLs" and paste in the body of the DSL
-3. Run the seed to generate your new jobs from your script. When successful, the "build result" page will list the jobs
-which have been successfully created
+The complete DSL API reference is available in your Jenkins installation at
+`https://your.jenkins.installation/plugin/job-dsl/api-viewer/index.html`. You can find links to the API reference on the
+seed job page and the Job DSL build step.
 
-Building
---------
-Prerequisites:
-* JDK 8
+A limited sub-set of the API reference is available online at https://jenkinsci.github.io/job-dsl-plugin/. But be aware
+that this does not show all API that is available in your Jenkins installation because a lot of the documentation is
+generated at runtime by introspecting the plugins that have been installed.
 
-To build the plugin from source:
+Jenkins saves the configuration of each job in a XML file. The Job DSL plugin is in principle a generator for these XML
+files, translating the DSL code into XML. If a configuration option is not available in the high-level DSL, it is
+possible to generate the XML directly using a
+[Configure Block](https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block). Use the
+[Job DSL Playground](http://job-dsl.herokuapp.com/) to create and test your configure blocks. Please note that the
+playground only supports the DSL API that is available in the online
+[API Reference](https://jenkinsci.github.io/job-dsl-plugin/).
 
-    ./gradlew build
+Find the complete documentation on the [Wiki](https://github.com/jenkinsci/job-dsl-plugin/wiki).
 
-To run Jenkins (http://localhost:8080) and test the plugin:
 
-    ./gradlew server
+Release Notes
+-------------
 
-Build job-dsl.hpi to be installed in Jenkins:
+See the [Wiki](https://github.com/jenkinsci/job-dsl-plugin/wiki#release-notes).
 
-    ./gradlew jpi
 
-IntelliJ IDEA and Eclipse (STS) have the ability to open Gradle projects directly, but they both have issues. IDEA
-sometimes does not detect all plugin dependencies (e.g. `hudson.maven.MavenModuleSet`) and as a workaround you need to
-hit the refresh button in the Gradle tool window until it does. You also need to run the `localizer` task to generate
-the `Messages` class before building and testing the project in the IDE:
-
-    ./gradlew localizer
-
-Authors
--------
-Justin Ryan <jryan@netflix.com>
-
-Andrew Harmel-Law <andrew@harmel-law.com>
-
-Daniel Spilker <mail@daniel-spilker.com>
-
-Matt Sheehan <mr.sheehan@gmail.com>
-
-Mailing List
-------------
-To track progress and ask questions head over [the mailing list](https://groups.google.com/d/forum/job-dsl-plugin)
-
-Artifacts
+Community
 ---------
-The library is built using Jenkins-on-Jenkins and is released via its update center.
 
-License
--------
-Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the
-License. You may obtain a copy of the License at
+Browse the collection of [talks and blog posts](https://github.com/jenkinsci/job-dsl-plugin/wiki/Talks-and-Blog-Posts)
+about Job DSL. If you have a talk or blog post to share, please raise a hand, e.g. by posting to the
+[mailing list](https://groups.google.com/d/forum/job-dsl-plugin).
 
-    http://www.apache.org/licenses/LICENSE-2.0
+Head over to [Stack Overflow](https://stackoverflow.com/questions/tagged/jenkins-job-dsl) or the
+[mailing list](https://groups.google.com/d/forum/job-dsl-plugin) to get help.
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an
-“AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
- language governing permissions and limitations under the License.
+Use the [Issue Tracker](https://issues.jenkins-ci.org/secure/Dashboard.jspa?selectPageId=15341) for reporting bugs and
+making feature requests. Select the `job-dsl-plugin` component when searching or creating issues.
+
+You can actively help to improve Job DSL by contributing code, documentation and tests or by reviewing and testing
+upcoming changes on [GitHub](https://github.com/jenkinsci/job-dsl-plugin). Start by reading the
+[guidelines for contributors](https://github.com/jenkinsci/job-dsl-plugin/blob/master/CONTRIBUTING.md).
+
+Please use the [mailing list](https://groups.google.com/d/forum/job-dsl-plugin) to provide feedback.
