@@ -1,17 +1,19 @@
 package javaposse.jobdsl.dsl.views
 
-import javaposse.jobdsl.dsl.AbstractContext
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.View
 import javaposse.jobdsl.dsl.ViewFactory
 
-class NestedViewsContext extends AbstractContext implements ViewFactory {
+@ContextType('hudson.model.View')
+class NestedViewsContext extends AbstractExtensibleContext implements ViewFactory {
     List<View> views = []
 
     NestedViewsContext(JobManagement jobManagement) {
-        super(jobManagement)
+        super(jobManagement, null)
     }
 
     /**
@@ -76,6 +78,16 @@ class NestedViewsContext extends AbstractContext implements ViewFactory {
     @Override
     DashboardView dashboardView(String name, @DslContext(DashboardView) Closure closure = null) {
         processView(name, DashboardView, closure)
+    }
+
+    @Override
+    protected void addExtensionNode(Node node) {
+        views << new View(jobManagement, node['name'].text()) {
+            @Override
+            Node getNode() {
+                node
+            }
+        }
     }
 
     private <T extends View> T processView(String name, Class<T> viewClass, Closure closure) {
