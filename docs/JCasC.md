@@ -1,9 +1,13 @@
-~~~~Via [configuration-as-code-plugin](https://plugins.jenkins.io/configuration-as-code) also known as JCasC
+Support for Configuration as Code Plugin
+========================================
 
-It is possible to configure initial seed jobs through a yaml config file.  
-The basics for job dsl is you have a root element called `jobs` that will be parsed to configure via job dsl
+See [Configuration as Code](https://plugins.jenkins.io/configuration-as-code) for an introduction to managing global
+Jenkins settings as code.
 
-Examples of config file
+The Job DSL plugin provides an extension to run Job DSL scripts when configuring Jenkins using Configuration as Code.
+These scripts can be used to create an initial seed job.
+
+To get started, add a root element called `jobs`. The given script will be executed by the Job DSL plugin.
 
 ```yml
 jobs:
@@ -18,7 +22,7 @@ jobs:
       }
 ```
 
-You can also fetch your job dsl from a file or URL
+You can also fetch Job DSL scripts from a file or URL.
 
 ```yml
 jobs:
@@ -27,10 +31,10 @@ jobs:
 
 ```yml
 jobs:
-  - url: https://raw.githubusercontent.com/jenkinsci/job-dsl-plugin/master/job-dsl-plugin/src/test/resources/javaposse/jobdsl/plugin/testjob.groovy
+  - url: https://example.acme.org/job-dsl/testjob.groovy
 ```
 
-You can reference multiple scripts, files, and urls
+You can reference multiple scripts, files, and URLs.
 
 ```yml
 jobs:
@@ -64,7 +68,7 @@ jobs:
   - file: ./jobdsl/job2.groovy
 ```
 
-You can pass values from the yaml file to the job dsl script
+You can pass values from the YAML file to the Job DSL script.
 
 ```yml
 jobs:
