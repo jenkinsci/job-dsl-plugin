@@ -515,6 +515,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             String itemName = FilenameUtils.getName(path);
             if (parent instanceof ModifiableTopLevelItemGroup) {
                 Item project = ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
+                project.onCreatedFromScratch();
                 notifyItemCreated(project, dslItem);
             } else if (parent == null) {
                 throw new DslException(format(Messages.CreateItem_UnknownParent(), path));
