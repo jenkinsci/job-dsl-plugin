@@ -30,4 +30,13 @@ class P4WorkspaceContext implements Context {
             }
         }
     }
+	
+	void stream(String workspaceName, String streamName) {
+        workspaceConfig = new NodeBuilder().workspace(class: 'org.jenkinsci.plugins.p4.workspace.StreamWorkspaceImpl') {
+            charset('none')
+            pinHost(false)
+            streamName(streamName ?: '')
+            format(workspaceName ?: '')
+        }
+    }
 }
