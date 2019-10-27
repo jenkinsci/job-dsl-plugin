@@ -189,16 +189,6 @@ class JobSpec extends Specification {
         job.node.properties[0].children()[0].name() == 'hack'
     }
 
-    def 'call triggers'() {
-        when:
-        job.triggers {
-            scm('2 3 * * * *')
-        }
-
-        then:
-        job.node.triggers[0].'hudson.triggers.SCMTrigger'[0].spec[0].text() == '2 3 * * * *'
-    }
-
     def 'add description'() {
         when:
         job.description('Description')

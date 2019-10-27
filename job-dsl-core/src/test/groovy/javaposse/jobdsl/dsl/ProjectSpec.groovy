@@ -59,6 +59,16 @@ class ProjectSpec extends Specification {
         thrown(DslScriptException)
     }
 
+    def 'call triggers'() {
+        when:
+        job.triggers {
+            scm('2 3 * * * *')
+        }
+
+        then:
+        job.node.triggers[0].'hudson.triggers.SCMTrigger'[0].spec[0].text() == '2 3 * * * *'
+    }
+
     def 'call wrappers'() {
         when:
         job.wrappers {

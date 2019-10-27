@@ -1,3 +1,33 @@
+## Migrating to 1.77
+
+### Pipeline: Job Plugin
+
+The `triggers` option for Pipeline jobs causes problems
+([JENKINS-53775](https://issues.jenkins-ci.org/browse/JENKINS-53775)). It is [[deprecated|Deprecation-Policy]] and will
+be removed. It should be replaced by the `pipelineTriggers` job property.
+
+DSL prior to 1.77
+```groovy
+pipelineJob('example') {
+    triggers {
+        [...]
+    }
+}
+```
+
+DSL since 1.77
+```groovy
+pipelineJob('example') {
+    properties {
+        pipelineTriggers {
+            triggers {
+                [...]
+            }
+        }
+    }
+}
+```
+
 ## Migrating to 1.76
 
 ### Pipeline: Job Plugin
