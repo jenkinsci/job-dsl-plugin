@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.views.DashboardView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
+import javaposse.jobdsl.dsl.views.PipelineAggregatorView
 import javaposse.jobdsl.dsl.views.SectionedView
 
 /**
@@ -129,4 +130,21 @@ interface ViewFactory extends Context {
      */
     @RequiresPlugin(id = 'dashboard-view', minimumVersion = '2.9.7', failIfMissing = true)
     DashboardView dashboardView(String name, @DslContext(DashboardView) Closure closure)
+
+    /**
+     * Creates or updates a view showing the history of pipelines with stage information.
+     *
+     * @see #pipelineAggregatorView(java.lang.String, groovy.lang.Closure)
+     * @since 1.78
+     */
+    @RequiresPlugin(id = 'pipeline-aggregator-view', minimumVersion = '1.8', failIfMissing = true)
+    PipelineAggregatorView pipelineAggregatorView(String name)
+
+    /**
+     * Creates or updates a view showing the history of pipelines with stage information.
+     *
+     * @since 1.78
+     */
+    @RequiresPlugin(id = 'pipeline-aggregator-view', minimumVersion = '1.8', failIfMissing = true)
+    PipelineAggregatorView pipelineAggregatorView(String name, @DslContext(PipelineAggregatorView) Closure closure)
 }

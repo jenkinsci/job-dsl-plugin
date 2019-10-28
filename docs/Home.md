@@ -32,6 +32,8 @@ scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Suppo
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
+* 1.79 (unreleased)
+  * Added support for the [Pipeline Aggregator Plugin](https://plugins.jenkins.io/pipeline-aggregator-view)
 * 1.78.1 (October 27 2021)
   * Fix: Ensure API Viewer is packaged correctly into the built plugin ([JENKINS-66988](https://issues.jenkins.io/browse/JENKINS-66988))
 * 1.78 (October 27 2021)
