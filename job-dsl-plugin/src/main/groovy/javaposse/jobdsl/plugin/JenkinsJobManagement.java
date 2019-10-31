@@ -143,15 +143,19 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         } else if (!ignoreExisting) {
             if (failOnSeedCollision) {
                 // fail if the item being created is already managed by another seed job
-                String seedJobName = project.getName();
+                String seedJobName = project.getFullName();
                 if (seedJobName != null) {
                     DescriptorImpl descriptor = Jenkins.get().getDescriptorByType(DescriptorImpl.class);
-                    SeedReference seedReference = descriptor.getGeneratedJobMap().get(jobName);
+                    String getpath = path;
+                    // generatedJobMap keys look like 'folder/job' instead of '/folder/job'
+                    if (getpath.charAt(0) == '/')
+                        getpath = getpath.substring(1);
+                    SeedReference seedReference = descriptor.getGeneratedJobMap().get(getpath);
                     if (seedReference != null) {
                         String existingSeedJobName = seedReference.getSeedJobName();
                         if (!seedJobName.equals(existingSeedJobName) &&
                                 Jenkins.get().getItemByFullName(existingSeedJobName) != null) {
-                            throw new DslException(format(Messages.CreateOrUpdateConfigFile_SeedCollision(), jobName, existingSeedJobName));
+                            throw new DslException(format(Messages.CreateOrUpdateConfigFile_SeedCollision(), jobName, existingSeedJobName, path, seedJobName));
                         }
                     }
                 }
