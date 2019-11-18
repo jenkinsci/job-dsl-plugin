@@ -1,6 +1,5 @@
 package javaposse.jobdsl.plugin;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.thoughtworks.xstream.io.xml.XppDriver;
@@ -60,6 +59,7 @@ import java.util.logging.Logger;
 import static hudson.model.Result.UNSTABLE;
 import static hudson.model.View.createViewFromXML;
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Manages Jenkins jobs, providing facilities to retrieve and create / update.
@@ -167,7 +167,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         String viewBaseName = FilenameUtils.getName(path);
         Jenkins.checkGoodName(viewBaseName);
         try {
-            InputStream inputStream = new ByteArrayInputStream(config.getBytes("UTF-8"));
+            InputStream inputStream = new ByteArrayInputStream(config.getBytes(UTF_8));
 
             ItemGroup parent = lookupStrategy.getParent(project, path);
             if (parent instanceof ViewGroup) {
@@ -365,12 +365,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     public void renameJobMatching(final String previousNames, String destination) throws IOException {
         final ItemGroup context = lookupStrategy.getContext(project);
         Collection<Job> items = Jenkins.get().getAllItems(Job.class);
-        Collection<Job> matchingJobs = Collections2.filter(items, new Predicate<Job>() {
-            @Override
-            public boolean apply(Job topLevelItem) {
-                return topLevelItem.getRelativeNameFrom(context).matches(previousNames);
-            }
-        });
+        Collection<Job> matchingJobs = Collections2.filter(items, topLevelItem -> topLevelItem.getRelativeNameFrom(context).matches(previousNames));
         if (matchingJobs.size() == 1) {
             renameJob(matchingJobs.iterator().next(), destination);
         } else if (matchingJobs.size() > 1) {
@@ -514,7 +509,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.FINE, format("Creating item as %s", config));
 
         try {
-            InputStream is = new ByteArrayInputStream(config.getBytes("UTF-8"));
+            InputStream is = new ByteArrayInputStream(config.getBytes(UTF_8));
 
             ItemGroup parent = lookupStrategy.getParent(project, path);
             String itemName = FilenameUtils.getName(path);
@@ -582,8 +577,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @SuppressWarnings("unchecked")
-    private static <I extends AbstractItem & TopLevelItem> I move(Item item, DirectlyModifiableTopLevelItemGroup destination) throws IOException {
-        return Items.move((I) item, destination);
+    private static <I extends AbstractItem & TopLevelItem> void move(Item item, DirectlyModifiableTopLevelItemGroup destination) throws IOException {
+        Items.move((I) item, destination);
     }
 
     private static class JobDslCause extends Cause {

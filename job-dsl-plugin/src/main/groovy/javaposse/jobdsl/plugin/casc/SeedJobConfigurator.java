@@ -59,7 +59,6 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
 
     @Nonnull
     @Override
-    @SuppressWarnings("unchecked")
     public GeneratedItems[] configure(CNode config, ConfigurationContext context) throws ConfiguratorException {
         Map<String, String> env = new HashMap<>(System.getenv());
         JenkinsJobManagement management = new JenkinsJobManagement(System.out, env, null, null, LookupStrategy.JENKINS_ROOT);
@@ -73,7 +72,7 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
     }
 
     @Override
-    public GeneratedItems[] check(CNode config, ConfigurationContext context) throws ConfiguratorException {
+    public GeneratedItems[] check(CNode config, ConfigurationContext context) {
         return new GeneratedItems[0];
     }
 
@@ -85,7 +84,7 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
 
     @CheckForNull
     @Override
-    public CNode describe(GeneratedItems[] instance, ConfigurationContext context) throws Exception {
+    public CNode describe(GeneratedItems[] instance, ConfigurationContext context) {
         return null;
     }
 

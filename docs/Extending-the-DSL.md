@@ -1,3 +1,6 @@
+**NOTE: The Job DSL extension point has been superseded by the [[Dynamic DSL]]. Consider the extension point as
+deprecated. It will be removed in the future.**
+
 Note: This page is intended for Jenkins plugin developers which want to provide DSL methods for their plugins. If you
 are a DSL user, have a look at the [[configure block|The Configure Block]], the [[user power moves|User Power Moves]]
 and at the [[examples|Real World Examples]] for hints about extending the DSL as a user.

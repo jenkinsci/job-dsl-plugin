@@ -4,6 +4,7 @@ import hudson.model.AbstractBuild
 import hudson.model.AbstractProject
 import hudson.model.ItemGroup
 import hudson.model.View
+import hudson.model.ViewGroup
 import javaposse.jobdsl.dsl.GeneratedView
 import spock.lang.Specification
 
@@ -106,10 +107,12 @@ class GeneratedViewsActionSpec extends Specification {
         setup:
         ItemGroup itemGroup = Mock(ItemGroup)
         itemGroup.fullDisplayName >> 'foo'
+        ViewGroup owner = Mock(ViewGroup)
+        owner.itemGroup >> itemGroup
         views[0].displayName >> 'one'
-        views[0].ownerItemGroup >> itemGroup
+        views[0].owner >> owner
         views[1].displayName >> 'two'
-        views[1].ownerItemGroup >> itemGroup
+        views[1].owner >> owner
         buildAction.views >> views
         build1.getAction(GeneratedViewsBuildAction) >> buildAction
         build2.getAction(GeneratedViewsBuildAction) >> buildAction
