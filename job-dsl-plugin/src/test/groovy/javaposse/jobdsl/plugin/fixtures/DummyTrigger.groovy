@@ -13,10 +13,9 @@ import org.kohsuke.stapler.DataBoundSetter
 
 class DummyTrigger extends Trigger<Job> {
 
+    @SuppressWarnings('EmptyClass')
     static class UnsupportedByStructs {
-        UnsupportedByStructs() {
-          // we are not supported.
-        }
+        // We are not supported.
     }
 
     @DataBoundSetter
