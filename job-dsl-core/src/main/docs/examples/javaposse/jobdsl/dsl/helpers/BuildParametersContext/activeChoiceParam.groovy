@@ -5,8 +5,12 @@ job('example') {
             filterable()
             choiceType('SINGLE_SELECT')
             groovyScript {
-                script('["choice1", "choice2"]')
-                fallbackScript('"fallback choice"')
+                script('["choice1", "choice2"]') {
+                    sandbox(true)
+                }
+                fallbackScript('"fallback choice"') {
+                    sandbox()
+                }
             }
         }
     }
