@@ -1,5 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
-
+plugins {
+  id "com.eriwen.gradle.css" version "2.14.0"
+}
 plugins {
     id 'org.ajoberstar.git-publish' version '0.3.3'
     id 'com.github.onslip.gradle-one-jar' version '1.0.5'
