@@ -3,6 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     id 'org.ajoberstar.git-publish' version '0.3.3'
     id 'com.github.onslip.gradle-one-jar' version '1.0.5'
+    id "com.eriwen.gradle.css" version "2.14.0"
     // need to be in the root project as workaround for https://github.com/michel-kraemer/gradle-download-task/issues/48
     id 'de.undercouch.download' version '3.1.2'
 }
