@@ -47,7 +47,7 @@ possibly running steps in parallel to improve build performance, poses a signifi
 often the better choice for creating complex automated processes. Job DSL can be used to create Pipeline and Multibranch
 Pipeline jobs. Do not confuse Job DSL with Pipeline DSL, both have their own syntax and scope of application.
 
-The Configuration as Code plugin can be used to manage the global system configuration of Jenkins. It is comes with an
+The Configuration as Code plugin can be used to manage the global system configuration of Jenkins. It comes with an
 integration for Job DSL to create an initial set of jobs.
 
 
