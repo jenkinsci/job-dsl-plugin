@@ -37,7 +37,7 @@ final class GitParamContext implements Context {
     }
     
     /**
-     * Sets a useRepository for the parameter.
+     * Sets a quickFilterEnabled for the parameter.
      */
     void quickFilterEnabled(Boolean quickFilterEnabled) {
         this.quickFilterEnabled = quickFilterEnabled
