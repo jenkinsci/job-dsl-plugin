@@ -79,6 +79,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
                     description(context.description ?: '')
                     credentialsId(context.credentialsId ?: '')
                     uuid(randomUUID())
+                    
                 }
     }
 
@@ -217,6 +218,9 @@ class BuildParametersContext extends AbstractExtensibleContext {
                     tagFilter(context.tagFilter ?: '')
                     sortMode(context.sortMode)
                     defaultValue(context.defaultValue ?: '')
+                    useRepository(context.repoName ?: '')
+                    quickFilterEnabled(context.quickFilterEnabled ?: false)
+                    branchFilter(context.branchFilter ?: '')
                 }
     }
 
