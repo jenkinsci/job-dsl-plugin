@@ -18,12 +18,36 @@ final class GitParamContext implements Context {
     String tagFilter
     String sortMode = 'NONE'
     String defaultValue
+    String branchFilter
+    String useRepository
+    Boolean quickFilterEnabled = false
 
     /**
      * Sets a description for the parameter.
      */
     void description(String description) {
         this.description = description
+    }
+    
+    /**
+     * Sets a useRepository for the parameter.
+     */
+    void useRepository(String useRepository) {
+        this.useRepository = useRepository
+    }
+    
+    /**
+     * Sets a useRepository for the parameter.
+     */
+    void quickFilterEnabled(Boolean quickFilterEnabled) {
+        this.quickFilterEnabled = quickFilterEnabled
+    }
+
+    /**
+     * Sets a branchFilter for the parameter.
+     */
+    void branchFilter(String branchFilter) {
+        this.branchFilter = branchFilter
     }
 
     /**
