@@ -19,7 +19,7 @@ final class GitParamContext implements Context {
     String sortMode = 'NONE'
     String defaultValue
     String branchFilter
-    String useRepository
+    String repoName
     Boolean quickFilterEnabled = false
 
     /**
@@ -32,8 +32,8 @@ final class GitParamContext implements Context {
     /**
      * Sets a useRepository for the parameter.
      */
-    void useRepository(String useRepository) {
-        this.useRepository = useRepository
+    void repoName(String repoName) {
+        this.useRepository = repoName
     }
     
     /**
