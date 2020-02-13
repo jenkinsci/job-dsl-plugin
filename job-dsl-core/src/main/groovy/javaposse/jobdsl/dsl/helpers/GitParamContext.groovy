@@ -33,7 +33,7 @@ final class GitParamContext implements Context {
      * Sets a useRepository for the parameter.
      */
     void repoName(String repoName) {
-        this.useRepository = repoName
+        this.repoName = repoName
     }
     
     /**
