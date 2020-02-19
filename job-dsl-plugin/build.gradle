@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-    id 'org.jenkins-ci.jpi' version '0.37.1'
+    id 'org.jenkins-ci.jpi' version '0.38.0'
 }
 
 description = 'Jenkins plugin to leverage job-dsl-core to programmatic create jobs from inside Jenkins.'
@@ -67,6 +67,7 @@ test {
         showStandardStreams = true
     }
     */
+    systemProperty 'jenkins.test.noSpaceInTmpDirs', 'true'
 }
 
 war {
