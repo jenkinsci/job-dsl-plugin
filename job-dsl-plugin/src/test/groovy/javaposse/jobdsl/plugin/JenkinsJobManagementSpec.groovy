@@ -539,6 +539,49 @@ class JenkinsJobManagementSpec extends Specification {
         e.message == 'Could not create item project, item is already managed by seed job seed'
     }
 
+    def 'JENKINS-59995 seed in folder can update jobs in and out of folder'() {
+        Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject seedJob = folder.createProject(FreeStyleProject, 'seed')
+        seedJob.buildersList.add(new ExecuteDslScripts('job("/project")'))
+        seedJob.buildersList.add(new ExecuteDslScripts('job("/folder/project")'))
+        jenkinsRule.buildAndAssertSuccess(seedJob)
+        AbstractBuild build = seedJob.scheduleBuild2(0).get()
+        JobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.JENKINS_ROOT
+        )
+        jobManagement.failOnSeedCollision = true
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('/project', '/config.xml'), false)
+        jobManagement.createOrUpdateConfig(createItem('/folder/project', '/config.xml'), false)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('/project') != null
+        jenkinsRule.jenkins.getItemByFullName('/folder/project') != null
+    }
+
+    def 'JENKINS-59995 two seeds should have collision on updating job in folder'() {
+        setup:
+        jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        seedJob.buildersList.add(new ExecuteDslScripts('job("folder/project")'))
+        jenkinsRule.buildAndAssertSuccess(seedJob)
+
+        FreeStyleProject seedJob2 = jenkinsRule.createFreeStyleProject('seed2')
+        AbstractBuild build = seedJob2.scheduleBuild2(0).get()
+        JobManagement jobManagement = new JenkinsJobManagement(
+                new PrintStream(buffer), [:], build, build.workspace, LookupStrategy.JENKINS_ROOT
+        )
+        jobManagement.failOnSeedCollision = true
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('folder/project', '/config.xml'), false)
+
+        then:
+        Exception e = thrown(DslException)
+        e.message == 'Could not create item folder/project, item is already managed by seed job seed'
+    }
+
     def 'createOrUpdateConfig should pass if item is managed by another seed and failOnSeedCollision is disabled'() {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
