@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.toplevel.LockableResourcesContext
+import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -151,6 +152,20 @@ abstract class Project extends Job {
         configure { Node project ->
             Node node = methodMissing('concurrentBuild', allowConcurrentBuild)
             project / node
+        }
+    }
+
+    /**
+     * Adds build triggers to the job.
+     */
+    void triggers(@DslContext(TriggerContext) Closure closure) {
+        TriggerContext context = new TriggerContext(jobManagement, this)
+        ContextHelper.executeInContext(closure, context)
+
+        configure { Node project ->
+            context.triggerNodes.each {
+                project / 'triggers' << it
+            }
         }
     }
 

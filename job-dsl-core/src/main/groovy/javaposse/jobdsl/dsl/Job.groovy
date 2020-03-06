@@ -6,7 +6,6 @@ import javaposse.jobdsl.dsl.helpers.properties.PropertiesContext
 import javaposse.jobdsl.dsl.helpers.toplevel.EnvironmentVariableContext
 import javaposse.jobdsl.dsl.helpers.toplevel.NotificationContext
 import javaposse.jobdsl.dsl.helpers.toplevel.ThrottleConcurrentBuildsContext
-import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.jobs.MatrixJob
 
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -321,20 +320,6 @@ abstract class Job extends Item {
             Node node = project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / 'parameterDefinitions'
             context.buildParameterNodes.values().each {
                 node << it
-            }
-        }
-    }
-
-    /**
-     * Adds build triggers to the job.
-     */
-    void triggers(@DslContext(TriggerContext) Closure closure) {
-        TriggerContext context = new TriggerContext(jobManagement, this)
-        ContextHelper.executeInContext(closure, context)
-
-        configure { Node project ->
-            context.triggerNodes.each {
-                project / 'triggers' << it
             }
         }
     }
