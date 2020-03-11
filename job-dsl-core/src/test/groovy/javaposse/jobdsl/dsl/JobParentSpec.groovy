@@ -408,8 +408,7 @@ class JobParentSpec extends Specification {
         then:
         job.name == 'test'
         parent.referencedJobs.contains(job)
-        1 * jobManagement.requirePlugin('workflow-job', true)
-        1 * jobManagement.logPluginDeprecationWarning('workflow-job', '2.4')
+        1 * jobManagement.requireMinimumPluginVersion('workflow-job', '2.4', true)
     }
 
     def 'multibranchPipelineJob'() {

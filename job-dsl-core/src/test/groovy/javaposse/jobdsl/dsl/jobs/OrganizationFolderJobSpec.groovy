@@ -83,7 +83,7 @@ class OrganizationFolderJobSpec extends Specification {
     def 'can configure triggers'() {
         when:
         job.triggers {
-            periodic(2)
+            cron('@midnight')
         }
 
         then:
@@ -91,9 +91,8 @@ class OrganizationFolderJobSpec extends Specification {
             triggers.size() == 1
             with(triggers[0]) {
                 children().size() == 1
-                it.'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger'.size() == 1
-                it.'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger'[0].interval[0].text() ==
-                        '120000'
+                it.'hudson.triggers.TimerTrigger'.size() == 1
+                it.'hudson.triggers.TimerTrigger'[0].spec[0].text() == '@midnight'
             }
         }
     }

@@ -104,7 +104,7 @@ DSL prior to 1.72
 ```
 organizationFolder('example') {
     triggers {
-        periodicFolderTrigger {
+        periodic {
             interval(2)
         }
     }

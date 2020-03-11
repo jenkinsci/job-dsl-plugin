@@ -50,13 +50,12 @@ class MultibranchWorkflowJobSpec extends Specification {
     def 'call triggers'() {
         when:
         job.triggers {
-            periodic(2)
+            cron('@midnight')
         }
 
         then:
         with(job.node) {
-            triggers[0].'com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger'[0].interval[0].text() ==
-                    '120000'
+            triggers[0].'hudson.triggers.TimerTrigger'[0].spec[0].text() == '@midnight'
         }
     }
 

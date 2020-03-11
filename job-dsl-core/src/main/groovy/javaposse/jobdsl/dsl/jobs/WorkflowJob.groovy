@@ -29,14 +29,6 @@ class WorkflowJob extends Job {
     }
 
     @Deprecated
-    void concurrentBuild(boolean allowConcurrentBuild = true) {
-        configure { Node project ->
-            Node node = methodMissing('concurrentBuild', allowConcurrentBuild)
-            project / node
-        }
-    }
-
-    @Deprecated
     void triggers(@DslContext(TriggerContext) Closure closure) {
         TriggerContext context = new TriggerContext(jobManagement, this)
         ContextHelper.executeInContext(closure, context)

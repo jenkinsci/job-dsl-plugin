@@ -83,7 +83,6 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     WorkflowJob pipelineJob(String name, @DslContext(WorkflowJob) Closure closure = null) {
-        jm.logPluginDeprecationWarning('workflow-job', '2.4')
         processItem(name, WorkflowJob, closure)
     }
 
