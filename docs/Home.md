@@ -32,7 +32,7 @@ scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Suppo
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.77 (unreleased)
+* 1.77 (March 11 2020)
   * Increased the minimum supported Jenkins version to 2.164
   * Improved support for views
     ([JENKINS-59117](https://issues.jenkins-ci.org/browse/JENKINS-59117))
