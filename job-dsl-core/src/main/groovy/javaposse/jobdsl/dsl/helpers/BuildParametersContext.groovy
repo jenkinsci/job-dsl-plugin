@@ -38,7 +38,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
     /**
      * Defines a parameter that allows to select a Subversion tag from which to create the working copy for the project.
      */
-    @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
+    @RequiresPlugin(id = 'subversion', minimumVersion = '2.8')
     void listTagsParam(String parameterName, String scmUrl, String tagFilterRegex, boolean sortNewestFirst = false,
                        boolean sortZtoA = false, String maxTagsToDisplay = 'all', String defaultValue = null,
                        String description = null) {
@@ -57,10 +57,8 @@ class BuildParametersContext extends AbstractExtensibleContext {
      *
      * @since 1.39
      */
-    @RequiresPlugin(id = 'subversion', minimumVersion = '2.1')
+    @RequiresPlugin(id = 'subversion', minimumVersion = '2.8')
     void listTagsParam(String parameterName, String scmUrl, @DslContext(ListTagsParamContext) Closure closure = null) {
-        jobManagement.logPluginDeprecationWarning('subversion', '2.8')
-
         checkParameterName(parameterName)
         checkNotNullOrEmpty(scmUrl, 'scmUrl cannot be null or empty')
 

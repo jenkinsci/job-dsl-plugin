@@ -114,8 +114,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text().empty
             !uuid.text().empty
         }
-        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
-        1 * jobManagement.logPluginDeprecationWarning('subversion', '2.8')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.8')
     }
 
     def 'simplified listTagsParam usage'() {
@@ -140,8 +139,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text().empty
             !uuid.text().empty
         }
-        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
-        1 * jobManagement.logPluginDeprecationWarning('subversion', '2.8')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.8')
     }
 
     def 'simplest listTagsParam usage'() {
@@ -165,8 +163,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text().empty
             !uuid.text().empty
         }
-        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
-        1 * jobManagement.logPluginDeprecationWarning('subversion', '2.8')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.8')
     }
 
     def 'simplest closure listTagsParam usage'() {
@@ -191,8 +188,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text().empty
             !uuid.text().empty
         }
-        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
-        1 * jobManagement.logPluginDeprecationWarning('subversion', '2.8')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.8')
     }
 
     def 'listTagsParam with all closure options'() {
@@ -224,8 +220,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text() == 'CREDENTIALS'
             !uuid.text().empty
         }
-        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
-        1 * jobManagement.logPluginDeprecationWarning('subversion', '2.8')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.8')
     }
 
     def 'listTagsParam with maxTagsToDisplay int argument'() {
@@ -257,8 +252,7 @@ class BuildParametersContextSpec extends Specification {
             credentialsId.text() == 'CREDENTIALS'
             !uuid.text().empty
         }
-        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
-        1 * jobManagement.logPluginDeprecationWarning('subversion', '2.8')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.8')
     }
 
     def 'listTagsParam name argument cant be null'() {
@@ -310,8 +304,7 @@ class BuildParametersContextSpec extends Specification {
             reverseByName.text() == 'false'
             maxTags.text() == 'all'
         }
-        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.1')
-        1 * jobManagement.logPluginDeprecationWarning('subversion', '2.8')
+        (1.._) * jobManagement.requireMinimumPluginVersion('subversion', '2.8')
 
         where:
         filter << [null, '']
