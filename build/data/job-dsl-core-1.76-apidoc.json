@@ -1,5 +1,5 @@
 {
-    "version": "1.77",
+    "version": "1.76",
     "root": {
         "name": "Jenkins Job DSL API",
         "contextClass": "javaposse.jobdsl.dsl.DslFactory"
@@ -38993,10 +38993,12 @@
                                     "type": "Closure"
                                 }
                             ],
-                            "deprecated": true,
+                            "html": "Adds build triggers to the job.",
+                            "firstSentenceCommentText": "Adds build triggers to the job.",
                             "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.TriggerContext"
                         }
-                    ]
+                    ],
+                    "examples": "job('example') {\r\n    triggers {\r\n        scm('@daily')\r\n    }\r\n}"
                 },
                 {
                     "name": "using",
