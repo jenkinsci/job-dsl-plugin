@@ -33,6 +33,7 @@ import org.custommonkey.xmlunit.XMLUnit
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import static hudson.model.Result.UNSTABLE
@@ -882,6 +883,7 @@ class JenkinsJobManagementSpec extends Specification {
     }
 
     @SuppressWarnings('BusyWait')
+    @IgnoreIf({ os.isWindows() })
     def 'queue job'() {
         setup:
         FreeStyleProject project = jenkinsRule.createProject(FreeStyleProject, 'project')
@@ -894,7 +896,6 @@ class JenkinsJobManagementSpec extends Specification {
 
         when:
         jobManagement.queueJob(project.name)
-        jenkinsRule.instance.queue.items.each { it.future.get() }
         while (project.builds.lastBuild == null) {
             Thread.sleep(100)
         }
@@ -908,6 +909,7 @@ class JenkinsJobManagementSpec extends Specification {
     }
 
     @SuppressWarnings('BusyWait')
+    @IgnoreIf({ os.isWindows() })
     def 'queue job without build'() {
         setup:
         FreeStyleProject project = jenkinsRule.createProject(FreeStyleProject, 'project')
@@ -915,7 +917,6 @@ class JenkinsJobManagementSpec extends Specification {
 
         when:
         testJobManagement.queueJob(project.name)
-        jenkinsRule.instance.queue.items.each { it.future.get() }
         while (project.builds.lastBuild == null) {
             Thread.sleep(100)
         }
