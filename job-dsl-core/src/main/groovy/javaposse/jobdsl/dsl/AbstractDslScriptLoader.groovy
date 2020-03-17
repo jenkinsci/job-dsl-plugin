@@ -61,7 +61,7 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
                 S jobParent = runScriptEngine(scriptRequest, groovyShell)
 
                 extractGeneratedItems(generatedItems, jobParent, scriptRequest)
-
+                closeStreams(jobParent)
                 scheduleJobsToRun(jobParent.queueToBuild)
             }
         } finally {
@@ -293,6 +293,18 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
         config.addCompilationCustomizers(icz)
 
         config.output = new PrintWriter(jobManagement.outputStream) // This seems to do nothing
+    }
+
+    protected void closeStreams(S jobParent) {
+        jobParent.referencedUserContents.each { UserContent userContent ->
+            if (userContent.content != null) {
+                try {
+                    userContent.content.close()
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "Failed to close stream for user content ${userContent.path}", e)
+                }
+            }
+        }
     }
 
     private static class SnitchingClassLoader extends ClassLoader {
