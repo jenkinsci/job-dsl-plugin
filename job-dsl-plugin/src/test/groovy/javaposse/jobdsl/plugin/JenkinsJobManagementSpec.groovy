@@ -894,6 +894,7 @@ class JenkinsJobManagementSpec extends Specification {
 
         when:
         jobManagement.queueJob(project.name)
+        jenkinsRule.instance.queue.items.each { it.future.get() }
         while (project.builds.lastBuild == null) {
             Thread.sleep(100)
         }
@@ -914,6 +915,7 @@ class JenkinsJobManagementSpec extends Specification {
 
         when:
         testJobManagement.queueJob(project.name)
+        jenkinsRule.instance.queue.items.each { it.future.get() }
         while (project.builds.lastBuild == null) {
             Thread.sleep(100)
         }
