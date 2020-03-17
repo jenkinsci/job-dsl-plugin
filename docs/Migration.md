@@ -4,13 +4,14 @@
 
 The `triggers` option for Pipeline jobs causes problems
 ([JENKINS-53775](https://issues.jenkins-ci.org/browse/JENKINS-53775)). It is [[deprecated|Deprecation-Policy]] and will
-be removed. It should be replaced by the `pipelineTriggers` job property.
+be removed. It should be replaced by the `pipelineTriggers` job property. The dynamic DSL syntax for pipeline triggers
+differs from the built-in syntax, use the embedded API viewer to look-up the exact syntax.
 
 DSL prior to 1.77
 ```groovy
 pipelineJob('example') {
     triggers {
-        [...]
+        cron('@daily')
     }
 }
 ```
@@ -21,7 +22,9 @@ pipelineJob('example') {
     properties {
         pipelineTriggers {
             triggers {
-                [...]
+                cron {
+                    spec('@daily')
+                }
             }
         }
     }
