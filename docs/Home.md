@@ -33,6 +33,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.78 (unreleased)
+  * Increased the minimum supported Jenkins version to 2.176
   * Removed anything that has been deprecated in 1.76, see [Migration](Migration#migrating-to-176)
   * Removed anything that has been deprecated in 1.72, see [Migration](Migration#migrating-to-172)
 * 1.77 (March 11 2020)
