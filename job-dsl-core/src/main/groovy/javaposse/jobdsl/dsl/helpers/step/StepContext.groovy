@@ -625,6 +625,8 @@ class StepContext extends AbstractExtensibleContext {
             loadParamsFromFile(false)
             parameterFile()
             queryString()
+            httpGetReadTimeout(context.httpGetReadTimeout)
+            httpPostReadTimeout(context.httpPostReadTimeout)
         }
     }
 

@@ -11,6 +11,8 @@ class ParameterizedRemoteTriggerContext extends AbstractContext {
     boolean blockBuildUntilComplete = false
     String token
     String credentialsIds
+    int httpGetReadTimeout = 10000
+    int httpPostReadTimeout = 30000
 
     ParameterizedRemoteTriggerContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -84,5 +86,23 @@ class ParameterizedRemoteTriggerContext extends AbstractContext {
      */
     void overrideCredentials(String credentialsIds) {
         this.credentialsIds = credentialsIds
+    }
+
+    /**
+     * HTTP GET read timeout (milliseconds)
+     *
+     * @since 1.78
+     */
+    void httpGetReadTimeout(int value) {
+        this.httpGetReadTimeout = value
+    }
+
+    /**
+     * HTTP POST read timeout (milliseconds)
+     *
+     * @since 1.78
+     */
+    void httpPostReadTimeout(int value) {
+        this.httpPostReadTimeout = value
     }
 }
