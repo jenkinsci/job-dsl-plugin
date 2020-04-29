@@ -1,9 +1,14 @@
 package javaposse.jobdsl.dsl
 
+import static javaposse.jobdsl.dsl.Preconditions.checkArgument
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
+import static javaposse.jobdsl.dsl.Preconditions.checkState
+
 import javaposse.jobdsl.dsl.helpers.BuildParametersContext
 import javaposse.jobdsl.dsl.helpers.JobAuthorizationContext
 import javaposse.jobdsl.dsl.helpers.ScmContext
 import javaposse.jobdsl.dsl.helpers.properties.PropertiesContext
+import javaposse.jobdsl.dsl.helpers.properties.office365connector.Office365ConnectorWebhookJobPropertyContext
 import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
 import javaposse.jobdsl.dsl.helpers.toplevel.EnvironmentVariableContext
@@ -13,10 +18,6 @@ import javaposse.jobdsl.dsl.helpers.toplevel.ThrottleConcurrentBuildsContext
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
 import javaposse.jobdsl.dsl.jobs.MatrixJob
-
-import static javaposse.jobdsl.dsl.Preconditions.checkArgument
-import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
-import static javaposse.jobdsl.dsl.Preconditions.checkState
 
 /**
  * DSL element representing a Jenkins job.
@@ -183,6 +184,27 @@ abstract class Job extends Item {
     @RequiresPlugin(id = 'lockable-resources', minimumVersion = '1.7')
     void lockableResources(@DslContext(LockableResourcesContext) Closure lockClosure = null) {
         lockableResources(null, lockClosure)
+    }
+
+    /**
+     * Sends actionable messages in Outlook, Office 365 Groups, and Microsoft Teams.
+     *
+     * @since 1.58
+     */
+    @RequiresPlugin(id = 'Office-365-Connector', minimumVersion = '1.4')
+    void office365ConnectorWebhooks(
+            @DslContext(Office365ConnectorWebhookJobPropertyContext) Closure propertyClosure = null) {
+            
+        Office365ConnectorWebhookJobPropertyContext propetyContext = new Office365ConnectorWebhookJobPropertyContext()
+        ContextHelper.executeInContext(propertyClosure, propetyContext)
+
+        configure { Node project ->
+            Node node = project / 'properties' / 'jenkins.plugins.office365connector.WebhookJobProperty' / 'webhooks'
+                
+            propetyContext.webhookContext.webhookNodes.each {
+                node << it
+            }
+        }
     }
 
     /**
