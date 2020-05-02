@@ -194,6 +194,28 @@ class BuildParametersContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Defines a parameter is validated using a regular expression.
+     *
+     * @since 1.31
+     */
+    @RequiresPlugin(id = 'validating-string-parameter', minimumVersion = '2.4')
+    void validatingStringParam(String parameterName, String defaultValue = null, String regex = null, String failedValidationMessage = null, String description = null) {
+        Node definitionNode = new Node(null, 'hudson.plugins.validating_string_parameter.ValidatingStringParameterDefinition')
+        definitionNode.appendNode('name', parameterName)
+        definitionNode.appendNode('defaultValue', defaultValue)
+        if (regex != null) {
+            definitionNode.appendNode('regex', regex)
+        }
+        if (failedValidationMessage != null) {
+            definitionNode.appendNode('failedValidationMessage', failedValidationMessage)
+        }
+        if (description != null) {
+            definitionNode.appendNode('description', description)
+        }
+        buildParameterNodes[parameterName] = definitionNode
+    }
+
+    /**
      * Defines a parameter that allows select a Git tag (or revision number).
      *
      * @since 1.31

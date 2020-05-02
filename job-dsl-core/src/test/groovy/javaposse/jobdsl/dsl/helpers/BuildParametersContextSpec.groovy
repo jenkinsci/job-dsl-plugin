@@ -593,6 +593,21 @@ class BuildParametersContextSpec extends Specification {
         thrown(DslScriptException)
     }
 
+    def 'base validatingStringParam usage'() {
+        when:
+        context.validatingStringParam('myParameterName', 'my default validatingStringParam value', 'regex', 'failedValidationMessage', 'myValidatingStringParameterDescription')
+
+        then:
+        context.buildParameterNodes != null
+        context.buildParameterNodes.size() == 1
+        context.buildParameterNodes['myParameterName'].name() == 'hudson.plugins.validating_string_parameter.ValidatingStringParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
+        context.buildParameterNodes['myParameterName'].defaultValue.text() == 'my default validatingStringParam value'
+        context.buildParameterNodes['myParameterName'].regex.text() == 'regex'
+        context.buildParameterNodes['myParameterName'].failedValidationMessage.text() == 'failedValidationMessage'
+        context.buildParameterNodes['myParameterName'].description.text() == 'myValidatingStringParameterDescription'
+    }
+
     def 'base textParam usage'() {
         when:
         context.textParam('myParameterName', 'my default textParam value', 'myTextParameterDescription')
