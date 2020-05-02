@@ -595,12 +595,15 @@ class BuildParametersContextSpec extends Specification {
 
     def 'base validatingStringParam usage'() {
         when:
-        context.validatingStringParam('myParameterName', 'my default validatingStringParam value', 'regex', 'failedValidationMessage', 'myValidatingStringParameterDescription')
+        context.validatingStringParam('myParameterName',
+                'my default validatingStringParam value', 'regex',
+                'failedValidationMessage', 'myValidatingStringParameterDescription')
 
         then:
         context.buildParameterNodes != null
         context.buildParameterNodes.size() == 1
-        context.buildParameterNodes['myParameterName'].name() == 'hudson.plugins.validating_string_parameter.ValidatingStringParameterDefinition'
+        context.buildParameterNodes['myParameterName'].name() ==
+                'hudson.plugins.validating_string_parameter.ValidatingStringParameterDefinition'
         context.buildParameterNodes['myParameterName'].name.text() == 'myParameterName'
         context.buildParameterNodes['myParameterName'].defaultValue.text() == 'my default validatingStringParam value'
         context.buildParameterNodes['myParameterName'].regex.text() == 'regex'
