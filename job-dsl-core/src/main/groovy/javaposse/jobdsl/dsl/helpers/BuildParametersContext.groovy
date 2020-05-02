@@ -194,7 +194,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Defines a parameter is validated using a regular expression.
+     * Defines a parameter that is validated using a regular expression.
      */
     @RequiresPlugin(id = 'validating-string-parameter', minimumVersion = '2.4')
     void validatingStringParam(String parameterName, String defaultValue = null, String regex = null,
