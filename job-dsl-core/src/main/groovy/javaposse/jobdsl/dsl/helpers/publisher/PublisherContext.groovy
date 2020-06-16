@@ -1354,10 +1354,10 @@ class PublisherContext extends AbstractExtensibleContext {
         ContextHelper.executeInContext(naginatorClosure, naginatorContext)
 
         Node naginatorNode = new NodeBuilder().'com.chikli.hudson.plugin.naginator.NaginatorPublisher' {
-            regexpForRerun()
+            regexpForRerun(naginatorContext.regexpForRerun)
             rerunIfUnstable(naginatorContext.rerunIfUnstable)
             rerunMatrixPart(false)
-            checkRegexp(false)
+            checkRegexp(naginatorContext.checkRegexp)
             maxSchedule(naginatorContext.retryLimit)
         }
         naginatorNode.append(naginatorContext.delay)
