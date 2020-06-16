@@ -6,6 +6,8 @@ class NaginatorContext implements Context {
     boolean rerunIfUnstable
     int retryLimit
     Node delay
+    boolean checkRegexp
+    String regexpForRerun = ''
 
     NaginatorContext() {
         progressiveDelay(5 * 60, 3 * 60 * 60)
@@ -43,4 +45,19 @@ class NaginatorContext implements Context {
             delegate.delay(delay)
         }
     }
+
+    /**
+     * If set, Only rerun build if regular expression is found in output. Defaults to {@code false}.
+     */
+    void checkRegexp(boolean checkRegexp = true) {
+        this.checkRegexp = checkRegexp
+    }
+
+    /**
+     * Specifies a regular expression for matching output. Defaults to ''.
+     */
+    void regexpForRerun(String regexpForRerun) {
+        this.regexpForRerun = regexpForRerun
+    }
+
 }
