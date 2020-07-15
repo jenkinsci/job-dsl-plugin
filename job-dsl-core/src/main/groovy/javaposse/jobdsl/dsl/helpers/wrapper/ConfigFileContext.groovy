@@ -13,7 +13,7 @@ class ConfigFileContext implements Context {
     }
 
     /**
-     * Defines where the file should be created on the slave.  If it is blank, a temporary file will be created.
+     * Defines where the file should be created on Jenkins node.  If it is blank, a temporary file will be created.
      */
     void targetLocation(String targetLocation) {
         this.targetLocation = targetLocation

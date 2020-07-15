@@ -64,7 +64,7 @@ Build parameters are exposed as environment variables in Jenkins. A seed job bui
 `FOO` variable in the DSL scripts. See the section about environment variables above.
 
 # Reading Files from your Job Workspace
-The job you create could be running on a slave, while the plugin runs on the master. Which means you shouldn't directly reference files on filesystem, since we're in a distributed system. The good news is that we added a method to help with this. See the docs for "Reading Files from Workspace" on https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-DSL-Commands
+The job you create could be running on Jenkins agent, while the plugin runs on Jenkins master. Which means you shouldn't directly reference files on filesystem, since we're in a distributed system. The good news is that we added a method to help with this. See the docs for "Reading Files from Workspace" on https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-DSL-Commands
 
 [Original  discussion on the newsgroup](https://groups.google.com/forum/#!msg/job-dsl-plugin/wjrHEI7BLx8/zxW7j7xcWOcJ)
 
