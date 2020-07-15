@@ -35,6 +35,12 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.78 (unreleased)
   * Close all streams that are passed into `userContent`
   * Increased the minimum supported Jenkins version to 2.176
+  * Enhanced support for [Subversion Plugin](https://plugins.jenkins.io/subversion)
+    ([JENKINS-58575](https://issues.jenkins-ci.org/browse/JENKINS-58575))
+  * Improved documentation
+    ([JENKINS-42816](https://issues.jenkins-ci.org/browse/JENKINS-42816),
+    [JENKINS-61463](https://issues.jenkins-ci.org/browse/JENKINS-61463),
+    [#1231](https://github.com/jenkinsci/job-dsl-plugin/pull/1231))
   * Removed anything that has been deprecated in 1.76, see [Migration](Migration#migrating-to-176)
   * Removed anything that has been deprecated in 1.72, see [Migration](Migration#migrating-to-172)
 * 1.77 (March 11 2020)
