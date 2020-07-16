@@ -94,6 +94,8 @@ class DescribableContext implements Context {
             return value instanceof Closure || value == null
         } else if (parameterType instanceof HeterogeneousObjectType) {
             return value instanceof Closure || value == null || parameterType.actualType == Object
+        } else if (parameterType.actualType instanceof Class) {
+            return value == null || ((Class) parameterType.actualType).isInstance(value)
         }
         false
     }

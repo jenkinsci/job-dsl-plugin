@@ -907,6 +907,19 @@ class DescribableContextSpec extends Specification {
         instance.enumList.empty
     }
 
+    def 'falls back to plain Class if type is not supported by structs'() {
+        setup:
+        DescribableContext context = new DescribableContext(new DescribableModel(DummyTrigger), jobManagement)
+
+        when:
+        context.unsupportedByStructs(new DummyTrigger.UnsupportedByStructs())
+        def instance = context.createInstance()
+
+        then:
+        instance instanceof DummyTrigger
+        instance.unsupportedByStructs instanceof DummyTrigger.UnsupportedByStructs
+    }
+
     def 'required parameter missing'() {
         setup:
         DescribableContext context = new DescribableContext(new DescribableModel(ADuplicateBuilder), jobManagement)

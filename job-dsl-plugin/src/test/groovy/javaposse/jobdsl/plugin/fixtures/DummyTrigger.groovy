@@ -12,6 +12,12 @@ import org.kohsuke.stapler.DataBoundConstructor
 import org.kohsuke.stapler.DataBoundSetter
 
 class DummyTrigger extends Trigger<Job> {
+
+    @SuppressWarnings('EmptyClass')
+    static class UnsupportedByStructs {
+        // We are not supported.
+    }
+
     @DataBoundSetter
     String aString
 
@@ -47,6 +53,9 @@ class DummyTrigger extends Trigger<Job> {
 
     @DataBoundSetter
     List<Thread.State> enumList
+
+    @DataBoundSetter
+    UnsupportedByStructs unsupportedByStructs
 
     @DataBoundConstructor
     DummyTrigger() throws ANTLRException {
