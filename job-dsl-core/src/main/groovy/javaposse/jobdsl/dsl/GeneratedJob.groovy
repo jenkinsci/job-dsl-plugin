@@ -14,7 +14,7 @@ class GeneratedJob implements Comparable<GeneratedJob> {
 
     @Override
     int hashCode() {
-        jobName.hashCode()
+        jobName.toLowerCase().hashCode()
     }
 
     @Override
@@ -27,7 +27,7 @@ class GeneratedJob implements Comparable<GeneratedJob> {
         }
 
         GeneratedJob that = (GeneratedJob) o
-        jobName == that.jobName
+        jobName.toLowerCase() == that.jobName.toLowerCase()
     }
 
     @Override
@@ -37,6 +37,6 @@ class GeneratedJob implements Comparable<GeneratedJob> {
 
     @Override
     int compareTo(GeneratedJob o) {
-        jobName <=> o.jobName
+        jobName.toLowerCase() <=> o.jobName.toLowerCase()
     }
 }

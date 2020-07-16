@@ -60,12 +60,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static hudson.Util.fixEmptyAndTrim;
 import static java.lang.String.format;
@@ -447,29 +445,19 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         return freshTemplates;
     }
 
-    private Set<GeneratedJob> getUnreferencedJobs(Set<GeneratedJob> generatedJobs, Set<GeneratedJob> freshJobs) {
-        Set<GeneratedJob> unreferenced = new HashSet<>();
-        List<String> normalizedJobNames = freshJobs.stream().map(freshJob -> freshJob.getJobName().toLowerCase())
-                .collect(Collectors.toList());
-
-        Set<GeneratedJob> generatedJobsDiff = Sets.difference(generatedJobs, freshJobs);
-        for (GeneratedJob generatedJob : generatedJobsDiff) {
-            if (!normalizedJobNames.contains(generatedJob.getJobName().toLowerCase())) {
-                unreferenced.add(generatedJob);
-            }
-        }
-        return unreferenced;
-    }
-
     private void updateGeneratedJobs(final Job seedJob, TaskListener listener,
                                      Set<GeneratedJob> freshJobs) throws IOException, InterruptedException {
         // Update Project
         Set<GeneratedJob> generatedJobs = extractGeneratedObjects(seedJob, GeneratedJobsAction.class);
         Set<GeneratedJob> added = Sets.difference(freshJobs, generatedJobs);
         Set<GeneratedJob> existing = Sets.intersection(generatedJobs, freshJobs);
-        Set<GeneratedJob> unreferenced = getUnreferencedJobs(generatedJobs, freshJobs);
+        Set<GeneratedJob> unreferenced = Sets.difference(generatedJobs, freshJobs);
         Set<GeneratedJob> removed = new HashSet<>();
         Set<GeneratedJob> disabled = new HashSet<>();
+
+        logItems(listener, "Added items", added);
+        logItems(listener, "Existing items", existing);
+        logItems(listener, "Unreferenced items", unreferenced);
 
         // Update unreferenced jobs
         for (GeneratedJob unreferencedJob : unreferenced) {
@@ -489,9 +477,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             }
         }
 
-        logItems(listener, "Added items", added);
-        logItems(listener, "Existing items", existing);
-        logItems(listener, "Unreferenced items", unreferenced);
+        // print what happened with unreferenced jobs
         logItems(listener, "Disabled items", disabled);
         logItems(listener, "Removed items", removed);
 
