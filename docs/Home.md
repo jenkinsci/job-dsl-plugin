@@ -37,6 +37,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Increased the minimum supported Jenkins version to 2.176
   * Enhanced support for [Subversion Plugin](https://plugins.jenkins.io/subversion)
     ([JENKINS-58575](https://issues.jenkins-ci.org/browse/JENKINS-58575))
+  * Fixed a problem with case sensitivity of item names
+    ([JENKINS-63056](https://issues.jenkins-ci.org/browse/JENKINS-63056))
   * Improved documentation
     ([JENKINS-42816](https://issues.jenkins-ci.org/browse/JENKINS-42816),
     [JENKINS-61463](https://issues.jenkins-ci.org/browse/JENKINS-61463),
