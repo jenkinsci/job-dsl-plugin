@@ -578,6 +578,40 @@ folder('folder-a/folder-b') {
         jenkinsRule.jenkins.getItemByFullName('/folder/test-job') == null
     }
 
+    def dontDereferenceDifferentlyCasedFolders() {
+        setup:
+        Folder folder = jenkinsRule.jenkins.createProject(Folder, 'folder')
+        FreeStyleProject job = folder.createProject(FreeStyleProject, 'seed')
+
+        when:
+        String script1 = '''\
+            folder("nestedFolder")
+            folder("nestedfolder")
+            job("nestedFolder/some-job")
+            job("nestedfolder/different-job")'''.stripIndent()
+        ExecuteDslScripts builder1 = new ExecuteDslScripts(script1)
+        builder1.removedJobAction = RemovedJobAction.DELETE
+        builder1.lookupStrategy = LookupStrategy.SEED_JOB
+        runBuild(job, builder1)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('folder/nestedFolder/different-job') instanceof FreeStyleProject
+        jenkinsRule.jenkins.getItemByFullName('folder/nestedFolder/some-job') instanceof FreeStyleProject
+
+        when:
+        String script2 = '''\
+            folder("nestedfolder")
+            job("nestedfolder/different-job")'''.stripIndent()
+        ExecuteDslScripts builder2 = new ExecuteDslScripts(script2)
+        builder2.removedJobAction = RemovedJobAction.DELETE
+        builder2.lookupStrategy = LookupStrategy.SEED_JOB
+        runBuild(job, builder2)
+
+        then:
+        jenkinsRule.jenkins.getItemByFullName('folder/nestedFolder/different-job') instanceof FreeStyleProject
+        jenkinsRule.jenkins.getItemByFullName('folder/nestedFolder/some-job') == null
+    }
+
     def 'only use last build to calculate items to be deleted'() {
         setup:
         FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
