@@ -35,6 +35,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.78 (unreleased)
   * Close all streams that are passed into `userContent`
   * Increased the minimum supported Jenkins version to 2.176
+  * Added support for the [Pipeline Aggregator Plugin](https://plugins.jenkins.io/pipeline-aggregator-view)
   * Enhanced support for [Subversion Plugin](https://plugins.jenkins.io/subversion)
     ([JENKINS-58575](https://issues.jenkins-ci.org/browse/JENKINS-58575))
   * Fixed a problem with case sensitivity of item names

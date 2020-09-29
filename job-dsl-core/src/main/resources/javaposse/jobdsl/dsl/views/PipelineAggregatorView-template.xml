@@ -1,0 +1,11 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<com.ooyala.jenkins.plugins.pipelineaggregatorview.PipelineAggregator>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <fontSize>16</fontSize>
+    <buildHistorySize>16</buildHistorySize>
+    <useCondensedTables>false</useCondensedTables>
+    <onlyLastBuild>false</onlyLastBuild>
+    <useScrollingCommits>false</useScrollingCommits>
+</com.ooyala.jenkins.plugins.pipelineaggregatorview.PipelineAggregator>

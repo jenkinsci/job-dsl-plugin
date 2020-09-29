@@ -17,6 +17,7 @@ import javaposse.jobdsl.dsl.views.DashboardView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
+import javaposse.jobdsl.dsl.views.PipelineAggregatorView
 import javaposse.jobdsl.dsl.views.SectionedView
 
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
@@ -172,6 +173,16 @@ abstract class JobParent extends Script implements DslFactory {
     @Override
     Folder folder(String name, @DslContext(Folder) Closure closure = null) {
         processItem(name, Folder, closure)
+    }
+
+    /**
+     * @since 1.78
+     */
+    @Override
+    PipelineAggregatorView pipelineAggregatorView(
+            String name, @DslContext(PipelineAggregatorView) Closure closure = null
+    ) {
+        processView(name, PipelineAggregatorView, closure)
     }
 
     @Override
