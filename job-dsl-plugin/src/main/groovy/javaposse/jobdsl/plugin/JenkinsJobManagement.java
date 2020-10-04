@@ -1,5 +1,13 @@
 package javaposse.jobdsl.plugin;
 
+import static hudson.model.Result.UNSTABLE;
+import static hudson.model.View.createViewFromXML;
+import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import com.cloudbees.hudson.plugins.folder.AbstractFolderProperty;
+import com.cloudbees.hudson.plugins.folder.Folder;
+import com.cloudbees.hudson.plugins.folder.properties.FolderCredentialsProvider.FolderCredentialsProperty;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.thoughtworks.xstream.io.xml.XppDriver;
@@ -52,6 +60,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -444,6 +453,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     private boolean updateExistingItem(AbstractItem item, javaposse.jobdsl.dsl.Item dslItem) {
+        mergeCredentials(item, dslItem);
         String config = dslItem.getXml();
 
         item.checkPermission(Item.EXTENDED_READ);
@@ -575,6 +585,22 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
         from.renameTo(FilenameUtils.getName(to));
     }
+
+    private void mergeCredentials(AbstractItem item, javaposse.jobdsl.dsl.Item dslItem) {
+        if (item instanceof Folder) {
+            Folder folder = (Folder) item;
+            Optional<AbstractFolderProperty<?>> maybeProperty =
+                folder.getProperties().stream()
+                .filter(p -> p instanceof FolderCredentialsProperty)
+                .findFirst();
+
+            if (maybeProperty.isPresent()) {
+                LOGGER.log(Level.FINE, format("Merging credentials for %s", item.getName()));
+                DslItemConfigurer.mergeCredentials(maybeProperty.get(), dslItem);
+            }
+        }
+    }
+
 
     @SuppressWarnings("unchecked")
     private static <I extends AbstractItem & TopLevelItem> void move(Item item, DirectlyModifiableTopLevelItemGroup destination) throws IOException {
