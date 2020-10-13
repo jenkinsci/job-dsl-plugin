@@ -4,10 +4,15 @@ import lib.FormTagLib
 
 def f = namespace(FormTagLib)
 
-f.section(_('Job DSL Security')) {
+f.section(title:_('Job DSL Security')) {
     f.optionalBlock(
             field: 'useScriptSecurity',
             title: 'Enable script security for Job DSL scripts',
             checked: descriptor.useScriptSecurity
+    )
+    f.optionalBlock(
+            field: 'restrictJobPathBySeedJob',
+            title: 'Restrict seed jobs to allow jobs only in the seed folder and subfolders',
+            checked: descriptor.restrictJobPathBySeedJob
     )
 }

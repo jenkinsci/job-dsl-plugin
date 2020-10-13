@@ -15,6 +15,8 @@ class GlobalJobDslSecurityConfiguration extends GlobalConfiguration {
 
     boolean useScriptSecurity = true
 
+    boolean restrictJobPathBySeedJob = false
+
     GlobalJobDslSecurityConfiguration() {
         load()
     }
@@ -22,6 +24,7 @@ class GlobalJobDslSecurityConfiguration extends GlobalConfiguration {
     @Override
     boolean configure(StaplerRequest req, JSONObject json) {
         useScriptSecurity = json.has('useScriptSecurity')
+        restrictJobPathBySeedJob = json.has('restrictJobPathBySeedJob')
         save()
         true
     }
