@@ -455,7 +455,6 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             diff = XMLUnit.compareXML(oldJob, config);
             if (diff.identical()) {
                 LOGGER.log(Level.FINE, format("Item %s is identical", item.getName()));
-                notifyItemUpdated(item, dslItem);
                 return false;
             }
         } catch (Exception e) {
