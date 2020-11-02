@@ -105,6 +105,16 @@ class ColumnsContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Adds a column for showing the number of unclaimed test failures.
+     *
+     * @since 1.78
+     */
+    @RequiresPlugin(id = 'claim', minimumVersion = '2.17')
+    void unclaimedTestFailures() {
+        columnNodes << new Node(null, 'hudson.plugins.claim.UnclaimedTestFailuresColumn')
+    }
+
+    /**
      * Adds a column for showing the node which executed the last build.
      * Requires version 1.16 or later of the Extra Columns plugin.
      *
