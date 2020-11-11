@@ -37,6 +37,8 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Increased the minimum supported Jenkins version to 2.176
   * Enhanced support for [Subversion Plugin](https://plugins.jenkins.io/subversion)
     ([JENKINS-58575](https://issues.jenkins-ci.org/browse/JENKINS-58575))
+  * Add new security configuration option to be able to restrict seed jobs
+    ([JENKINS-63922](https://issues.jenkins.io/browse/JENKINS-63922)) 
   * Fixed a problem with case sensitivity of item names
     ([JENKINS-63056](https://issues.jenkins-ci.org/browse/JENKINS-63056))
   * Improved documentation

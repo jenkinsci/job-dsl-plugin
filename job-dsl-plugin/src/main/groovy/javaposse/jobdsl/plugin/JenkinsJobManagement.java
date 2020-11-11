@@ -76,6 +76,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private boolean failOnMissingPlugin;
     private boolean failOnSeedCollision;
     private boolean unstableOnDeprecation;
+    private boolean restrictJobPathBySeedJob;
 
     public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, Run<?, ?> run,
                                 FilePath workspace, LookupStrategy lookupStrategy) {
@@ -102,6 +103,21 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
     void setUnstableOnDeprecation(boolean unstableOnDeprecation) {
         this.unstableOnDeprecation = unstableOnDeprecation;
+    }
+
+    void setRestrictJobPathBySeedJob(boolean enabled) {
+        this.restrictJobPathBySeedJob = enabled;
+    }
+
+     public void checkParentIsAllowed(String parentFullName) {
+        if (restrictJobPathBySeedJob) {
+            // validate path
+            String seedJobParentPath = project.getParent().getFullName() + "/";
+            String path = parentFullName + "/";
+            if (!path.startsWith(seedJobParentPath)) {
+                throw new DslException("It is prohibited to create/update " + path + " by a seed job from " + seedJobParentPath);
+            }
+        }
     }
 
     @Override
@@ -171,6 +187,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
             ItemGroup parent = lookupStrategy.getParent(project, path);
             if (parent instanceof ViewGroup) {
+                checkParentIsAllowed(parent.getFullDisplayName());
                 ViewGroup parentGroup = (ViewGroup) parent;
                 View view = parentGroup.getView(viewBaseName);
                 if (view != null && viewTypeChanged(view, inputStream)) {
@@ -230,6 +247,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
 
         BuildableItem project = lookupStrategy.getItem(this.project, path, BuildableItem.class);
         project.checkPermission(Item.BUILD);
+        checkParentIsAllowed(project.getParent().getFullName());
 
         LOGGER.log(Level.INFO, format("Scheduling build of %s from %s", path, project.getName()));
         project.scheduleBuild(run == null ? new JobDslCause() : new Cause.UpstreamCause(run));
@@ -444,6 +462,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     private boolean updateExistingItem(AbstractItem item, javaposse.jobdsl.dsl.Item dslItem) {
+        checkParentIsAllowed(item.getParent().getFullName());
         String config = dslItem.getXml();
 
         item.checkPermission(Item.EXTENDED_READ);
@@ -514,6 +533,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             ItemGroup parent = lookupStrategy.getParent(project, path);
             String itemName = FilenameUtils.getName(path);
             if (parent instanceof ModifiableTopLevelItemGroup) {
+                checkParentIsAllowed(parent.getFullName());
                 Item project = ((ModifiableTopLevelItemGroup) parent).createProjectFromXML(itemName, is);
                 notifyItemCreated(project, dslItem);
             } else if (parent == null) {
@@ -560,6 +580,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         if (toParent == null) {
             throw new DslException(format(Messages.RenameJobMatching_UnknownParent(), from.getFullName(), to));
         }
+        checkParentIsAllowed(toParent.getFullName());
         if (fromParent != toParent) {
             LOGGER.info(format("Moving Job %s to folder %s", fromParent.getFullName(), toParent.getFullName()));
             if (toParent instanceof DirectlyModifiableTopLevelItemGroup) {

@@ -326,6 +326,10 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             jenkinsJobManagement.setFailOnMissingPlugin(failOnMissingPlugin);
             jenkinsJobManagement.setFailOnSeedCollision(failOnSeedCollision);
             jenkinsJobManagement.setUnstableOnDeprecation(unstableOnDeprecation);
+
+            boolean restrictJobPathBySeedJob = Jenkins.get().getDescriptorByType(GlobalJobDslSecurityConfiguration.class).isRestrictJobPathBySeedJob();
+            jenkinsJobManagement.setRestrictJobPathBySeedJob(restrictJobPathBySeedJob);
+
             JobManagement jobManagement = new InterruptibleJobManagement(jenkinsJobManagement);
 
             if (rebootRequired) {
