@@ -12,7 +12,7 @@ f.section(title:_('Job DSL Security')) {
     )
     f.optionalBlock(
             field: 'restrictJobPathBySeedJob',
-            title: 'Restrict seed jobs to allow jobs only in the seed folder and subfolders',
+            title: 'Restrict seed jobs to manage items only in the seed\'s folder and its subfolders',
             checked: descriptor.restrictJobPathBySeedJob
     )
 }
