@@ -283,6 +283,16 @@ class ColumnsContext extends AbstractExtensibleContext {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.SCMTypeColumn')
     }
 
+    /**
+     * Adds a column showing code coverage of the project.
+     *
+     * @since 1.78
+     */
+    @RequiresPlugin(id = 'code-coverage-api')
+    void coverageColumn() {
+        columnNodes << new Node(null, 'io.jenkins.plugins.coverage.CoverageColumn')
+    }
+
     @Override
     protected void addExtensionNode(Node node) {
         columnNodes << node
