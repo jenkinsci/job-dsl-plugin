@@ -769,6 +769,20 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('next-executions', '1.0.12')
     }
 
+    def 'coverage column'() {
+        when:
+        view.columns {
+            coverageColumn()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'io.jenkins.plugins.coverage.CoverageColumn'
+        1 * jobManagement.requireMinimumPluginVersion('code-coverage-api', '1.0.0')
+    }
+
     protected String getDefaultXml() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>
