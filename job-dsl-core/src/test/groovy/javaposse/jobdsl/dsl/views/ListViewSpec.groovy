@@ -769,6 +769,20 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('next-executions', '1.0.12')
     }
 
+    def 'issues total column'() {
+        when:
+        view.columns {
+            issuesTotalColumn()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn'
+        1 * jobManagement.requireMinimumPluginVersion('warnings-ng', '1.0.0')
+    }
+
     protected String getDefaultXml() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <hudson.model.ListView>

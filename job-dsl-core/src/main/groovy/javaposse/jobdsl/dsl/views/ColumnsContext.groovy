@@ -283,6 +283,19 @@ class ColumnsContext extends AbstractExtensibleContext {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.SCMTypeColumn')
     }
 
+    /**
+     * Adds a column showing issues that are in the project.
+     *
+     * @since 1.78
+     */
+    @RequiresPlugin(id = 'warnings-ng')
+    void issuesTotalColumn(String name = '# Issues', String type = 'TOTAL') {
+        columnNodes << new Node(null, 'io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn') {
+            name(name)
+            type(type)
+        }
+    }
+
     @Override
     protected void addExtensionNode(Node node) {
         columnNodes << node
