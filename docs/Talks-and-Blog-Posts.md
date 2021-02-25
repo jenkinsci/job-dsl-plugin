@@ -1,5 +1,7 @@
 This is a collection of talks, presentations and blog posts about the Job DSL plugin.
 
+* February 2020
+    * [Getting Started With Jenkins Job DSL Plugin for Standardising Your Pipelines](https://www.jvt.me/posts/2021/02/23/getting-started-jobdsl-standardised/)
 * August 2016
     * [Jenkins-as-code: comparing job-dsl and Pipelines](http://marcesher.com/2016/08/04/jenkins-as-code-comparing-job-dsl-and-pipelines/)
       by [Marc Esher](http://marcesher.com)
