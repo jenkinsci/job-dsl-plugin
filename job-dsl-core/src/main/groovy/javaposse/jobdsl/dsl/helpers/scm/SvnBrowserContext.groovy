@@ -85,7 +85,7 @@ class SvnBrowserContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Use SVNWeb as repository browser.
+     * Use SVN::Web as repository browser.
      *
      * @since 1.78
      */
