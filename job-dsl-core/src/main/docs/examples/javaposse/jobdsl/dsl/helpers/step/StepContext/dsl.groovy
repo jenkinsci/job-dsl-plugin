@@ -19,7 +19,7 @@ job('example-2') {
 job('example-3') {
     steps {
         dsl {
-            text(readFileFromWorkspace('more-jobs.groovy'))
+            text(readFileFromWorkspace('more_jobs.groovy'))
             removeAction('DELETE')
         }
     }

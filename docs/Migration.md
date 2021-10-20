@@ -1032,7 +1032,7 @@ DSL prior to 1.47
 workflowJob('example-1') {
     definition {
         cps {
-            script(readFileFromWorkspace('project-a-workflow.groovy'))
+            script(readFileFromWorkspace('project_a_workflow.groovy'))
             sandbox()
         }
     }
@@ -1059,7 +1059,7 @@ DSL since 1.47
 pipelineJob('example-1') {
     definition {
         cps {
-            script(readFileFromWorkspace('project-a-workflow.groovy'))
+            script(readFileFromWorkspace('project_a_workflow.groovy'))
             sandbox()
         }
     }
