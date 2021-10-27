@@ -12,7 +12,6 @@ buildscript {
 
 plugins {
     id 'org.jenkins-ci.jpi' version '0.43.0'
-    id 'war'
 }
 
 java {
@@ -91,7 +90,7 @@ test {
     systemProperty 'jenkins.test.noSpaceInTmpDirs', 'true'
 }
 
-war {
+jpi {
     into('api-viewer') {
         from(project(':job-dsl-api-viewer').projectDir) {
             include 'index.html'
