@@ -119,6 +119,7 @@ dependencies {
     configFileProviderImplementation 'org.jenkins-ci.plugins:config-file-provider:2.15.4'
     managedScriptsImplementation 'org.jenkinsci.plugins:managed-scripts:1.3'
     configurationAsCodeImplementation 'io.jenkins:configuration-as-code:1.15'
+    testRuntimeOnly "org.jenkins-ci.main:jenkins-war:${project.properties['jenkinsVersion']}"
     testImplementation 'io.jenkins:configuration-as-code:1.15'
     testImplementation 'io.jenkins:configuration-as-code:1.15:tests'
     testImplementation 'org.jenkins-ci.plugins:matrix-auth:1.3'
