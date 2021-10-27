@@ -12,6 +12,7 @@ buildscript {
 
 plugins {
     id 'org.jenkins-ci.jpi' version '0.43.0'
+    id 'war'
 }
 
 java {
@@ -90,21 +91,15 @@ test {
     systemProperty 'jenkins.test.noSpaceInTmpDirs', 'true'
 }
 
-task copyApiViewer {
-    copy {
-        from(project(':job-dsl-api-viewer').projectDir)
-        include 'index.html'
-        into 'src/main/webapp/api-viewer'
+war {
+    into('api-viewer') {
+        from(project(':job-dsl-api-viewer').projectDir) {
+            include 'index.html'
+            include 'build/dist/**'
+        }
     }
-    copy {
-        from(project(':job-dsl-api-viewer').buildDir)
-        include 'dist/**'
-        into 'src/main/webapp/api-viewer/build'
-    }
+    dependsOn tasks.getByPath(':job-dsl-api-viewer:build')
 }
-
-copyApiViewer.dependsOn ':job-dsl-api-viewer:build'
-jpi.dependsOn 'copyApiViewer'
 
 dependencies {
     annotationProcessor 'net.java.sezpoz:sezpoz:1.13'
