@@ -14,8 +14,8 @@ buildscript {
 }
 
 plugins {
-    id 'com.eriwen.gradle.css' version '2.14.0'
-    id 'com.eriwen.gradle.js' version '2.14.1'
+    id 'com.eriwen.gradle.css'
+    id 'com.eriwen.gradle.js'
 }
 
 apply plugin: 'org.ajoberstar.git-publish'

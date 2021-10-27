@@ -1,2 +1,20 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+		maven {
+			url 'https://jitpack.io'
+		}
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == 'com.eriwen.gradle.css') {
+                useModule('com.github.eriwen:gradle-css-plugin:9fe88d7')
+            } else if (requested.id.id == 'com.eriwen.gradle.js') {
+                useModule('com.github.eriwen:gradle-js-plugin:d15f4ae')
+            }
+        }
+    }
+}
+
 rootProject.name = 'job-dsl-plugin-root'
 include 'job-dsl-core', 'job-dsl-plugin', 'job-dsl-api-viewer'
