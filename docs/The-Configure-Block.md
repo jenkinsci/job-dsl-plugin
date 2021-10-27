@@ -115,7 +115,7 @@ def switchOn = {
         'switch'('on')
     }
 }
-               
+
 job('example-1') {
     configure switchOn
 }
@@ -135,7 +135,7 @@ Closure switchOnOrOff(String value) {
         }
     }
 }
-               
+
 job('example-1') {
     configure switchOnOrOff('on')
 }
@@ -970,12 +970,12 @@ job('example') {
                 'com.myyearbook.hudson.plugins.confluence.wiki.editors.PrependEditor' {
                     generator(class: 'com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator') {
                         text('Jenkins Publisher Job Build Number: $BUILD_NUMBER')
-                    }                
+                    }
                 }
                 'com.myyearbook.hudson.plugins.confluence.wiki.editors.AppendEditor' {
                     generator(class: 'com.myyearbook.hudson.plugins.confluence.wiki.generators.PlainTextGenerator') {
                         text('Jenkins Publisher Job Build Number: $BUILD_NUMBER')
-                    }                
+                    }
                 }
             }
         }

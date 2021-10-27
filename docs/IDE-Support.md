@@ -7,9 +7,9 @@ which enables IDE support for custom Groovy DSLs. To configure support for the J
 following content must be available on the classpath along with the `job-dsl-core` library.
 
     // enable DSL support in IDEA, see https://confluence.jetbrains.com/display/GRVY/Scripting+IDE+for+DSL+awareness
-    
+
     def jobPath = /.*\/jobs\/.*\.groovy/
-    
+
     def ctx = context(pathRegexp: jobPath)
     contributor(ctx, {
         delegatesTo(findClass('javaposse.jobdsl.dsl.DslFactory'))

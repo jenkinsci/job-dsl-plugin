@@ -5,7 +5,7 @@ Variables
 ---------
 
     def jobName = 'example'
-    
+
     job(jobName) {
     }
 
@@ -38,13 +38,13 @@ Multi-line strings
     //depot/commonlibraries/utils/... //jryan_car/commonlibraries/utils/...
     //depot/helloworld/... //jryan_car/helloworld/...
     '''
-    
+
     job('PerforceJob') {
         scm {
             p4(viewspec)
         }
     }
-    
+
 
 REST API calls
 --------------
@@ -61,7 +61,7 @@ REST API calls
             }
         }
     }
-    
+
 
 Import other files (i.e. with class definitions) into your script
 -----------------------------------------------------------------

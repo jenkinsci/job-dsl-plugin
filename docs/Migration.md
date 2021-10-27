@@ -191,7 +191,7 @@ DSL support is [[deprecated|Deprecation-Policy]] and will be removed.
 ### Primary View
 
 Support for setting the primary view in `multibranchPipelineJob` and `organizationFolder` is
-[[deprecated|Deprecation-Policy]] and will be removed. Setting the primary is not supported by these job types. 
+[[deprecated|Deprecation-Policy]] and will be removed. Setting the primary is not supported by these job types.
 
 ## Migrating to 1.68
 
@@ -445,7 +445,7 @@ Support for versions older than 1.21 of the [Join Plugin](https://wiki.jenkins-c
 
 Starting with Job DSL 1.60, script security for Job DSL scripts is enabled by default if Jenkins
 security is enabled. As a consequence, DSL scripts have either to be approved by an Jenkins administrator or run in an
-restricted sandbox. To avoid loading arbitrary code from the workspace without approval, the script directory is not 
+restricted sandbox. To avoid loading arbitrary code from the workspace without approval, the script directory is not
 added to the classpath and additional classpath entries are not supported when security is enabled. Thus importing
 classes from the workspace is not possible and the "Additional Classpath" option is not available.
 
@@ -1080,7 +1080,7 @@ multibranchPipelineJob('example-2') {
     }
 }
 ```
- 
+
 ### GitLab
 
 Support for versions older than 1.2 of the [Gitlab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin) is
@@ -1933,7 +1933,7 @@ In the future only names which contain letters, digits, underscores or dollar si
 start with a digit. Basically these are the rules for Java identifiers, see
 [this](http://docs.oracle.com/javase/6/docs/api/java/lang/Character.html#isJavaIdentifierStart%28char%29) and
 [this](http://docs.oracle.com/javase/6/docs/api/java/lang/Character.html#isJavaIdentifierPart%28char%29)) for details.
-The file name extension can be anything and is ignored.  
+The file name extension can be anything and is ignored.
 
 ### Build Blocker
 

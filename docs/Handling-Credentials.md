@@ -28,7 +28,7 @@ Newer versions of the Credentials Plugin allow to specify a custom ID which shou
 ID instead of using the auto-generated UUID.
 
 The Job DSL allows to specify the credentials' ID as a reference when when configuring those plugins.
- 
+
     // use the github-ci-key credentials for authentication with GitHub
     job('example-1') {
         scm {
@@ -40,7 +40,7 @@ The Job DSL allows to specify the credentials' ID as a reference when when confi
             }
         }
     }
-    
+
     // assign the jarsign-keystore credentials to the PASSWORD build variable
     job('example-2') {
         wrappers {
@@ -58,13 +58,13 @@ The Job DSL allows to specify the credentials' ID as a reference when when confi
             }
         }
     }
-    
+
 ## Build Variables
 
 All build variables are exposed to the Job DSL scripts as variables, see [User Power
 Moves](User-Power-Moves#access-the-jenkins-environment-variables). There are several ways to define credentials as
 build variables, e.g. the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin) provides a
-"Inject passwords to the build as environment variables" setting to inject passwords either defined globally in 
+"Inject passwords to the build as environment variables" setting to inject passwords either defined globally in
 "Configure System" or directly on a job.
 
     // use the FLOWDOCK_TOKEN variable to configure the Flowdock publisher
@@ -80,7 +80,7 @@ build variables, e.g. the [EnvInject Plugin](https://wiki.jenkins-ci.org/display
             }
         }
     }
-    
+
     // variables can also be using in configure blocks
     job('example-5') {
         configure { project ->
