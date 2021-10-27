@@ -32,7 +32,8 @@ scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Suppo
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* Unreleased
+* 1.78.1 (October 27 2021)
+  * Fix: Ensure API Viewer is packaged correctly into the built plugin ([JENKINS-66988](https://issues.jenkins.io/browse/JENKINS-66988))
 * 1.78 (October 27 2021)
   * Don't destroy credentials when re-creating folders ([JENKINS-44681](https://issues.jenkins.io/browse/JENKINS-44681))
   * Close all streams that are passed into `userContent`
