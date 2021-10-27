@@ -44,6 +44,11 @@ jenkinsPlugin {
             email 'mail@daniel-spilker.com'
         }
         developer {
+            id 'jamietanna'
+            name 'Jamie Tanna'
+            email 'jenkins@jamietanna.co.uk'
+        }
+        developer {
             id 'sheehan'
             name 'Matt Sheehan'
             email 'mr.sheehan@gmail.com'
