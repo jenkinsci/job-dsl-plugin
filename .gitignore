@@ -31,3 +31,6 @@ generated
 .bundle
 
 node_modules
+
+!job-dsl-plugin/src/main/webapp/api-viewer/config.json
+job-dsl-plugin/src/main/webapp/api-viewer
