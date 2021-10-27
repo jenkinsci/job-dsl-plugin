@@ -89,6 +89,7 @@ dependencies {
     compile(project(':job-dsl-core'))  {
         exclude group: 'org.jvnet.hudson', module:'xstream'
     }
+    jenkinsPlugins 'org.jenkins-ci.plugins:cloudbees-folder:5.14'
     jenkinsPlugins 'org.jenkins-ci.plugins:structs:1.19'
     jenkinsPlugins 'org.jenkins-ci.plugins:script-security:1.54'
     optionalJenkinsPlugins('org.jenkins-ci.plugins:vsphere-cloud:1.1.11') {
@@ -99,7 +100,6 @@ dependencies {
     optionalJenkinsPlugins 'io.jenkins:configuration-as-code:1.15'
     jenkinsTest 'io.jenkins:configuration-as-code:1.15'
     jenkinsTest 'io.jenkins:configuration-as-code:1.15:tests'
-    jenkinsTest 'org.jenkins-ci.plugins:cloudbees-folder:5.14'
     jenkinsTest 'org.jenkins-ci.plugins:matrix-auth:1.3'
     jenkinsTest 'org.jenkins-ci.plugins:nested-view:1.14'
     jenkinsTest 'org.jenkins-ci.plugins:credentials:2.1.10'
