@@ -1,7 +1,17 @@
 This is a collection of talks, presentations and blog posts about the Job DSL plugin.
 
+* May 2021
+    * [Configuring a Jenkins Multibranch Pipeline to Specify the Trust Permissions with Job DSL](https://www.jvt.me/posts/2021/05/10/job-dsl-multibranch-github-trust/)
+* April 2021
+    * [Building a Multibranch Pipeline on a Schedule](https://www.jvt.me/posts/2021/04/26/jenkins-schedule-multibranch/)
+    * [Disabling a Multibranch Pipeline using Job DSL](https://www.jvt.me/posts/2021/04/24/job-dsl-disable-multibranch/)
+    * [Setting up a Test Environment for Job DSL Projects](https://www.jvt.me/posts/2021/04/06/job-dsl-test-environment/)
+* March 2021
+    * [Ensuring Consistent Code Style with Job DSL Repos](https://www.jvt.me/posts/2021/03/12/jobdsl-spotless/)
 * February 2020
     * [Getting Started With Jenkins Job DSL Plugin for Standardising Your Pipelines](https://www.jvt.me/posts/2021/02/23/getting-started-jobdsl-standardised/)
+* December 2019
+    * [Configuring a Jenkins Multibranch Pipeline to Use an External Script with Job DSL](https://www.jvt.me/posts/2019/12/06/jenkins-job-dsl-multibranch-external-script/)
 * August 2016
     * [Jenkins-as-code: comparing job-dsl and Pipelines](http://marcesher.com/2016/08/04/jenkins-as-code-comparing-job-dsl-and-pipelines/)
       by [Marc Esher](http://marcesher.com)
