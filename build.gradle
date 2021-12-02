@@ -198,3 +198,8 @@ gitPublish {
 }
 
 task publishDocs(dependsOn: ['gitPublishPush', ':job-dsl-api-viewer:gitPublishPush'])
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
