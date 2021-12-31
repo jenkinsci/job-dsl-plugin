@@ -17,8 +17,8 @@ import javaposse.jobdsl.plugin.LookupStrategy;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +33,7 @@ import static io.vavr.API.unchecked;
 @Restricted(NoExternalUse.class)
 public class SeedJobConfigurator implements RootElementConfigurator<GeneratedItems[]> {
 
-    @Nonnull
+    @NonNull
     @Override
     public String getName() {
         return "jobs";
@@ -45,7 +45,7 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
         return GeneratedItems[].class;
     }
 
-    @Nonnull
+    @NonNull
     @Override
     @SuppressWarnings("unchecked")
     public Set<Attribute<GeneratedItems[], ?>> describe() {
@@ -57,7 +57,7 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
         return new GeneratedItems[0]; // Doesn't really make sense
     }
 
-    @Nonnull
+    @NonNull
     @Override
     public GeneratedItems[] configure(CNode config, ConfigurationContext context) throws ConfiguratorException {
         Map<String, String> env = new HashMap<>(System.getenv());
@@ -76,7 +76,7 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
         return new GeneratedItems[0];
     }
 
-    @Nonnull
+    @NonNull
     @Override
     public List<Configurator<GeneratedItems[]>> getConfigurators(ConfigurationContext context) {
         return Collections.singletonList(context.lookup(ScriptSource.class));

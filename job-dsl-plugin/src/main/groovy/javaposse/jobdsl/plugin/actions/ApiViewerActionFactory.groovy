@@ -7,7 +7,7 @@ import javaposse.jobdsl.plugin.ExecuteDslScripts
 import jenkins.model.Jenkins
 import jenkins.model.TransientActionFactory
 
-import javax.annotation.Nonnull
+import edu.umd.cs.findbugs.annotations.NonNull
 
 @Extension
 class ApiViewerActionFactory extends TransientActionFactory<Project> {
@@ -17,7 +17,7 @@ class ApiViewerActionFactory extends TransientActionFactory<Project> {
     }
 
     @Override
-    Collection<? extends Action> createFor(@Nonnull Project target) {
+    Collection<? extends Action> createFor(@NonNull Project target) {
         target.buildersList.contains(Jenkins.get().getDescriptor(ExecuteDslScripts)) ? [new ApiViewerAction()] : []
     }
 }
