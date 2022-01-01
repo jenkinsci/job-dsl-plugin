@@ -22,8 +22,8 @@ import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.StaplerRequest;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Map;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
@@ -97,7 +97,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
     }
 
     @Override
-    public Builder newInstance(@CheckForNull StaplerRequest req, @Nonnull JSONObject formData) throws FormException {
+    public Builder newInstance(@CheckForNull StaplerRequest req, @NonNull JSONObject formData) throws FormException {
         ExecuteDslScripts builder = (ExecuteDslScripts) super.newInstance(req, formData);
         builder.configure(req.findAncestorObject(Item.class));
         return builder;
