@@ -22,7 +22,21 @@ public enum LookupStrategy {
      * Using this naming strategy jobs with relative path names are created relative
      * to the seed job's parent folder.
      */
-    SEED_JOB("Seed Job", Item::getParent);
+    SEED_JOB("Seed Job", Item::getParent),
+
+    /**
+     * Using this naming strategy jobs with relative path names are created relative
+     * to the seed job's grandparent folder. This is most useful if you group several
+     * seed jobs together in a folder (e.g. called "seed-jobs") and the jobs shall be generated
+     * as siblings to that ("seed-jobs") folder.
+     */
+    SEED_JOB_PARENT("Seed Job Parent", (seedJob) -> {
+        ItemGroup<?> parent = seedJob.getParent();
+        if (parent instanceof Item) {
+            return ((Item) parent).getParent();
+        }
+        return Jenkins.get();
+    });
 
     LookupStrategy(String displayName, Function<Item, ItemGroup> context) {
         this.displayName = displayName;

@@ -13,6 +13,7 @@ import spock.lang.Unroll
 
 import static javaposse.jobdsl.plugin.LookupStrategy.JENKINS_ROOT
 import static javaposse.jobdsl.plugin.LookupStrategy.SEED_JOB
+import static javaposse.jobdsl.plugin.LookupStrategy.SEED_JOB_PARENT
 
 class LookupStrategySpec extends Specification {
     @Shared
@@ -43,9 +44,10 @@ class LookupStrategySpec extends Specification {
         name == expectedName
 
         where:
-        lookupStrategy | expectedName
-        JENKINS_ROOT   | 'Jenkins Root'
-        SEED_JOB       | 'Seed Job'
+        lookupStrategy  | expectedName
+        JENKINS_ROOT    | 'Jenkins Root'
+        SEED_JOB        | 'Seed Job'
+        SEED_JOB_PARENT | 'Seed Job Parent'
     }
 
     def 'getItem'(LookupStrategy lookupStrategy, String expectedFullName) {
@@ -56,9 +58,10 @@ class LookupStrategySpec extends Specification {
         result.fullName == expectedFullName
 
         where:
-        lookupStrategy | expectedFullName
-        JENKINS_ROOT   | 'job'
-        SEED_JOB       | 'folder/job'
+        lookupStrategy  | expectedFullName
+        JENKINS_ROOT    | 'job'
+        SEED_JOB        | 'folder/job'
+        SEED_JOB_PARENT | 'job'
     }
 
     def 'getItem not normalized'(LookupStrategy lookupStrategy, String expectedFullName) {
@@ -69,9 +72,10 @@ class LookupStrategySpec extends Specification {
         result?.fullName == expectedFullName
 
         where:
-        lookupStrategy | expectedFullName
-        JENKINS_ROOT   | null
-        SEED_JOB       | 'job'
+        lookupStrategy  | expectedFullName
+        JENKINS_ROOT    | null
+        SEED_JOB        | 'job'
+        SEED_JOB_PARENT | null
     }
 
     def 'getContext'(LookupStrategy lookupStrategy, String expectedFullName) {
@@ -82,9 +86,10 @@ class LookupStrategySpec extends Specification {
         result.fullName == expectedFullName
 
         where:
-        lookupStrategy | expectedFullName
-        JENKINS_ROOT   | ''
-        SEED_JOB       | 'folder'
+        lookupStrategy  | expectedFullName
+        JENKINS_ROOT    | ''
+        SEED_JOB        | 'folder'
+        SEED_JOB_PARENT | ''
     }
 
     @Unroll
@@ -96,15 +101,19 @@ class LookupStrategySpec extends Specification {
         result.fullName == expectedFullName
 
         where:
-        lookupStrategy | path          | expectedFullName
-        JENKINS_ROOT   | 'job'         | ''
-        SEED_JOB       | 'job'         | 'folder'
-        JENKINS_ROOT   | '/job'        | ''
-        SEED_JOB       | '/job'        | ''
-        JENKINS_ROOT   | 'folder/job'  | 'folder'
-        SEED_JOB       | 'folder/job'  | 'folder/folder'
-        JENKINS_ROOT   | '/folder/foo' | 'folder'
-        SEED_JOB       | '/folder/foo' | 'folder'
+        lookupStrategy  | path          | expectedFullName
+        JENKINS_ROOT    | 'job'         | ''
+        SEED_JOB        | 'job'         | 'folder'
+        SEED_JOB_PARENT | 'job'         | ''
+        JENKINS_ROOT    | '/job'        | ''
+        SEED_JOB        | '/job'        | ''
+        SEED_JOB_PARENT | '/job'        | ''
+        JENKINS_ROOT    | 'folder/job'  | 'folder'
+        SEED_JOB        | 'folder/job'  | 'folder/folder'
+        SEED_JOB_PARENT | 'folder/job'  | 'folder'
+        JENKINS_ROOT    | '/folder/foo' | 'folder'
+        SEED_JOB        | '/folder/foo' | 'folder'
+        SEED_JOB_PARENT | '/folder/foo' | 'folder'
     }
 
     @Unroll
@@ -116,14 +125,18 @@ class LookupStrategySpec extends Specification {
         result?.fullName == expected
 
         where:
-        strategy     | path                          | expected
-        JENKINS_ROOT | '../folder/job'               | null
-        SEED_JOB     | '../folder/job'               | 'folder'
-        JENKINS_ROOT | '/folder/../job'              | ''
-        SEED_JOB     | '/folder/../job'              | ''
-        JENKINS_ROOT | 'folder/../job'               | ''
-        SEED_JOB     | 'folder/../job'               | 'folder'
-        JENKINS_ROOT | 'folder/with space/../../job' | ''
-        SEED_JOB     | 'folder/with space/../../job' | 'folder'
+        strategy        | path                          | expected
+        JENKINS_ROOT    | '../folder/job'               | null
+        SEED_JOB        | '../folder/job'               | 'folder'
+        SEED_JOB_PARENT | '../folder/job'               | null
+        JENKINS_ROOT    | '/folder/../job'              | ''
+        SEED_JOB        | '/folder/../job'              | ''
+        SEED_JOB_PARENT | '/folder/../job'              | ''
+        JENKINS_ROOT    | 'folder/../job'               | ''
+        SEED_JOB        | 'folder/../job'               | 'folder'
+        SEED_JOB_PARENT | 'folder/../job'               | ''
+        JENKINS_ROOT    | 'folder/with space/../../job' | ''
+        SEED_JOB        | 'folder/with space/../../job' | 'folder'
+        SEED_JOB_PARENT | 'folder/with space/../../job' | ''
     }
 }

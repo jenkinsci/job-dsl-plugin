@@ -11,7 +11,8 @@ job('my-job')
 ```
 
 When defining jobs, views or folders the name is treated as absolute to the Jenkins root by default, but the seed job
-can be configured to interpret names relative to the seed job. (since 1.24)
+can be configured to interpret names relative to the seed job (since 1.24), or relative to the seed job's parent folder
+(since 1.79).
 
 In the closure provided to the job methods there are a few top level methods, like `label` and `description`. Others are nested
 deeper in blocks which represent their role in Jenkins, e.g. the `publishers` block contains all the publisher actions.

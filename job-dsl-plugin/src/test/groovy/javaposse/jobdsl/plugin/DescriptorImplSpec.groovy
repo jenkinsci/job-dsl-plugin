@@ -14,10 +14,12 @@ class DescriptorImplSpec extends Specification {
         ListBoxModel listBoxModel = new DescriptorImpl().doFillLookupStrategyItems()
 
         then:
-        listBoxModel.size() == 2
+        listBoxModel.size() == 3
         listBoxModel.get(0).name == 'Jenkins Root'
         listBoxModel.get(0).value == 'JENKINS_ROOT'
         listBoxModel.get(1).name == 'Seed Job'
         listBoxModel.get(1).value == 'SEED_JOB'
+        listBoxModel.get(2).name == 'Seed Job Parent'
+        listBoxModel.get(2).value == 'SEED_JOB_PARENT'
     }
 }
