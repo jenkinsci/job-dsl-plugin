@@ -39,6 +39,7 @@ import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
 import javaposse.jobdsl.dsl.NameNotProvidedException;
 import javaposse.jobdsl.dsl.UserContent;
 import javaposse.jobdsl.plugin.ExtensionPointHelper.DslExtension;
+import jenkins.branch.OrganizationFolder;
 import jenkins.model.DirectlyModifiableTopLevelItemGroup;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
@@ -587,17 +588,24 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     private void mergeCredentials(AbstractItem item, javaposse.jobdsl.dsl.Item dslItem) {
+        Optional<AbstractFolderProperty<?>> maybeProperty = Optional.empty();
         if (item instanceof Folder) {
             Folder folder = (Folder) item;
-            Optional<AbstractFolderProperty<?>> maybeProperty =
+            maybeProperty =
                 folder.getProperties().stream()
                 .filter(p -> p instanceof FolderCredentialsProperty)
                 .findFirst();
-
-            if (maybeProperty.isPresent()) {
-                LOGGER.log(Level.FINE, format("Merging credentials for %s", item.getName()));
-                DslItemConfigurer.mergeCredentials(maybeProperty.get(), dslItem);
-            }
+        }
+        if (item instanceof OrganizationFolder) {
+            OrganizationFolder folder = (OrganizationFolder) item;
+            maybeProperty =
+                folder.getProperties().stream()
+                .filter(p -> p instanceof FolderCredentialsProperty)
+                .findFirst();
+        }
+        if (maybeProperty.isPresent()) {
+            LOGGER.log(Level.FINE, format("Merging credentials for %s", item.getName()));
+            DslItemConfigurer.mergeCredentials(maybeProperty.get(), dslItem);
         }
     }
 

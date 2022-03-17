@@ -110,18 +110,20 @@ dependencies {
         exclude group: 'org.jvnet.hudson', module:'xstream'
     }
     implementation 'org.jenkins-ci.plugins:cloudbees-folder:5.14'
+    implementation 'org.jenkins-ci.plugins:branch-api:2.6.3'
     implementation 'org.jenkins-ci.plugins:structs:1.19'
+    implementation 'org.jenkins-ci.plugins:scm-api:2.3.0'
     implementation 'org.jenkins-ci.plugins:script-security:1.54'
     vsphereCloudImplementation('org.jenkins-ci.plugins:vsphere-cloud:1.1.11') {
         exclude group: 'dom4j'
     }
     configFileProviderImplementation 'org.jenkins-ci.plugins:config-file-provider:2.15.4'
     managedScriptsImplementation 'org.jenkinsci.plugins:managed-scripts:1.3'
-    configurationAsCodeImplementation 'io.jenkins:configuration-as-code:1.15'
+    configurationAsCodeImplementation 'io.jenkins:configuration-as-code:1.35'
     testRuntimeOnly "org.jenkins-ci.main:jenkins-war:${project.properties['jenkinsVersion']}"
-    testImplementation 'io.jenkins:configuration-as-code:1.15'
-    testImplementation 'io.jenkins:configuration-as-code:1.15:tests'
+    testImplementation 'io.jenkins:configuration-as-code:1.35'
+    testImplementation 'io.jenkins.configuration-as-code:test-harness:1.35'
     testImplementation 'org.jenkins-ci.plugins:matrix-auth:1.3'
     testImplementation 'org.jenkins-ci.plugins:nested-view:1.14'
-    testImplementation 'org.jenkins-ci.plugins:credentials:2.1.10'
+    testImplementation 'org.jenkins-ci.plugins:credentials:2.3.11'
 }
