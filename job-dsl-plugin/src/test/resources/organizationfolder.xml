@@ -1,0 +1,9 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<jenkins.branch.OrganizationFolder>
+    <properties>
+    </properties>
+    <disabled>false</disabled>
+    <navigators/>
+    <projectFactories/>
+    <buildStrategies/>
+</jenkins.branch.OrganizationFolder>
