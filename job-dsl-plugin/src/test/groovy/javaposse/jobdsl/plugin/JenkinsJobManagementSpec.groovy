@@ -1,5 +1,5 @@
 package javaposse.jobdsl.plugin
-
+ import jenkins.branch.OrganizationFolder;
 import com.cloudbees.hudson.plugins.folder.AbstractFolder
 import com.cloudbees.hudson.plugins.folder.AbstractFolderProperty
 import com.cloudbees.hudson.plugins.folder.AbstractFolderPropertyDescriptor
@@ -665,6 +665,43 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         def actual = jenkinsRule.jenkins.getItem('folder')
         actual.properties.size() == 0
+    }
+
+    def 'createOrUpdateConfig should preserve credentials if they exist on an OrganizationFolder'() {
+        setup:
+        OrganizationFolder folder = jenkinsRule.createProject(OrganizationFolder, 'org')
+        // `OrganizationFolder`s include a lot of existing metadata that is appended, regardless of how few we already
+        // set, so we should calculate expected as the default computed properties
+        int defaultProperties = folder.properties.size()
+
+        def property = createCredentialProperty()
+        folder.addProperty(property)
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('org', '/organizationfolder.xml'), false)
+
+        then:
+        def actualItem = jenkinsRule.jenkins.getItem('org')
+        def actual = (AbstractFolder<?>) actualItem
+        actual.properties.size() == defaultProperties + 1
+    }
+
+    def 'createOrUpdateConfig should ignore other properties on the OrganizationFolder'() {
+        setup:
+        OrganizationFolder folder = jenkinsRule.createProject(OrganizationFolder, 'org')
+        // `OrganizationFolder`s include a lot of existing metadata that is appended, regardless of how few we already
+        // set, so we should calculate expected as the default computed properties
+        int defaultProperties = folder.properties.size()
+
+        folder.addProperty(new FakeProperty())
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('org', '/organizationfolder.xml'), false)
+        folder.writeConfigDotXml(System.out)
+
+        then:
+        def actual = jenkinsRule.jenkins.getItem('org')
+        actual.properties.size() == defaultProperties
     }
 
     def 'createOrUpdateView should work if view type changes'() {
