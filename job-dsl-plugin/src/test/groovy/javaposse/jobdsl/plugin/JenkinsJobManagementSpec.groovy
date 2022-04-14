@@ -641,7 +641,7 @@ class JenkinsJobManagementSpec extends Specification {
         e.message == 'Type of item "my-job" does not match existing type, item type can not be changed'
     }
 
-    def 'createOrUpdateConfig should preserve credentials if they exist on a folder'() {
+    def 'createOrUpdateConfig should preserve credentials if they exist on a Folder'() {
         setup:
         Folder folder = jenkinsRule.createProject(Folder, 'folder')
         folder.addProperty(createCredentialProperty())
@@ -654,7 +654,7 @@ class JenkinsJobManagementSpec extends Specification {
         actual.properties.size() == 1
     }
 
-    def 'createOrUpdateConfig should ignore other properties on the folder'() {
+    def 'createOrUpdateConfig should ignore other properties on the Folder'() {
         setup:
         Folder folder = jenkinsRule.createProject(Folder, 'folder')
         folder.addProperty(new FakeProperty())
