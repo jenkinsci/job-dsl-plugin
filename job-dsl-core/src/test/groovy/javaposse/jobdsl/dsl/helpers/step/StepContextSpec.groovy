@@ -2385,7 +2385,7 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
-            children().size() == 14
+            children().size() == 22
             token[0].value() == ''
             remoteJenkinsName[0].value() == 'dev-ci'
             job[0].value() == 'test'
@@ -2405,7 +2405,15 @@ class StepContextSpec extends Specification {
                 CREDENTIALS__PLUGIN[0].value() == 'credentialsPlugin'
             }
             loadParamsFromFile[0].value() == false
-            parameterFile[0].value() == []
+            parameterFile[0].value() == null
+            abortTriggeredJob[0].value() == false
+            maxConn[0].value() == 1
+            enhancedLogging[0].value() == false
+            useCrumbCache[0].value() == true
+            useJobInfoCache[0].value() == true
+            disabled[0].value() == false
+            overrideTrustAllCertificates[0].value() == false
+            trustAllCertificates[0].value() == false
             queryString[0].value() == []
         }
         1 * jobManagement.requireMinimumPluginVersion('Parameterized-Remote-Trigger', '2.0')
@@ -2423,7 +2431,7 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
-            children().size() == 14
+            children().size() == 22
             token[0].value() == ''
             remoteJenkinsName[0].value() == 'dev-ci'
             job[0].value() == 'test'
@@ -2447,7 +2455,15 @@ class StepContextSpec extends Specification {
                 CREDENTIALS__PLUGIN[0].value() == 'credentialsPlugin'
             }
             loadParamsFromFile[0].value() == false
-            parameterFile[0].value() == []
+            parameterFile[0].value() == null
+            abortTriggeredJob[0].value() == false
+            maxConn[0].value() == 1
+            enhancedLogging[0].value() == false
+            useCrumbCache[0].value() == true
+            useJobInfoCache[0].value() == true
+            disabled[0].value() == false
+            overrideTrustAllCertificates[0].value() == false
+            trustAllCertificates[0].value() == false
             queryString[0].value() == []
         }
         1 * jobManagement.requireMinimumPluginVersion('Parameterized-Remote-Trigger', '2.0')
@@ -2469,7 +2485,7 @@ class StepContextSpec extends Specification {
         context.stepNodes.size() == 1
         with(context.stepNodes[0]) {
             name() == 'org.jenkinsci.plugins.ParameterizedRemoteTrigger.RemoteBuildConfiguration'
-            children().size() == 14
+            children().size() == 22
             token[0].value() == 'test'
             remoteJenkinsName[0].value() == 'dev-ci'
             job[0].value() == 'test'
@@ -2491,7 +2507,15 @@ class StepContextSpec extends Specification {
                 CREDENTIALS__PLUGIN[0].value() == 'credentialsPlugin'
             }
             loadParamsFromFile[0].value() == false
-            parameterFile[0].value() == []
+            parameterFile[0].value() == null
+            abortTriggeredJob[0].value() == false
+            maxConn[0].value() == 1
+            enhancedLogging[0].value() == false
+            useCrumbCache[0].value() == true
+            useJobInfoCache[0].value() == true
+            disabled[0].value() == false
+            overrideTrustAllCertificates[0].value() == false
+            trustAllCertificates[0].value() == false
             queryString[0].value() == []
         }
         1 * jobManagement.requireMinimumPluginVersion('Parameterized-Remote-Trigger', '2.0')
