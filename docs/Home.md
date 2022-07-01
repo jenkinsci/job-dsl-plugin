@@ -32,6 +32,8 @@ scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Suppo
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
+* 1.80.0 (July 1 2022)
+  * Don't destroy credentials when re-creating organization folders ([GH-1251](https://github.com/jenkinsci/job-dsl-plugin/pull/1251) [JENKINS-44681](https://issues.jenkins.io/browse/JENKINS-44681))
 * 1.79.0 (April 14 2022)
   * Allow using classes not supported by `structs` for `DescribableContext` ([GH-1202](https://github.com/jenkinsci/job-dsl-plugin/pull/1202) [JENKINS-57435](https://issues.jenkins-ci.org/browse/JENKINS-57435))
     ** Note that this has the potential to be unsafe and can lead to source-controlled secrets. Please be **very cautious** when embedding secrets into source control!
