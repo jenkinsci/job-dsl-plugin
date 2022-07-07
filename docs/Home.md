@@ -33,6 +33,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 
 ## Release Notes
 * 1.82.0 (unreleased)
+  * Bump minimum Jenkins version to 2.332.3 TODTODTODTODTODOOOOOTODO ([JENKINS-68275](https://issues.jenkins.io/browse/JENKINS-68275))
   * Internal dependency management updates
   * Fix concurrent modification exception in ExecuteDslScripts ([GH-1253](https://github.com/jenkinsci/job-dsl-plugin/pull/1253) [JENKINS-69064](https://issues.jenkins.io/browse/JENKINS-69064)).
 * 1.81.0 (July 18 2022)
