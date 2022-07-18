@@ -9,7 +9,6 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
-import javaposse.jobdsl.dsl.jobs.MatrixJob
 
 import static javaposse.jobdsl.dsl.ContextHelper.toNamedNode
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
@@ -1284,27 +1283,6 @@ class PublisherContext extends AbstractExtensibleContext {
             isPmdDeactivated(!analysisCollectorContext.includePmd)
             isOpenTasksDeactivated(!analysisCollectorContext.includeTasks)
             isWarningsDeactivated(!analysisCollectorContext.includeWarnings)
-        }
-    }
-
-    /**
-     * Execute a set of scripts at the end of the build.
-     *
-     * @since 1.31
-     */
-    @RequiresPlugin(id = 'postbuildscript', minimumVersion = '0.17')
-    void postBuildScripts(@DslContext(PostBuildScriptsContext) Closure closure) {
-        PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement, item)
-        ContextHelper.executeInContext(closure, context)
-
-        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.postbuildscript.PostBuildScript' {
-            buildSteps(context.stepContext.stepNodes)
-            scriptOnlyIfSuccess(context.onlyIfBuildSucceeds)
-            scriptOnlyIfFailure(context.onlyIfBuildFails)
-            markBuildUnstable(context.markBuildUnstable)
-            if (item instanceof MatrixJob) {
-                executeOn(context.executeOn)
-            }
         }
     }
 
