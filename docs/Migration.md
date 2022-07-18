@@ -1,3 +1,11 @@
+## Migrating to 1.81
+
+### PostBuildScript plugin
+
+There are no longer any manually defined DSL methods for the PostBuildScript, which allows folks using PostBuildScript v3.0.0 to no longer have issues with Job DSL ([JENKINS-66189](https://issues.jenkins.io/browse/JENKINS-66189)).
+
+Note that this did not go through a deprecation cycle, as we usually should do, in a decision by the maintainers regarding how few folks still use the v2.x release, and the age of the plugin.
+
 ## Migrating to 1.77
 
 ### Pipeline: Job Plugin
