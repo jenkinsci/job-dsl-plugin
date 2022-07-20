@@ -784,7 +784,7 @@ folder('folder-a/folder-b') {
         jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
     }
 
-    def "Deleted jobs with different seeds but same templates are removed from GeneratedJobMap"() {
+    def "JENKINS-69064 Deleted jobs with different seeds but same templates are removed from GeneratedJobMap"() {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
         FreeStyleProject seedJob2 = jenkinsRule.createFreeStyleProject('seed2')
