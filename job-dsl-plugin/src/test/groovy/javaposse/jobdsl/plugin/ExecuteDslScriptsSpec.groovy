@@ -784,6 +784,24 @@ folder('folder-a/folder-b') {
         jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
     }
 
+    def "Deleted jobs with different seeds but same templates are removed from GeneratedJobMap"() {
+        setup:
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        FreeStyleProject seedJob2 = jenkinsRule.createFreeStyleProject('seed2')
+        jenkinsRule.createFreeStyleProject('template')
+        runBuild(seedJob, new ExecuteDslScripts('job("test-job") {\n using("template")\n}'))
+        runBuild(seedJob2, new ExecuteDslScripts('job("test-job-2") {\n using("template")\n}'))
+
+        when:
+        ExecuteDslScripts builder = new ExecuteDslScripts('// do nothing')
+        builder.removedJobAction = RemovedJobAction.DELETE
+        runBuild(seedJob, builder)
+        runBuild(seedJob2, builder)
+
+        then:
+        jenkinsRule.instance.getDescriptorByType(DescriptorImpl).generatedJobMap.size() == 0
+    }
+
     def "Manually deleted job is removed from GeneratedJobMap"() {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
