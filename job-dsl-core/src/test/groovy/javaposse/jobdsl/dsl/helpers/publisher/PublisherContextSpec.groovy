@@ -270,13 +270,15 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 6
+            children().size() == 8
             artifacts[0].value() == 'include/*'
             excludes[0].value() == 'exclude/*'
             allowEmptyArchive[0].value() == false
             fingerprint[0].value() == false
             onlyIfSuccessful[0].value() == false
             defaultExcludes[0].value() == true
+            followSymlinks[0].value() == true
+            caseSensitive[0].value() == true
         }
     }
 
@@ -287,12 +289,14 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 5
+            children().size() == 7
             artifacts[0].value() == 'include/*'
             allowEmptyArchive[0].value() == false
             fingerprint[0].value() == false
             onlyIfSuccessful[0].value() == false
             defaultExcludes[0].value() == true
+            followSymlinks[0].value() == true
+            caseSensitive[0].value() == true
         }
     }
 
@@ -310,13 +314,15 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 6
+            children().size() == 8
             artifacts[0].value() == 'include/*'
             excludes[0].value() == 'exclude/*'
             allowEmptyArchive[0].value() == true
             fingerprint[0].value() == true
             onlyIfSuccessful[0].value() == true
             defaultExcludes[0].value() == false
+            followSymlinks[0].value() == true
+            caseSensitive[0].value() == true
         }
     }
 
@@ -330,12 +336,14 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 5
+            children().size() == 7
             artifacts[0].value() == 'include1/*,include2/*'
             allowEmptyArchive[0].value() == false
             fingerprint[0].value() == false
             onlyIfSuccessful[0].value() == false
             defaultExcludes[0].value() == true
+            followSymlinks[0].value() == true
+            caseSensitive[0].value() == true
         }
     }
 

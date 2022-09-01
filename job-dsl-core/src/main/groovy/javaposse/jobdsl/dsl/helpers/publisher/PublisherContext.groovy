@@ -103,6 +103,8 @@ class PublisherContext extends AbstractExtensibleContext {
             defaultExcludes(artifactsContext.defaultExcludes)
             delegate.fingerprint(artifactsContext.fingerprint)
             onlyIfSuccessful(artifactsContext.onlyIfSuccessful)
+            followSymlinks(artifactsContext.followSymlinks)
+            caseSensitive(artifactsContext.caseSensitive)
         }
     }
 
