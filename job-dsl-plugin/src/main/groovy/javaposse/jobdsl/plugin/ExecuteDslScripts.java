@@ -409,7 +409,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
             Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
             if (!matching.isEmpty()) {
-                seedJobReferences.removeAll(matching);
+                seedJobReferences.removeAll(Sets.newHashSet(matching));
                 descriptorMutated = true;
             }
         }
@@ -432,7 +432,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             } else {
                 if (matching.size() > 1) {
                     // Not sure how there could be more one, throw it all away and start over
-                    seedJobReferences.removeAll(matching);
+                    seedJobReferences.removeAll(Sets.newHashSet(matching));
                 }
                 seedJobReferences.add(new SeedReference(templateName, seedJobName, digest));
                 descriptorMutated = true;
