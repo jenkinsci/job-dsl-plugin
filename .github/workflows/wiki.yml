@@ -1,0 +1,36 @@
+name: Push to the GitHub Wiki
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "docs/**"
+
+permissions:
+  contents: write
+
+jobs:
+  push-to-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          path: repo
+      - name: Checkout wiki
+        uses: actions/checkout@v3
+        with:
+          repository: ${{github.repository}}.wiki
+          path: wiki
+      - name: Push to wiki
+        continue-on-error: true
+        run: |
+          git config --global user.email "actions@users.noreply.github.com"
+          git config --global user.name "wiki[bot]"
+
+          cd wiki
+          cp ../docs/* -r .
+          git add .
+          git commit -m "Automagic update"
+          git push
