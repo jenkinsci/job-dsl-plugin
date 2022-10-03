@@ -30,7 +30,7 @@ jobs:
           git config --global user.name "wiki[bot]"
 
           cd wiki
-          cp ../docs/* -r .
+          cp ../repo/docs/* -r .
           git add .
           git commit -m "Automagic update"
           git push
