@@ -32,6 +32,9 @@ scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Suppo
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
+* 1.82.0 (unreleased)
+  * Internal dependency management updates
+  * Fix concurrent modification exception in ExecuteDslScripts ([GH-1253](https://github.com/jenkinsci/job-dsl-plugin/pull/1253) [JENKINS-69064](https://issues.jenkins.io/browse/JENKINS-69064)).
 * 1.81.0 (July 18 2022)
   * Add missing options for Parameterized Remote Trigger Plugin ([GH-1250](https://github.com/jenkinsci/job-dsl-plugin/pull/1250) [JENKINS-68781](https://issues.jenkins.io/browse/JENKINS-68781)).
 * 1.80.0 (July 1 2022)
