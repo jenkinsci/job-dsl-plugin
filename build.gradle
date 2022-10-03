@@ -19,9 +19,10 @@ configure(subprojects - project(':job-dsl-api-viewer')) {
     targetCompatibility = 1.8
 
     dependencies {
+        implementation platform("org.jenkins-ci.plugins:plugin:${jenkinsPluginBomVersion}")
         compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
         testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
-        testCompile 'junit:junit:4.12'
+        testCompile 'junit:junit'
         testCompile 'cglib:cglib-nodep:3.2.5' // used by Spock
         testCompile 'org.objenesis:objenesis:2.5.1' // used by Spock
     }
