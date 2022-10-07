@@ -1,6 +1,9 @@
 package javaposse.jobdsl.dsl.helpers.icon
 
-import javaposse.jobdsl.dsl.*
+import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextType
+import javaposse.jobdsl.dsl.Item
+import javaposse.jobdsl.dsl.JobManagement
 
 @ContextType('com.cloudbees.hudson.plugins.folder.FolderIcon')
 class FolderIconContext extends AbstractExtensibleContext {
