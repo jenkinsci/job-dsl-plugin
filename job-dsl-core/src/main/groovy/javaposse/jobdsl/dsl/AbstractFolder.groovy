@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.helpers.AuthorizationContext
+import javaposse.jobdsl.dsl.helpers.icon.FolderIconContext
 import javaposse.jobdsl.dsl.helpers.properties.FolderPropertiesContext
 
 abstract class AbstractFolder extends Item {
@@ -52,6 +53,24 @@ abstract class AbstractFolder extends Item {
             context.propertiesNodes.each {
                 project / 'properties' << it
             }
+        }
+    }
+
+    /**
+     * Sets the icon of the folder.
+     *
+     * @since 1.82
+     */
+    void icon(@DslContext(FolderIconContext) Closure closure) {
+        FolderIconContext context = new FolderIconContext(jobManagement, this)
+        ContextHelper.executeInContext(closure, context)
+
+        configure { Node folder ->
+            Node icon = folder / icon
+            if (icon) {
+                folder.remove(icon)
+            }
+            folder << context.icon
         }
     }
 }

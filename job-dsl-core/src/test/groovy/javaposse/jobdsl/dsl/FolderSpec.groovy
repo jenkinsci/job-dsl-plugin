@@ -127,6 +127,23 @@ class FolderSpec extends Specification {
         folder.node.properties[0].children()[0].name() == 'hack'
     }
 
+    def 'call icon'() {
+        when:
+        folder.icon {
+            icon = new Node(null,
+                    'icon', ['class': 'jenkins.plugins.foldericon.CustomFolderIcon', 'plugin': 'custom-folder-icon'],
+                    new Node(null,
+                            'customFolderIcon', 'test.png'))
+        }
+
+        then:
+        folder.node.icon[0].name() == 'icon'
+        folder.node.icon[0].attribute('class') == 'jenkins.plugins.foldericon.CustomFolderIcon'
+        folder.node.icon[0].attribute('plugin') == 'custom-folder-icon'
+        folder.node.icon[0].children()[0].name() == 'customFolderIcon'
+        folder.node.icon[0].children()[0].value() == 'test.png'
+    }
+
     def 'configure'() {
         when:
         folder.configure {
