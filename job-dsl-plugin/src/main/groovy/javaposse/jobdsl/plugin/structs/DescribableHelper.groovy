@@ -13,8 +13,12 @@ import jenkins.model.Jenkins
 import org.codehaus.groovy.syntax.Types
 import org.jenkinsci.Symbol
 import org.jenkinsci.plugins.structs.SymbolLookup
+import org.jenkinsci.plugins.structs.describable.ArrayType
 import org.jenkinsci.plugins.structs.describable.DescribableModel
 import org.jenkinsci.plugins.structs.describable.ErrorType
+import org.jenkinsci.plugins.structs.describable.HeterogeneousObjectType
+import org.jenkinsci.plugins.structs.describable.HomogeneousObjectType
+import org.jenkinsci.plugins.structs.describable.ParameterType
 import org.kohsuke.stapler.NoStaplerConstructorException
 
 import java.util.concurrent.ConcurrentHashMap
@@ -160,6 +164,12 @@ class DescribableHelper {
     @SuppressWarnings('UnnecessaryGetter')
     static String getClassName(Class clazz) {
         clazz.getName()
+    }
+
+    static boolean isContextParameter(ParameterType parameterType) {
+        parameterType instanceof HomogeneousObjectType ||
+                (parameterType instanceof HeterogeneousObjectType && parameterType.actualType != Object) ||
+                (parameterType instanceof ArrayType && isContextParameter(parameterType.elementType))
     }
 
     private static Class getTypeForLookup(DescribableModel model) {

@@ -1,0 +1,12 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+  <l:layout title="Generated Job DSL Script For ${it.target.fullName}">
+    <st:include it="${it.target}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <h1>Generated Job DSL Script For ${it.target.fullName}</h1>
+      <pre>
+        <j:whitespace>${it.script}</j:whitespace>
+      </pre>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>
