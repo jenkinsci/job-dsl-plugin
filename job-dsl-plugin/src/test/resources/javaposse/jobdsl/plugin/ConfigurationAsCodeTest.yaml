@@ -1,4 +1,5 @@
 jobs:
+  - additionalClasspath: ['src/test/resources/lib/', 'abc/', 'def/']
   - script: >
       job('testJob1') {
           scm {
@@ -13,6 +14,7 @@ jobs:
       }
 
   - file: ./src/test/resources/javaposse/jobdsl/plugin/testjob.groovy
+  - file: ./src/test/resources/javaposse/jobdsl/plugin/advancedJob.groovy
 
   - providedEnv:
       JOB_NAME_FROM_ENV: testJob3

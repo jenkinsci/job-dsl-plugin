@@ -18,5 +18,6 @@ public class ConfigurationAsCodeTest {
         assertNotNull(j.jenkins.getItem("testJob1"));
         assertNotNull(j.jenkins.getItem("testJob2"));
         assertNotNull(j.jenkins.getItem("testJob3"));
+        assertNotNull(j.jenkins.getItem("advancedJob"));
     }
 }

@@ -10,6 +10,9 @@ import io.jenkins.plugins.casc.SecretSourceResolver;
 import io.jenkins.plugins.casc.impl.attributes.MultivaluedAttribute;
 import io.jenkins.plugins.casc.model.CNode;
 import io.jenkins.plugins.casc.model.Mapping;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
 import javaposse.jobdsl.dsl.GeneratedItems;
 import javaposse.jobdsl.plugin.JenkinsDslScriptLoader;
 import javaposse.jobdsl.plugin.JenkinsJobManagement;
@@ -61,13 +64,15 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
     @Override
     public GeneratedItems[] configure(CNode config, ConfigurationContext context) throws ConfiguratorException {
         Map<String, String> env = new HashMap<>(System.getenv());
+        List<URL> additionalClasspath = new ArrayList<>();
         JenkinsJobManagement management = new JenkinsJobManagement(System.out, env, null, null, LookupStrategy.JENKINS_ROOT);
         Configurator<ScriptSource> configurator = context.lookupOrFail(ScriptSource.class);
         return config.asSequence().stream()
+            .flatMap(source -> processAdditionalClasspath(source, additionalClasspath))
             .flatMap(source -> processProvidedEnv(source, context, env))
             .map(source -> getActualValue(source, context))
             .map(source -> getScriptFromSource(source, context, configurator))
-            .map(script -> generateFromScript(script, management))
+            .map(script -> generateFromScript(script, management, additionalClasspath))
             .toArray(GeneratedItems[]::new);
     }
 
@@ -98,6 +103,17 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
         return Stream.of(source);
     }
 
+    private Stream<CNode> processAdditionalClasspath(CNode source, List<URL> classpath) {
+        Map.Entry<String, CNode> entry = unchecked(() -> source.asMapping().entrySet().iterator().next()).apply();
+        if (entry.getKey().equals("additionalClasspath")) {
+            unchecked(entry.getValue()::asSequence).apply().forEach(classpathEntry ->
+                classpath.add(unchecked(() -> URI.create("file:" + classpathEntry.asScalar().getValue()).toURL()).apply())
+            );
+            return Stream.empty();
+        }
+        return Stream.of(source);
+    }
+
     private CNode getActualValue(CNode config, ConfigurationContext context) {
         return unchecked(() -> config.asMapping().entrySet().stream().findFirst()).apply()
             .map(entry -> {
@@ -112,9 +128,9 @@ public class SeedJobConfigurator implements RootElementConfigurator<GeneratedIte
         return SecretSourceResolver.resolve(context, value);
     }
 
-    private GeneratedItems generateFromScript(String script, JenkinsJobManagement management) {
+    private GeneratedItems generateFromScript(String script, JenkinsJobManagement management, List<URL> additionalClasspath) {
         return unchecked(() ->
-            Try(() -> new JenkinsDslScriptLoader(management).runScript(script))
+            Try(() -> new JenkinsDslScriptLoader(management).runScript(script, additionalClasspath))
                 .getOrElseThrow(t -> new ConfiguratorException(this, "Failed to execute script with hash " + script.hashCode(), t))).apply();
     }
 
