@@ -83,9 +83,13 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
      *
      * @since 1.47
      */
+    G runScript(String script) throws IOException {
+        runScript(script, [])
+    }
+
     G runScript(String script, List<URL> additionalClasspath) throws IOException {
         List<URL> classpath = new ArrayList<URL>(additionalClasspath)
-        classpath.add(new File('.').toURI().toURL())
+        //classpath.add(new File('.').toURI().toURL())
 
         ScriptRequest scriptRequest = new ScriptRequest(script, classpath as URL[])
         runScripts([scriptRequest])
