@@ -503,10 +503,12 @@ class WrapperContext extends AbstractExtensibleContext {
      * @since 1.27
      */
     @RequiresPlugin(id = 'nodejs')
-    void nodejs(String installation, String configId = null) {
+    void nodejs(String installation, String config = null) {
         wrapperNodes << new NodeBuilder().'jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper' {
             nodeJSInstallationName(installation)
-            configId(configId)
+            if (config) {
+                configId(config)
+            }
         }
     }
 

@@ -1109,6 +1109,21 @@ class WrapperContextSpec extends Specification {
         1 * mockJobManagement.requirePlugin('nodejs')
     }
 
+    def 'call nodejs with configId'() {
+        when:
+        context.nodejs('NodeJS 0.10.26', 'some-id')
+
+        then:
+        context.wrapperNodes?.size() == 1
+        with(context.wrapperNodes[0]) {
+            name() == 'jenkins.plugins.nodejs.tools.NpmPackagesBuildWrapper'
+            children().size() == 2
+            nodeJSInstallationName[0].value() == 'NodeJS 0.10.26'
+            configId[0].value() == 'some-id'
+        }
+        1 * mockJobManagement.requirePlugin('nodejs')
+    }
+
     def 'call sauce on demand with defaults for older plugin version'() {
         when:
         context.sauceOnDemand {
