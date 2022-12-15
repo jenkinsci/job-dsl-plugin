@@ -67,4 +67,22 @@ class GerritEventContext implements Context {
     void refUpdated() {
         eventShortNames << 'RefUpdated'
     }
+
+    /**
+     * Trigger when the private state is updated.
+     *
+     * @since 2.15
+     */
+    void privateStateChanged() {
+        eventShortNames << 'PrivateStateChanged'
+    }
+
+    /**
+     * Trigger when the Work In Progress state is updated.
+     *
+     * @since 2.15
+     */
+    void wipStateChanged() {
+        eventShortNames << 'WipStateChanged'
+    }
 }
