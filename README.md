@@ -1,6 +1,8 @@
 Jenkins Job DSL Plugin
 ======================
 
+**NOTE** The Job DSL Plugin is [currently seeking co-maintainers](https://groups.google.com/g/jenkinsci-dev/c/WtNZKVWVlJ0/m/Zbd7SH_GFAAJ). This does **not** mean that it's unmaintained right now, but that stepping up to help support this plugin would help long-term health of this project.
+
 Introduction
 ------------
 
