@@ -15,8 +15,8 @@ configure(subprojects - project(':job-dsl-api-viewer')) {
     apply plugin: 'groovy'
     apply plugin: 'codenarc'
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
     dependencies {
         implementation platform("org.jenkins-ci.plugins:plugin:${jenkinsPluginBomVersion}")
