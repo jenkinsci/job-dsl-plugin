@@ -107,7 +107,7 @@ restricted sandbox, use the [Node](http://docs.groovy-lang.org/latest/html/gapi/
 
 # Reusable Configure Blocks
 
-To reuse an configure block for many jobs, the configure block can be refactored into a helper function.
+To reuse a configure block for many jobs, the configure block can be refactored into a helper function.
 
 ```groovy
 def switchOn = {
@@ -145,7 +145,7 @@ job('example-2') {
 }
 ```
 
-To reuse an configure block for many scripts, the configure block can be moved to a helper class.
+To reuse a configure block for many scripts, the configure block can be moved to a helper class.
 
 ```groovy
 package helpers
