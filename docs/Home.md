@@ -35,6 +35,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.82.0 (unreleased)
   * Internal dependency management updates
   * Fix concurrent modification exception in ExecuteDslScripts ([GH-1253](https://github.com/jenkinsci/job-dsl-plugin/pull/1253) [JENKINS-69064](https://issues.jenkins.io/browse/JENKINS-69064)).
+  * Importing a workspace file into a Job DSL script with the Groovy Sandbox does not work on Java 17 ([JENKINS-70361](https://issues.jenkins.io/browse/JENKINS-70361))
 * 1.81.0 (July 18 2022)
   * Add missing options for Parameterized Remote Trigger Plugin ([GH-1250](https://github.com/jenkinsci/job-dsl-plugin/pull/1250) [JENKINS-68781](https://issues.jenkins.io/browse/JENKINS-68781)).
 * 1.80.0 (July 1 2022)
