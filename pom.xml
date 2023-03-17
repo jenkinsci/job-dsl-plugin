@@ -85,7 +85,7 @@
                         <dependency>
                             <groupId>org.codenarc</groupId>
                             <artifactId>CodeNarc</artifactId>
-                            <version>1.2</version>
+                            <version>3.2.0-groovy-4.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
