@@ -1,2 +1,3 @@
-/* `buildPluginWithGradle` step provided by: https://github.com/jenkins-infra/pipeline-library */
-buildPluginWithGradle()
+buildPlugin(useContainerAgent: true, configurations: [
+    [platform: 'linux', jdk: 11],
+])

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>4.56</version>
+        <relativePath />
+    </parent>
+    <artifactId>job-dsl-parent</artifactId>
+    <version>${revision}${changelist}</version>
+    <packaging>pom</packaging>
+    <name>Job DSL Parent</name>
+    <url>https://github.com/jenkinsci/job-dsl-plugin</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <modules>
+        <module>job-dsl-ast</module>
+        <module>job-dsl-core</module>
+        <module>job-dsl-plugin</module>
+    </modules>
+    <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
+        <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
+        <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+        <tag>${scmTag}</tag>
+        <url>https://github.com/${gitHubRepo}</url>
+    </scm>
+    <distributionManagement>
+        <site>
+            <id>github</id>
+            <url>scm:git:git@github.com:${gitHubUser}/job-dsl-plugin.wiki.git</url>
+        </site>
+    </distributionManagement>
+    <properties>
+        <revision>1.82</revision>
+        <changelist>-SNAPSHOT</changelist>
+        <gitHubUser>jenkinsci</gitHubUser>
+        <gitHubRepo>jenkinsci/job-dsl-plugin</gitHubRepo>
+        <jenkins.version>2.361.4</jenkins.version>
+        <!-- TODO fix violations -->
+        <spotbugs.threshold>High</spotbugs.threshold>
+    </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib-nodep</artifactId>
+                <version>3.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.objenesis</groupId>
+                <artifactId>objenesis</artifactId>
+                <version>3.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.spockframework</groupId>
+                <artifactId>spock-core</artifactId>
+                <version>1.3-groovy-2.4</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <repositories>
+        <repository>
+            <id>repo.jenkins-ci.org</id>
+            <url>https://repo.jenkins-ci.org/public/</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repo.jenkins-ci.org</id>
+            <url>https://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codenarc</groupId>
+                            <artifactId>CodeNarc</artifactId>
+                            <version>1.2</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-publish-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <configuration>
+                    <checkinComment>updated wiki for ${project.version}</checkinComment>
+                    <scmBranch>master</scmBranch>
+                    <!-- TODO generate the wiki from docs/*.md replacing version with project.version and jenkinsVersion with jenkins.version -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

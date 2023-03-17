@@ -3,8 +3,8 @@ When you get a little bit expert in your usage of the Job DSL and Plugin, you mi
 # Run a DSL Script locally
 Before you push a new DSL script to Jenkins, it's helpful to run it locally and eyeball the resulting XML. To do this follow these steps:
 
-    curl -O https://repo.jenkins-ci.org/public/org/jenkins-ci/plugins/job-dsl-core/@version@/job-dsl-core-@version@-standalone.jar
-    java -jar job-dsl-core-@version@-standalone.jar sample.dsl.groovy
+    curl -O https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/job-dsl-core/@version@/job-dsl-core-@version@-jar-with-dependencies.jar
+    java -jar job-dsl-core-@version@-jar-with-dependencies.jar sample.dsl.groovy
 
 Replace the version number with the version of Job DSL that's installed in Jenkins to get comparable results. If you
 already have downloaded the JAR then you can ignore step 1.
@@ -15,16 +15,7 @@ By default the current directory is added to the classpath to be able to import 
 scripts, the classpath differs compared to running in Jenkins where the DSL script's directory is added to the
 classpath. Add the `-j` command line option to use the same behavior as when running in Jenkins:
 
-    java -jar job-dsl-core-@version@-standalone.jar -j sample.dsl.groovy
-
-# Generate a Job config.xml without having to fire up Jenkins
-1. Add some job dsl content to a file, say job.dsl
-1. Run the gradle command:  ./gradlew run -Pargs=job.dsl
-
-   Note: the run task loads the file relative to the job-dsl-core directory, so I always just put my test files in there.
-   Note2: if your dsl code contains a job named "myJob", the run task will generate myJob.xml.
-
-[The original discussion about this on the Newsgroup](https://groups.google.com/forum/#!msg/job-dsl-plugin/lOYH7bL7AcM/70N1AEW219cJ)
+    java -jar job-dsl-core-@version@-jar-with-dependencies.jar -j sample.dsl.groovy
 
 # Access the Jenkins Environment Variables
 To access the Jenkins Environment variables (such as BUILD_NUMBER) from within DSL scripts just wrap them in '${}'. E.g.:
