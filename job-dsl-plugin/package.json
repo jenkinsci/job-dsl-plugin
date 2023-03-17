@@ -16,9 +16,6 @@
     "url": "git+https://github.com/jenkinsci/job-dsl-plugin.git"
   },
   "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/jenkinsci/job-dsl-plugin/issues"
-  },
   "dependencies": {
     "backbone": "1.4.1",
     "backbone.marionette": "4.1.3",
