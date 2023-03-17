@@ -1,0 +1,43 @@
+<div class="layout-container">
+    <div class="title">
+        <nav class="navbar">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                        aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Jenkins Job DSL Plugin</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">API</a></li>
+                    <li><a href="https://github.com/jenkinsci/job-dsl-plugin">GitHub</a></li>
+                    <li><a href="http://job-dsl.herokuapp.com">Playground</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="tree">
+        <div class="form-inline search-filter">
+            <div class="form-group">
+                <button class="btn btn-default toggle-plugins form-control"><span class="glyphicon glyphicon-filter"></span><span class="filter-active invisible"></span></button>
+            </div>
+            <div class="search-section form-group">
+                <input class="search-input form-control" type="text" placeholder="Search methods...">
+                <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+                <span class="glyphicon glyphicon-remove-sign clear-search hide" aria-hidden="true"></span>
+            </div>
+        </div>
+        <div class="tree-wrapper"></div>
+    </div>
+    <div class="detail-wrapper">
+        <div class="loading-outer"><div class="loading-middle"><div class="loading-inner">Loading data...</div></div></div>
+    </div>
+    <div class="plugins-wrapper">
+        <div class="plugins-header"><label><span class="checkbox-wrapper"><input type="checkbox" /></span> Filter by Plugin</label></div>
+        <div class="plugins-body"></div>
+    </div>
+</div>

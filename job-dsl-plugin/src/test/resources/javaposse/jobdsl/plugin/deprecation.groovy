@@ -1,1 +1,1 @@
-jm.logPluginDeprecationWarning('matrix-auth', '2.0')
+jm.logPluginDeprecationWarning('matrix-auth', '999999.0')

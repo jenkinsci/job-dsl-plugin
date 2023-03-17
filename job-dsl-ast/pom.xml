@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>job-dsl-parent</artifactId>
+        <version>${revision}${changelist}</version>
+    </parent>
+    <artifactId>job-dsl-ast</artifactId>
+    <name>Job DSL Abstract Syntax Tree (AST)</name>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>addSources</goal>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <goal>removeStubs</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <target>
+                                <taskdef classname="org.codenarc.ant.CodeNarcTask" name="codenarc" />
+                                <echo level="info" message="Checking src/main/groovy code with CodeNarc" />
+                                <codenarc maxPriority1Violations="0" maxPriority2Violations="0" maxPriority3Violations="0" ruleSetFiles="file:${maven.multiModuleProjectDirectory}/config/codenarc/rules.groovy">
+                                    <fileset dir="src/main/groovy">
+                                        <include name="**/*.groovy" />
+                                    </fileset>
+                                    <report type="console" />
+                                </codenarc>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

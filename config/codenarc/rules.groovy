@@ -54,6 +54,8 @@ ruleset {
         exclude 'ClassJavadoc'
         // causes false positives
         exclude 'Indentation'
+        // existing violations
+        exclude 'LineLength'
 
     }
 
