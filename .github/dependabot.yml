@@ -19,3 +19,9 @@ updates:
       # https://github.com/jenkinsci/job-dsl-plugin/pull/1270
       - dependency-name: "bootstrap"
         versions: [">=4.0.0"]
+      # Jenkins core is stuck on Groovy 2.4 due to JENKINS-53372, and Spock 1.x
+      # is the last version to support Groovy 2.4. Until Jenkins core moves
+      # forward, this plugin is stuck on Spock 1.x. See:
+      # https://github.com/jenkinsci/job-dsl-plugin/pull/1273
+      - dependency-name: "org.spockframework:spock-core"
+        versions: [">=2.0"]
