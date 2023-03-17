@@ -17,8 +17,8 @@ export default Marionette.View.extend({
     onAttach: function() {
         this.application.highlightCode($(".highlight"));
         $(".detail-wrapper")
-            .find(".expand-closure")
-            .click(this.application.onExpandClick.bind(this.application));
+                .find(".expand-closure")
+                .click(this.application.onExpandClick.bind(this.application));
     },
 
     serializeData: function() {
