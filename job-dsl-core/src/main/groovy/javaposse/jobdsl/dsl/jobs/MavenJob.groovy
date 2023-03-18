@@ -8,6 +8,7 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.Project
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.helpers.LocalRepositoryLocation
+import javaposse.jobdsl.dsl.helpers.common.Threshold
 import javaposse.jobdsl.dsl.helpers.properties.MavenPropertiesContext
 import javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext
 import javaposse.jobdsl.dsl.helpers.step.StepContext
@@ -15,9 +16,6 @@ import javaposse.jobdsl.dsl.helpers.triggers.MavenTriggerContext
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext
 import javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext
 import javaposse.jobdsl.dsl.helpers.wrapper.WrapperContext
-
-import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COLOR_MAP
-import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_ORDINAL_MAP
 
 class MavenJob extends Project {
     private final List<String> mavenGoals = []
@@ -266,8 +264,8 @@ class MavenJob extends Project {
      */
     void postBuildSteps(String thresholdName, @DslContext(StepContext) Closure postBuildClosure) {
         Preconditions.checkArgument(
-            THRESHOLD_COLOR_MAP.containsKey(thresholdName),
-            "thresholdName must be one of these values ${THRESHOLD_COLOR_MAP.keySet().join(',')}"
+            Threshold.THRESHOLD_COLOR_MAP.containsKey(thresholdName),
+            "thresholdName must be one of these values ${Threshold.THRESHOLD_COLOR_MAP.keySet().join(',')}"
         )
 
         StepContext postBuildContext = new StepContext(jobManagement, this)
@@ -276,8 +274,8 @@ class MavenJob extends Project {
         configure { Node project ->
             project / runPostStepsIfResult {
                 delegate.name(thresholdName)
-                ordinal(THRESHOLD_ORDINAL_MAP[thresholdName])
-                color(THRESHOLD_COLOR_MAP[thresholdName])
+                ordinal(Threshold.THRESHOLD_ORDINAL_MAP[thresholdName])
+                color(Threshold.THRESHOLD_COLOR_MAP[thresholdName])
                 completeBuild(true)
             }
             postBuildContext.stepNodes.each {

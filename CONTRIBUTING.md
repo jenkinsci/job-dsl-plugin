@@ -241,23 +241,22 @@ void clean(boolean clean = true) {
 ## Building
 
 Prerequisites:
-* JDK 8
+* JDK 11
 
 To build the plugin from source:
 
-    ./gradlew build
+    mvn clean verify -Pquick-build
 
 To run Jenkins (http://localhost:8080) and test the plugin:
 
-    ./gradlew server
+    mvn hpi:run
 
-Build job-dsl.hpi to be installed in Jenkins:
+To work on the API viewer:
 
-    ./gradlew jpi
+1. Build the plugin from source with `mvn clean verify -Pquick-build`.
+2. Add `${PROJECT_ROOT}/job-dsl-plugin/node` to your `PATH`.
+3. From `${PROJECT_ROOT}/job-dsl-plugin`, run `npm start`.
 
-IntelliJ IDEA and Eclipse (STS) have the ability to open Gradle projects directly, but they both have issues. IDEA
-sometimes does not detect all plugin dependencies (e.g. `hudson.maven.MavenModuleSet`) and as a workaround you need to
-hit the refresh button in the Gradle tool window until it does. You also need to run the `localizer` task to generate
-the `Messages` class before building and testing the project in the IDE:
-
-    ./gradlew localizer
+This will build and launch the API viewer in development mode, opening the result in your browser.
+Development mode allows you to debug the JavaScript and CSS in your browser, and it does not require a Jenkins installation.
+This mode is useful for quickly iterating on changes.

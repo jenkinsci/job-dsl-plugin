@@ -1329,7 +1329,7 @@ folder('folder-a/folder-b') {
 
         then:
         build.getLog(25).join('\n') =~
-    /Warning: \(script, line 1\) support for Matrix Authorization Strategy Plugin versions older than 2.0 is deprecated/
+    /Warning: \(script, line 1\) support for Matrix Authorization Strategy Plugin versions older than 999999.0 is deprecated/
         build.result == result
 
         where:

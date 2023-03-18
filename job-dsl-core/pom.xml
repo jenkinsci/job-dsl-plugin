@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>job-dsl-parent</artifactId>
+        <version>${revision}${changelist}</version>
+    </parent>
+    <artifactId>job-dsl-core</artifactId>
+    <name>Job DSL Core</name>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>job-dsl-ast</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.github.x-stream</groupId>
+                    <artifactId>mxparser</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+        </dependency>
+        <!-- for runtime use, not just for testing -->
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <!-- used by Spock -->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- used by Spock -->
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <goal>generateTestStubs</goal>
+                            <goal>compileTests</goal>
+                            <goal>removeStubs</goal>
+                            <goal>removeTestStubs</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Spec.class</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Main-Class>javaposse.jobdsl.Run</Main-Class>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Jenkins-ClassFilter-Whitelisted>true</Jenkins-ClassFilter-Whitelisted>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-api-doc</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <mainClass>javaposse.jobdsl.dsl.doc.ApiDocGenerator</mainClass>
+                            <classpathFilenameExclusions>
+                                <classpathFilenameExclusion>job-dsl-ast.jar</classpathFilenameExclusion>
+                            </classpathFilenameExclusions>
+                            <systemProperties>
+                                <systemProperty>
+                                    <key>project.basedir</key>
+                                    <value>${project.basedir}</value>
+                                </systemProperty>
+                            </systemProperties>
+                            <arguments>
+                                <argument>${project.version}</argument>
+                                <argument>${project.build.outputDirectory}/javaposse/jobdsl/dsl/dsl.json</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>javaposse.jobdsl.Run</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <target>
+                                <taskdef classname="org.codenarc.ant.CodeNarcTask" name="codenarc" />
+                                <echo level="info" message="Checking src/main/groovy code with CodeNarc" />
+                                <codenarc maxPriority1Violations="0" maxPriority2Violations="0" maxPriority3Violations="0" ruleSetFiles="file:${maven.multiModuleProjectDirectory}/config/codenarc/rules.groovy">
+                                    <fileset dir="src/main/groovy">
+                                        <include name="**/*.groovy" />
+                                    </fileset>
+                                    <report type="console" />
+                                </codenarc>
+                                <echo level="info" message="Checking src/test/groovy code with CodeNarc" />
+                                <codenarc maxPriority1Violations="0" maxPriority2Violations="0" maxPriority3Violations="0" ruleSetFiles="file:${maven.multiModuleProjectDirectory}/config/codenarc/rules-test.groovy">
+                                    <fileset dir="src/test/groovy">
+                                        <include name="**/*.groovy" />
+                                    </fileset>
+                                    <report type="console" />
+                                </codenarc>
+                                <echo level="info" message="Checking src/main/docs/examples code with CodeNarc" />
+                                <codenarc maxPriority1Violations="0" maxPriority2Violations="0" maxPriority3Violations="0" ruleSetFiles="file:${maven.multiModuleProjectDirectory}/config/codenarc/rules-examples.groovy">
+                                    <fileset dir="src/main/docs/examples">
+                                        <include name="**/*.groovy" />
+                                    </fileset>
+                                    <report type="console" />
+                                </codenarc>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

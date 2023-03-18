@@ -4,7 +4,7 @@ import groovy.json.JsonBuilder
 import spock.lang.Specification
 
 class ApiDocGeneratorSpec extends Specification {
-    private final ApiDocGenerator apiDocGenerator = new ApiDocGenerator()
+    private final ApiDocGenerator apiDocGenerator = new ApiDocGenerator(new File('.'))
 
     void 'generateApi - success'() {
         when:

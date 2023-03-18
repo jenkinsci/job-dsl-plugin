@@ -21,17 +21,23 @@ import java.lang.reflect.Type
 
 class ApiDocGenerator {
 
-    final private GroovyDocHelper docHelper = new GroovyDocHelper('src/main/groovy/')
+    final private File baseDir
+    final private GroovyDocHelper docHelper = new GroovyDocHelper(new File("${baseDir}/src/main/groovy/"))
     final private String commandDocsPath = 'src/main/docs'
     final private Class rootClass = DslFactory
     final private Map allContextClasses = [:]
     final private List allContextClassesList = []
 
+    ApiDocGenerator(File baseDir) {
+        this.baseDir = baseDir
+    }
+
     static void main(String[] args) {
         String version = args[0]
         String outputPath = args[1]
+        File baseDir = new File(System.properties['project.basedir'] ?: '.')
 
-        JsonBuilder builder = new ApiDocGenerator().generateApi(version)
+        JsonBuilder builder = new ApiDocGenerator(baseDir).generateApi(version)
 
         File file = new File(outputPath)
         file.parentFile.mkdirs()
@@ -126,7 +132,7 @@ class ApiDocGenerator {
 
     private String getExamples(Class clazz, String methodName) {
         String path = "${clazz.name.replaceAll('\\.', '/')}/$methodName"
-        File file = new File("${commandDocsPath}/examples/${path}.groovy")
+        File file = new File("${baseDir}/${commandDocsPath}/examples/${path}.groovy")
         if (file.exists()) {
             file.text
         } else if (clazz.superclass) {
