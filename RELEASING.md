@@ -5,6 +5,7 @@ These are the steps to release the Maven-based Job DSL plugin.
 * Set `compatibleSinceVersion` to the new version if deprecated features have been removed
 * Prepare and perform the release: `mvn release:prepare release:perform`
 * Edit the [draft release notes](https://github.com/jenkinsci/job-dsl-plugin/releases) and publish them
+* File a pull request to add the newly-released version to the API viewer in `job-dsl-plugin/pom.xml` and `job-dsl-plugin/src/main/hbs/root.hbs`
 * Close all resolved issues in [JIRA](https://issues.jenkins-ci.org/secure/Dashboard.jspa?selectPageId=15341)
 * Open a pull request to update the [Job DSL Playground](https://github.com/sheehan/job-dsl-playground)
 * Open a pull request to update the [Job DSL Gradle Example](https://github.com/sheehan/job-dsl-gradle-example)
