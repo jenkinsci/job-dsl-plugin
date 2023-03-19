@@ -6,10 +6,20 @@ ruleset {
     ruleset('rulesets/concurrency.xml')
 
     ruleset('rulesets/convention.xml') {
+        // pending GROOVY-8814
+        exclude 'CompileStatic'
         // we don't care
         exclude 'CouldBeSwitchStatement'
         // this rule does not necessarily lead to better code
         exclude 'IfStatementCouldBeTernary'
+        // this rule does not necessarily lead to better code
+        exclude 'ImplicitClosureParameter'
+        // we use UnnecessaryReturnKeyword instead
+        exclude 'ImplicitReturnStatement'
+        // satisfying this rule would introduce bugs
+        exclude 'NoDouble'
+        // satisfying this rule would introduce bugs
+        exclude 'NoFloat'
         // we don't care
         exclude 'StaticMethodsBeforeInstanceMethods'
         // we don't care
@@ -36,6 +46,16 @@ ruleset {
     ruleset('rulesets/exceptions.xml')
 
     ruleset('rulesets/formatting.xml') {
+        // this rule does not necessarily lead to better code
+        ClassStartsWithBlankLine {
+            blankLineRequired = false
+        }
+
+        // this rule does not necessarily lead to better code
+        ClassEndsWithBlankLine {
+            blankLineRequired = false
+        }
+
         // empty blocks like {} are OK
         SpaceAfterOpeningBrace {
             ignoreEmptyBlock = true
@@ -54,8 +74,6 @@ ruleset {
         exclude 'ClassJavadoc'
         // causes false positives
         exclude 'Indentation'
-        // existing violations
-        exclude 'LineLength'
 
     }
 
@@ -111,9 +129,12 @@ ruleset {
             // constructors with annotations are probably necessary
             ignoreAnnotations = true
         }
+        UnnecessaryReturnKeyword
 
         // we don't care, does not necessarily lead to better code
         exclude 'UnnecessaryElseStatement'
+        // we don't care, does not necessarily lead to better code
+        exclude 'UnnecessaryGetter'
         // we don't care for now, does not necessarily lead to better code
         exclude 'UnnecessaryObjectReferences'
         // we do "unnecessary" overrides for the @NoDoc annotation

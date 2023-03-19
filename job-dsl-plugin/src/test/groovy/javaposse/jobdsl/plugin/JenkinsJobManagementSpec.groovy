@@ -125,7 +125,7 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         buffer.toString() =~
-                /Warning: \(.+, line \d+\) support for Script Security Plugin versions older than 999999.0 is deprecated/
+               /Warning: \(.+, line \d+\) support for Script Security Plugin versions older than 999999.0 is deprecated/
     }
 
     def 'logPluginDeprecationWarning does not log anything if plugin version is newer'() {
