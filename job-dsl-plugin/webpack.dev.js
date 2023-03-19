@@ -11,9 +11,9 @@ module.exports = merge(common, {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: "../job-dsl-core/target/classes/javaposse/jobdsl/dsl/dsl.json" },
         { from: "src/main/json/development/config.json" },
         { from: "target/update-center.json" },
+        { from: "target/versions/*.json", to: "[name][ext]" },
       ],
     }),
   ],
