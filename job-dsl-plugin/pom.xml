@@ -45,11 +45,12 @@
     </developers>
     <distributionManagement>
         <site>
-            <id>github</id>
+            <id>github.com</id>
             <url>scm:git:git@github.com:${gitHubUser}/job-dsl-plugin.git</url>
         </site>
     </distributionManagement>
     <properties>
+        <gitHubUser>jenkinsci</gitHubUser>
         <!-- TODO GMavenPlus does not support Javadoc -->
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <node.version>18.14.2</node.version>
@@ -476,6 +477,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>3.1.0</version>
                 <configuration>
                     <checkinComment>updated gh-pages for ${project.version}</checkinComment>
                     <scmBranch>gh-pages</scmBranch>

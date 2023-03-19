@@ -29,16 +29,9 @@
         <tag>${scmTag}</tag>
         <url>https://github.com/${gitHubRepo}</url>
     </scm>
-    <distributionManagement>
-        <site>
-            <id>github</id>
-            <url>scm:git:git@github.com:${gitHubUser}/job-dsl-plugin.wiki.git</url>
-        </site>
-    </distributionManagement>
     <properties>
         <revision>1.82</revision>
         <changelist>-SNAPSHOT</changelist>
-        <gitHubUser>jenkinsci</gitHubUser>
         <gitHubRepo>jenkinsci/job-dsl-plugin</gitHubRepo>
         <jenkins.version>2.361.4</jenkins.version>
         <!-- TODO fix violations -->
@@ -101,11 +94,6 @@
                         </dependency>
                     </dependencies>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-scm-publish-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -115,15 +103,6 @@
                 <configuration>
                     <!-- Keep the tag names aligned with previous releases -->
                     <tagNameFormat>job-dsl-@{project.version}</tagNameFormat>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-scm-publish-plugin</artifactId>
-                <configuration>
-                    <checkinComment>updated wiki for ${project.version}</checkinComment>
-                    <scmBranch>master</scmBranch>
-                    <!-- TODO generate the wiki from docs/*.md replacing version with project.version and jenkinsVersion with jenkins.version -->
                 </configuration>
             </plugin>
         </plugins>
