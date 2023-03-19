@@ -296,7 +296,8 @@ class ScmContext extends AbstractExtensibleContext {
         checkNotNull(parentProject, 'parentProject must not be null')
         checkArgument(
                 PublisherContext.VALID_CLONE_WORKSPACE_CRITERIA.contains(criteria),
-                "Clone Workspace Criteria needs to be one of these values: ${PublisherContext.VALID_CLONE_WORKSPACE_CRITERIA.join(',')}"
+                'Clone Workspace Criteria needs to be one of these values: '
+                        + PublisherContext.VALID_CLONE_WORKSPACE_CRITERIA.join(',')
         )
 
         scmNodes << new NodeBuilder().scm(class: 'hudson.plugins.cloneworkspace.CloneWorkspaceSCM') {
