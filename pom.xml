@@ -85,7 +85,7 @@
                         <dependency>
                             <groupId>org.codenarc</groupId>
                             <artifactId>CodeNarc</artifactId>
-                            <version>1.2</version>
+                            <version>1.6.1</version>
                         </dependency>
                     </dependencies>
                 </plugin>

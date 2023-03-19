@@ -37,7 +37,7 @@
                             <target>
                                 <taskdef classname="org.codenarc.ant.CodeNarcTask" name="codenarc" />
                                 <echo level="info" message="Checking src/main/groovy code with CodeNarc" />
-                                <codenarc maxPriority1Violations="0" maxPriority2Violations="0" maxPriority3Violations="0" ruleSetFiles="file:${maven.multiModuleProjectDirectory}/config/codenarc/rules.groovy">
+                                <codenarc failOnError="true" maxPriority1Violations="0" maxPriority2Violations="0" maxPriority3Violations="0" ruleSetFiles="file:${maven.multiModuleProjectDirectory}/config/codenarc/rules.groovy">
                                     <fileset dir="src/main/groovy">
                                         <include name="**/*.groovy" />
                                     </fileset>

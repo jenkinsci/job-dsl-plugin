@@ -20,7 +20,6 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 class ApiDocGenerator {
-
     final private File baseDir
     final private GroovyDocHelper docHelper = new GroovyDocHelper(new File("${baseDir}/src/main/groovy/"))
     final private String commandDocsPath = 'src/main/docs'
