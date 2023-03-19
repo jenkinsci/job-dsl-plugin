@@ -111,6 +111,14 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <!-- Keep the tag names aligned with previous releases -->
+                    <tagNameFormat>job-dsl-@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-scm-publish-plugin</artifactId>
                 <configuration>
                     <checkinComment>updated wiki for ${project.version}</checkinComment>
