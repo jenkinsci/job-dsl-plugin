@@ -33,7 +33,7 @@
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
-            <version>1.4</version>
+            <version>1.6</version>
         </dependency>
         <!-- used by Spock -->
         <dependency>
