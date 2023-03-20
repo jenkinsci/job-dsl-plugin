@@ -601,7 +601,7 @@ class WrapperContextSpec extends Specification {
             }
             with(preBuildSteps[0].children()[1]) {
                 name() == 'hudson.tasks.ArtifactArchiver'
-                children().size() == 5
+                children().size() == 7
             }
             postSuccessfulBuildSteps[0].children().size() == 3
             with(postSuccessfulBuildSteps[0].children()[0]) {
@@ -616,7 +616,7 @@ class WrapperContextSpec extends Specification {
             }
             with(postSuccessfulBuildSteps[0].children()[2]) {
                 name() == 'hudson.tasks.ArtifactArchiver'
-                children().size() == 5
+                children().size() == 7
             }
             postBuildSteps[0].children().size() == 2
             with(postBuildSteps[0].children()[0]) {
@@ -626,7 +626,7 @@ class WrapperContextSpec extends Specification {
             }
             with(postBuildSteps[0].children()[1]) {
                 name() == 'hudson.tasks.ArtifactArchiver'
-                children().size() == 5
+                children().size() == 7
             }
             postFailedBuildSteps[0].children().size() == 2
             with(postFailedBuildSteps[0].children()[0]) {
@@ -636,7 +636,7 @@ class WrapperContextSpec extends Specification {
             }
             with(postFailedBuildSteps[0].children()[1]) {
                 name() == 'hudson.tasks.ArtifactArchiver'
-                children().size() == 5
+                children().size() == 7
             }
             custom[0].value() == 'value'
         }
