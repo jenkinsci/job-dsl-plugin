@@ -107,7 +107,7 @@ class ColumnsContext extends AbstractExtensibleContext {
     /**
      * Adds a column for showing the number of unclaimed test failures.
      *
-     * @since 1.78
+     * @since 1.83
      */
     @RequiresPlugin(id = 'claim', minimumVersion = '2.17')
     void unclaimedTestFailures() {
