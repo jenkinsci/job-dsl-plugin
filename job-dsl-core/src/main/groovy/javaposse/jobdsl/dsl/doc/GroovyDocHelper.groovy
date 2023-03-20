@@ -11,7 +11,7 @@ import java.lang.reflect.Method
 class GroovyDocHelper {
     final GroovyRootDoc rootDoc
 
-    GroovyDocHelper(String sourcePath) {
+    GroovyDocHelper(File sourcePath) {
         rootDoc = createRootDoc(sourcePath)
     }
 
@@ -98,15 +98,14 @@ class GroovyDocHelper {
         }
     }
 
-    private static GroovyRootDoc createRootDoc(String sourcePath) {
+    private static GroovyRootDoc createRootDoc(File sourcePath) {
         List filePaths = []
-        File root = new File(sourcePath)
-        root.eachFileRecurse { File file ->
+        sourcePath.eachFileRecurse { File file ->
             if (file.isFile()) {
-                filePaths.add file.canonicalPath - root.canonicalPath
+                filePaths.add file.canonicalPath - sourcePath.canonicalPath
             }
         }
-        GroovyDocTool tool = new GroovyDocTool([root] as String[])
+        GroovyDocTool tool = new GroovyDocTool([sourcePath] as String[])
         tool.add filePaths
 
         tool.rootDoc
