@@ -269,6 +269,34 @@ class ListViewSpec<T extends ListView> extends Specification {
         1 * jobManagement.requirePlugin('extra-columns')
     }
 
+    def 'claim column'() {
+        when:
+        view.columns {
+            claim()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'hudson.plugins.claim.ClaimColumn'
+        1 * jobManagement.requirePlugin('claim')
+    }
+
+    def 'unclaimed test failures column'() {
+        when:
+        view.columns {
+            unclaimedTestFailures()
+        }
+
+        then:
+        Node root = view.node
+        root.columns.size() == 1
+        root.columns[0].value().size() == 1
+        root.columns[0].value()[0].name() == 'hudson.plugins.claim.UnclaimedTestFailuresColumn'
+        1 * jobManagement.requireMinimumPluginVersion('claim', '2.17')
+    }
+
     def 'robotResults column'() {
         when:
         view.columns {

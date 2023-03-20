@@ -9,3 +9,11 @@ listView('project-A') {
         buildButton()
     }
 }
+
+listView('project-B') {
+    columns {
+        name()
+        claim()
+        unclaimedTestFailures()
+    }
+}
