@@ -4,12 +4,13 @@
   "description": "Job DSL",
   "private": true,
   "scripts": {
-    "mvnbuild": "npm run build",
+    "mvnbuild": "npm run build && npm run gh-pages",
     "mvntest": "npm run test",
     "test": "eslint --config .eslintrc.js",
     "watch": "webpack --watch --config webpack.dev.js",
     "start": "webpack serve --open --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js"
+    "build": "webpack --config webpack.plugin.js",
+    "gh-pages": "webpack --config webpack.gh-pages.js"
   },
   "repository": {
     "type": "git",
