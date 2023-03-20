@@ -32,7 +32,26 @@ scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Suppo
 Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
 
 ## Release Notes
-* 1.78 (unreleased)
+* Release notes for versions >= 1.82 can be found on the [GitHub releases page](https://github.com/jenkinsci/job-dsl-plugin/releases).
+* 1.81.1 (March 13 2023)
+  * Internal dependency management updates
+  * Fix concurrent modification exception in ExecuteDslScripts ([GH-1253](https://github.com/jenkinsci/job-dsl-plugin/pull/1253) [JENKINS-69064](https://issues.jenkins.io/browse/JENKINS-69064)).
+  * Importing a workspace file into a Job DSL script with the Groovy Sandbox does not work on Java 17 ([JENKINS-70361](https://issues.jenkins.io/browse/JENKINS-70361))
+* 1.81.0 (July 18 2022)
+  * Add missing options for Parameterized Remote Trigger Plugin ([GH-1250](https://github.com/jenkinsci/job-dsl-plugin/pull/1250) [JENKINS-68781](https://issues.jenkins.io/browse/JENKINS-68781)).
+* 1.80.0 (July 1 2022)
+  * Don't destroy credentials when re-creating organization folders ([GH-1251](https://github.com/jenkinsci/job-dsl-plugin/pull/1251) [JENKINS-44681](https://issues.jenkins.io/browse/JENKINS-44681))
+* 1.79.0 (April 14 2022)
+  * Allow using classes not supported by `structs` for `DescribableContext` ([GH-1202](https://github.com/jenkinsci/job-dsl-plugin/pull/1202) [JENKINS-57435](https://issues.jenkins-ci.org/browse/JENKINS-57435))
+    ** Note that this has the potential to be unsafe and can lead to source-controlled secrets. Please be **very cautious** when embedding secrets into source control!
+* 1.78.3 (January 01 2022)
+  * Replace JSR305 annotations with SpotBugs annotations ([JENKINS-55973](https://issues.jenkins-ci.org/browse/JENKINS-55973))
+* 1.78.2 (January 01 2022)
+  * Prepare for sunset icon removal from core (https://github.com/jenkinsci/job-dsl-plugin/pull/1245)
+* 1.78.1 (October 27 2021)
+  * Fix: Ensure API Viewer is packaged correctly into the built plugin ([JENKINS-66988](https://issues.jenkins.io/browse/JENKINS-66988))
+* 1.78 (October 27 2021)
+  * Don't destroy credentials when re-creating folders ([JENKINS-44681](https://issues.jenkins.io/browse/JENKINS-44681))
   * Close all streams that are passed into `userContent`
   * Increased the minimum supported Jenkins version to 2.176
   * Enhanced support for [Subversion Plugin](https://plugins.jenkins.io/subversion)

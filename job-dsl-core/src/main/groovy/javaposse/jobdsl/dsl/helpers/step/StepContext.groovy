@@ -622,8 +622,19 @@ class StepContext extends AbstractExtensibleContext {
                     CREDENTIALS__PLUGIN('credentialsPlugin')
                 }
             }
-            loadParamsFromFile(false)
-            parameterFile()
+            loadParamsFromFile(context.parameterFile as boolean)
+            parameterFile(context.parameterFile)
+            if (context.remoteJenkinsUrl) {
+                remoteJenkinsUrl(context.remoteJenkinsUrl)
+            }
+            abortTriggeredJob(context.abortTriggeredJob)
+            maxConn(context.maxConn)
+            enhancedLogging(context.enhancedLogging)
+            useCrumbCache(context.useCrumbCache)
+            useJobInfoCache(context.useJobInfoCache)
+            disabled(context.disabled)
+            overrideTrustAllCertificates(context.overrideTrustAllCertificates)
+            trustAllCertificates(context.trustAllCertificates)
             queryString()
         }
     }

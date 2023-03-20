@@ -8,7 +8,7 @@ import javaposse.jobdsl.plugin.SeedReference
 import jenkins.model.Jenkins
 import jenkins.model.TransientActionFactory
 
-import javax.annotation.Nonnull
+import edu.umd.cs.findbugs.annotations.NonNull
 
 @Extension
 class SeedJobTransientActionFactory extends TransientActionFactory<Item> {
@@ -17,9 +17,9 @@ class SeedJobTransientActionFactory extends TransientActionFactory<Item> {
         Item
     }
 
-    @Nonnull
+    @NonNull
     @Override
-    Collection<? extends Action> createFor(@Nonnull Item target) {
+    Collection<? extends Action> createFor(@NonNull Item target) {
         DescriptorImpl descriptor = Jenkins.get().getDescriptorByType(DescriptorImpl)
         SeedReference seedReference = descriptor.generatedJobMap[target.fullName]
         seedReference != null ? [new SeedJobAction(target, seedReference)] : []

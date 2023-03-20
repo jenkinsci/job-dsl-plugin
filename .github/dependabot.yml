@@ -1,0 +1,33 @@
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates
+---
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # Jenkins core is stuck on Groovy 2.4 due to JENKINS-53372, and CodeNarc
+      # 1.x is the last version to support Groovy 2.4. Until Jenkins core moves
+      # forward, this plugin is stuck on CodeNarc 1.x.
+      - dependency-name: "org.codenarc:CodeNarc"
+        versions: [">=2.0.0"]
+      # Jenkins core is stuck on Groovy 2.4 due to JENKINS-53372, and Spock 1.x
+      # is the last version to support Groovy 2.4. Until Jenkins core moves
+      # forward, this plugin is stuck on Spock 1.x. See:
+      # https://github.com/jenkinsci/job-dsl-plugin/pull/1273
+      - dependency-name: "org.spockframework:spock-core"
+        versions: [">=2.0", "1.3-groovy-2.5"]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "job-dsl-plugin"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # Breaks the appearance of the API viewer. See:
+      # https://github.com/jenkinsci/job-dsl-plugin/pull/1270
+      - dependency-name: "bootstrap"
+        versions: [">=4.0.0"]

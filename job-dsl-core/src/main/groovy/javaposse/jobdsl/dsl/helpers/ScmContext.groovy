@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
+import javaposse.jobdsl.dsl.helpers.publisher.PublisherContext
 import javaposse.jobdsl.dsl.helpers.scm.ClearCaseContext
 import javaposse.jobdsl.dsl.helpers.scm.GitContext
 import javaposse.jobdsl.dsl.helpers.scm.HgContext
@@ -20,7 +21,6 @@ import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 import static javaposse.jobdsl.dsl.Preconditions.checkState
-import static javaposse.jobdsl.dsl.helpers.publisher.PublisherContext.VALID_CLONE_WORKSPACE_CRITERIA
 
 @ContextType('hudson.scm.SCM')
 class ScmContext extends AbstractExtensibleContext {
@@ -295,8 +295,9 @@ class ScmContext extends AbstractExtensibleContext {
     void cloneWorkspace(String parentProject, String criteria = 'Any') {
         checkNotNull(parentProject, 'parentProject must not be null')
         checkArgument(
-                VALID_CLONE_WORKSPACE_CRITERIA.contains(criteria),
-                "Clone Workspace Criteria needs to be one of these values: ${VALID_CLONE_WORKSPACE_CRITERIA.join(',')}"
+                PublisherContext.VALID_CLONE_WORKSPACE_CRITERIA.contains(criteria),
+                'Clone Workspace Criteria needs to be one of these values: '
+                        + PublisherContext.VALID_CLONE_WORKSPACE_CRITERIA.join(',')
         )
 
         scmNodes << new NodeBuilder().scm(class: 'hudson.plugins.cloneworkspace.CloneWorkspaceSCM') {

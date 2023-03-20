@@ -58,7 +58,7 @@ contexts:
 * `javaposse.jobdsl.dsl.helpers.BuildParametersContext` for the `parameters` context
 * `javaposse.jobdsl.dsl.helpers.publisher.MavenPublisherContext` for the `publishers` context, but only for Maven jobs
 * `javaposse.jobdsl.dsl.helpers.triggers.MavenTriggerContext` for the `triggers` context, but only for Maven jobs
-* `javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext` for the `wrappers` context, but only for Maven jobs 
+* `javaposse.jobdsl.dsl.helpers.wrapper.MavenWrapperContext` for the `wrappers` context, but only for Maven jobs
 * `javaposse.jobdsl.dsl.helpers.AxisContext` for the `axes` context of matrix jobs
 * `javaposse.jobdsl.dsl.helpers.IvyBuilderContext` for the `ivyBuilder` context of Ivy jobs
 * `javaposse.jobdsl.dsl.helpers.common.DownstreamTriggerParameterContext` for the `parameters` context of parameterized
@@ -88,12 +88,12 @@ To implement this DSL extension, a `ContextExtensionPoint` subclass must contain
 signature. The method must return a pre-configured `ExampleBuilder`.
 
     package org.jenkinsci.plugins.example;
-    
+
     import hudson.Extension;
     import javaposse.jobdsl.dsl.helpers.step.StepContext;
     import javaposse.jobdsl.plugin.ContextExtensionPoint;
     import javaposse.jobdsl.plugin.DslExtensionMethod;
-    
+
     @Extension(optional = true)
     public class ExampleJobDslExtension extends ContextExtensionPoint {
         @DslExtensionMethod(context = StepContext.class)
@@ -120,17 +120,17 @@ The example above can be changed to use a nested DSL context for the `ExampleBui
             }
         }
     }
-    
-A class implementing `Context` will provide the methods for the nested DSL context. 
+
+A class implementing `Context` will provide the methods for the nested DSL context.
 
     package org.jenkinsci.plugins.example;
-    
+
     import javaposse.jobdsl.dsl.Context;
-    
+
     public class ExampleDslContext implements Context {
         String optionA
         int optionB
-    
+
         public void optionA(String value) {
             optionA = value;
         }
@@ -139,25 +139,25 @@ A class implementing `Context` will provide the methods for the nested DSL conte
             optionB = value;
         }
     }
-    
+
 The `@DslExtensionMethod` annotated method in the `ContextExtensionPoint` subclass has a single `Runnable` parameter,
 which will be executed using the custom `Context` class. It returns a new `ExampleBuilder` configured with values from
 the nested context.
 
     package org.jenkinsci.plugins.example;
-    
+
     import hudson.Extension;
     import javaposse.jobdsl.dsl.helpers.step.StepContext;
     import javaposse.jobdsl.plugin.ContextExtensionPoint;
     import javaposse.jobdsl.plugin.DslExtensionMethod;
-    
+
     @Extension(optional = true)
     public class ExampleJobDslExtension extends ContextExtensionPoint {
         @DslExtensionMethod(context = StepContext.class)
         public Object example(Runnable closure) {
             ExampleDslContext context = new ExampleDslContext();
             executeInContext(closure, context);
-    
+
             return new ExampleBuilder(context.optionA, context.optionB);
         }
     }
@@ -185,14 +185,14 @@ the workspace of the seed job.
             example('bar', readFileFromWorkspace('example-2.json'))
         }
     }
-    
+
 The `@DslExtensionMethod` uses the environment to store the content of the config file, so that is can be retrieved in
 the listener methods and be written to a file. The implementation does not need to distinguish between creation and
 update, so it delegates the creation event to `notifyItemUpdated`. A unique key for the `DslEnvironment` must be chosen
-because build steps can be added multiple times.  
- 
+because build steps can be added multiple times.
+
     package org.jenkinsci.plugins.example;
-    
+
     import hudson.Extension;
     import hudson.model.Item;
     import javaposse.jobdsl.dsl.helpers.step.StepContext;
@@ -204,7 +204,7 @@ because build steps can be added multiple times.
     import java.io.File;
     import java.io.IOException;
     import java.util.Map;
-    
+
     @Extension(optional = true)
     public class ExampleJobDslExtension extends ContextExtensionPoint {
         private static final String PREFIX = "example.";
@@ -226,7 +226,7 @@ because build steps can be added multiple times.
         public void notifyItemUpdated(Item item,
                                       DslEnvironment dslEnvironment) {
             for (Map.Entry<String, Object> entry : dslEnvironment.entrySet()) {
-                String key = entry.getKey();  
+                String key = entry.getKey();
                 if (key.startsWith(PREFIX)) {
                     String fileName = key.substring(PREFIX.length()) + ".json";
                     File configFile = new File(item.getRootDir(), fileName);

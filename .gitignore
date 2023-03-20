@@ -1,33 +1,20 @@
 target
-bin
-.classpath
-.settings
-.project
-*.iml
-*.ipr
-*.iws
-/.idea
-.nb-gradle-properties
+
+# mvn hpi:run
 work
-nbactions.xml
-/.nb-gradle/
-/.gradle
-gradle-app.setting
-.*.sw?
-*~
-*.bak
-/local*
-build
-generated
-*/out/
-/classes
-.DS_Store
 
-#Jenkins specific out
-*.hpi
+# IntelliJ IDEA project files
+*.iml
+*.iws
+*.ipr
+.idea
 
-#Vagrant
-.vagrant
-.bundle
+# Eclipse project files
+.settings
+.classpath
+.project
 
-node_modules
+# Web application
+job-dsl-plugin/node
+job-dsl-plugin/node_modules
+job-dsl-plugin/src/main/webapp/api-viewer
