@@ -1,6 +1,7 @@
 package javaposse.jobdsl.dsl.helpers.icon
 
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
+import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
