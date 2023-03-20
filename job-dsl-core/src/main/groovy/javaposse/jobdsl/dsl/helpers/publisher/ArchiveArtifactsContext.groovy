@@ -68,7 +68,7 @@ class ArchiveArtifactsContext extends AbstractContext {
     /**
      * Indicates whether symbolic links should be followed or not. Defaults to {@code true}.
      *
-     * @since 1.82
+     * @since 1.83
      */
     void followSymlinks(boolean followSymlinks = true) {
         this.followSymlinks = followSymlinks
@@ -77,7 +77,7 @@ class ArchiveArtifactsContext extends AbstractContext {
     /**
      * Indicates whether include and exclude patterns should be considered as case sensitive. Defaults to {@code true}.
      *
-     * @since 1.82
+     * @since 1.83
      */
     void caseSensitive(boolean caseSensitive = true) {
         this.caseSensitive = caseSensitive
