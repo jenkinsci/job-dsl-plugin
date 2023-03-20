@@ -1,4 +1,3 @@
-const path = require("path");
 const webpack = require("webpack");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -62,6 +61,5 @@ module.exports = {
     assetModuleFilename: "[name].[hash][ext][query]",
     clean: true,
     filename: "[name].[contenthash].js",
-    path: path.join(__dirname, "src/main/webapp/api-viewer"),
   },
 };
