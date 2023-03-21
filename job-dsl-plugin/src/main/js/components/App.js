@@ -45,8 +45,16 @@ import TreeView from "../views/TreeView";
             $('.loading-outer').addClass('loading');
             this.loadConfig().then(this.loadUpdateCenter.bind(this)).then(this.loadSelectedDsl.bind(this)).then(function() {
                 Backbone.history.start({pushState: false});
+                if (!this.config.embedded) {
+                    $('.version-select').show()
+                }
             }.bind(this));
 
+            $('.version-select').change(function() {
+                this.loadSelectedDsl().then(function() {
+                    Backbone.history.loadUrl(Backbone.history.getHash());
+                });
+            }.bind(this));
             $('.toggle-plugins').click(function(e) {
                 if ($('.plugins-wrapper').is(':visible')) {
                     this.layout.hide('east');
@@ -93,7 +101,7 @@ import TreeView from "../views/TreeView";
         },
 
         loadSelectedDsl: function() {
-            var url = this.config.embedded ? '../../../job-dsl-api-viewer/data' : 'dsl.json';
+            var url = this.config.embedded ? '../../../job-dsl-api-viewer/data' : $('.version-select').val();
             return this.dslLoader.fetch(url).then(this.onDslFetchComplete.bind(this), this.onDslFetchFailure.bind(this));
         },
 

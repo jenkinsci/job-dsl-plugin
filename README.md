@@ -124,7 +124,8 @@ Find the complete documentation on the [Wiki](https://github.com/jenkinsci/job-d
 Release Notes
 -------------
 
-See the [Wiki](https://github.com/jenkinsci/job-dsl-plugin/wiki#release-notes).
+Release notes for versions >= 1.82 can be found on the [GitHub releases page](https://github.com/jenkinsci/job-dsl-plugin/releases).
+All notable changes prior to 1.82 are documented in the [Wiki](https://github.com/jenkinsci/job-dsl-plugin/wiki#release-notes).
 
 
 Community

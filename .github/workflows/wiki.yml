@@ -1,0 +1,48 @@
+name: Push to the GitHub Wiki
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "docs/**"
+      - "pom.xml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  push-to-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          path: job-dsl-plugin
+      - name: Checkout wiki
+        uses: actions/checkout@v3
+        with:
+          repository: ${{github.repository}}.wiki
+          path: job-dsl-plugin.wiki
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'
+      - name: Push to wiki
+        run: |
+          git config --global user.email "actions@users.noreply.github.com"
+          git config --global user.name "wiki[bot]"
+
+          pushd job-dsl-plugin
+          ./build-wiki.sh
+          popd
+
+          pushd job-dsl-plugin.wiki
+          cp -r ../job-dsl-plugin/target/docs/* .
+          git add .
+          git commit -m "Automagic update" || true
+          git push
+          popd
