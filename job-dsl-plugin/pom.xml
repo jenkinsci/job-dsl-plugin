@@ -115,6 +115,7 @@
             <version>2.27</version>
             <optional>true</optional>
             <exclusions>
+                <!-- TODO pending https://github.com/jenkinsci/vsphere-cloud-plugin/pull/135 -->
                 <exclusion>
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
