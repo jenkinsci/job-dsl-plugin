@@ -53,7 +53,7 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.361.x</artifactId>
+                <artifactId>bom-2.387.x</artifactId>
                 <version>1887.vda_d0ddb_c15c4</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -114,6 +114,12 @@
             <artifactId>vsphere-cloud</artifactId>
             <version>2.27</version>
             <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jenkinsci.plugins</groupId>
