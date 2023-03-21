@@ -59,7 +59,7 @@ abstract class AbstractFolder extends Item {
     /**
      * Sets the icon of the folder.
      *
-     * @since 1.82
+     * @since 1.83
      */
     void icon(@DslContext(FolderIconContext) Closure closure) {
         FolderIconContext context = new FolderIconContext(jobManagement, this)
