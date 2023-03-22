@@ -54,7 +54,7 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-2.387.x</artifactId>
-                <version>1887.vda_d0ddb_c15c4</version>
+                <version>1935.v530f4395930f</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -137,6 +137,11 @@
         <dependency>
             <groupId>io.jenkins.configuration-as-code</groupId>
             <artifactId>test-harness</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jenkins.plugins</groupId>
+            <artifactId>custom-folder-icon</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
