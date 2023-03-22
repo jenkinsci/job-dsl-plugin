@@ -32,6 +32,7 @@ import jenkins.branch.MetadataActionFolderIcon
 import jenkins.model.Jenkins
 import jenkins.plugins.foldericon.BuildStatusFolderIcon
 import jenkins.plugins.foldericon.CustomFolderIcon
+import jenkins.plugins.foldericon.EmojiFolderIcon
 import jenkins.plugins.foldericon.IoniconFolderIcon
 import jenkins.security.QueueItemAuthenticator
 import jenkins.security.QueueItemAuthenticatorConfiguration
@@ -122,6 +123,7 @@ folder('folder-a/folder-b') {
     metadataActionFolderIcon()
   }
 }"""
+
     private static final String FOLDER_WITH_CUSTOM_ICON_SCRIPT = """folder('custom') {
   icon {
     customFolderIcon {
@@ -129,6 +131,7 @@ folder('folder-a/folder-b') {
     }
   }
 }"""
+
     private static final String FOLDER_WITH_IONICON_ICON_SCRIPT = """folder('ionicon') {
   icon {
     ioniconFolderIcon {
@@ -136,9 +139,18 @@ folder('folder-a/folder-b') {
     }
   }
 }"""
+
     private static final String FOLDER_WITH_BUILD_STATUS_ICON_SCRIPT = """folder('build-status') {
   icon {
     buildStatusFolderIcon()
+  }
+}"""
+
+    private static final String FOLDER_WITH_EMOJI_ICON_SCRIPT = """folder('emoji') {
+  icon {
+    emojiFolderIcon {
+      emoji('sloth')
+    }
   }
 }"""
 
@@ -996,6 +1008,23 @@ folder('folder-a/folder-b') {
         FolderIcon icon = ((Folder) item).getIcon()
         icon instanceof BuildStatusFolderIcon
         ((BuildStatusFolderIcon) icon).getIconClassName() == BallColor.NOTBUILT.getIconClassName()
+    }
+
+    def createFolderWithEmojiIcon() {
+        setup:
+        FreeStyleProject job = jenkinsRule.createFreeStyleProject('seed')
+        job.buildersList.add(new ExecuteDslScripts(FOLDER_WITH_EMOJI_ICON_SCRIPT))
+
+        when:
+        FreeStyleBuild freeStyleBuild = job.scheduleBuild2(0).get()
+
+        then:
+        freeStyleBuild.result == SUCCESS
+        Item item = jenkinsRule.instance.getItemByFullName('emoji')
+        item instanceof Folder
+        FolderIcon icon = ((Folder) item).getIcon()
+        icon instanceof EmojiFolderIcon
+        ((EmojiFolderIcon) icon).getEmoji() == 'sloth'
     }
 
     def createJobInFolder() {
