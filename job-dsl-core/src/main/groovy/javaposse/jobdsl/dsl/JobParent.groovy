@@ -180,8 +180,7 @@ abstract class JobParent extends Script implements DslFactory {
      */
     @Override
     PipelineAggregatorView pipelineAggregatorView(
-            String name, @DslContext(PipelineAggregatorView) Closure closure = null
-    ) {
+            String name, @DslContext(PipelineAggregatorView) Closure closure = null) {
         processView(name, PipelineAggregatorView, closure)
     }
 

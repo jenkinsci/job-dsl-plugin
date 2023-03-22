@@ -8,7 +8,6 @@ import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 class PipelineAggregatorView extends View {
-
     PipelineAggregatorView(JobManagement jobManagement, String name) {
         super(jobManagement, name)
     }

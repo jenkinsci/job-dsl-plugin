@@ -85,8 +85,7 @@ class NestedViewsContext extends AbstractExtensibleContext implements ViewFactor
      */
     @Override
     PipelineAggregatorView pipelineAggregatorView(
-            String name, @DslContext(PipelineAggregatorView) Closure closure = null
-    ) {
+            String name, @DslContext(PipelineAggregatorView) Closure closure = null) {
         processView(name, PipelineAggregatorView, closure)
     }
 
