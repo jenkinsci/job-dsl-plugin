@@ -81,7 +81,7 @@ class NestedViewsContext extends AbstractExtensibleContext implements ViewFactor
     }
 
     /**
-     * @since 1.78
+     * @since 1.83
      */
     @Override
     PipelineAggregatorView pipelineAggregatorView(

@@ -176,7 +176,7 @@ abstract class JobParent extends Script implements DslFactory {
     }
 
     /**
-     * @since 1.78
+     * @since 1.83
      */
     @Override
     PipelineAggregatorView pipelineAggregatorView(

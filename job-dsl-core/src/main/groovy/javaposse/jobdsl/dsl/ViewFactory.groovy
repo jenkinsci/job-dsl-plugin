@@ -135,7 +135,7 @@ interface ViewFactory extends Context {
      * Creates or updates a view showing the history of pipelines with stage information.
      *
      * @see #pipelineAggregatorView(java.lang.String, groovy.lang.Closure)
-     * @since 1.78
+     * @since 1.83
      */
     @RequiresPlugin(id = 'pipeline-aggregator-view', minimumVersion = '1.8', failIfMissing = true)
     PipelineAggregatorView pipelineAggregatorView(String name)
@@ -143,7 +143,7 @@ interface ViewFactory extends Context {
     /**
      * Creates or updates a view showing the history of pipelines with stage information.
      *
-     * @since 1.78
+     * @since 1.83
      */
     @RequiresPlugin(id = 'pipeline-aggregator-view', minimumVersion = '1.8', failIfMissing = true)
     PipelineAggregatorView pipelineAggregatorView(String name, @DslContext(PipelineAggregatorView) Closure closure)
