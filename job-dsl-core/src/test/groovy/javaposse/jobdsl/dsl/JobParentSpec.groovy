@@ -15,6 +15,7 @@ import javaposse.jobdsl.dsl.views.DashboardView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
+import javaposse.jobdsl.dsl.views.PipelineAggregatorView
 import javaposse.jobdsl.dsl.views.SectionedView
 import spock.lang.Specification
 
@@ -245,6 +246,31 @@ class JobParentSpec extends Specification {
         folder.name == 'test'
         parent.referencedJobs.contains(folder)
         1 * jobManagement.requireMinimumPluginVersion('cloudbees-folder', '5.14', true)
+    }
+
+    def 'pipeline aggregator view'() {
+        when:
+        View view = parent.pipelineAggregatorView('test') {
+            description('foo')
+        }
+
+        then:
+        view.name == 'test'
+        view instanceof PipelineAggregatorView
+        parent.referencedViews.contains(view)
+        view.node.description[0].text() == 'foo'
+        1 * jobManagement.requireMinimumPluginVersion('pipeline-aggregator-view', '1.15', true)
+    }
+
+    def 'pipeline aggregator view without closure'() {
+        when:
+        View view = parent.pipelineAggregatorView('test')
+
+        then:
+        view.name == 'test'
+        view instanceof PipelineAggregatorView
+        parent.referencedViews.contains(view)
+        1 * jobManagement.requireMinimumPluginVersion('pipeline-aggregator-view', '1.15', true)
     }
 
     def 'readFileInWorkspace from seed job'() {

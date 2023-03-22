@@ -80,6 +80,15 @@ class NestedViewsContext extends AbstractExtensibleContext implements ViewFactor
         processView(name, DashboardView, closure)
     }
 
+    /**
+     * @since 1.83
+     */
+    @Override
+    PipelineAggregatorView pipelineAggregatorView(
+            String name, @DslContext(PipelineAggregatorView) Closure closure = null) {
+        processView(name, PipelineAggregatorView, closure)
+    }
+
     @Override
     protected void addExtensionNode(Node node) {
         views << new View(jobManagement, node['name'].text()) {
