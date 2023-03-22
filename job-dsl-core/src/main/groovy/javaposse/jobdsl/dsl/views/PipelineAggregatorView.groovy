@@ -46,6 +46,17 @@ class PipelineAggregatorView extends View {
     }
 
     /**
+     * Set refresh interval size. Defaults to {@code 15}.
+     */
+    void refreshInterval(int refreshInterval) {
+        checkArgument(refreshInterval > 0, 'refreshInterval must be positive integer')
+
+        configure {
+            it / methodMissing('refreshInterval', refreshInterval)
+        }
+    }
+
+    /**
      * Display only last pipeline build. Defaults to {@code false}.
      */
     void onlyLastBuild(boolean onlyLastBuild = true) {
@@ -69,6 +80,42 @@ class PipelineAggregatorView extends View {
     void useScrollingCommits(boolean useScrollingCommits = true) {
         configure {
             it / methodMissing('useScrollingCommits', useScrollingCommits)
+        }
+    }
+
+    /**
+     * Show commit info. Defaults to {@code true}.
+     */
+    void showCommitInfo(boolean showCommitInfo = true) {
+        configure {
+            it / methodMissing('showCommitInfo', showCommitInfo)
+        }
+    }
+
+    /**
+     * Show build number. Defaults to {@code true}.
+     */
+    void showBuildNumber(boolean showBuildNumber = true) {
+        configure {
+            it / methodMissing('showBuildNumber', showBuildNumber)
+        }
+    }
+
+    /**
+     * Show build time. Defaults to {@code true}.
+     */
+    void showBuildTime(boolean showBuildTime = true) {
+        configure {
+            it / methodMissing('showBuildTime', showBuildTime)
+        }
+    }
+
+    /**
+     * Show build duration. Defaults to {@code true}.
+     */
+    void showBuildDuration(boolean showBuildDuration = true) {
+        configure {
+            it / methodMissing('showBuildDuration', showBuildDuration)
         }
     }
 

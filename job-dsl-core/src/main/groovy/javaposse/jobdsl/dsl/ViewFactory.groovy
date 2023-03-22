@@ -137,7 +137,7 @@ interface ViewFactory extends Context {
      * @see #pipelineAggregatorView(java.lang.String, groovy.lang.Closure)
      * @since 1.83
      */
-    @RequiresPlugin(id = 'pipeline-aggregator-view', minimumVersion = '1.8', failIfMissing = true)
+    @RequiresPlugin(id = 'pipeline-aggregator-view', minimumVersion = '1.15', failIfMissing = true)
     PipelineAggregatorView pipelineAggregatorView(String name)
 
     /**
@@ -145,6 +145,6 @@ interface ViewFactory extends Context {
      *
      * @since 1.83
      */
-    @RequiresPlugin(id = 'pipeline-aggregator-view', minimumVersion = '1.8', failIfMissing = true)
+    @RequiresPlugin(id = 'pipeline-aggregator-view', minimumVersion = '1.15', failIfMissing = true)
     PipelineAggregatorView pipelineAggregatorView(String name, @DslContext(PipelineAggregatorView) Closure closure)
 }

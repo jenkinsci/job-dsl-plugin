@@ -259,7 +259,7 @@ class JobParentSpec extends Specification {
         view instanceof PipelineAggregatorView
         parent.referencedViews.contains(view)
         view.node.description[0].text() == 'foo'
-        1 * jobManagement.requireMinimumPluginVersion('pipeline-aggregator-view', '1.8', true)
+        1 * jobManagement.requireMinimumPluginVersion('pipeline-aggregator-view', '1.15', true)
     }
 
     def 'pipeline aggregator view without closure'() {
@@ -270,7 +270,7 @@ class JobParentSpec extends Specification {
         view.name == 'test'
         view instanceof PipelineAggregatorView
         parent.referencedViews.contains(view)
-        1 * jobManagement.requireMinimumPluginVersion('pipeline-aggregator-view', '1.8', true)
+        1 * jobManagement.requireMinimumPluginVersion('pipeline-aggregator-view', '1.15', true)
     }
 
     def 'readFileInWorkspace from seed job'() {

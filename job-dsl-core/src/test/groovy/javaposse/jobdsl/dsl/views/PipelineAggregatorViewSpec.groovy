@@ -15,9 +15,14 @@ class PipelineAggregatorViewSpec extends Specification {
             <properties class="hudson.model.View$PropertyList"/>
             <fontSize>16</fontSize>
             <buildHistorySize>16</buildHistorySize>
+            <refreshInterval>15</refreshInterval>
             <useCondensedTables>false</useCondensedTables>
             <onlyLastBuild>false</onlyLastBuild>
             <useScrollingCommits>false</useScrollingCommits>
+            <showCommitInfo>true</showCommitInfo>
+            <showBuildNumber>true</showBuildNumber>
+            <showBuildTime>true</showBuildTime>
+            <showBuildDuration>true</showBuildDuration>
         </com.ooyala.jenkins.plugins.pipelineaggregatorview.PipelineAggregator>'''
 
     private final JobManagement jobManagement = Mock(JobManagement)
