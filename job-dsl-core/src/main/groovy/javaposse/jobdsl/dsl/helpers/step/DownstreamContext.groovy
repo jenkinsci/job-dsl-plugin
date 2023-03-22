@@ -5,9 +5,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
-
-import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COLOR_MAP
-import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_ORDINAL_MAP
+import javaposse.jobdsl.dsl.helpers.common.Threshold
 
 class DownstreamContext extends AbstractContext {
     protected final Item item
@@ -61,8 +59,8 @@ class DownstreamContext extends AbstractContext {
     private Node createThresholdNode(String thresholdName, String threshold) {
         new NodeBuilder()."${thresholdName}Threshold" {
             name(threshold)
-            ordinal(THRESHOLD_ORDINAL_MAP[threshold])
-            color(THRESHOLD_COLOR_MAP[threshold])
+            ordinal(Threshold.THRESHOLD_ORDINAL_MAP[threshold])
+            color(Threshold.THRESHOLD_COLOR_MAP[threshold])
             completeBuild(true)
         }
     }

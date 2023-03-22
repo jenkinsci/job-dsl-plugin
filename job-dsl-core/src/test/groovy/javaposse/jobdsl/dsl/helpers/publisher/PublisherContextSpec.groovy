@@ -270,13 +270,15 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 6
+            children().size() == 8
             artifacts[0].value() == 'include/*'
             excludes[0].value() == 'exclude/*'
             allowEmptyArchive[0].value() == false
             fingerprint[0].value() == false
             onlyIfSuccessful[0].value() == false
             defaultExcludes[0].value() == true
+            followSymlinks[0].value() == true
+            caseSensitive[0].value() == true
         }
     }
 
@@ -287,12 +289,14 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 5
+            children().size() == 7
             artifacts[0].value() == 'include/*'
             allowEmptyArchive[0].value() == false
             fingerprint[0].value() == false
             onlyIfSuccessful[0].value() == false
             defaultExcludes[0].value() == true
+            followSymlinks[0].value() == true
+            caseSensitive[0].value() == true
         }
     }
 
@@ -310,13 +314,15 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 6
+            children().size() == 8
             artifacts[0].value() == 'include/*'
             excludes[0].value() == 'exclude/*'
             allowEmptyArchive[0].value() == true
             fingerprint[0].value() == true
             onlyIfSuccessful[0].value() == true
             defaultExcludes[0].value() == false
+            followSymlinks[0].value() == true
+            caseSensitive[0].value() == true
         }
     }
 
@@ -330,12 +336,14 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.ArtifactArchiver'
-            children().size() == 5
+            children().size() == 7
             artifacts[0].value() == 'include1/*,include2/*'
             allowEmptyArchive[0].value() == false
             fingerprint[0].value() == false
             onlyIfSuccessful[0].value() == false
             defaultExcludes[0].value() == true
+            followSymlinks[0].value() == true
+            caseSensitive[0].value() == true
         }
     }
 
@@ -3525,105 +3533,6 @@ class PublisherContextSpec extends Specification {
         then:
         Exception e = thrown(DslScriptException)
         e.message =~ 'can only be using in matrix jobs'
-    }
-
-    def 'call post build scripts with minimal options'() {
-        when:
-        context.postBuildScripts {
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
-            children().size() == 4
-            buildSteps[0].children().size == 0
-            scriptOnlyIfSuccess[0].value() == true
-            scriptOnlyIfFailure[0].value() == false
-            markBuildUnstable[0].value() == false
-        }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-    }
-
-    def 'call post build scripts with all options'() {
-        when:
-        context.postBuildScripts {
-            steps {
-                shell('echo TEST')
-            }
-            onlyIfBuildSucceeds(value)
-            onlyIfBuildFails(value)
-            markBuildUnstable(value)
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
-            children().size() == 4
-            buildSteps[0].children().size == 1
-            buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
-            scriptOnlyIfSuccess[0].value() == value
-            scriptOnlyIfFailure[0].value() == value
-            markBuildUnstable[0].value() == value
-        }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-
-        where:
-        value << [true, false]
-    }
-
-    def 'call post build scripts with minimal options and matrix job'() {
-        setup:
-        Item item = new MatrixJob(jobManagement, 'test')
-        PublisherContext context = new PublisherContext(jobManagement, item)
-
-        when:
-        context.postBuildScripts {
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
-            children().size() == 5
-            buildSteps[0].children().size == 0
-            scriptOnlyIfSuccess[0].value() == true
-            scriptOnlyIfFailure[0].value() == false
-            markBuildUnstable[0].value() == false
-            executeOn[0].value() == 'BOTH'
-        }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-    }
-
-    def 'call post build scripts with all options and matrix job'() {
-        setup:
-        Item item = new MatrixJob(jobManagement, 'test')
-        PublisherContext context = new PublisherContext(jobManagement, item)
-
-        when:
-        context.postBuildScripts {
-            steps {
-                shell('echo TEST')
-            }
-            onlyIfBuildSucceeds(false)
-            onlyIfBuildFails()
-            markBuildUnstable()
-            executeOn(mode)
-        }
-
-        then:
-        with(context.publisherNodes[0]) {
-            name() == 'org.jenkinsci.plugins.postbuildscript.PostBuildScript'
-            children().size() == 5
-            buildSteps[0].children().size == 1
-            buildSteps[0].children()[0].name() == 'hudson.tasks.Shell'
-            scriptOnlyIfSuccess[0].value() == false
-            scriptOnlyIfFailure[0].value() == true
-            markBuildUnstable[0].value() == true
-            executeOn[0].value() == mode
-        }
-        1 * jobManagement.requireMinimumPluginVersion('postbuildscript', '0.17')
-
-        where:
-        mode << ['MATRIX', 'AXES', 'BOTH']
     }
 
     def 'call sonar with no options'() {

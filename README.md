@@ -1,6 +1,8 @@
 Jenkins Job DSL Plugin
 ======================
 
+**NOTE** The Job DSL Plugin is [currently seeking co-maintainers](https://groups.google.com/g/jenkinsci-dev/c/WtNZKVWVlJ0/m/Zbd7SH_GFAAJ). This does **not** mean that it's unmaintained right now, but that stepping up to help support this plugin would help long-term health of this project.
+
 Introduction
 ------------
 
@@ -122,7 +124,8 @@ Find the complete documentation on the [Wiki](https://github.com/jenkinsci/job-d
 Release Notes
 -------------
 
-See the [Wiki](https://github.com/jenkinsci/job-dsl-plugin/wiki#release-notes).
+Release notes for versions >= 1.82 can be found on the [GitHub releases page](https://github.com/jenkinsci/job-dsl-plugin/releases).
+All notable changes prior to 1.82 are documented in the [Wiki](https://github.com/jenkinsci/job-dsl-plugin/wiki#release-notes).
 
 
 Community

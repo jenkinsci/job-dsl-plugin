@@ -10,6 +10,8 @@ class ArchiveArtifactsContext extends AbstractContext {
     boolean fingerprint
     boolean onlyIfSuccessful
     boolean defaultExcludes = true
+    boolean caseSensitive = true
+    boolean followSymlinks = true
 
     ArchiveArtifactsContext(JobManagement jobManagement) {
         super(jobManagement)
@@ -61,5 +63,23 @@ class ArchiveArtifactsContext extends AbstractContext {
      */
     void defaultExcludes(boolean defaultExcludes = true) {
         this.defaultExcludes = defaultExcludes
+    }
+
+    /**
+     * Indicates whether symbolic links should be followed or not. Defaults to {@code true}.
+     *
+     * @since 1.83
+     */
+    void followSymlinks(boolean followSymlinks = true) {
+        this.followSymlinks = followSymlinks
+    }
+
+    /**
+     * Indicates whether include and exclude patterns should be considered as case sensitive. Defaults to {@code true}.
+     *
+     * @since 1.83
+     */
+    void caseSensitive(boolean caseSensitive = true) {
+        this.caseSensitive = caseSensitive
     }
 }

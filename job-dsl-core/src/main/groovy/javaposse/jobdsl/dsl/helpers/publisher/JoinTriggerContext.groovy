@@ -6,8 +6,7 @@ import javaposse.jobdsl.dsl.DslContext
 import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Preconditions
-
-import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COLOR_MAP
+import javaposse.jobdsl.dsl.helpers.common.Threshold
 
 class JoinTriggerContext extends AbstractContext {
     final List<String> projects = []
@@ -52,8 +51,8 @@ class JoinTriggerContext extends AbstractContext {
      */
     void resultThreshold(String threshold) {
         Preconditions.checkArgument(
-                THRESHOLD_COLOR_MAP.containsKey(threshold),
-                "threshold must be one of these values ${THRESHOLD_COLOR_MAP.keySet().join(',')}"
+                Threshold.THRESHOLD_COLOR_MAP.containsKey(threshold),
+                "threshold must be one of these values ${Threshold.THRESHOLD_COLOR_MAP.keySet().join(',')}"
         )
 
         this.resultThreshold = threshold

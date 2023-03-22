@@ -47,13 +47,13 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "generated": true,
               "contextClass": "hudson.triggers.TimerTrigger",
-              "html": "<div>\n  Provides a <a href=\"http://en.wikipedia.org/wiki/cron\">cron<\/a>-like feature\n  to periodically execute this project.\n\n  <p>\n  This feature is primarily for using Jenkins as a cron replacement,\n  and it is <b>not ideal for continuously building software projects<\/b>.\n\n  When people first start continuous integration, they are often so used to\n  the idea of regularly scheduled builds like nightly/weekly that they use\n  this feature. However, the point of continuous integration is to start\n  a build as soon as a change is made, to provide a quick feedback to the change.\n  To do that you need to\n  <a href=\"https://jenkins.io/redirect/scm-change-trigger\">hook up SCM change notification to Jenkins<\/a>.\n\n  <p>\n  So, before using this feature, stop and ask yourself if this is really what you want.\n\n<\/div>",
-              "firstSentenceCommentText": "Provides a cron-like feature\n  to periodically execute this project."
+              "html": "<div>\n  Provides a\n  <a href=\"https://en.wikipedia.org/wiki/cron\">cron</a>\n  -like feature to periodically execute this project.\n\n  <p>\n    This feature is primarily for using Jenkins as a cron replacement, and it is\n    <b>not ideal for continuously building software projects</b>\n    . When people first start continuous integration, they are often so used to\n    the idea of regularly scheduled builds like nightly/weekly that they use\n    this feature. However, the point of continuous integration is to start a\n    build as soon as a change is made, to provide a quick feedback to the\n    change. To do that you need to\n    <a href=\"https://www.jenkins.io/redirect/scm-change-trigger\">\n      hook up SCM change notification to Jenkins\n    </a>\n    .\n  </p>\n\n  <p>\n    So, before using this feature, stop and ask yourself if this is really what\n    you want.\n  </p>\n</div>",
+              "firstSentenceCommentText": "Provides a\n  cron\n  -like feature to periodically execute this project."
             }
           ],
           "examples": "job('example') {\r\n    triggers {\r\n        cron('@daily')\r\n    }\r\n}\r\n"
@@ -70,10 +70,10 @@
                 {
                   "name": "scmTriggerClosure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
-              "html": "Polls source control for changes at regular intervals.\r\n\r\n To configure a multi-line entry, use a single trigger string with entries separated by <TT>\\n<\/TT>.",
+              "html": "Polls source control for changes at regular intervals.\r\n\r\n To configure a multi-line entry, use a single trigger string with entries separated by <TT>\\n</TT>.",
               "firstSentenceCommentText": "Polls source control for changes at regular intervals.",
               "contextClass": "javaposse.jobdsl.dsl.helpers.triggers.ScmTriggerContext"
             }
@@ -104,13 +104,13 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "generated": true,
               "contextClass": "jenkins.triggers.ReverseBuildTrigger",
-              "html": "<div>\n  <p>\n    Set up a trigger so that when some other projects finish building,\n    a new build is scheduled for this project. This is convenient for running\n    an extensive test after a build is complete, for example.\n  <\/p><p>\n    This configuration complements the \"Build other projects\" section\n    in the \"Post-build Actions\" of an upstream project, but is preferable when you want to configure the downstream project.\n  <\/p>\n<\/div>",
-              "firstSentenceCommentText": "Set up a trigger so that when some other projects finish building,\n    a new build is scheduled for this project."
+              "html": "<div>\n  <p>\n    Set up a trigger so that when some other projects finish building, a new\n    build is scheduled for this project. This is convenient for running an\n    extensive test after a build is complete, for example.\n  </p>\n  <p>\n    This configuration complements the \"Build other projects\" section in the\n    \"Post-build Actions\" of an upstream project, but is preferable when you want\n    to configure the downstream project.\n  </p>\n</div>",
+              "firstSentenceCommentText": "Set up a trigger so that when some other projects finish building, a new\n    build is scheduled for this project."
             }
           ],
           "examples": "job('example') {\r\n    triggers {\r\n        upstream('other', 'UNSTABLE')\r\n    }\r\n}\r\n"
@@ -171,7 +171,7 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "generated": true,
@@ -205,7 +205,7 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "generated": true,
@@ -222,13 +222,16 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "generated": true,
               "contextClass": "com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger",
               "html": "<!--\n ~ The MIT License\n ~\n ~ Copyright (c) 2013, CloudBees, Inc.\n ~\n ~ Permission is hereby granted, free of charge, to any person obtaining a copy\n ~ of this software and associated documentation files (the \"Software\"), to deal\n ~ in the Software without restriction, including without limitation the rights\n ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n ~ copies of the Software, and to permit persons to whom the Software is\n ~ furnished to do so, subject to the following conditions:\n ~\n ~ The above copyright notice and this permission notice shall be included in\n ~ all copies or substantial portions of the Software.\n ~\n ~ THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n ~ THE SOFTWARE.\n -->\n<div>\n\n    <p>\n        Some kinds of folders are reindexed automatically and immediately upon receipt of an external event.\n        For example, a multi-branch project will recheck its SCM repository for new or removed or modified branches when it receives an SCM change notification.\n        (Push notification may be configured as per the SCM plugin used for each respective branch source.)\n        Such notifications can occasionally be unreliable, however, or Jenkins might not even be running to receive them.\n        In some cases no immediate notification is even possible, for example because Jenkins is behind a firewall and can only poll an external system.\n    <\/p>\n\n    <p>\n        This trigger allows for a periodic fallback, but when necessary.\n        If no indexing has been performed in the specified interval, then an indexing will be scheduled.\n        For example, in the case of a multi-branch project, if the source control system is not configured for push notification, set a short interval (most people will pick between 15 minutes and 1 hour).\n        If the source control system is configured for push notification, set an interval that corresponds to the maximum acceptable delay in the event of a lost push notification as the last commit of the day.\n        (Subsequent commits should trigger indexing anyway and result in the commit being picked up, so most people will pick between 4 hours and 1 day.)\n    <\/p>\n<\/div>",
-              "firstSentenceCommentText": "Some kinds of folders are reindexed automatically and immediately upon receipt of an external event."
+              "firstSentenceCommentText": "Some kinds of folders are reindexed automatically and immediately upon receipt of an external event.",
+              "plugin": {
+                "id": "cloudbees-folder"
+              }
             }
           ]
         },
@@ -240,12 +243,12 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "generated": true,
               "contextClass": "hudson.triggers.SCMTrigger",
-              "html": "<div>\n  Configure Jenkins to poll changes in SCM.\n\n  <p>\n  Note that this is going to be an expensive operation for CVS, as every polling\n  requires Jenkins to scan the entire workspace and verify it with the server.\n  Consider setting up a \"push\" trigger to avoid this overhead, as described in\n  <a href=\"https://jenkins.io/redirect/scm-change-trigger\">this document<\/a>\n<\/div>",
+              "html": "<div>\n  Configure Jenkins to poll changes in SCM.\n\n  <p>\n    Note that this is going to be an expensive operation for CVS, as every\n    polling requires Jenkins to scan the entire workspace and verify it with the\n    server. Consider setting up a \"push\" trigger to avoid this overhead, as\n    described in\n    <a href=\"https://www.jenkins.io/redirect/scm-change-trigger\">\n      this document\n    </a>\n  </p>\n</div>",
               "firstSentenceCommentText": "Configure Jenkins to poll changes in SCM."
             }
           ]
@@ -308,7 +311,7 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "deprecated": false,
@@ -325,7 +328,7 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "deprecated": false,
@@ -342,7 +345,7 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "deprecated": false,
@@ -359,7 +362,7 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "deprecated": false,
@@ -376,7 +379,7 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "deprecated": false,
@@ -393,7 +396,7 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "deprecated": false,
@@ -523,7 +526,7 @@
               "deprecated": false,
               "generated": true,
               "required": true,
-              "html": "<!--\n ~ The MIT License\n ~\n ~ Copyright (c) 2013, CloudBees, Inc.\n ~\n ~ Permission is hereby granted, free of charge, to any person obtaining a copy\n ~ of this software and associated documentation files (the \"Software\"), to deal\n ~ in the Software without restriction, including without limitation the rights\n ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n ~ copies of the Software, and to permit persons to whom the Software is\n ~ furnished to do so, subject to the following conditions:\n ~\n ~ The above copyright notice and this permission notice shall be included in\n ~ all copies or substantial portions of the Software.\n ~\n ~ THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n ~ THE SOFTWARE.\n -->\n<div>\n    The maximum amount of time since the last indexing that is allowed to elapse before an indexing is triggered.\n<\/div>",
+              "html": "<!--\n ~ The MIT License\n ~\n ~ Copyright (c) 2013, CloudBees, Inc.\n ~\n ~ Permission is hereby granted, free of charge, to any person obtaining a copy\n ~ of this software and associated documentation files (the \"Software\"), to deal\n ~ in the Software without restriction, including without limitation the rights\n ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n ~ copies of the Software, and to permit persons to whom the Software is\n ~ furnished to do so, subject to the following conditions:\n ~\n ~ The above copyright notice and this permission notice shall be included in\n ~ all copies or substantial portions of the Software.\n ~\n ~ THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n ~ THE SOFTWARE.\n -->\n<div>\n    <p>\n        The maximum amount of time since the last indexing that is allowed to elapse before an indexing is triggered.\n        For example: interval('5m') // or '2h', '7d', '5000ms', '60s'\n    </p>\n</div>",
               "firstSentenceCommentText": "The maximum amount of time since the last indexing that is allowed to elapse before an indexing is triggered."
             }
           ]
@@ -561,7 +564,7 @@
               ],
               "deprecated": false,
               "generated": true,
-              "html": "<div>\n  Ignore changes notified by SCM post-commit hooks.\n<p>\n  This can be useful if you want to prevent some long-running jobs (e.g. reports) starting because of every commit, but still want to\n  run them periodic if SCM changes have occurred.\n<p>\n  Note that this option needs to be supported by the SCM plugin, too! The subversion-plugin supports this since version 1.44. \n<\/div>",
+              "html": "<div>\n  Ignore changes notified by SCM post-commit hooks.\n  <p>\n    This can be useful if you want to prevent some long-running jobs (e.g.\n    reports) starting because of every commit, but still want to run them\n    periodic if SCM changes have occurred.\n  </p>\n\n  <p>\n    Note that this option needs to be supported by the SCM plugin, too! The\n    subversion-plugin supports this since version 1.44.\n  </p>\n</div>",
               "firstSentenceCommentText": "Ignore changes notified by SCM post-commit hooks."
             }
           ]
@@ -670,13 +673,13 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "generated": true,
               "contextClass": "jenkins.mvn.FilePathSettingsProvider",
-              "html": "<div>\n    Use a custom <tt>settings.xml<\/tt> file. Such a file is checked out from SCM as part of the job or a well known location.\n<\/div>",
-              "firstSentenceCommentText": "Use a custom settings.xml file."
+              "html": "<div>\n  Use a custom\n  <code>settings.xml</code>\n  file. Such a file is checked out from SCM as part of the job or a well known\n  location.\n</div>",
+              "firstSentenceCommentText": "Use a custom\n  settings.xml\n  file."
             }
           ]
         },
@@ -688,13 +691,16 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "generated": true,
               "contextClass": "org.jenkinsci.plugins.configfiles.maven.job.MvnSettingsProvider",
               "html": "<div>\n    select the provided settings.xml for this project\n<\/div>",
-              "firstSentenceCommentText": "select the provided settings.xml for this project"
+              "firstSentenceCommentText": "select the provided settings.xml for this project",
+              "plugin": {
+                "id": "config-file-provider"
+              }
             }
           ]
         },
@@ -704,8 +710,8 @@
             {
               "parameters": [],
               "generated": true,
-              "html": "<div>\n    Use default maven settings (<tt>$HOME/.m2/settings.xml<\/tt>) as set on build node.\n<\/div>",
-              "firstSentenceCommentText": "Use default maven settings ($HOME/.m2/settings.xml) as set on build node."
+              "html": "<div>\n  Use default maven settings (\n  <code>$HOME/.m2/settings.xml</code>\n  ) as set on build node.\n</div>",
+              "firstSentenceCommentText": "Use default maven settings (\n  $HOME/.m2/settings.xml\n  ) as set on build node."
             }
           ]
         }
@@ -722,7 +728,7 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "generated": true,
@@ -743,7 +749,7 @@
                 {
                   "name": "closure",
                   "type": "Closure",
-                  "defaultValue": null
+                  "defaultValue": "null"
                 }
               ],
               "generated": true,
@@ -769,8 +775,8 @@
               "deprecated": false,
               "generated": true,
               "required": true,
-              "html": "<div>\n    Path to settings.xml file, relative to project workspace or absolute (variables are supported).\n<\/div>",
-              "firstSentenceCommentText": "Path to settings.xml file, relative to project workspace or absolute (variables are supported)."
+              "html": "<div>\n  Path to settings.xml file, relative to project workspace or absolute\n  (variables are supported).\n</div>",
+              "firstSentenceCommentText": "Path to settings.xml file, relative to project workspace or absolute\n  (variables are supported)."
             }
           ]
         }

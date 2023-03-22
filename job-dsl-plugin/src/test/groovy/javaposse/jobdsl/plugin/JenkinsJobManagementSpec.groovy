@@ -1,8 +1,7 @@
 package javaposse.jobdsl.plugin
 
+import jenkins.branch.OrganizationFolder
 import com.cloudbees.hudson.plugins.folder.AbstractFolder
-import com.cloudbees.hudson.plugins.folder.AbstractFolderProperty
-import com.cloudbees.hudson.plugins.folder.AbstractFolderPropertyDescriptor
 import com.cloudbees.hudson.plugins.folder.Folder
 import com.cloudbees.hudson.plugins.folder.properties.FolderCredentialsProvider
 import com.cloudbees.plugins.credentials.CredentialsScope
@@ -10,7 +9,6 @@ import com.cloudbees.plugins.credentials.domains.Domain
 import com.cloudbees.plugins.credentials.domains.DomainCredentials
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl
 import com.google.common.io.Resources
-import hudson.Extension
 import hudson.FilePath
 import hudson.model.AbstractBuild
 import hudson.model.AllView
@@ -123,11 +121,11 @@ class JenkinsJobManagementSpec extends Specification {
 
     def 'logPluginDeprecationWarning for plugin'() {
         when:
-        jobManagement.logPluginDeprecationWarning('script-security', '20.0')
+        jobManagement.logPluginDeprecationWarning('script-security', '999999.0')
 
         then:
         buffer.toString() =~
-                /Warning: \(.+, line \d+\) support for Script Security Plugin versions older than 20.0 is deprecated/
+               /Warning: \(.+, line \d+\) support for Script Security Plugin versions older than 999999.0 is deprecated/
     }
 
     def 'logPluginDeprecationWarning does not log anything if plugin version is newer'() {
@@ -641,7 +639,7 @@ class JenkinsJobManagementSpec extends Specification {
         e.message == 'Type of item "my-job" does not match existing type, item type can not be changed'
     }
 
-    def 'createOrUpdateConfig should preserve credentials if they exist on a folder'() {
+    def 'createOrUpdateConfig should preserve credentials if they exist on a Folder'() {
         setup:
         Folder folder = jenkinsRule.createProject(Folder, 'folder')
         folder.addProperty(createCredentialProperty())
@@ -654,7 +652,7 @@ class JenkinsJobManagementSpec extends Specification {
         actual.properties.size() == 1
     }
 
-    def 'createOrUpdateConfig should ignore other properties on the folder'() {
+    def 'createOrUpdateConfig should ignore other properties on the Folder'() {
         setup:
         Folder folder = jenkinsRule.createProject(Folder, 'folder')
         folder.addProperty(new FakeProperty())
@@ -665,6 +663,43 @@ class JenkinsJobManagementSpec extends Specification {
         then:
         def actual = jenkinsRule.jenkins.getItem('folder')
         actual.properties.size() == 0
+    }
+
+    def 'createOrUpdateConfig should preserve credentials if they exist on an OrganizationFolder'() {
+        setup:
+        OrganizationFolder folder = jenkinsRule.createProject(OrganizationFolder, 'org')
+        // `OrganizationFolder`s include a lot of existing metadata that is appended, regardless of how few we already
+        // set, so we should calculate expected as the default computed properties
+        int defaultProperties = folder.properties.size()
+
+        def property = createCredentialProperty()
+        folder.addProperty(property)
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('org', '/organizationfolder.xml'), false)
+
+        then:
+        def actualItem = jenkinsRule.jenkins.getItem('org')
+        def actual = (AbstractFolder<?>) actualItem
+        actual.properties.size() == defaultProperties + 1
+    }
+
+    def 'createOrUpdateConfig should ignore other properties on the OrganizationFolder'() {
+        setup:
+        OrganizationFolder folder = jenkinsRule.createProject(OrganizationFolder, 'org')
+        // `OrganizationFolder`s include a lot of existing metadata that is appended, regardless of how few we already
+        // set, so we should calculate expected as the default computed properties
+        int defaultProperties = folder.properties.size()
+
+        folder.addProperty(new FakeProperty())
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('org', '/organizationfolder.xml'), false)
+        folder.writeConfigDotXml(System.out)
+
+        then:
+        def actual = jenkinsRule.jenkins.getItem('org')
+        actual.properties.size() == defaultProperties
     }
 
     def 'createOrUpdateView should work if view type changes'() {
@@ -692,7 +727,7 @@ class JenkinsJobManagementSpec extends Specification {
         result
 
         when:
-        result = jobManagement.isMinimumPluginVersionInstalled('script-security', '10.0')
+        result = jobManagement.isMinimumPluginVersionInstalled('script-security', '999999.0')
 
         then:
         !result
@@ -1015,14 +1050,6 @@ class JenkinsJobManagementSpec extends Specification {
         domainCredentials[0] = new DomainCredentials(Domain.global(), Collections.singletonList(credentials))
 
         new FolderCredentialsProvider.FolderCredentialsProperty(domainCredentials)
-    }
-
-    private static class FakeProperty extends AbstractFolderProperty<AbstractFolder<?>> {
-
-        @Extension(optional = true)
-            static class DescriptorImpl extends AbstractFolderPropertyDescriptor {
-                final String displayName = ''
-            }
     }
 
     private Item createItem(String name, String config) {

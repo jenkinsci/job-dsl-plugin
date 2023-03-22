@@ -9,14 +9,11 @@ import javaposse.jobdsl.dsl.Preconditions
 import javaposse.jobdsl.dsl.RequiresPlugin
 import javaposse.jobdsl.dsl.AbstractExtensibleContext
 import javaposse.jobdsl.dsl.helpers.common.PublishOverSshContext
-import javaposse.jobdsl.dsl.jobs.MatrixJob
+import javaposse.jobdsl.dsl.helpers.common.Threshold
 
 import static javaposse.jobdsl.dsl.ContextHelper.toNamedNode
 import static javaposse.jobdsl.dsl.Preconditions.checkArgument
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
-import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COLOR_MAP
-import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_COMPLETED_BUILD
-import static javaposse.jobdsl.dsl.helpers.common.Threshold.THRESHOLD_ORDINAL_MAP
 
 @ContextType('hudson.tasks.Publisher')
 class PublisherContext extends AbstractExtensibleContext {
@@ -104,6 +101,8 @@ class PublisherContext extends AbstractExtensibleContext {
             defaultExcludes(artifactsContext.defaultExcludes)
             delegate.fingerprint(artifactsContext.fingerprint)
             onlyIfSuccessful(artifactsContext.onlyIfSuccessful)
+            followSymlinks(artifactsContext.followSymlinks)
+            caseSensitive(artifactsContext.caseSensitive)
         }
     }
 
@@ -491,16 +490,16 @@ class PublisherContext extends AbstractExtensibleContext {
      */
     void downstream(String projectName, String thresholdName = 'SUCCESS') {
         checkArgument(
-                THRESHOLD_COLOR_MAP.containsKey(thresholdName),
-                "thresholdName must be one of these values ${THRESHOLD_COLOR_MAP.keySet().join(',')}"
+                Threshold.THRESHOLD_COLOR_MAP.containsKey(thresholdName),
+                "thresholdName must be one of these values ${Threshold.THRESHOLD_COLOR_MAP.keySet().join(',')}"
         )
 
         publisherNodes << new NodeBuilder().'hudson.tasks.BuildTrigger' {
             childProjects projectName
             threshold {
                 delegate.createNode('name', thresholdName)
-                ordinal THRESHOLD_ORDINAL_MAP[thresholdName]
-                color THRESHOLD_COLOR_MAP[thresholdName]
+                ordinal Threshold.THRESHOLD_ORDINAL_MAP[thresholdName]
+                color Threshold.THRESHOLD_COLOR_MAP[thresholdName]
             }
         }
     }
@@ -1288,27 +1287,6 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
-     * Execute a set of scripts at the end of the build.
-     *
-     * @since 1.31
-     */
-    @RequiresPlugin(id = 'postbuildscript', minimumVersion = '0.17')
-    void postBuildScripts(@DslContext(PostBuildScriptsContext) Closure closure) {
-        PostBuildScriptsContext context = new PostBuildScriptsContext(jobManagement, item)
-        ContextHelper.executeInContext(closure, context)
-
-        publisherNodes << new NodeBuilder().'org.jenkinsci.plugins.postbuildscript.PostBuildScript' {
-            buildSteps(context.stepContext.stepNodes)
-            scriptOnlyIfSuccess(context.onlyIfBuildSucceeds)
-            scriptOnlyIfFailure(context.onlyIfBuildFails)
-            markBuildUnstable(context.markBuildUnstable)
-            if (item instanceof MatrixJob) {
-                executeOn(context.executeOn)
-            }
-        }
-    }
-
-    /**
      * Triggers SonarQube analysis.
      *
      * @since 1.31
@@ -1438,9 +1416,9 @@ class PublisherContext extends AbstractExtensibleContext {
             joinPublishers(joinTriggerContext.publisherContext.publisherNodes)
             resultThreshold {
                 name(joinTriggerContext.resultThreshold)
-                ordinal(THRESHOLD_ORDINAL_MAP[joinTriggerContext.resultThreshold])
-                color(THRESHOLD_COLOR_MAP[joinTriggerContext.resultThreshold])
-                completeBuild(THRESHOLD_COMPLETED_BUILD[joinTriggerContext.resultThreshold])
+                ordinal(Threshold.THRESHOLD_ORDINAL_MAP[joinTriggerContext.resultThreshold])
+                color(Threshold.THRESHOLD_COLOR_MAP[joinTriggerContext.resultThreshold])
+                completeBuild(Threshold.THRESHOLD_COMPLETED_BUILD[joinTriggerContext.resultThreshold])
             }
         }
     }
