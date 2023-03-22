@@ -122,12 +122,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.jenkinsci.plugins</groupId>
-            <artifactId>managed-scripts</artifactId>
-            <version>1.5.6</version>
-            <optional>true</optional>
-        </dependency>
         <!-- used by Spock -->
         <dependency>
             <groupId>cglib</groupId>
@@ -152,6 +146,12 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-auth</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkinsci.plugins</groupId>
+            <artifactId>managed-scripts</artifactId>
+            <version>1.5.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
