@@ -60,6 +60,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         this.templateJobMap = templateJobMap;
     }
 
+    @SuppressWarnings({"lgtm[jenkins/csrf]", "lgtm[jenkins/no-permission-check]"})
     public ListBoxModel doFillRemovedJobActionItems() {
         ListBoxModel items = new ListBoxModel();
         for (RemovedJobAction action : RemovedJobAction.values()) {
@@ -68,6 +69,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         return items;
     }
 
+    @SuppressWarnings({"lgtm[jenkins/csrf]", "lgtm[jenkins/no-permission-check]"})
     public ListBoxModel doFillRemovedViewActionItems() {
         ListBoxModel items = new ListBoxModel();
         for (RemovedViewAction action : RemovedViewAction.values()) {
@@ -79,6 +81,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
     /**
      * @since 1.62
      */
+    @SuppressWarnings({"lgtm[jenkins/csrf]", "lgtm[jenkins/no-permission-check]"})
     public ListBoxModel doFillRemovedConfigFilesActionItems() {
         ListBoxModel items = new ListBoxModel();
         for (RemovedConfigFilesAction action : RemovedConfigFilesAction.values()) {
@@ -87,6 +90,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
         return items;
     }
 
+    @SuppressWarnings({"lgtm[jenkins/csrf]", "lgtm[jenkins/no-permission-check]"})
     public ListBoxModel doFillLookupStrategyItems() {
         ListBoxModel items = new ListBoxModel();
         for (LookupStrategy item : LookupStrategy.values()) {
