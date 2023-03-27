@@ -231,6 +231,7 @@ class PublisherContextSpec extends Specification {
         'firstUnstable'  || 'FirstUnstableTrigger'
         'stillUnstable'  || 'StillUnstableTrigger'
         'fixedUnhealthy' || 'FixedUnhealthyTrigger'
+        'xNthFailure'    || 'XNthFailureTrigger'
     }
 
     def 'call standard mailer method'() {

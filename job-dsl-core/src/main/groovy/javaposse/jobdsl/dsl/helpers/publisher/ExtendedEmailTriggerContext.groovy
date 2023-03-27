@@ -17,6 +17,7 @@ class ExtendedEmailTriggerContext implements Context {
     boolean attachBuildLog
     boolean compressBuildLog
     final List<String> replyToList = []
+    int failureCount = -1
 
     /**
      * Specifies the email recipients.
@@ -87,5 +88,12 @@ class ExtendedEmailTriggerContext implements Context {
      */
     void replyToList(String... replyToList) {
         this.replyToList.addAll(replyToList)
+    }
+
+    /**
+     * Specifies the failure count to be applied to the xNthFailure use case.
+     */
+    void failureCount(int failureCount) {
+        this.failureCount = failureCount
     }
 }
