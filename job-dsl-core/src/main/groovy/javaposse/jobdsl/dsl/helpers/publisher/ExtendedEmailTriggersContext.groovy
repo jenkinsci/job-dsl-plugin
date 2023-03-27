@@ -22,6 +22,14 @@ class ExtendedEmailTriggersContext implements Context {
     }
 
     /**
+     * Triggers an email when the build goes from failing (compilation or build step failures) to
+     * unstable (unit test failures).
+     */
+    void building(@DslContext(ExtendedEmailTriggerContext) Closure closure = null) {
+        addTrigger('Building', closure)
+    }
+
+    /**
      * Triggers an email when the build begins, but after SCM polling has completed.
      */
     void beforeBuild(@DslContext(ExtendedEmailTriggerContext) Closure closure = null) {
