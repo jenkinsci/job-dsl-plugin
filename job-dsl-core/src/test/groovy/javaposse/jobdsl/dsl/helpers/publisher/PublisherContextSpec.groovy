@@ -217,6 +217,7 @@ class PublisherContextSpec extends Specification {
         'aborted'        || 'AbortedTrigger'
         'always'         || 'AlwaysTrigger'
         'beforeBuild'    || 'PreBuildTrigger'
+        'building'       || 'BuildingTrigger'
         'firstFailure'   || 'FirstFailureTrigger'
         'secondFailure'  || 'SecondFailureTrigger'
         'failure'        || 'FailureTrigger'
