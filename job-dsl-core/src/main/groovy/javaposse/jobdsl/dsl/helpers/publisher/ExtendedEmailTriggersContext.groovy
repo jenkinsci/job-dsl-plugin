@@ -43,7 +43,7 @@ class ExtendedEmailTriggersContext implements Context {
     }
 
     /**
-     * Triggers an email when the build fails n times in a row after a successful build
+     * Triggers an email when the build fails n times in a row after a successful build.
      */
     void xNthFailure(@DslContext(FailureCountExtendedEmailTriggerContext) Closure closure = null) {
         addFailureCountTrigger('XNthFailure', closure)
