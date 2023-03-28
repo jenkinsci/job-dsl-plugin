@@ -46,7 +46,7 @@ class ExtendedEmailTriggersContext implements Context {
      * Triggers an email when the build fails n times in a row after a successful build
      */
     void xNthFailure(@DslContext(ExtendedEmailTriggerContext) Closure closure = null) {
-        addTrigger('XNthFailure', closure)
+        addFailureCountTrigger('XNthFailure', closure)
     }
 
     /**
@@ -134,11 +134,19 @@ class ExtendedEmailTriggersContext implements Context {
     }
 
     protected void addTrigger(String name, Closure closure) {
+        buildTrigger(name, closure, new ExtendedEmailTriggerContext())
+    }
+
+    protected void addFailureCountTrigger(String name, Closure closure) {
+        buildTrigger(name, closure, new FailureCountExtendedEmailTriggerContext())
+    }
+
+    protected void buildTrigger(String name, Closure closure, ExtendedEmailTriggerContext context) {
         ExtendedEmailTriggerContext context = new ExtendedEmailTriggerContext()
         ContextHelper.executeInContext(closure, context)
 
         configuredTriggers << new NodeBuilder()."hudson.plugins.emailext.plugins.trigger.${name}Trigger" {
-            if (context.failureCount != -1) {
+            if (context.hasProperty('failureCount')) {
                 requiredFailureCount(context.failureCount)
             }
             email {
