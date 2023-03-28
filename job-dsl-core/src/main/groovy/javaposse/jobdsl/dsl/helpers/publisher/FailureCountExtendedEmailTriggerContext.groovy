@@ -4,7 +4,7 @@ class FailureCountExtendedEmailTriggerContext extends ExtendedEmailTriggerContex
     int failureCount = 3
 
     /**
-     * Specifies the failure count to be applied to the xNthFailure use case.
+     * Specifies the failure count.
      */
     void failureCount(int failureCount) {
         this.failureCount = failureCount
