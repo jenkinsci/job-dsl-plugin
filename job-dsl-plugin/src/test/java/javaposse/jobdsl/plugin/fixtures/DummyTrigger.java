@@ -123,19 +123,44 @@ public class DummyTrigger extends Trigger<Job> {
         this.unsupportedByStructs = unsupportedByStructs;
     }
 
-    @DataBoundSetter private String aString;
-    @DataBoundSetter private Integer anInteger;
-    @DataBoundSetter private boolean aBoolean;
-    @DataBoundSetter private Thread.State anEnum;
-    @DataBoundSetter private SettingsProvider aHeterogeneous;
-    @DataBoundSetter private List<SettingsProvider> aHeterogeneousList;
-    @DataBoundSetter private ADescribable aHomogeneous;
-    @DataBoundSetter private List<ADescribable> aHomogeneousList;
-    @DataBoundSetter private ABean aHomogeneousBean;
-    @DataBoundSetter private List<ABean> aHomogeneousBeanList;
-    @DataBoundSetter private List<String> stringList;
-    @DataBoundSetter private List<Thread.State> enumList;
-    @DataBoundSetter private UnsupportedByStructs unsupportedByStructs;
+    @DataBoundSetter
+    private String aString;
+
+    @DataBoundSetter
+    private Integer anInteger;
+
+    @DataBoundSetter
+    private boolean aBoolean;
+
+    @DataBoundSetter
+    private Thread.State anEnum;
+
+    @DataBoundSetter
+    private SettingsProvider aHeterogeneous;
+
+    @DataBoundSetter
+    private List<SettingsProvider> aHeterogeneousList;
+
+    @DataBoundSetter
+    private ADescribable aHomogeneous;
+
+    @DataBoundSetter
+    private List<ADescribable> aHomogeneousList;
+
+    @DataBoundSetter
+    private ABean aHomogeneousBean;
+
+    @DataBoundSetter
+    private List<ABean> aHomogeneousBeanList;
+
+    @DataBoundSetter
+    private List<String> stringList;
+
+    @DataBoundSetter
+    private List<Thread.State> enumList;
+
+    @DataBoundSetter
+    private UnsupportedByStructs unsupportedByStructs;
 
     public static class UnsupportedByStructs {}
 

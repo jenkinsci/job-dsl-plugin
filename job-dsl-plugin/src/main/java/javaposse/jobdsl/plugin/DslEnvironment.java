@@ -1,8 +1,7 @@
 package javaposse.jobdsl.plugin;
 
-import javaposse.jobdsl.dsl.Context;
-
 import java.util.Map;
+import javaposse.jobdsl.dsl.Context;
 
 /**
  * The {@link DslEnvironment} can be used to transfer state between a {@link DslExtensionMethod}

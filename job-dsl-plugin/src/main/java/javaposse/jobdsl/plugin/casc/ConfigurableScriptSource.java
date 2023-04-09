@@ -22,5 +22,4 @@ public abstract class ConfigurableScriptSource extends ScriptSource implements C
     public CNode describe() {
         return null; // Not relevant here
     }
-
 }

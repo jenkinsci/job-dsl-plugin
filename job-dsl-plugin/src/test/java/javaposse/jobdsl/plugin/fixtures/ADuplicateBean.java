@@ -15,5 +15,6 @@ public class ADuplicateBean {
         this.prop = prop;
     }
 
-    @DataBoundSetter private String prop;
+    @DataBoundSetter
+    private String prop;
 }

@@ -18,7 +18,8 @@ public class JenkinsDslScriptLoader extends AbstractDslScriptLoader<JenkinsJobPa
     }
 
     @Override
-    protected void extractGeneratedItems(GeneratedItems generatedItems, JenkinsJobParent jobParent, ScriptRequest scriptRequest) {
+    protected void extractGeneratedItems(
+            GeneratedItems generatedItems, JenkinsJobParent jobParent, ScriptRequest scriptRequest) {
         super.extractGeneratedItems(generatedItems, jobParent, scriptRequest);
 
         if (Jenkins.get().getPluginManager().getPlugin("config-file-provider") != null) {

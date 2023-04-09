@@ -15,5 +15,6 @@ public class ABean {
         this.prop = prop;
     }
 
-    @DataBoundSetter private String prop;
+    @DataBoundSetter
+    private String prop;
 }
