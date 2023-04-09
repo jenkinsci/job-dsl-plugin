@@ -3,6 +3,8 @@ package javaposse.jobdsl.plugin.fixtures;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.views.ListViewColumn;
+import java.util.ArrayList;
+import java.util.List;
 import javaposse.jobdsl.dsl.Context;
 import javaposse.jobdsl.dsl.helpers.step.StepContext;
 import javaposse.jobdsl.dsl.helpers.triggers.TriggerContext;
@@ -11,9 +13,6 @@ import javaposse.jobdsl.plugin.ContextExtensionPoint;
 import javaposse.jobdsl.plugin.DslEnvironment;
 import javaposse.jobdsl.plugin.DslExtensionMethod;
 import org.spockframework.util.Assert;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Extension(optional = true)
 public class TestContextExtensionPoint extends ContextExtensionPoint {
@@ -120,6 +119,5 @@ public class TestContextExtensionPoint extends ContextExtensionPoint {
         }
     }
 
-    static class MyColumn extends ListViewColumn {
-    }
+    static class MyColumn extends ListViewColumn {}
 }

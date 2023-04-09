@@ -1,5 +1,8 @@
 package javaposse.jobdsl.plugin;
 
+import static com.google.common.collect.Collections2.filter;
+import static com.google.common.collect.Collections2.transform;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import hudson.Extension;
@@ -11,16 +14,12 @@ import hudson.model.BuildableItem;
 import hudson.model.Cause;
 import hudson.model.Saveable;
 import hudson.model.listeners.SaveableListener;
-import jenkins.YesNoMaybe;
-import jenkins.model.Jenkins;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Logger;
-
-import static com.google.common.collect.Collections2.filter;
-import static com.google.common.collect.Collections2.transform;
+import jenkins.YesNoMaybe;
+import jenkins.model.Jenkins;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
 public class MonitorTemplateJobs extends SaveableListener {
@@ -40,7 +39,8 @@ public class MonitorTemplateJobs extends SaveableListener {
         String possibleTemplateName = project.getName();
 
         DescriptorImpl descriptor = Jenkins.get().getDescriptorByType(DescriptorImpl.class);
-        Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(possibleTemplateName);
+        Collection<SeedReference> seedJobReferences =
+                descriptor.getTemplateJobMap().get(possibleTemplateName);
 
         if (seedJobReferences.isEmpty()) {
             return;
@@ -48,9 +48,12 @@ public class MonitorTemplateJobs extends SaveableListener {
 
         final String digest;
         try {
-            digest = Util.getDigestOf(new FileInputStream(project.getConfigFile().getFile()));
+            digest =
+                    Util.getDigestOf(new FileInputStream(project.getConfigFile().getFile()));
         } catch (IOException e) {
-            LOGGER.warning(String.format("Unable to read template %s, which means we wouldn't be able to run seed anyways", possibleTemplateName));
+            LOGGER.warning(String.format(
+                    "Unable to read template %s, which means we wouldn't be able to run seed anyways",
+                    possibleTemplateName));
             return;
         }
 
@@ -66,8 +69,7 @@ public class MonitorTemplateJobs extends SaveableListener {
     }
 
     public static class TemplateTriggerCause extends Cause {
-        TemplateTriggerCause() {
-        }
+        TemplateTriggerCause() {}
 
         @Override
         public String getShortDescription() {

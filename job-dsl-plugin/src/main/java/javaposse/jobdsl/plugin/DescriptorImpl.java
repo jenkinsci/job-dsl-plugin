@@ -3,6 +3,7 @@ package javaposse.jobdsl.plugin;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.init.InitMilestone;
 import hudson.init.Initializer;
@@ -13,6 +14,7 @@ import hudson.model.listeners.ItemListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.ListBoxModel;
+import java.util.Map;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
@@ -21,9 +23,6 @@ import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.StaplerRequest;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import java.util.Map;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
 @Symbol("jobDsl")
@@ -112,25 +111,26 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
     }
 
     public String getScriptApprovalWarning() {
-        return isSecurityEnabled() && !Jenkins.get().hasPermission(Jenkins.RUN_SCRIPTS) ? Messages.ScriptSecurity_ScriptApprovalWarning() : "";
+        return isSecurityEnabled() && !Jenkins.get().hasPermission(Jenkins.RUN_SCRIPTS)
+                ? Messages.ScriptSecurity_ScriptApprovalWarning()
+                : "";
     }
 
     @Initializer(before = InitMilestone.PLUGINS_STARTED)
     public static void addAliases() {
         Run.XSTREAM2.addCompatibilityAlias(
-                "javaposse.jobdsl.plugin.GeneratedConfigFilesBuildAction", GeneratedConfigFilesBuildAction.class
-        );
+                "javaposse.jobdsl.plugin.GeneratedConfigFilesBuildAction", GeneratedConfigFilesBuildAction.class);
         Run.XSTREAM2.addCompatibilityAlias(
-                "javaposse.jobdsl.plugin.GeneratedJobsBuildAction", GeneratedJobsBuildAction.class
-        );
+                "javaposse.jobdsl.plugin.GeneratedJobsBuildAction", GeneratedJobsBuildAction.class);
         Run.XSTREAM2.addCompatibilityAlias(
-                "javaposse.jobdsl.plugin.GeneratedViewsBuildAction", GeneratedViewsBuildAction.class
-        );
+                "javaposse.jobdsl.plugin.GeneratedViewsBuildAction", GeneratedViewsBuildAction.class);
     }
 
     public boolean isSecurityEnabled() {
         Jenkins jenkins = Jenkins.get();
-        return jenkins.isUseSecurity() && jenkins.getDescriptorByType(GlobalJobDslSecurityConfiguration.class).isUseScriptSecurity();
+        return jenkins.isUseSecurity()
+                && jenkins.getDescriptorByType(GlobalJobDslSecurityConfiguration.class)
+                        .isUseScriptSecurity();
     }
 
     private static void removeSeedReference(String key) {

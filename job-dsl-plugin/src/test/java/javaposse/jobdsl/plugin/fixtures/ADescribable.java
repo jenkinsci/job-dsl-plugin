@@ -26,8 +26,11 @@ public class ADescribable extends AbstractDescribableImpl<ADescribable> {
         this.bar = bar;
     }
 
-    @DataBoundSetter private String foo;
-    @DataBoundSetter private int bar;
+    @DataBoundSetter
+    private String foo;
+
+    @DataBoundSetter
+    private int bar;
 
     @Extension
     public static class DescriptorImpl extends Descriptor<ADescribable> {

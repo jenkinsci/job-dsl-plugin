@@ -1,13 +1,12 @@
 package javaposse.jobdsl.plugin.actions;
 
 import hudson.model.Run;
-import jenkins.model.RunAction2;
-import jenkins.tasks.SimpleBuildStep;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import jenkins.model.RunAction2;
+import jenkins.tasks.SimpleBuildStep;
 
 public abstract class GeneratedObjectsRunAction<T> implements RunAction2, SimpleBuildStep.LastBuildAction {
     private final Set<T> modifiedObjects;
@@ -49,10 +48,10 @@ public abstract class GeneratedObjectsRunAction<T> implements RunAction2, Simple
 
     public void addModifiedObjects(Collection<T> modifiedObjects) {
         if (this.modifiedObjects == null) {
-            throw new IllegalStateException("Modified object should not be null. Probably wrong state after serialization/deserialization");
+            throw new IllegalStateException(
+                    "Modified object should not be null. Probably wrong state after serialization/deserialization");
         } else {
             this.modifiedObjects.addAll(modifiedObjects);
         }
     }
-
 }
