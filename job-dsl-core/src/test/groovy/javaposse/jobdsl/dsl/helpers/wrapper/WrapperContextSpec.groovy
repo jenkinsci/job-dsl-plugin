@@ -1391,7 +1391,7 @@ class WrapperContextSpec extends Specification {
         then:
         with(context.wrapperNodes[0]) {
             name() == 'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper'
-            children().size() == 9
+            children().size() == 10
             selector[0].children().size() == 2
             selector[0].attribute('class') == 'com.cloudbees.jenkins.plugins.okidocki.DockerfileImageSelector'
             selector[0].contextPath[0].value() == '.'
@@ -1404,6 +1404,7 @@ class WrapperContextSpec extends Specification {
             forcePull[0].value() == false
             group[0].value().empty
             command[0].value() == '/bin/cat'
+            net[0].value() == 'bridge'
         }
         1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.6.2')
     }
@@ -1422,12 +1423,13 @@ class WrapperContextSpec extends Specification {
             verbose()
             userGroup('test10')
             startCommand('test11')
+            network('test12')
         }
 
         then:
         with(context.wrapperNodes[0]) {
             name() == 'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper'
-            children().size() == 9
+            children().size() == 10
             selector[0].children().size() == 2
             selector[0].attribute('class') == 'com.cloudbees.jenkins.plugins.okidocki.DockerfileImageSelector'
             selector[0].contextPath[0].value() == 'test1'
@@ -1448,6 +1450,7 @@ class WrapperContextSpec extends Specification {
             forcePull[0].value() == true
             group[0].value() == 'test10'
             command[0].value() == 'test11'
+            net[0].value() == 'test12'
         }
         1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.6.2')
     }
@@ -1466,12 +1469,13 @@ class WrapperContextSpec extends Specification {
             verbose()
             userGroup('test10')
             startCommand('test11')
+            network('test12')
         }
 
         then:
         with(context.wrapperNodes[0]) {
             name() == 'com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper'
-            children().size() == 9
+            children().size() == 10
             selector[0].children().size() == 1
             selector[0].attribute('class') == 'com.cloudbees.jenkins.plugins.okidocki.PullDockerImageSelector'
             selector[0].image[0].value() == 'test1'
@@ -1491,6 +1495,7 @@ class WrapperContextSpec extends Specification {
             forcePull[0].value() == true
             group[0].value() == 'test10'
             command[0].value() == 'test11'
+            net[0].value() == 'test12'
         }
         1 * mockJobManagement.requireMinimumPluginVersion('docker-custom-build-environment', '1.6.2')
     }
