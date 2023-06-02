@@ -24,8 +24,7 @@ public abstract class ContextExtensionPoint implements ExtensionPoint {
      * @param item the newly created item
      * @param dslEnvironment the environment that has been available while creating the item
      */
-    public void notifyItemCreated(Item item, DslEnvironment dslEnvironment) {
-    }
+    public void notifyItemCreated(Item item, DslEnvironment dslEnvironment) {}
 
     /**
      * Notifies the ExtensionPoint if an item has been updated. Implementations should override this to get notified.
@@ -34,8 +33,7 @@ public abstract class ContextExtensionPoint implements ExtensionPoint {
      * @param item the updated item
      * @param dslEnvironment the environment that has been available while updating the item
      */
-    public void notifyItemUpdated(Item item, DslEnvironment dslEnvironment) {
-    }
+    public void notifyItemUpdated(Item item, DslEnvironment dslEnvironment) {}
 
     /**
      * Call the {@link Runnable}, which must be a Groovy closure, in the given {@link Context}.

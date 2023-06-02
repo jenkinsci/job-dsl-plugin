@@ -2,10 +2,9 @@ package javaposse.jobdsl.plugin;
 
 import hudson.model.Item;
 import hudson.model.ItemGroup;
+import java.util.function.Function;
 import jenkins.model.Jenkins;
 import org.apache.commons.io.FilenameUtils;
-
-import java.util.function.Function;
 
 /**
  * A JobLookupStrategy encapsulates where a seed job will look for existing jobs

@@ -1,10 +1,15 @@
 package javaposse.jobdsl.plugin;
 
+import static hudson.Util.fixEmptyAndTrim;
+import static java.lang.String.format;
+import static javaposse.jobdsl.plugin.actions.GeneratedObjectsAction.extractGeneratedObjects;
+
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.ExtensionList;
@@ -24,6 +29,16 @@ import hudson.model.TaskListener;
 import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.tasks.Builder;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.GeneratedConfigFile;
 import javaposse.jobdsl.dsl.GeneratedItems;
@@ -36,11 +51,11 @@ import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesAction;
 import javaposse.jobdsl.plugin.actions.GeneratedConfigFilesBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedJobsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedJobsBuildAction;
+import javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction;
 import javaposse.jobdsl.plugin.actions.GeneratedUserContentsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedUserContentsBuildAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsAction;
 import javaposse.jobdsl.plugin.actions.GeneratedViewsBuildAction;
-import javaposse.jobdsl.plugin.actions.GeneratedObjectsRunAction;
 import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
 import jenkins.tasks.SimpleBuildStep;
@@ -52,22 +67,6 @@ import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval;
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static hudson.Util.fixEmptyAndTrim;
-import static java.lang.String.format;
-import static javaposse.jobdsl.plugin.actions.GeneratedObjectsAction.extractGeneratedObjects;
 
 /**
  * This Builder keeps a list of job DSL scripts, and when prompted, executes these to create /
@@ -127,8 +126,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     }
 
     @DataBoundConstructor
-    public ExecuteDslScripts() {
-    }
+    public ExecuteDslScripts() {}
 
     ExecuteDslScripts(String scriptText) {
         this.usingScriptText = true;
@@ -292,8 +290,15 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     }
 
     void configure(Item ancestor) {
-        if (!sandbox && isUsingScriptText() && scriptText != null && ((DescriptorImpl) getDescriptor()).isSecurityEnabled()) {
-            ScriptApproval.get().configuring(scriptText, GroovyLanguage.get(), ApprovalContext.create().withCurrentUser().withItem(ancestor));
+        if (!sandbox
+                && isUsingScriptText()
+                && scriptText != null
+                && ((DescriptorImpl) getDescriptor()).isSecurityEnabled()) {
+            ScriptApproval.get()
+                    .configuring(
+                            scriptText,
+                            GroovyLanguage.get(),
+                            ApprovalContext.create().withCurrentUser().withItem(ancestor));
         }
     }
 
@@ -307,8 +312,12 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
      * updated Jenkins jobs. The created / updated jobs are reported in the build result.
      */
     @Override
-    public void perform(@NonNull Run<?, ?> run, @NonNull FilePath workspace, @NonNull Launcher launcher,
-                        @NonNull TaskListener listener) throws InterruptedException, IOException {
+    public void perform(
+            @NonNull Run<?, ?> run,
+            @NonNull FilePath workspace,
+            @NonNull Launcher launcher,
+            @NonNull TaskListener listener)
+            throws InterruptedException, IOException {
         try {
             EnvVars env = run.getEnvironment(listener);
             if (run instanceof AbstractBuild) {
@@ -320,9 +329,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 binding.putAll(additionalParameters);
             }
 
-            JenkinsJobManagement jenkinsJobManagement = new JenkinsJobManagement(
-                    listener.getLogger(), binding, run, workspace, getLookupStrategy()
-            );
+            JenkinsJobManagement jenkinsJobManagement =
+                    new JenkinsJobManagement(listener.getLogger(), binding, run, workspace, getLookupStrategy());
             jenkinsJobManagement.setFailOnMissingPlugin(failOnMissingPlugin);
             jenkinsJobManagement.setFailOnSeedCollision(failOnSeedCollision);
             jenkinsJobManagement.setUnstableOnDeprecation(unstableOnDeprecation);
@@ -334,8 +342,12 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
             try (ScriptRequestGenerator generator = new ScriptRequestGenerator(workspace, env)) {
                 Set<ScriptRequest> scriptRequests = generator.getScriptRequests(
-                        getTargets(), isUsingScriptText(), getScriptText(), ignoreExisting, isIgnoreMissingFiles(), additionalClasspath
-                );
+                        getTargets(),
+                        isUsingScriptText(),
+                        getScriptText(),
+                        ignoreExisting,
+                        isIgnoreMissingFiles(),
+                        additionalClasspath);
 
                 JenkinsDslScriptLoader dslScriptLoader;
                 if (((DescriptorImpl) getDescriptor()).isSecurityEnabled()) {
@@ -360,11 +372,31 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 addJobAction(run, new GeneratedConfigFilesBuildAction(freshConfigFiles));
                 addJobAction(run, new GeneratedUserContentsBuildAction(freshUserContents));
 
-                updateTemplates(run.getParent(), listener, new HashSet<>(run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
-                updateGeneratedJobs(run.getParent(), listener, new HashSet<>(run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
-                updateGeneratedViews(run.getParent(), listener, new HashSet<>(run.getAction(GeneratedViewsBuildAction.class).getModifiedObjects()));
-                updateGeneratedConfigFiles(run.getParent(), listener, new HashSet<>(run.getAction(GeneratedConfigFilesBuildAction.class).getModifiedObjects()));
-                updateGeneratedUserContents(run.getParent(), listener, new HashSet<>(run.getAction(GeneratedUserContentsBuildAction.class).getModifiedObjects()));
+                updateTemplates(
+                        run.getParent(),
+                        listener,
+                        new HashSet<>(
+                                run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
+                updateGeneratedJobs(
+                        run.getParent(),
+                        listener,
+                        new HashSet<>(
+                                run.getAction(GeneratedJobsBuildAction.class).getModifiedObjects()));
+                updateGeneratedViews(
+                        run.getParent(),
+                        listener,
+                        new HashSet<>(
+                                run.getAction(GeneratedViewsBuildAction.class).getModifiedObjects()));
+                updateGeneratedConfigFiles(
+                        run.getParent(),
+                        listener,
+                        new HashSet<>(run.getAction(GeneratedConfigFilesBuildAction.class)
+                                .getModifiedObjects()));
+                updateGeneratedUserContents(
+                        run.getParent(),
+                        listener,
+                        new HashSet<>(run.getAction(GeneratedUserContentsBuildAction.class)
+                                .getModifiedObjects()));
             }
         } catch (RuntimeException e) {
             if (!(e instanceof DslException) && !(e instanceof AccessDeniedException)) {
@@ -375,12 +407,11 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         }
     }
 
-    private void addJobAction(Run run, GeneratedObjectsRunAction action){
+    private void addJobAction(Run run, GeneratedObjectsRunAction action) {
         GeneratedObjectsRunAction generatedJobsBuildAction = run.getAction(action.getClass());
         if (generatedJobsBuildAction == null) {
             run.addAction(action);
-        }
-        else {
+        } else {
             generatedJobsBuildAction.addModifiedObjects(action.getModifiedObjects());
         }
     }
@@ -388,8 +419,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     /**
      * Uses generatedJobs as existing data, so call before updating generatedJobs.
      */
-    private Set<String> updateTemplates(Job seedJob, TaskListener listener,
-                                        Set<GeneratedJob> freshJobs) throws IOException {
+    private Set<String> updateTemplates(Job seedJob, TaskListener listener, Set<GeneratedJob> freshJobs)
+            throws IOException {
         Set<String> freshTemplates = getTemplates(freshJobs);
         Set<String> existingTemplates = getTemplates(extractGeneratedObjects(seedJob, GeneratedJobsAction.class));
         Set<String> newTemplates = Sets.difference(freshTemplates, existingTemplates);
@@ -406,8 +437,10 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
         // Clean up
         for (String templateName : removedTemplates) {
-            Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
-            Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
+            Collection<SeedReference> seedJobReferences =
+                    descriptor.getTemplateJobMap().get(templateName);
+            Collection<SeedReference> matching =
+                    Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
             if (!matching.isEmpty()) {
                 seedJobReferences.removeAll(Sets.newHashSet(matching));
                 descriptorMutated = true;
@@ -416,11 +449,14 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
         // Ensure we have a reference
         for (String templateName : freshTemplates) {
-            Collection<SeedReference> seedJobReferences = descriptor.getTemplateJobMap().get(templateName);
-            Collection<SeedReference> matching = Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
+            Collection<SeedReference> seedJobReferences =
+                    descriptor.getTemplateJobMap().get(templateName);
+            Collection<SeedReference> matching =
+                    Collections2.filter(seedJobReferences, new SeedNamePredicate(seedJobName));
 
             AbstractItem templateProject = getLookupStrategy().getItem(seedJob, templateName, AbstractItem.class);
-            final String digest = Util.getDigestOf(new FileInputStream(templateProject.getConfigFile().getFile()));
+            final String digest = Util.getDigestOf(
+                    new FileInputStream(templateProject.getConfigFile().getFile()));
 
             if (matching.size() == 1) {
                 // Just update digest
@@ -445,8 +481,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         return freshTemplates;
     }
 
-    private void updateGeneratedJobs(final Job seedJob, TaskListener listener,
-                                     Set<GeneratedJob> freshJobs) throws IOException, InterruptedException {
+    private void updateGeneratedJobs(final Job seedJob, TaskListener listener, Set<GeneratedJob> freshJobs)
+            throws IOException, InterruptedException {
         // Update Project
         Set<GeneratedJob> generatedJobs = extractGeneratedObjects(seedJob, GeneratedJobsAction.class);
         Set<GeneratedJob> added = Sets.difference(freshJobs, generatedJobs);
@@ -484,8 +520,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         updateGeneratedJobMap(seedJob, Sets.union(added, existing), unreferenced);
     }
 
-    private void updateGeneratedJobMap(Job seedJob, Set<GeneratedJob> createdOrUpdatedJobs,
-                                       Set<GeneratedJob> removedJobs) throws IOException {
+    private void updateGeneratedJobMap(
+            Job seedJob, Set<GeneratedJob> createdOrUpdatedJobs, Set<GeneratedJob> removedJobs) throws IOException {
         DescriptorImpl descriptor = Jenkins.get().getDescriptorByType(DescriptorImpl.class);
         boolean descriptorMutated = false;
         Map<String, SeedReference> generatedJobMap = descriptor.getGeneratedJobMap();
@@ -500,7 +536,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                         newSeedReference.setTemplateJobName(template.getFullName());
                     }
                 }
-                newSeedReference.setDigest(Util.getDigestOf(Items.getConfigFile(item).getFile()));
+                newSeedReference.setDigest(
+                        Util.getDigestOf(Items.getConfigFile(item).getFile()));
 
                 SeedReference oldSeedReference = generatedJobMap.get(item.getFullName());
                 if (!newSeedReference.equals(oldSeedReference)) {
@@ -523,8 +560,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         }
     }
 
-    private void updateGeneratedViews(Job seedJob, TaskListener listener,
-                                      Set<GeneratedView> freshViews) throws IOException {
+    private void updateGeneratedViews(Job seedJob, TaskListener listener, Set<GeneratedView> freshViews)
+            throws IOException {
         Set<GeneratedView> generatedViews = extractGeneratedObjects(seedJob, GeneratedViewsAction.class);
         Set<GeneratedView> added = Sets.difference(freshViews, generatedViews);
         Set<GeneratedView> existing = Sets.intersection(generatedViews, freshViews);
@@ -558,9 +595,10 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         logItems(listener, "Removed views", removed);
     }
 
-    private void updateGeneratedConfigFiles(Job seedJob, TaskListener listener,
-                                            Set<GeneratedConfigFile> freshConfigFiles) {
-        Set<GeneratedConfigFile> generatedConfigFiles = extractGeneratedObjects(seedJob, GeneratedConfigFilesAction.class);
+    private void updateGeneratedConfigFiles(
+            Job seedJob, TaskListener listener, Set<GeneratedConfigFile> freshConfigFiles) {
+        Set<GeneratedConfigFile> generatedConfigFiles =
+                extractGeneratedObjects(seedJob, GeneratedConfigFilesAction.class);
         Set<GeneratedConfigFile> added = Sets.difference(freshConfigFiles, generatedConfigFiles);
         Set<GeneratedConfigFile> existing = Sets.intersection(generatedConfigFiles, freshConfigFiles);
         Set<GeneratedConfigFile> unreferenced = Sets.difference(generatedConfigFiles, freshConfigFiles);
@@ -569,7 +607,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         logItems(listener, "Existing config files", existing);
         logItems(listener, "Unreferenced config files", unreferenced);
 
-        if (removedConfigFilesAction == RemovedConfigFilesAction.DELETE && Jenkins.get().getPluginManager().getPlugin("config-file-provider") != null) {
+        if (removedConfigFilesAction == RemovedConfigFilesAction.DELETE
+                && Jenkins.get().getPluginManager().getPlugin("config-file-provider") != null) {
             GlobalConfigFiles globalConfigFiles = GlobalConfigFiles.get();
             for (GeneratedConfigFile unreferencedConfigFile : unreferenced) {
                 Jenkins.get().checkPermission(Jenkins.ADMINISTER);
@@ -578,9 +617,10 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         }
     }
 
-    private void updateGeneratedUserContents(Job seedJob, TaskListener listener,
-                                             Set<GeneratedUserContent> freshUserContents) {
-        Set<GeneratedUserContent> generatedUserContents = extractGeneratedObjects(seedJob, GeneratedUserContentsAction.class);
+    private void updateGeneratedUserContents(
+            Job seedJob, TaskListener listener, Set<GeneratedUserContent> freshUserContents) {
+        Set<GeneratedUserContent> generatedUserContents =
+                extractGeneratedObjects(seedJob, GeneratedUserContentsAction.class);
         Set<GeneratedUserContent> added = Sets.difference(freshUserContents, generatedUserContents);
         Set<GeneratedUserContent> existing = Sets.intersection(generatedUserContents, freshUserContents);
         Set<GeneratedUserContent> unreferenced = Sets.difference(generatedUserContents, freshUserContents);

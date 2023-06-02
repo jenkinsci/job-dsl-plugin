@@ -1,11 +1,11 @@
 package javaposse.jobdsl.plugin;
 
+import static org.junit.Assert.assertNotNull;
+
 import io.jenkins.plugins.casc.misc.ConfiguredWithCode;
 import io.jenkins.plugins.casc.misc.JenkinsConfiguredWithCodeRule;
 import org.junit.ClassRule;
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
 
 public class ConfigurationAsCodeTest {
 

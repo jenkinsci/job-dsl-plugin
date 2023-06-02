@@ -4,15 +4,14 @@ import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.Job;
 import hudson.model.JobProperty;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 import javaposse.jobdsl.dsl.helpers.properties.PropertiesContext;
 import javaposse.jobdsl.plugin.ContextExtensionPoint;
 import javaposse.jobdsl.plugin.DslEnvironment;
 import javaposse.jobdsl.plugin.DslExtensionMethod;
 import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
 
 @Extension(optional = true)
 public class ExampleJobDslExtension extends ContextExtensionPoint {
@@ -25,14 +24,12 @@ public class ExampleJobDslExtension extends ContextExtensionPoint {
     }
 
     @Override
-    public void notifyItemCreated(Item item,
-                                  DslEnvironment dslEnvironment) {
+    public void notifyItemCreated(Item item, DslEnvironment dslEnvironment) {
         notifyItemUpdated(item, dslEnvironment);
     }
 
     @Override
-    public void notifyItemUpdated(Item item,
-                                  DslEnvironment dslEnvironment) {
+    public void notifyItemUpdated(Item item, DslEnvironment dslEnvironment) {
         for (Map.Entry<String, Object> entry : dslEnvironment.entrySet()) {
             String key = entry.getKey();
             if (key.startsWith(PREFIX)) {

@@ -31,25 +31,6 @@ import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.slaves.Cloud;
 import hudson.util.VersionNumber;
-import javaposse.jobdsl.dsl.AbstractJobManagement;
-import javaposse.jobdsl.dsl.DslException;
-import javaposse.jobdsl.dsl.DslScriptException;
-import javaposse.jobdsl.dsl.ExtensibleContext;
-import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
-import javaposse.jobdsl.dsl.NameNotProvidedException;
-import javaposse.jobdsl.dsl.UserContent;
-import javaposse.jobdsl.plugin.ExtensionPointHelper.DslExtension;
-import jenkins.branch.OrganizationFolder;
-import jenkins.model.DirectlyModifiableTopLevelItemGroup;
-import jenkins.model.Jenkins;
-import jenkins.model.ModifiableTopLevelItemGroup;
-import org.apache.commons.io.FilenameUtils;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.jenkinsci.plugins.vSphereCloud;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -65,11 +46,24 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static hudson.model.Result.UNSTABLE;
-import static hudson.model.View.createViewFromXML;
-import static java.lang.String.format;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import javaposse.jobdsl.dsl.AbstractJobManagement;
+import javaposse.jobdsl.dsl.DslException;
+import javaposse.jobdsl.dsl.DslScriptException;
+import javaposse.jobdsl.dsl.ExtensibleContext;
+import javaposse.jobdsl.dsl.JobConfigurationNotFoundException;
+import javaposse.jobdsl.dsl.NameNotProvidedException;
+import javaposse.jobdsl.dsl.UserContent;
+import javaposse.jobdsl.plugin.ExtensionPointHelper.DslExtension;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import jenkins.branch.OrganizationFolder;
+import jenkins.model.DirectlyModifiableTopLevelItemGroup;
+import jenkins.model.Jenkins;
+import jenkins.model.ModifiableTopLevelItemGroup;
+import org.apache.commons.io.FilenameUtils;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.jenkinsci.plugins.vSphereCloud;
 
 /**
  * Manages Jenkins jobs, providing facilities to retrieve and create / update.
@@ -87,8 +81,12 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private boolean failOnSeedCollision;
     private boolean unstableOnDeprecation;
 
-    public JenkinsJobManagement(PrintStream outputLogger, Map<String, ?> envVars, Run<?, ?> run,
-                                FilePath workspace, LookupStrategy lookupStrategy) {
+    public JenkinsJobManagement(
+            PrintStream outputLogger,
+            Map<String, ?> envVars,
+            Run<?, ?> run,
+            FilePath workspace,
+            LookupStrategy lookupStrategy) {
         super(outputLogger);
         this.envVars = envVars;
         this.run = run;
@@ -156,12 +154,14 @@ public class JenkinsJobManagement extends AbstractJobManagement {
                 String seedJobName = project.getFullName();
                 if (seedJobName != null) {
                     DescriptorImpl descriptor = Jenkins.get().getDescriptorByType(DescriptorImpl.class);
-                    SeedReference seedReference = descriptor.getGeneratedJobMap().get(item.getFullName());
+                    SeedReference seedReference =
+                            descriptor.getGeneratedJobMap().get(item.getFullName());
                     if (seedReference != null) {
                         String existingSeedJobName = seedReference.getSeedJobName();
-                        if (!seedJobName.equals(existingSeedJobName) &&
-                                Jenkins.get().getItemByFullName(existingSeedJobName) != null) {
-                            throw new DslException(format(Messages.CreateOrUpdateConfigFile_SeedCollision(), path, existingSeedJobName));
+                        if (!seedJobName.equals(existingSeedJobName)
+                                && Jenkins.get().getItemByFullName(existingSeedJobName) != null) {
+                            throw new DslException(format(
+                                    Messages.CreateOrUpdateConfigFile_SeedCollision(), path, existingSeedJobName));
                         }
                     }
                 }
@@ -192,7 +192,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
                         ((ModifiableViewGroup) parent).checkPermission(View.CREATE);
                         ((ModifiableViewGroup) parent).addView(createViewFromXML(viewBaseName, inputStream));
                     } else {
-                        throw new DslException(format(Messages.CreateView_UnsupportedParent(), parent.getFullName(), parent.getClass()));
+                        throw new DslException(format(
+                                Messages.CreateView_UnsupportedParent(), parent.getFullName(), parent.getClass()));
                     }
                 } else if (!ignoreExisting) {
                     inputStream.reset();
@@ -201,7 +202,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             } else if (parent == null) {
                 throw new DslException(format(Messages.CreateView_UnknownParent(), path));
             } else {
-                throw new DslException(format(Messages.CreateView_UnsupportedParent(), parent.getFullName(), parent.getClass()));
+                throw new DslException(
+                        format(Messages.CreateView_UnsupportedParent(), parent.getFullName(), parent.getClass()));
             }
         } catch (IOException e) {
             throw new DslException(e);
@@ -220,8 +222,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             }
         } catch (Exception e) {
             throw new DslException(
-                    format(Messages.CreateOrUpdateUserContent_Exception(), userContent.getPath(), e.getMessage())
-            );
+                    format(Messages.CreateOrUpdateUserContent_Exception(), userContent.getPath(), e.getMessage()));
         }
     }
 
@@ -244,7 +245,6 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         LOGGER.log(Level.INFO, format("Scheduling build of %s from %s", path, project.getName()));
         project.scheduleBuild(run == null ? new JobDslCause() : new Cause.UpstreamCause(run));
     }
-
 
     @Override
     public InputStream streamFileInWorkspace(String relLocation) throws IOException, InterruptedException {
@@ -290,8 +290,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         Plugin plugin = Jenkins.get().getPlugin(pluginShortName);
         if (plugin != null && plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(minimumVersion))) {
             logDeprecationWarning(
-                    "support for " + plugin.getWrapper().getDisplayName() + " versions older than " + minimumVersion
-            );
+                    "support for " + plugin.getWrapper().getDisplayName() + " versions older than " + minimumVersion);
         }
     }
 
@@ -313,9 +312,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         Plugin plugin = Jenkins.get().getPlugin(pluginShortName);
         if (plugin == null) {
             failOrMarkBuildAsUnstable(
-                    "plugin '" + pluginShortName + "' needs to be installed",
-                    failIfMissing || failOnMissingPlugin
-            );
+                    "plugin '" + pluginShortName + "' needs to be installed", failIfMissing || failOnMissingPlugin);
         }
     }
 
@@ -330,13 +327,11 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         if (plugin == null) {
             failOrMarkBuildAsUnstable(
                     "version " + version + " or later of plugin '" + pluginShortName + "' needs to be installed",
-                    failIfMissing || failOnMissingPlugin
-            );
+                    failIfMissing || failOnMissingPlugin);
         } else if (plugin.getWrapper().getVersionNumber().isOlderThan(new VersionNumber(version))) {
             failOrMarkBuildAsUnstable(
                     "plugin '" + pluginShortName + "' needs to be updated to version " + version + " or later",
-                    failIfMissing || failOnMissingPlugin
-            );
+                    failIfMissing || failOnMissingPlugin);
         }
     }
 
@@ -363,7 +358,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         Jenkins jenkins = Jenkins.get();
         if (jenkins.getPlugin("vsphere-cloud") != null) {
             for (Cloud cloud : jenkins.clouds) {
-                if (cloud instanceof vSphereCloud && ((vSphereCloud) cloud).getVsDescription().equals(name)) {
+                if (cloud instanceof vSphereCloud
+                        && ((vSphereCloud) cloud).getVsDescription().equals(name)) {
                     return ((vSphereCloud) cloud).getHash();
                 }
             }
@@ -375,7 +371,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     public void renameJobMatching(final String previousNames, String destination) throws IOException {
         final ItemGroup context = lookupStrategy.getContext(project);
         Collection<Job> items = Jenkins.get().getAllItems(Job.class);
-        Collection<Job> matchingJobs = Collections2.filter(items, topLevelItem -> topLevelItem.getRelativeNameFrom(context).matches(previousNames));
+        Collection<Job> matchingJobs = Collections2.filter(
+                items, topLevelItem -> topLevelItem.getRelativeNameFrom(context).matches(previousNames));
         if (matchingJobs.size() == 1) {
             renameJob(matchingJobs.iterator().next(), destination);
         } else if (matchingJobs.size() > 1) {
@@ -389,21 +386,20 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     @Override
-    public Node callExtension(String name, javaposse.jobdsl.dsl.Item item,
-                              Class<? extends ExtensibleContext> contextType, Object... args) throws Throwable {
+    public Node callExtension(
+            String name, javaposse.jobdsl.dsl.Item item, Class<? extends ExtensibleContext> contextType, Object... args)
+            throws Throwable {
         Set<DslExtension> candidates = ExtensionPointHelper.findExtensionPoints(name, contextType, args);
         if (candidates.isEmpty()) {
             LOGGER.fine(
-                    "Found no extension which provides method " + name + " with arguments " + Arrays.toString(args)
-            );
+                    "Found no extension which provides method " + name + " with arguments " + Arrays.toString(args));
             return null;
         } else if (candidates.size() > 1) {
             throw new DslException(format(
                     Messages.CallExtension_MultipleCandidates(),
                     name,
                     Arrays.toString(args),
-                    Arrays.toString(candidates.toArray())
-            ));
+                    Arrays.toString(candidates.toArray())));
         }
 
         try {
@@ -429,7 +425,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
-    private FilePath locateValidFileInWorkspace(FilePath workspace, String relLocation) throws IOException, InterruptedException {
+    private FilePath locateValidFileInWorkspace(FilePath workspace, String relLocation)
+            throws IOException, InterruptedException {
         FilePath filePath = workspace.child(relLocation);
         if (!filePath.exists()) {
             throw new DslScriptException(format("File %s does not exist in workspace", relLocation));
@@ -494,23 +491,23 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         try {
             oldConfig = new XmlParser().parse(item.getConfigFile().getFile());
         } catch (Exception e) {
-            throw new DslException(format(
-                    Messages.UpdateExistingItem_CouldNotReadConfig(),
-                    item.getConfigFile().getFile().getAbsolutePath(),
-                    item.getFullName()
-            ), e);
+            throw new DslException(
+                    format(
+                            Messages.UpdateExistingItem_CouldNotReadConfig(),
+                            item.getConfigFile().getFile().getAbsolutePath(),
+                            item.getFullName()),
+                    e);
         }
 
         if (!oldConfig.name().equals(dslItem.getNode().name())) {
-            throw new DslException(format(
-                    Messages.UpdateExistingItem_ItemTypeDoesNotMatch(),
-                    item.getFullName()
-            ));
+            throw new DslException(format(Messages.UpdateExistingItem_ItemTypeDoesNotMatch(), item.getFullName()));
         }
     }
 
     private boolean viewTypeChanged(View view, InputStream config) throws IOException {
-        Class viewType = Jenkins.XSTREAM2.getMapper().realClass(new XppDriver().createReader(config).getNodeName());
+        Class viewType = Jenkins.XSTREAM2
+                .getMapper()
+                .realClass(new XppDriver().createReader(config).getNodeName());
         config.reset();
         return !viewType.equals(view.getClass());
     }
@@ -530,7 +527,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             } else if (parent == null) {
                 throw new DslException(format(Messages.CreateItem_UnknownParent(), path));
             } else {
-                throw new DslException(format(Messages.CreateItem_UnsupportedParent(), parent.getFullName(), parent.getClass()));
+                throw new DslException(
+                        format(Messages.CreateItem_UnsupportedParent(), parent.getFullName(), parent.getClass()));
             }
         } catch (IOException e) {
             throw new DslException(e);
@@ -578,10 +576,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
                 move(from, itemGroup);
             } else {
                 throw new DslException(format(
-                        Messages.RenameJobMatching_DestinationNotFolder(),
-                        from.getFullName(),
-                        toParent.getFullName()
-                ));
+                        Messages.RenameJobMatching_DestinationNotFolder(), from.getFullName(), toParent.getFullName()));
             }
         }
         from.renameTo(FilenameUtils.getName(to));
@@ -591,18 +586,15 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         Optional<AbstractFolderProperty<?>> maybeProperty = Optional.empty();
         if (item instanceof Folder) {
             Folder folder = (Folder) item;
-            maybeProperty =
-                folder.getProperties().stream()
-                .filter(p -> p instanceof FolderCredentialsProperty)
-                .findFirst();
-
+            maybeProperty = folder.getProperties().stream()
+                    .filter(p -> p instanceof FolderCredentialsProperty)
+                    .findFirst();
         }
         if (item instanceof OrganizationFolder) {
             OrganizationFolder folder = (OrganizationFolder) item;
-            maybeProperty =
-                    folder.getProperties().stream()
-                            .filter(p -> p instanceof FolderCredentialsProperty)
-                            .findFirst();
+            maybeProperty = folder.getProperties().stream()
+                    .filter(p -> p instanceof FolderCredentialsProperty)
+                    .findFirst();
         }
         if (maybeProperty.isPresent()) {
             LOGGER.log(Level.FINE, format("Merging credentials for %s", item.getName()));
@@ -610,9 +602,9 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
-
     @SuppressWarnings("unchecked")
-    private static <I extends AbstractItem & TopLevelItem> void move(Item item, DirectlyModifiableTopLevelItemGroup destination) throws IOException {
+    private static <I extends AbstractItem & TopLevelItem> void move(
+            Item item, DirectlyModifiableTopLevelItemGroup destination) throws IOException {
         Items.move((I) item, destination);
     }
 

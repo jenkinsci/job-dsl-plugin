@@ -5,8 +5,6 @@ import hudson.model.Descriptor;
 import io.jenkins.plugins.casc.Configurable;
 import org.jenkinsci.Symbol;
 
-import java.io.IOException;
-
 public class InlineGroovyScriptSource extends ConfigurableScriptSource implements Configurable {
 
     public String script;
@@ -23,7 +21,5 @@ public class InlineGroovyScriptSource extends ConfigurableScriptSource implement
 
     @Extension(optional = true)
     @Symbol("script")
-    public static class DescriptorImpl extends Descriptor<ScriptSource> {
-
-    }
+    public static class DescriptorImpl extends Descriptor<ScriptSource> {}
 }

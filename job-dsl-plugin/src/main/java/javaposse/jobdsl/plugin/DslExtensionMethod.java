@@ -1,13 +1,12 @@
 package javaposse.jobdsl.plugin;
 
-import javaposse.jobdsl.dsl.ExtensibleContext;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import javaposse.jobdsl.dsl.ExtensibleContext;
 
 /**
  * Any methods of {@link ContextExtensionPoint} marked with this annotation will be exposed to the DSL.
