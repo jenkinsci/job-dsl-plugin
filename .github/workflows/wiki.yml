@@ -6,7 +6,6 @@ on:
       - master
     paths:
       - "docs/**"
-      - "pom.xml"
   workflow_dispatch:
 
 permissions:
