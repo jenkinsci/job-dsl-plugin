@@ -164,7 +164,7 @@ class MemoryJobManagementSpec extends Specification {
 
     def 'outputStream'() {
         setup:
-        PrintStream out = Mock(PrintStream)
+        PrintStream out = new PrintStream(OutputStream.nullOutputStream())
 
         when:
         JobManagement jobManagement = new MemoryJobManagement(out)

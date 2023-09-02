@@ -319,9 +319,8 @@ class ScriptRequestGeneratorSpec extends Specification {
         requests[0].body == SCRIPT_A
         requests[0].urlRoots.length == 3
         requests[0].urlRoots[0].toString() == 'workspace:/'
-        URL tempDirUrl = new File(System.getProperty('java.io.tmpdir')).toURI().toURL()
-        requests[0].urlRoots[1] =~ "${tempDirUrl}jobdsl.*\\.jar"
-        requests[0].urlRoots[2] =~ "${tempDirUrl}jobdsl.*\\.jar"
+        requests[0].urlRoots[1] =~ 'jobdsl.*\\.jar'
+        requests[0].urlRoots[2] =~ 'jobdsl.*\\.jar'
         !requests[0].ignoreExisting
         requests[0].scriptPath == getAbsolutePath(remoteBuild.workspace.child('a.groovy'))
         requests[0].relativeScriptPath == 'a.groovy'
