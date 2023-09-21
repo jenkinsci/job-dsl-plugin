@@ -10,7 +10,6 @@ import com.cloudbees.hudson.plugins.folder.Folder;
 import com.cloudbees.hudson.plugins.folder.properties.FolderCredentialsProvider.FolderCredentialsProperty;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
-import com.thoughtworks.xstream.io.xml.XppDriver;
 import groovy.util.Node;
 import groovy.util.XmlParser;
 import hudson.FilePath;
@@ -31,6 +30,7 @@ import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.slaves.Cloud;
 import hudson.util.VersionNumber;
+import hudson.util.XStream2;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -507,7 +507,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     private boolean viewTypeChanged(View view, InputStream config) throws IOException {
         Class viewType = Jenkins.XSTREAM2
                 .getMapper()
-                .realClass(new XppDriver().createReader(config).getNodeName());
+                .realClass(XStream2.getDefaultDriver().createReader(config).getNodeName());
         config.reset();
         return !viewType.equals(view.getClass());
     }
