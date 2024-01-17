@@ -79,6 +79,30 @@ class BranchSourcesContext extends AbstractExtensibleContext {
         }
     }
 
+    /**
+     * Adds a GitLab branch source. Can be called multiple times to add more branch sources.
+     */
+    @RequiresPlugin(id = 'gitlab-branch-source', minimumVersion = '670.vf7df45517001')
+    void gitlab(@DslContext(GitLabBranchSourceContext) Closure branchSourceClosure) {
+        GitLabBranchSourceContext context = new GitLabBranchSourceContext(jobManagement)
+        ContextHelper.executeInContext(branchSourceClosure, context)
+
+        Preconditions.checkNotNullOrEmpty(context.id, 'id must be specified')
+
+        branchSourceNodes << new NodeBuilder().'jenkins.branch.BranchSource' {
+            source(class: 'io.jenkins.plugins.gitlabbranchsource.GitLabSCMSource') {
+                id(context.id)
+                serverName(context.serverName ?: '')
+                credentialsId(context.credentialsId ?: '')
+                projectOwner(context.projectOwner ?: '')
+                projectPath(context.projectPath ?: '')
+            }
+            strategy(class: 'jenkins.branch.DefaultBranchPropertyStrategy') {
+                properties(class: 'empty-list')
+            }
+        }
+    }
+
     @Override
     protected void addExtensionNode(Node node) {
         branchSourceNodes << node
