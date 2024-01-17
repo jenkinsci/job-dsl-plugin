@@ -20,6 +20,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.repository_owner == 'jenkinsci'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
