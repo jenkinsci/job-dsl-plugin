@@ -1280,6 +1280,163 @@ class ScmContextSpec extends Specification {
         (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.8')
     }
 
+    def 'call svn with Assembla browser'() {
+        when:
+        context.svn {
+            location('url')
+            browser {
+                assembla('example')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.scm.browsers.Assembla'
+        context.scmNodes[0].browser[0].'spaceName'[0].value() == 'example'
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.8')
+    }
+
+    def 'call svn with CollabNet SVN browser'() {
+        when:
+        context.svn {
+            location('url')
+            browser {
+                collabNetSVN('https://myproject.dev.java.net/source/browse/example')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.scm.browsers.CollabNetSVN'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'https://myproject.dev.java.net/source/browse/example'
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.8')
+    }
+
+    def 'call svn with FishEye SVN browser'() {
+        when:
+        context.svn {
+            location('url')
+            browser {
+                fishEyeSVN('http://fisheye5.cenqua.com/browse/example/', 'foo/bar')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.scm.browsers.FishEyeSVN'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://fisheye5.cenqua.com/browse/example/'
+        context.scmNodes[0].browser[0].'rootModule'[0].value() == 'foo/bar'
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.8')
+    }
+
+    def 'call svn with Phabricator browser'() {
+        when:
+        context.svn {
+            location('url')
+            browser {
+                phabricator('http://svn.apache.org/wsvn/', 'example')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.scm.browsers.Phabricator'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://svn.apache.org/wsvn/'
+        context.scmNodes[0].browser[0].'repo'[0].value() == 'example'
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.8')
+    }
+
+    def 'call svn with Sventon browser'() {
+        when:
+        context.svn {
+            location('url')
+            browser {
+                sventon('http://mycompany/svn/', 'example')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.scm.browsers.Sventon'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://mycompany/svn/'
+        context.scmNodes[0].browser[0].'repositoryInstance'[0].value() == 'example'
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.8')
+    }
+
+    def 'call svn with Sventon2 browser'() {
+        when:
+        context.svn {
+            location('url')
+            browser {
+                sventon2('http://mycompany/svn2/', 'example')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.scm.browsers.Sventon2'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://mycompany/svn2/'
+        context.scmNodes[0].browser[0].'repositoryInstance'[0].value() == 'example'
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.8')
+    }
+
+    def 'call svn with SVN::Web browser'() {
+        when:
+        context.svn {
+            location('url')
+            browser {
+                svnWeb('http://svn.apache.org/wsvn/')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.scm.browsers.SVNWeb'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://svn.apache.org/wsvn/'
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.8')
+    }
+
+    def 'call svn with ViewSVN browser'() {
+        when:
+        context.svn {
+            location('url')
+            browser {
+                viewSVN('http://mycompany.com/viewsvn/repo_name')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.scm.browsers.ViewSVN'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://mycompany.com/viewsvn/repo_name'
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.8')
+    }
+
+    def 'call svn with WebSVN browser'() {
+        when:
+        context.svn {
+            location('url')
+            browser {
+                webSVN('http://mycompany.com/websvn/')
+            }
+        }
+
+        then:
+        context.scmNodes[0] != null
+        context.scmNodes[0].browser.size() == 1
+        context.scmNodes[0].browser[0].attribute('class') == 'hudson.scm.browsers.WebSVN'
+        context.scmNodes[0].browser[0].'url'[0].value() == 'http://mycompany.com/websvn/'
+        (1.._) * mockJobManagement.requireMinimumPluginVersion('subversion', '2.8')
+    }
+
     def 'call svn with no locations'() {
         when:
         context.svn {

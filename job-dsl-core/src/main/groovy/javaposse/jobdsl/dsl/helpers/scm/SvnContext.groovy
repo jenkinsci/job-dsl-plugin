@@ -3,9 +3,14 @@ package javaposse.jobdsl.dsl.helpers.scm
 import javaposse.jobdsl.dsl.AbstractContext
 import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.DslContext
+import javaposse.jobdsl.dsl.Item
 import javaposse.jobdsl.dsl.JobManagement
 
+import static javaposse.jobdsl.dsl.ContextHelper.executeInContext
+
 class SvnContext extends AbstractContext {
+    private final Item item
+
     List<Node> locations = []
     SvnCheckoutStrategy checkoutStrategy = SvnCheckoutStrategy.UPDATE
     List<String> excludedRegions = []
@@ -14,9 +19,11 @@ class SvnContext extends AbstractContext {
     List<String> excludedCommitMessages = []
     String excludedRevisionProperty
     Closure configureBlock
+    final SvnBrowserContext svnBrowserContext = new SvnBrowserContext(jobManagement, item)
 
-    SvnContext(JobManagement jobManagement) {
+    SvnContext(JobManagement jobManagement, Item item) {
         super(jobManagement)
+        this.item = item
     }
 
     /**
@@ -132,6 +139,15 @@ class SvnContext extends AbstractContext {
      */
     void excludedRevisionProperty(String revisionProperty) {
         excludedRevisionProperty = revisionProperty
+    }
+
+    /**
+     * Adds a repository browser for browsing the details of changes in an external system.
+     *
+     * @since 1.78
+     */
+    void browser(@DslContext(SvnBrowserContext) Closure svnBrowserClosure) {
+        executeInContext(svnBrowserClosure, svnBrowserContext)
     }
 
     /**
