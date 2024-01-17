@@ -146,7 +146,7 @@ class TriggerContextSpec extends Specification {
         where:
         event << [
                 'changeAbandoned', 'changeMerged', 'changeRestored', 'commentAdded', 'draftPublished',
-                'patchsetCreated', 'refUpdated'
+                'patchsetCreated', 'refUpdated', 'PrivateStateChanged', 'WipStateChanged'
         ]
     }
 
