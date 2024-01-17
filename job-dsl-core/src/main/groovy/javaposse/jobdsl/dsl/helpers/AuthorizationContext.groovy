@@ -21,35 +21,39 @@ class AuthorizationContext extends AbstractContext {
     /**
      * Adds all available permissions for the user.
      */
-    void permissionAll(String user) {
+    void permissionAll(String type, String user) {
         availablePermissions.each {
-            addPermission(it, user)
+            addPermission(type, it, user)
         }
     }
 
     /**
      * Adds a specific permission.
      *
-     * @param permission a permission string in {@code '<permission>:<user>'} format, e.g.
+     * @param permission a permission string in {@code '<type>:<permission>:<user>'} format, e.g.
      * {@code 'hudson.model.Item.Create:authenticated'}
      */
     void permission(String permission) {
         checkNotNullOrEmpty(permission, 'permission must not be null or empty')
-        checkArgument(permission.contains(':'), 'permission must be <permission>:<user>')
+        checkArgument(permission.contains(':'), 'permission must be <type>:<permission>:<user>')
 
-        String[] permissionAndUser = permission.split(':', 2)
-        this.permission(permissionAndUser[0], permissionAndUser[1])
+        String[] permissionAndUser = permission.split(':', 3)
+        this.permission(permissionAndUser[0], permissionAndUser[1], permissionAndUser[2])
     }
 
     /**
      * Adds a specific permission, but breaks apart the permission from the user name.
      */
-    void permission(String permission, String user) {
+    void permission(String type, String permission, String user) {
         checkArgument(
                 availablePermissions.contains(permission),
                 "permission must be one of ${availablePermissions.join(',')}"
         )
-        addPermission(permission, user)
+        checkArgument(
+                ["USER", "GROUP"].contains(type),
+                "type must be USER or GROUP"
+        )
+        addPermission(type, permission, user)
     }
 
     /**
@@ -57,14 +61,14 @@ class AuthorizationContext extends AbstractContext {
      *
      * @since 1.66
      */
-    void permissions(String user, Iterable<String> permissionsList) {
+    void permissions(String type, String user, Iterable<String> permissionsList) {
         permissionsList.each {
-            this.permission(it, user)
+            this.permission(type, it, user)
         }
     }
 
-    protected void addPermission(String permission, String user) {
-        permissions << "${permission}:${user}".toString()
+    protected void addPermission(String type, String permission, String user) {
+        permissions << "${type}:${permission}:${user}".toString()
     }
 
     protected Set<String> getAvailablePermissions() {
