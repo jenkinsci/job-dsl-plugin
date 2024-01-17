@@ -6,7 +6,7 @@
     <f:radioBlock name="useScriptText" value="true" title="Use the provided DSL script" checked="${instance.isUsingScriptText()}" inline="true">
         <f:entry title='DSL Script' field='scriptText' description="${descriptor.scriptApprovalWarning}">
             <f:textarea codemirror-mode="groovy"
-                        codemirror-config="mode: 'text/x-groovy', lineNumbers: true, matchBrackets: true, onBlur: function(editor){editor.save()}"/>
+                        codemirror-config='"mode": "text/x-groovy", "lineNumbers": true, "matchBrackets": true'/>
         </f:entry>
     </f:radioBlock>
 
