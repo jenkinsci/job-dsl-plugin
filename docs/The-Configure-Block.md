@@ -851,6 +851,22 @@ job('example') {
 }
 ```
 
+## Configure Post Build Task Publisher with multiply conditions
+DSL:
+```groovy
+job('example') {
+    publishers {
+      def conditions = [
+              ['Build was aborted', 'AND'],
+              ['Simulation.*started', 'AND']
+      ]
+      postBuildTaskChainConditions {
+            task(conditions, 'git clean -fdx')
+        }
+    }
+}
+```
+
 ## Configure Post Build Sonar Task
 
 In order to trigger a Sonar analysis as a Post Build Task in your job you can use the following code.
