@@ -12,8 +12,7 @@ the common pattern in this situation is to copy jobs to create new ones, these "
 diverging from their original "template" and consequently it becomes difficult to maintain consistency between these
 jobs.
 
-The Job DSL plugin attempts to solve this problem by allowing jobs to be defined in a programmatic form in a human
-readable file. Writing such a file is feasible without being a Jenkins expert as the configuration from the web UI
+The Job DSL plugin attempts to solve this problem by allowing jobs to be defined in a programmatic form in a human-readable file. Writing such a file is feasible without being a Jenkins expert as the configuration from the web UI
 translates intuitively into code.
 
 ![configuration form](docs/images/pipeline.png)
@@ -113,10 +112,7 @@ generated at runtime by introspecting the plugins that have been installed.
 Jenkins saves the configuration of each job in a XML file. The Job DSL plugin is in principle a generator for these XML
 files, translating the DSL code into XML. If a configuration option is not available in the high-level DSL, it is
 possible to generate the XML directly using a
-[Configure Block](https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block). Use the
-[Job DSL Playground](http://job-dsl.herokuapp.com/) to create and test your configure blocks. Please note that the
-playground only supports the DSL API that is available in the online
-[API Reference](https://jenkinsci.github.io/job-dsl-plugin/).
+[Configure Block](https://github.com/jenkinsci/job-dsl-plugin/wiki/The-Configure-Block).
 
 Find the complete documentation on the [Wiki](https://github.com/jenkinsci/job-dsl-plugin/wiki).
 
