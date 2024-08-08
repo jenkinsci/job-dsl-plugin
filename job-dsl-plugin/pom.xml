@@ -47,8 +47,8 @@
   <properties>
     <!-- TODO GMavenPlus does not support Javadoc -->
     <maven.javadoc.skip>true</maven.javadoc.skip>
-    <node.version>18.14.2</node.version>
-    <npm.version>9.5.0</npm.version>
+    <node.version>20.16.0</node.version>
+    <npm.version>10.8.1</npm.version>
   </properties>
   <dependencyManagement>
     <dependencies>
