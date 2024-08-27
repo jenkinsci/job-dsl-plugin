@@ -29,6 +29,9 @@ jobs:
   - file: ./jobdsl/job.groovy
 ```
 
+Note that relative paths are resolved relative to the current working directory of the Jenkins server,
+which may not necessarily be the same as `$JENKINS_HOME`, depending on how your server was started.
+
 ```yml
 jobs:
   - url: https://example.acme.org/job-dsl/testjob.groovy
