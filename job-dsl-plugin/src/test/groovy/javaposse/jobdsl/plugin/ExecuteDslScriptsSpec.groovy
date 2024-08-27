@@ -142,7 +142,9 @@ folder('folder-a/folder-b') {
 
     private static final String FOLDER_WITH_BUILD_STATUS_ICON_SCRIPT = """folder('build-status') {
   icon {
-    buildStatusFolderIcon()
+    buildStatusFolderIcon {
+      jobs(['main'] as Set)
+    }
   }
 }"""
 
