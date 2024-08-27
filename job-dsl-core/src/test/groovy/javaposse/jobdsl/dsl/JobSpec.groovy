@@ -141,6 +141,57 @@ class JobSpec extends Specification {
         1 * jobManagement.requireMinimumPluginVersion('matrix-auth', '1.2')
     }
 
+    def 'call authorization with matrix-auth >= 3.2'() {
+        setup:
+        jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [
+                'hudson.model.Item.Configure',
+                'hudson.model.Item.Read',
+                'hudson.model.Run.Update',
+        ]
+
+        when:
+        job.authorization {
+            userPermissionAll('tanya')
+            groupPermissionAll('devs')
+            permission('USER:hudson.model.Run.Update:alex')
+            userPermission('hudson.model.Run.Update', 'sam')
+            groupPermission('hudson.model.Item.Configure', 'admins')
+            userPermissions('pedro', [
+                    'hudson.model.Item.Configure',
+                    'hudson.model.Item.Read',
+            ])
+            groupPermissions('robin', [
+                    'hudson.model.Item.Configure',
+                    'hudson.model.Item.Read',
+            ])
+        }
+
+        then:
+        with(job.node.properties[0].'hudson.security.AuthorizationMatrixProperty'[0]) {
+            children().size() == 14
+            blocksInheritance[0].value() == false
+            permission.size() == 13
+            int index = -1
+            permission[++index].text() == 'USER:hudson.model.Item.Configure:tanya'
+            permission[++index].text() == 'USER:hudson.model.Item.Read:tanya'
+            permission[++index].text() == 'USER:hudson.model.Run.Update:tanya'
+
+            permission[++index].text() == 'GROUP:hudson.model.Item.Configure:devs'
+            permission[++index].text() == 'GROUP:hudson.model.Item.Read:devs'
+            permission[++index].text() == 'GROUP:hudson.model.Run.Update:devs'
+
+            permission[++index].text() == 'USER:hudson.model.Run.Update:alex'
+            permission[++index].text() == 'USER:hudson.model.Run.Update:sam'
+            permission[++index].text() == 'GROUP:hudson.model.Item.Configure:admins'
+
+            permission[++index].text() == 'USER:hudson.model.Item.Configure:pedro'
+            permission[++index].text() == 'USER:hudson.model.Item.Read:pedro'
+            permission[++index].text() == 'GROUP:hudson.model.Item.Configure:robin'
+            permission[++index].text() == 'GROUP:hudson.model.Item.Read:robin'
+        }
+        19 * jobManagement.requireMinimumPluginVersion('matrix-auth', '3.0')
+    }
+
     def 'call authorization with blocksInheritance'() {
         setup:
         jobManagement.getPermissions('hudson.security.AuthorizationMatrixProperty') >> [

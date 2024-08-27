@@ -98,9 +98,23 @@ class FolderSpec extends Specification {
         when:
         folder.authorization {
             permission('hudson.model.Item.Build:jill')
+            permission('USER:hudson.model.Item.Build:andi')
+            permission('GROUP:hudson.model.Item.Build:admin')
             permission('hudson.model.Item.Configure', 'jack')
+            userPermission('hudson.model.Item.Configure', 'foo')
+            groupPermission('hudson.model.Item.Configure', 'bar')
             permissionAll('anonymous')
+            userPermissionAll('alex')
+            groupPermissionAll('devs')
             permissions('janice', [
+                'hudson.model.Item.Build',
+                'hudson.model.Item.Configure'
+            ])
+            userPermissions('pedro', [
+                'hudson.model.Item.Build',
+                'hudson.model.Item.Configure'
+            ])
+            groupPermissions('tanya', [
                 'hudson.model.Item.Build',
                 'hudson.model.Item.Configure'
             ])
@@ -108,13 +122,26 @@ class FolderSpec extends Specification {
 
         then:
         NodeList permissions = folder.node.properties[0]."$propertyName"[0].permission
-        permissions.size() == 6
-        permissions[0].text() == 'hudson.model.Item.Build:jill'
-        permissions[1].text() == 'hudson.model.Item.Configure:jack'
-        permissions[2].text() == 'hudson.model.Item.Build:anonymous'
-        permissions[3].text() == 'hudson.model.Item.Configure:anonymous'
-        permissions[4].text() == 'hudson.model.Item.Build:janice'
-        permissions[5].text() == 'hudson.model.Item.Configure:janice'
+        permissions.size() == 18
+        int index = -1
+        permissions[++index].text() == 'hudson.model.Item.Build:jill'
+        permissions[++index].text() == 'USER:hudson.model.Item.Build:andi'
+        permissions[++index].text() == 'GROUP:hudson.model.Item.Build:admin'
+        permissions[++index].text() == 'hudson.model.Item.Configure:jack'
+        permissions[++index].text() == 'USER:hudson.model.Item.Configure:foo'
+        permissions[++index].text() == 'GROUP:hudson.model.Item.Configure:bar'
+        permissions[++index].text() == 'hudson.model.Item.Build:anonymous'
+        permissions[++index].text() == 'hudson.model.Item.Configure:anonymous'
+        permissions[++index].text() == 'USER:hudson.model.Item.Build:alex'
+        permissions[++index].text() == 'USER:hudson.model.Item.Configure:alex'
+        permissions[++index].text() == 'GROUP:hudson.model.Item.Build:devs'
+        permissions[++index].text() == 'GROUP:hudson.model.Item.Configure:devs'
+        permissions[++index].text() == 'hudson.model.Item.Build:janice'
+        permissions[++index].text() == 'hudson.model.Item.Configure:janice'
+        permissions[++index].text() == 'USER:hudson.model.Item.Build:pedro'
+        permissions[++index].text() == 'USER:hudson.model.Item.Configure:pedro'
+        permissions[++index].text() == 'GROUP:hudson.model.Item.Build:tanya'
+        permissions[++index].text() == 'GROUP:hudson.model.Item.Configure:tanya'
     }
 
     def 'call properties'() {
