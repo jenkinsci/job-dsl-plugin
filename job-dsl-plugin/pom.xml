@@ -137,7 +137,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>custom-folder-icon</artifactId>
-      <version>2.13</version>
       <scope>test</scope>
     </dependency>
     <dependency>
