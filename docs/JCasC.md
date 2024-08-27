@@ -28,7 +28,8 @@ You can also fetch Job DSL scripts from a file or URL.
 jobs:
   - file: ./jobdsl/job.groovy
 ```
-NOTE: Relative paths are resolved relative to the current working directory of the Jenkins server, 
+
+NOTE: Relative paths are resolved relative to the current working directory of the Jenkins server,
 which may not necessarily be the same as `$JENKINS_HOME`, depending on how your server was started.
 
 ```yml
