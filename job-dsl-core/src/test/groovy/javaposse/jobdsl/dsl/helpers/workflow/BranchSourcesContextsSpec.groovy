@@ -190,4 +190,75 @@ class BranchSourcesContextsSpec extends Specification {
         }
         1 * jobManagement.requireMinimumPluginVersion('github-branch-source', '1.8')
     }
+
+    def 'gitlab with missing id'() {
+        when:
+        context.gitlab {}
+
+        then:
+        Exception e = thrown DslException
+        e.message =~ 'id must be specified'
+    }
+
+    def 'gitlab with minimal options'() {
+        when:
+        context.gitlab {
+            id('test')
+        }
+
+        then:
+        context.branchSourceNodes.size() == 1
+        with(context.branchSourceNodes[0]) {
+            name() == 'jenkins.branch.BranchSource'
+            children().size() == 2
+            with(source[0]) {
+                children().size() == 5
+                id[0].value() == 'test'
+                serverName[0].value().empty
+                credentialsId[0].value().empty
+                projectOwner[0].value().empty
+                projectPath[0].value().empty
+            }
+            with(strategy[0]) {
+                children().size() == 1
+                attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
+                properties[0].value() == []
+                properties[0].attribute('class') == 'empty-list'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('gitlab-branch-source', '670.vf7df45517001')
+    }
+
+    def 'gitlab with all options'() {
+        when:
+        context.gitlab {
+            id('test')
+            serverName('GitLab')
+            credentialsId('checkoutCreds')
+            projectOwner('ownerName')
+            projectPath('ownerName/projectName')
+        }
+
+        then:
+        context.branchSourceNodes.size() == 1
+        with(context.branchSourceNodes[0]) {
+            name() == 'jenkins.branch.BranchSource'
+            children().size() == 2
+            with(source[0]) {
+                children().size() == 5
+                id[0].value() == 'test'
+                serverName[0].value() == 'GitLab'
+                credentialsId[0].value() == 'checkoutCreds'
+                projectOwner[0].value() == 'ownerName'
+                projectPath[0].value() == 'ownerName/projectName'
+            }
+            with(strategy[0]) {
+                children().size() == 1
+                attribute('class') == 'jenkins.branch.DefaultBranchPropertyStrategy'
+                properties[0].value() == []
+                properties[0].attribute('class') == 'empty-list'
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('gitlab-branch-source', '670.vf7df45517001')
+    }
 }
