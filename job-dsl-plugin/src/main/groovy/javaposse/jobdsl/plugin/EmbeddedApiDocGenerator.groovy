@@ -16,8 +16,8 @@ import org.jenkinsci.plugins.structs.describable.EnumType
 import org.jenkinsci.plugins.structs.describable.HeterogeneousObjectType
 import org.jenkinsci.plugins.structs.describable.HomogeneousObjectType
 import org.jenkinsci.plugins.structs.describable.ParameterType
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer
 import org.springframework.core.ParameterNameDiscoverer
+import org.springframework.core.StandardReflectionParameterNameDiscoverer
 
 import java.lang.reflect.Method
 import java.text.BreakIterator
@@ -33,7 +33,7 @@ import static org.apache.commons.lang.StringEscapeUtils.unescapeHtml
 
 class EmbeddedApiDocGenerator {
     private static final ParameterNameDiscoverer PARAMETER_NAME_DISCOVERER =
-            new LocalVariableTableParameterNameDiscoverer()
+            new StandardReflectionParameterNameDiscoverer()
 
     private final List<DescribableModel> newContexts = []
     private final List<ParameterType> newListContexts = []
