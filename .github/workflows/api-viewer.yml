@@ -31,6 +31,21 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
+      # https://github.com/jenkins-infra/github-reusable-workflows/issues/36
+      - name: Set up Maven
+        run: |
+          wget --no-verbose https://downloads.apache.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
+          echo $CHECKSUM apache-maven-$MAVEN_VERSION-bin.tar.gz | sha512sum --check
+          tar xzf apache-maven-$MAVEN_VERSION-bin.tar.gz
+          rm apache-maven-$MAVEN_VERSION-bin.tar.gz
+          sudo mv apache-maven-$MAVEN_VERSION /opt/maven
+          sudo rm -f /usr/bin/mvn
+          sudo ln -s /opt/maven/bin/mvn /usr/bin/mvn
+          mvn --version
+        env:
+          MAVEN_VERSION: 3.9.9
+          # https://downloads.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz.sha512
+          CHECKSUM: a555254d6b53d267965a3404ecb14e53c3827c09c3b94b5678835887ab404556bfaf78dcfe03ba76fa2508649dca8531c74bca4d5846513522404d48e8c4ac8b
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Build API viewer
