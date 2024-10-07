@@ -33,7 +33,7 @@
     <revision>1.90</revision>
     <changelist>-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/job-dsl-plugin</gitHubRepo>
-    <jenkins.version>2.462.1</jenkins.version>
+    <jenkins.version>2.462.3</jenkins.version>
     <!-- TODO fix violations -->
     <spotbugs.threshold>High</spotbugs.threshold>
     <spotless.check.skip>false</spotless.check.skip>
