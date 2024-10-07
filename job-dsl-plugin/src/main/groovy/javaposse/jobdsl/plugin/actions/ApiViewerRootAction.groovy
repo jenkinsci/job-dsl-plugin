@@ -10,10 +10,10 @@ import hudson.model.UpdateSite
 import javaposse.jobdsl.plugin.EmbeddedApiDocGenerator
 import jenkins.model.Jenkins
 import net.sf.json.JSONObject
-import org.kohsuke.stapler.StaplerRequest
-import org.kohsuke.stapler.StaplerResponse
+import org.kohsuke.stapler.StaplerRequest2
+import org.kohsuke.stapler.StaplerResponse2
 
-import javax.servlet.ServletException
+import jakarta.servlet.ServletException
 
 @Extension
 class ApiViewerRootAction implements RootAction {
@@ -34,12 +34,12 @@ class ApiViewerRootAction implements RootAction {
     }
 
     @SuppressWarnings('GroovyUnusedDeclaration')
-    void doPlugins(StaplerRequest request, StaplerResponse response) throws ServletException, IOException {
+    void doPlugins(StaplerRequest2 request, StaplerResponse2 response) throws ServletException, IOException {
         serveCachedFile(request, response, generatePlugins(), 'update-center.json')
     }
 
     @SuppressWarnings('GroovyUnusedDeclaration')
-    void doData(StaplerRequest request, StaplerResponse response) throws ServletException, IOException {
+    void doData(StaplerRequest2 request, StaplerResponse2 response) throws ServletException, IOException {
         serveCachedFile(request, response, generateData(), 'dsl.json')
     }
 
@@ -91,7 +91,7 @@ class ApiViewerRootAction implements RootAction {
         updateCenter
     }
 
-    private static void serveCachedFile(StaplerRequest request, StaplerResponse response, CachedFile file,
+    private static void serveCachedFile(StaplerRequest2 request, StaplerResponse2 response, CachedFile file,
                                         String fileName) {
         response.serveFile(
                 request,

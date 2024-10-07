@@ -4,7 +4,7 @@ import jenkins.model.GlobalConfigurationCategory
 import net.sf.json.JSONObject
 import org.junit.ClassRule
 import org.jvnet.hudson.test.JenkinsRule
-import org.kohsuke.stapler.StaplerRequest
+import org.kohsuke.stapler.StaplerRequest2
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -27,7 +27,7 @@ class GlobalJobDslSecurityConfigurationSpec extends Specification {
 
     def 'enable security'() {
         setup:
-        StaplerRequest req = Mock(StaplerRequest)
+        StaplerRequest2 req = Mock(StaplerRequest2)
         JSONObject json = new JSONObject()
         json.put('useScriptSecurity', '')
         config.useScriptSecurity = false
@@ -48,7 +48,7 @@ class GlobalJobDslSecurityConfigurationSpec extends Specification {
 
     def 'disable security'() {
         setup:
-        StaplerRequest req = Mock(StaplerRequest)
+        StaplerRequest2 req = Mock(StaplerRequest2)
         JSONObject json = new JSONObject()
         config.useScriptSecurity = true
 

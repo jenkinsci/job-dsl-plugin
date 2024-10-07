@@ -4,7 +4,7 @@ import hudson.Extension
 import jenkins.model.GlobalConfiguration
 import jenkins.model.GlobalConfigurationCategory
 import net.sf.json.JSONObject
-import org.kohsuke.stapler.StaplerRequest
+import org.kohsuke.stapler.StaplerRequest2
 
 @Extension
 class GlobalJobDslSecurityConfiguration extends GlobalConfiguration {
@@ -19,7 +19,7 @@ class GlobalJobDslSecurityConfiguration extends GlobalConfiguration {
     }
 
     @Override
-    boolean configure(StaplerRequest req, JSONObject json) {
+    boolean configure(StaplerRequest2 req, JSONObject json) {
         useScriptSecurity = json.has('useScriptSecurity')
         save()
         true
