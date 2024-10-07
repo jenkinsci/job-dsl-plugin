@@ -22,7 +22,7 @@ import jenkins.YesNoMaybe;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 @Extension(dynamicLoadable = YesNoMaybe.YES)
 @Symbol("jobDsl")
@@ -99,7 +99,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Builder> {
     }
 
     @Override
-    public Builder newInstance(@NonNull StaplerRequest req, @NonNull JSONObject formData) throws FormException {
+    public Builder newInstance(@NonNull StaplerRequest2 req, @NonNull JSONObject formData) throws FormException {
         ExecuteDslScripts builder = (ExecuteDslScripts) super.newInstance(req, formData);
         builder.configure(req.findAncestorObject(Item.class));
         return builder;
