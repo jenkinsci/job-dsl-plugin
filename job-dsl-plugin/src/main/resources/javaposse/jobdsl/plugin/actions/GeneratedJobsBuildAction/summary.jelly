@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
     <j:set var="allFolders" value="${it.items}"/>
     <j:if test="${!allFolders.isEmpty()}">
-        <t:summary icon="/plugin/job-dsl/images/directory.svg">
+        <t:summary icon="symbol-directory plugin-job-dsl">
             Generated Items:
             <ul class="folderList">
                 <j:forEach items="${allFolders}" var="folder">

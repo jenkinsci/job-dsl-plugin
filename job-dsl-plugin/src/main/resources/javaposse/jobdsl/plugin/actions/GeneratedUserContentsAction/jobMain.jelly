@@ -3,7 +3,7 @@
     <j:set var="allUserContents" value="${it.findAllGeneratedObjects()}"/>
     <j:if test="${!allUserContents.isEmpty()}">
         <table style="margin-top: 1em; margin-left:1em;">
-            <t:summary icon="/plugin/job-dsl/images/directory.svg">
+            <t:summary icon="symbol-directory plugin-job-dsl">
                 Generated User Content:
                 <ul class="folderList">
                     <j:forEach items="${allUserContents}" var="userContent">

@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
     <j:set var="allUserContents" value="${it.modifiedObjects}"/>
     <j:if test="${!allUserContents.isEmpty()}">
-        <t:summary icon="/plugin/job-dsl/images/directory.svg">
+        <t:summary icon="symbol-directory plugin-job-dsl">
             Generated User Content:
             <ul class="folderList">
                 <j:forEach items="${allUserContents}" var="userContent">
