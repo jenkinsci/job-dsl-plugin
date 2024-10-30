@@ -3,7 +3,7 @@
     <j:set var="allFolders" value="${it.items}"/>
     <j:if test="${!allFolders.isEmpty()}">
         <table style="margin-top: 1em; margin-left:1em;">
-            <t:summary icon="/plugin/job-dsl/images/directory.svg">
+            <t:summary icon="symbol-directory plugin-job-dsl">
                 Generated Items:
                 <ul class="folderList">
                     <j:forEach items="${allFolders}" var="folder">
