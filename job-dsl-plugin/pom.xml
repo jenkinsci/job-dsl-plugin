@@ -4,10 +4,10 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>job-dsl-parent</artifactId>
-    <version>${revision}${changelist}</version>
+    <version>1.90</version>
   </parent>
   <artifactId>job-dsl</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>1.90</version>
   <packaging>hpi</packaging>
   <name>Job DSL</name>
   <url>https://github.com/jenkinsci/job-dsl-plugin</url>
