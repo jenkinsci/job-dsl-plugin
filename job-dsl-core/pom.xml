@@ -4,10 +4,10 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>job-dsl-parent</artifactId>
-    <version>1.91</version>
+    <version>${revision}${changelist}</version>
   </parent>
   <artifactId>job-dsl-core</artifactId>
-  <version>1.91</version>
+  <version>${revision}${changelist}</version>
   <name>Job DSL Core</name>
   <dependencies>
     <dependency>
