@@ -59,11 +59,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>jackson2-api</artifactId>
-        <version>2.18.3-402.v74c4eb_f122b_2</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
