@@ -36,16 +36,14 @@
       <artifactId>xmlunit</artifactId>
       <version>1.6</version>
     </dependency>
-    <!-- used by Spock -->
     <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib-nodep</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- used by Spock -->
-    <dependency>
-      <groupId>org.objenesis</groupId>
-      <artifactId>objenesis</artifactId>
+      <!--
+        we do not depend on mockito, but rather bytebuddy and objenesis
+        However we need to ensure the version we get maintains compatability with Jenkins and Java versions
+        So using mockito which is tested/managed in the plugin pom allows us to do that
+      -->
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
