@@ -8,7 +8,7 @@
     <relativePath />
   </parent>
   <artifactId>job-dsl-parent</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>1.92</version>
   <packaging>pom</packaging>
   <name>Job DSL Parent</name>
   <url>https://github.com/jenkinsci/job-dsl-plugin</url>
@@ -26,7 +26,7 @@
   <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
     <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
     <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
-    <tag>${scmTag}</tag>
+    <tag>job-dsl-1.92</tag>
     <url>https://github.com/${gitHubRepo}</url>
   </scm>
   <properties>
