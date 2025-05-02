@@ -17,7 +17,7 @@ We are always happy for folk to help us out on this project. Please follow these
 * Small changes (fixes to spelling, inaccuracies, errors) - just do it, send a pull request.
 * Larger Changes (whole new sections / pages) - send a mail to
   [the group](https://groups.google.com/forum/?fromgroups#!forum/job-dsl-plugin) with your proposal.
-    
+
 ### New Features
 
 Before opening a feature request or submitting a pull request, make sure that the feature is not already supported by
@@ -65,7 +65,7 @@ Try to focus. It's not required to add all options for a certain plugin to get t
 even delay the merge until someone finds time to review a huge change. Only implement the options you really need and
 leave room so that the remaining options can be added when needed.
 
-If the author of a pull request does not respond to comments within 4 weeks, the pull request will be closed. 
+If the author of a pull request does not respond to comments within 4 weeks, the pull request will be closed.
 
 ## Our Basic Design Decisions / Conventions
 
@@ -100,7 +100,7 @@ job {
 void remote(@DslContext(RemoteContext) Closure remoteClosure) {
     RemoteContext remoteContext = new RemoteContext()
     executeInContext(remoteClosure, remoteContext)
-    
+
     // ...
 }
 ```
@@ -190,7 +190,7 @@ To deprecate support for older plugin versions,
 `JobManagement#logPluginDeprecationWarning(String pluginShortName, String minimumVersion)` must be used to print a
 warning to the console log during the deprecation phase. A section on the [Migration](docs/Migration.md) page gives
 users a hint about what to expect when upgrading. See commit
-[bc64d98](https://github.com/jenkinsci/job-dsl-plugin/commit/bc64d9831c34350d36552727a5dead572d24b70e) for an example.   
+[bc64d98](https://github.com/jenkinsci/job-dsl-plugin/commit/bc64d9831c34350d36552727a5dead572d24b70e) for an example.
 
 ## Code Style
 
@@ -249,6 +249,7 @@ To build the plugin from source:
 
 To run Jenkins (http://localhost:8080) and test the plugin:
 
+    mvn clean install -Pquick-build
     mvn hpi:run
 
 To work on the API viewer:
