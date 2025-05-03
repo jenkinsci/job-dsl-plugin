@@ -55,7 +55,7 @@ import TreeView from "../views/TreeView";
                     Backbone.history.loadUrl(Backbone.history.getHash());
                 });
             }.bind(this));
-            $('.toggle-plugins').click(function(e) {
+            $('.toggle-plugins').click(function() {
                 if ($('.plugins-wrapper').is(':visible')) {
                     this.layout.hide('east');
                 } else {
@@ -127,7 +127,7 @@ import TreeView from "../views/TreeView";
             this.allItems = allItems;
         },
 
-        onDslFetchFailure: function(dsl) {
+        onDslFetchFailure: function() {
             $('.loading-inner').html('Error while loading data, see Jenkins logs for details.');
         },
 
