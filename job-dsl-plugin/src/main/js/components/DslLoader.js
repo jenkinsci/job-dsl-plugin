@@ -1,10 +1,10 @@
-import Marionette from "backbone.marionette";
-import Dsl from "./Dsl";
+import { MnObject } from 'backbone.marionette';
+import Dsl from './Dsl.js';
 
 /**
  * Loads and caches DSL data.
  */
-export default Marionette.Object.extend({
+export default MnObject.extend({
     initialize: function() {
         this.dslsByUrl = {};
     },

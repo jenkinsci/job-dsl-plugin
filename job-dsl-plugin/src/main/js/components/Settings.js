@@ -1,7 +1,7 @@
-import Marionette from "backbone.marionette";
-import _ from "underscore";
+import { MnObject } from 'backbone.marionette';
+import _ from 'underscore';
 
-export default Marionette.Object.extend({
+export default MnObject.extend({
     initialize: function() {
         var parsed = JSON.parse(localStorage.getItem('job-dsl-api-viewer')) || {};
         this.excludedPlugins = parsed.excludedPlugins || [];

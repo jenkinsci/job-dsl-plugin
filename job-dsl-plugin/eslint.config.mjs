@@ -1,11 +1,8 @@
-const {
-    defineConfig,
-} = require("eslint/config");
-const js = require("@eslint/js");
+import { defineConfig } from 'eslint/config';
+import js from '@eslint/js';
+import globals from 'globals';
 
-const globals = require("globals");
-
-module.exports = defineConfig([
+export default defineConfig([
     js.configs.recommended,
     {
         plugins: {

@@ -1,8 +1,8 @@
-import Marionette from "backbone.marionette";
+import { View } from 'backbone.marionette';
 
-import PluginDetail from "../../hbs/pluginDetail.hbs";
+import PluginDetail from '../../hbs/pluginDetail.hbs';
 
-export default Marionette.View.extend({
+export default View.extend({
     template: PluginDetail,
 
     serializeData: function() {
