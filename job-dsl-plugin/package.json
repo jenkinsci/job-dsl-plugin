@@ -6,7 +6,7 @@
   "scripts": {
     "mvnbuild": "npm run build && npm run gh-pages",
     "mvntest": "npm run test",
-    "test": "eslint --config .eslintrc.js",
+    "test": "eslint --config eslint.config.js",
     "watch": "webpack --watch --config webpack.dev.js",
     "start": "webpack serve --open --config webpack.dev.js",
     "build": "webpack --config webpack.plugin.js",
@@ -29,10 +29,12 @@
     "underscore": "1.13.7"
   },
   "devDependencies": {
+    "@eslint/js": "^9.26.0",
     "copy-webpack-plugin": "13.0.0",
     "css-loader": "7.1.2",
     "css-minimizer-webpack-plugin": "7.0.2",
-    "eslint": "8.42.0",
+    "eslint": "9.25.1",
+    "globals": "^16.0.0",
     "handlebars": "4.7.8",
     "handlebars-loader": "1.7.3",
     "html-webpack-plugin": "5.6.3",
