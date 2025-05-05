@@ -1,8 +1,8 @@
-import Marionette from "backbone.marionette";
+import { View } from 'backbone.marionette';
 
-import Plugins from "../../hbs/plugins.hbs";
+import Plugins from '../../hbs/plugins.hbs';
 
-export default Marionette.View.extend({
+export default View.extend({
     template: Plugins,
 
     events: {

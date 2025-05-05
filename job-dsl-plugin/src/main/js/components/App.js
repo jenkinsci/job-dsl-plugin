@@ -1,28 +1,28 @@
-import "bootstrap/dist/css/bootstrap.css";
-import "highlight.js/styles/default.css";
-import "jquery.ui.layout";
-import "jstree";
-import "jstree/dist/themes/default/style.css";
-import Backbone from "backbone";
-import Marionette from "backbone.marionette";
-import _ from "underscore";
-import groovy from "highlight.js/lib/languages/groovy";
-import hljs from "highlight.js/lib/core";
+import 'bootstrap/dist/css/bootstrap.css';
+import 'highlight.js/styles/default.css';
+import 'jquery.ui.layout';
+import 'jstree';
+import 'jstree/dist/themes/default/style.css';
+import Backbone from 'backbone';
+import { Application } from 'backbone.marionette';
+import _ from 'underscore';
+import groovy from 'highlight.js/lib/languages/groovy';
+import hljs from 'highlight.js/lib/core';
 
-import "../../less/main.less";
-import ContextView from "../views/ContextView";
-import DetailView from "../views/DetailView";
-import DslLoader from "./DslLoader";
-import HomeView from "../views/HomeView";
-import PluginDetailView from "../views/PluginDetailView";
-import PluginsView from "../views/PluginsView";
-import RootView from "../views/RootView";
-import Router from "./Router";
-import SearchResults from "../../hbs/searchResults.hbs";
-import Settings from "./Settings";
-import TreeView from "../views/TreeView";
+import '../../less/main.less';
+import ContextView from '../views/ContextView.js';
+import DetailView from '../views/DetailView.js';
+import DslLoader from './DslLoader.js';
+import HomeView from '../views/HomeView.js';
+import PluginDetailView from '../views/PluginDetailView.js';
+import PluginsView from '../views/PluginsView.js';
+import RootView from '../views/RootView.js';
+import Router from './Router.js';
+import SearchResults from '../../hbs/searchResults.hbs';
+import Settings from './Settings.js';
+import TreeView from '../views/TreeView.js';
 
-    export default Marionette.Application.extend({
+    export default Application.extend({
         region: "#root",
 
         onStart: function() {

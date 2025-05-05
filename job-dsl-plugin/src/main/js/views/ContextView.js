@@ -1,8 +1,8 @@
-import Marionette from "backbone.marionette";
+import { View } from 'backbone.marionette';
 
-import Context from "../../hbs/context.hbs";
+import Context from '../../hbs/context.hbs';
 
-export default Marionette.View.extend({
+export default View.extend({
     className: 'context-view',
 
     template: Context,

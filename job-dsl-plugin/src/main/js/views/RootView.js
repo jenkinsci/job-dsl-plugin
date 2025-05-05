@@ -1,8 +1,8 @@
-import Marionette from "backbone.marionette";
+import { View } from 'backbone.marionette';
 
-import Root from "../../hbs/root.hbs";
+import Root from '../../hbs/root.hbs';
 
-export default Marionette.View.extend({
+export default View.extend({
     template: Root,
 
     regions: {

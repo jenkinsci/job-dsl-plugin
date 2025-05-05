@@ -1,9 +1,9 @@
-import Marionette from "backbone.marionette";
-import _ from "underscore";
+import { View } from 'backbone.marionette';
+import _ from 'underscore';
 
-import Tree from "../../hbs/tree.hbs";
+import Tree from '../../hbs/tree.hbs';
 
-export default Marionette.View.extend({
+export default View.extend({
     template: Tree,
 
     initialize: function(options) {

@@ -1,9 +1,9 @@
-import Marionette from "backbone.marionette";
-import _ from "underscore";
+import { View } from 'backbone.marionette';
+import _ from 'underscore';
 
-import Detail from "../../hbs/detail.hbs";
+import Detail from '../../hbs/detail.hbs';
 
-export default Marionette.View.extend({
+export default View.extend({
     template: Detail,
 
     initialize: function(options) {

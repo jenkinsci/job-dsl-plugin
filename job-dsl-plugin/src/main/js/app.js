@@ -1,4 +1,4 @@
-import App from "./components/App";
+import App from './components/App.js';
 
 $(function() {
     var app = new App();

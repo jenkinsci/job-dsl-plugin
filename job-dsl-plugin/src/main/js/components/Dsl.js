@@ -1,10 +1,10 @@
-import Marionette from "backbone.marionette";
-import _ from "underscore";
+import { MnObject } from 'backbone.marionette';
+import _ from 'underscore';
 
 /**
  * Provides access to DSL data.
  */
-export default Marionette.Object.extend({
+export default MnObject.extend({
     initialize: function(options) {
         this.data = options.data;
         _.forEach(options.data.contexts, this._processContext.bind(this));

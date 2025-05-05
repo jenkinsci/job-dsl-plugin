@@ -1,12 +1,13 @@
-const webpack = require("webpack");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+import webpack from 'webpack';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
-module.exports = {
+const exported = {
   entry: {
     app: "./src/main/js/app.js",
   },
+
   plugins: [
     new HtmlWebpackPlugin({
       title: "Jenkins Job DSL Plugin",
@@ -21,6 +22,7 @@ module.exports = {
       jQuery: "jquery",
     }),
   ],
+
   module: {
     rules: [
       {
@@ -52,14 +54,26 @@ module.exports = {
       },
     ],
   },
+
   optimization: {
     minimizer: [
       new CssMinimizerPlugin(),
     ],
   },
+
   output: {
     assetModuleFilename: "[name].[hash][ext][query]",
     clean: true,
     filename: "[name].[contenthash].js",
-  },
+  }
 };
+
+export default exported;
+
+export const {
+  entry,
+  plugins,
+  module,
+  optimization,
+  output
+} = exported;

@@ -1,9 +1,9 @@
-const { merge } = require("webpack-merge");
-const common = require("./webpack.common.js");
-const path = require("path");
-const CopyPlugin = require("copy-webpack-plugin");
+import { merge } from 'webpack-merge';
+import common from './webpack.common.mjs';
+import path from 'path';
+import CopyPlugin from 'copy-webpack-plugin';
 
-module.exports = merge(common, {
+export default merge(common, {
   mode: "development",
   devtool: "inline-source-map",
   devServer: {
@@ -19,6 +19,6 @@ module.exports = merge(common, {
     }),
   ],
   output: {
-    path: path.join(__dirname, "target/dev-api-viewer"),
+    path: path.join(import.meta.dirname, "target/dev-api-viewer"),
   },
 });

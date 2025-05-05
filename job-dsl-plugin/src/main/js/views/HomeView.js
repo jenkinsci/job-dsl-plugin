@@ -1,10 +1,10 @@
-import Marionette from "backbone.marionette";
-import _ from "underscore";
+import { View } from 'backbone.marionette';
+import _ from 'underscore';
 
-import ContextView from "./ContextView";
-import Home from "../../hbs/home.hbs";
+import ContextView from './ContextView.js';
+import Home from '../../hbs/home.hbs';
 
-export default Marionette.View.extend({
+export default View.extend({
     template: Home,
 
     regions: {

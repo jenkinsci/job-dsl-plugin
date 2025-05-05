@@ -6,11 +6,11 @@
   "scripts": {
     "mvnbuild": "npm run build && npm run gh-pages",
     "mvntest": "npm run test",
-    "test": "eslint --config eslint.config.js",
-    "watch": "webpack --watch --config webpack.dev.js",
-    "start": "webpack serve --open --config webpack.dev.js",
-    "build": "webpack --config webpack.plugin.js",
-    "gh-pages": "webpack --config webpack.gh-pages.js"
+    "test": "eslint --config eslint.config.mjs",
+    "watch": "webpack --watch --config webpack.dev.mjs",
+    "start": "webpack serve --open --config webpack.dev.mjs",
+    "build": "webpack --config webpack.plugin.mjs",
+    "gh-pages": "webpack --config webpack.gh-pages.mjs"
   },
   "repository": {
     "type": "git",
