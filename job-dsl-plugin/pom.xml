@@ -146,7 +146,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>nested-view</artifactId>
-      <version>235.vecfa_743cb_531</version>
+      <version>241.v178f0b_a_cd76a_</version>
       <scope>test</scope>
     </dependency>
     <dependency>
