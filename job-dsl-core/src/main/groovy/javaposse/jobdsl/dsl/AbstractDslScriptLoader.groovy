@@ -306,15 +306,4 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
             }
         }
     }
-
-    private static class SnitchingClassLoader extends ClassLoader {
-        SnitchingClassLoader(ClassLoader parent) {
-            super(parent)
-        }
-
-        @Override
-        Package[] getPackages() {
-            super.packages
-        }
-    }
 }
