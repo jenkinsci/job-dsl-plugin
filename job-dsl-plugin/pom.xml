@@ -55,7 +55,7 @@
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-${jenkins.baseline}.x</artifactId>
-        <version>4770.v9a_2b_7a_9d8b_7f</version>
+        <version>4862.vc32a_71c3e731</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -146,7 +146,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>nested-view</artifactId>
-      <version>235.vecfa_743cb_531</version>
+      <version>241.v178f0b_a_cd76a_</version>
       <scope>test</scope>
     </dependency>
     <dependency>
