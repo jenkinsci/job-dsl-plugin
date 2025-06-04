@@ -6,6 +6,8 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer
 
 import java.util.logging.Level
 import java.util.logging.Logger
+import java.lang.reflect.Method
+import java.lang.reflect.InvocationTargetException
 
 import static groovy.lang.GroovyShell.DEFAULT_CODE_BASE
 
@@ -167,12 +169,22 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
     private static void checkCollidingScriptName(ScriptRequest scriptRequest, ClassLoader classLoader,
                                                  PrintStream logger) {
         String scriptName = scriptRequest.scriptBaseName
-        Package[] packages = new SnitchingClassLoader(classLoader).packages
-        if (packages.any { it.name == scriptName || it.name.startsWith("${scriptName}.") }) {
-            logger.println(
-                    "Warning: the script name '${scriptRequest.scriptName} is identical to a package name; choose a " +
-                            'different script name to avoid problems'
-            )
+
+        try {
+            // Use reflection to access the protected getPackages() method
+            Method getPackagesMethod = ClassLoader.class.getDeclaredMethod('getPackages')
+            getPackagesMethod.setAccessible(true)
+            Package[] packages = (Package[]) getPackagesMethod.invoke(classLoader)
+
+            if (packages.any { it.name == scriptName || it.name.startsWith("${scriptName}.") }) {
+                logger.println(
+                    "Warning: the script name '${scriptName} is identical to a package name; choose a different " +
+                        'script name to avoid problems'
+                )
+            }
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            // If reflection fails, log a warning but don't break the build
+            logger.println("Warning: Could not check for script name collision due to reflection error: ${e.message}")
         }
     }
 
@@ -304,17 +316,6 @@ abstract class AbstractDslScriptLoader<S extends JobParent, G extends GeneratedI
                     LOGGER.log(Level.WARNING, "Failed to close stream for user content ${userContent.path}", e)
                 }
             }
-        }
-    }
-
-    private static class SnitchingClassLoader extends ClassLoader {
-        SnitchingClassLoader(ClassLoader parent) {
-            super(parent)
-        }
-
-        @Override
-        Package[] getPackages() {
-            super.packages
         }
     }
 }
