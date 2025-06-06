@@ -194,6 +194,11 @@
                 <artifactItem>
                   <groupId>${project.groupId}</groupId>
                   <artifactId>job-dsl-core</artifactId>
+                  <version>1.93</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>job-dsl-core</artifactId>
                   <version>1.92</version>
                 </artifactItem>
                 <artifactItem>
