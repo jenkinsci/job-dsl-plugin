@@ -8,7 +8,7 @@
     <relativePath />
   </parent>
   <artifactId>job-dsl-parent</artifactId>
-  <version>1.93</version>
+  <version>${revision}${changelist}</version>
   <packaging>pom</packaging>
   <name>Job DSL Parent</name>
   <url>https://github.com/jenkinsci/job-dsl-plugin</url>
@@ -26,11 +26,11 @@
   <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
     <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
     <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
-    <tag>job-dsl-1.93</tag>
+    <tag>${scmTag}</tag>
     <url>https://github.com/${gitHubRepo}</url>
   </scm>
   <properties>
-    <revision>1.93</revision>
+    <revision>1.94</revision>
     <changelist>-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/job-dsl-plugin</gitHubRepo>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
