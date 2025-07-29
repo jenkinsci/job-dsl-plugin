@@ -110,6 +110,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
 
     private RemovedConfigFilesAction removedConfigFilesAction = RemovedConfigFilesAction.IGNORE;
 
+    private boolean verboseLogging = true;
+
     private LookupStrategy lookupStrategy = LookupStrategy.JENKINS_ROOT;
 
     private String additionalClasspath;
@@ -260,6 +262,15 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     @DataBoundSetter
     public void setRemovedConfigFilesAction(RemovedConfigFilesAction removedConfigFilesAction) {
         this.removedConfigFilesAction = removedConfigFilesAction;
+    }
+
+    public boolean isVerboseLogging() {
+        return verboseLogging;
+    }
+
+    @DataBoundSetter
+    public void setVerboseLogging(boolean verboseLogging) {
+        this.verboseLogging = verboseLogging;
     }
 
     public LookupStrategy getLookupStrategy() {
@@ -426,9 +437,9 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         Set<String> newTemplates = Sets.difference(freshTemplates, existingTemplates);
         Set<String> removedTemplates = Sets.difference(existingTemplates, freshTemplates);
 
-        logItems(listener, "Existing templates", existingTemplates);
-        logItems(listener, "New templates", newTemplates);
-        logItems(listener, "Unreferenced templates", removedTemplates);
+        logItems(listener, "Existing templates", existingTemplates, verboseLogging);
+        logItems(listener, "New templates", newTemplates, verboseLogging);
+        logItems(listener, "Unreferenced templates", removedTemplates, verboseLogging);
 
         // Collect information about the templates we loaded
         final String seedJobName = seedJob.getName();
@@ -491,9 +502,9 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         Set<GeneratedJob> removed = new HashSet<>();
         Set<GeneratedJob> disabled = new HashSet<>();
 
-        logItems(listener, "Added items", added);
-        logItems(listener, "Existing items", existing);
-        logItems(listener, "Unreferenced items", unreferenced);
+        logItems(listener, "Added items", added, verboseLogging);
+        logItems(listener, "Existing items", existing, verboseLogging);
+        logItems(listener, "Unreferenced items", unreferenced, verboseLogging);
 
         // Update unreferenced jobs
         for (GeneratedJob unreferencedJob : unreferenced) {
@@ -514,8 +525,8 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         }
 
         // print what happened with unreferenced jobs
-        logItems(listener, "Disabled items", disabled);
-        logItems(listener, "Removed items", removed);
+        logItems(listener, "Disabled items", disabled, verboseLogging);
+        logItems(listener, "Removed items", removed, verboseLogging);
 
         updateGeneratedJobMap(seedJob, Sets.union(added, existing), unreferenced);
     }
@@ -568,9 +579,9 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         Set<GeneratedView> unreferenced = Sets.difference(generatedViews, freshViews);
         Set<GeneratedView> removed = new HashSet<>();
 
-        logItems(listener, "Added views", added);
-        logItems(listener, "Existing views", existing);
-        logItems(listener, "Unreferenced views", unreferenced);
+        logItems(listener, "Added views", added, verboseLogging);
+        logItems(listener, "Existing views", existing, verboseLogging);
+        logItems(listener, "Unreferenced views", unreferenced, verboseLogging);
 
         // Delete views
         if (removedViewAction == RemovedViewAction.DELETE) {
@@ -592,7 +603,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             }
         }
 
-        logItems(listener, "Removed views", removed);
+        logItems(listener, "Removed views", removed, verboseLogging);
     }
 
     private void updateGeneratedConfigFiles(
@@ -603,9 +614,9 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         Set<GeneratedConfigFile> existing = Sets.intersection(generatedConfigFiles, freshConfigFiles);
         Set<GeneratedConfigFile> unreferenced = Sets.difference(generatedConfigFiles, freshConfigFiles);
 
-        logItems(listener, "Added config files", added);
-        logItems(listener, "Existing config files", existing);
-        logItems(listener, "Unreferenced config files", unreferenced);
+        logItems(listener, "Added config files", added, verboseLogging);
+        logItems(listener, "Existing config files", existing, verboseLogging);
+        logItems(listener, "Unreferenced config files", unreferenced, verboseLogging);
 
         if (removedConfigFilesAction == RemovedConfigFilesAction.DELETE
                 && Jenkins.get().getPluginManager().getPlugin("config-file-provider") != null) {
@@ -625,16 +636,19 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
         Set<GeneratedUserContent> existing = Sets.intersection(generatedUserContents, freshUserContents);
         Set<GeneratedUserContent> unreferenced = Sets.difference(generatedUserContents, freshUserContents);
 
-        logItems(listener, "Adding user content", added);
-        logItems(listener, "Existing user content", existing);
-        logItems(listener, "Unreferenced user content", unreferenced);
+        logItems(listener, "Adding user content", added, verboseLogging);
+        logItems(listener, "Existing user content", existing, verboseLogging);
+        logItems(listener, "Unreferenced user content", unreferenced, verboseLogging);
     }
 
-    private static void logItems(TaskListener listener, String message, Collection<?> collection) {
+    private static void logItems(
+            TaskListener listener, String message, Collection<?> collection, boolean verboseLogging) {
         if (!collection.isEmpty()) {
-            listener.getLogger().println(message + ":");
-            for (Object item : collection) {
-                listener.getLogger().println("    " + item.toString());
+            listener.getLogger().printf(message + " (%d)%n", collection.size(), verboseLogging ? ':' : '.');
+            if (verboseLogging) {
+                for (Object item : collection) {
+                    listener.getLogger().println("    " + item.toString());
+                }
             }
         }
     }
