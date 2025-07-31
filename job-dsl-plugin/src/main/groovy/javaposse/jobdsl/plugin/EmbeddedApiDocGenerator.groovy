@@ -29,7 +29,7 @@ import static javaposse.jobdsl.plugin.ExtensionPointHelper.isVisibleParameterTyp
 import static javaposse.jobdsl.plugin.structs.DescribableHelper.findDescribableModels
 import static javaposse.jobdsl.plugin.structs.DescribableHelper.getClassName
 import static javaposse.jobdsl.plugin.structs.DescribableHelper.getSimpleName
-import static org.apache.commons.lang.StringEscapeUtils.unescapeHtml
+import static org.apache.commons.text.StringEscapeUtils.unescapeHtml3
 
 class EmbeddedApiDocGenerator {
     private static final ParameterNameDiscoverer PARAMETER_NAME_DISCOVERER =
@@ -66,7 +66,7 @@ class EmbeddedApiDocGenerator {
         // remove HTML tags
         cleanText = cleanText.replaceAll(/<.*?>/, '')
         // unescape HTML and remove leading/trailing spaces
-        cleanText = unescapeHtml(cleanText).trim()
+        cleanText = unescapeHtml3(cleanText).trim()
 
         if (cleanText.empty) {
             return ''

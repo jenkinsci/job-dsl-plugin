@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.Context
 import javaposse.jobdsl.dsl.DslException
 import javaposse.jobdsl.dsl.DslScriptException
 import javaposse.jobdsl.dsl.JobManagement
-import org.apache.commons.lang.ClassUtils
+import org.apache.commons.lang3.ClassUtils
 import org.jenkinsci.plugins.structs.describable.ArrayType
 import org.jenkinsci.plugins.structs.describable.AtomicType
 import org.jenkinsci.plugins.structs.describable.DescribableModel
