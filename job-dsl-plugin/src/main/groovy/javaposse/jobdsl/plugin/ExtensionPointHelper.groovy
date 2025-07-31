@@ -4,7 +4,7 @@ import javaposse.jobdsl.dsl.ContextHelper
 import javaposse.jobdsl.dsl.ExtensibleContext
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.plugin.structs.DescribableContext
-import org.apache.commons.lang.ClassUtils
+import org.apache.commons.lang3.ClassUtils
 import org.jenkinsci.plugins.structs.describable.DescribableModel
 
 import java.lang.reflect.InvocationTargetException
