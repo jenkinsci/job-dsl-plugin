@@ -1,23 +1,10 @@
 package javaposse.jobdsl.dsl
 
-import javaposse.jobdsl.dsl.jobs.FreeStyleJob
-import javaposse.jobdsl.dsl.jobs.IvyJob
-import javaposse.jobdsl.dsl.jobs.MatrixJob
-import javaposse.jobdsl.dsl.jobs.MavenJob
-import javaposse.jobdsl.dsl.jobs.MultiJob
-import javaposse.jobdsl.dsl.jobs.OrganizationFolderJob
-import javaposse.jobdsl.dsl.jobs.WorkflowJob
-import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
-import javaposse.jobdsl.dsl.views.BuildMonitorView
-import javaposse.jobdsl.dsl.views.BuildPipelineView
-import javaposse.jobdsl.dsl.views.CategorizedJobsView
-import javaposse.jobdsl.dsl.views.DashboardView
-import javaposse.jobdsl.dsl.views.DeliveryPipelineView
-import javaposse.jobdsl.dsl.views.ListView
-import javaposse.jobdsl.dsl.views.NestedView
-import javaposse.jobdsl.dsl.views.PipelineAggregatorView
-import javaposse.jobdsl.dsl.views.SectionedView
+import javaposse.jobdsl.dsl.jobs.*
+import javaposse.jobdsl.dsl.views.*
 import spock.lang.Specification
+
+import java.nio.charset.Charset
 
 class JobParentSpec extends Specification {
     private final JobParent parent = Spy(JobParent)
@@ -328,7 +315,7 @@ class JobParentSpec extends Specification {
         result == 'hello'
 
         when:
-        parent.readFileFromWorkspace('my-job', null)
+        parent.readFileFromWorkspace('my-job', (String) null)
 
         then:
         thrown(DslScriptException)
@@ -347,6 +334,28 @@ class JobParentSpec extends Specification {
 
         when:
         parent.readFileFromWorkspace('', 'foo.txt')
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'readFileInWorkspace with charset parameter'() {
+        jobManagement.readFileInWorkspace('foo.txt', Charset.forName('windows-31j')) >> 'hello'
+
+        when:
+        String result = parent.readFileFromWorkspace('foo.txt', Charset.forName('windows-31j'))
+
+        then:
+        result == 'hello'
+
+        when:
+        parent.readFileFromWorkspace('foo.txt', (Charset) null)
+
+        then:
+        thrown(DslScriptException)
+
+        when:
+        parent.readFileFromWorkspace(null, Charset.forName('windows-31j'))
 
         then:
         thrown(DslScriptException)

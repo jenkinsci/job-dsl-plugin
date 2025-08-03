@@ -1,14 +1,9 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.helpers.ConfigFilesContext
-import javaposse.jobdsl.dsl.jobs.FreeStyleJob
-import javaposse.jobdsl.dsl.jobs.IvyJob
-import javaposse.jobdsl.dsl.jobs.MatrixJob
-import javaposse.jobdsl.dsl.jobs.MavenJob
-import javaposse.jobdsl.dsl.jobs.MultiJob
-import javaposse.jobdsl.dsl.jobs.OrganizationFolderJob
-import javaposse.jobdsl.dsl.jobs.WorkflowJob
-import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
+import javaposse.jobdsl.dsl.jobs.*
+
+import java.nio.charset.Charset
 
 interface DslFactory extends ViewFactory {
     /**
@@ -236,4 +231,12 @@ interface DslFactory extends ViewFactory {
      * @param filePath path of the file relative to the workspace root
      */
     String readFileFromWorkspace(String jobName, String filePath)
+
+    /**
+     * Streams a file from the workspace of the seed job.
+     *
+     * @param filePath path of the file relative to the workspace root
+     * @param charset
+     */
+    String readFileFromWorkspace(String filePath, Charset charset)
 }

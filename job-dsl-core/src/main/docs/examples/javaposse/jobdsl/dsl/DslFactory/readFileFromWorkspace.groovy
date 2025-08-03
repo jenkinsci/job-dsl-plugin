@@ -1,3 +1,5 @@
+import java.nio.charset.Charset
+
 // read the file release.groovy from the seed job's workspace
 // and configure a Groovy build step using that script
 def releaseScript = readFileFromWorkspace('release.groovy')
@@ -13,5 +15,12 @@ def runScript = readFileFromWorkspace('project-a', 'run.bat')
 job('example-2') {
     steps {
         batchFile(runScript)
+    }
+}
+
+def winScript = readFileFromWorkspace('build.bat', Charset.forName("windows-31j"))
+job('example-3') {
+    steps {
+        batchFile(winScript)
     }
 }

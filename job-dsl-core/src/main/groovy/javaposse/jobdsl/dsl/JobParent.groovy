@@ -2,23 +2,10 @@ package javaposse.jobdsl.dsl
 
 import groovy.transform.ThreadInterrupt
 import javaposse.jobdsl.dsl.helpers.ConfigFilesContext
-import javaposse.jobdsl.dsl.jobs.FreeStyleJob
-import javaposse.jobdsl.dsl.jobs.IvyJob
-import javaposse.jobdsl.dsl.jobs.MatrixJob
-import javaposse.jobdsl.dsl.jobs.MavenJob
-import javaposse.jobdsl.dsl.jobs.MultiJob
-import javaposse.jobdsl.dsl.jobs.OrganizationFolderJob
-import javaposse.jobdsl.dsl.jobs.WorkflowJob
-import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
-import javaposse.jobdsl.dsl.views.BuildMonitorView
-import javaposse.jobdsl.dsl.views.BuildPipelineView
-import javaposse.jobdsl.dsl.views.CategorizedJobsView
-import javaposse.jobdsl.dsl.views.DashboardView
-import javaposse.jobdsl.dsl.views.DeliveryPipelineView
-import javaposse.jobdsl.dsl.views.ListView
-import javaposse.jobdsl.dsl.views.NestedView
-import javaposse.jobdsl.dsl.views.PipelineAggregatorView
-import javaposse.jobdsl.dsl.views.SectionedView
+import javaposse.jobdsl.dsl.jobs.*
+import javaposse.jobdsl.dsl.views.*
+
+import java.nio.charset.Charset
 
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
@@ -237,6 +224,16 @@ abstract class JobParent extends Script implements DslFactory {
         checkNotNullOrEmpty(jobName, 'jobName must not be null or empty')
         checkNotNullOrEmpty(filePath, 'filePath must not be null or empty')
         jm.readFileInWorkspace(jobName, filePath)
+    }
+
+    /**
+     * @since 1.xx
+     */
+    @Override
+    String readFileFromWorkspace(String filePath, Charset charset) {
+        checkNotNullOrEmpty(filePath, 'filePath must not be null or empty')
+        checkNotNull(charset, 'charset must not be null')
+        jm.readFileInWorkspace(filePath, charset)
     }
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263

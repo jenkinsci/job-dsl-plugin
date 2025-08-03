@@ -1,12 +1,14 @@
 package javaposse.jobdsl.dsl
 
+import java.nio.charset.Charset
+
 /**
  * Interface to manage jobs, which the DSL needs to do.
  */
 interface JobManagement {
     /**
      * Marker value returned by
-     * {@link #callExtension(java.lang.String, javaposse.jobdsl.dsl.Item, java.lang.Class, java.lang.Object[])} to
+     * {@link #callExtension(java.lang.String, javaposse.jobdsl.dsl.Item, java.lang.Class, java.lang.Object [ ])} to
      * indicate that an extension method does not produce a node.
      */
     Node NO_VALUE = new Node(null, 'no-value')
@@ -105,6 +107,17 @@ interface JobManagement {
      * @since 1.25
      */
     String readFileInWorkspace(String jobName, String filePath) throws IOException, InterruptedException
+
+    /**
+     * Reads a file from the workspace of a job.
+     *
+     * @param filePath path of the file relative to the workspace root
+     * @param charset charset to use when reading the file
+     * @return content of the file
+     * @throws IOException if the file could not be read
+     * @since 1.xx
+     */
+    String readFileInWorkspace(String filePath, Charset charset) throws IOException, InterruptedException
 
     /**
      * Stream to write to, for stdout.
