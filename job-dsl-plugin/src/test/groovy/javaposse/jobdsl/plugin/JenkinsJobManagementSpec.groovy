@@ -43,6 +43,8 @@ import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
+import java.nio.charset.Charset
+
 import static hudson.model.Result.UNSTABLE
 import static java.nio.charset.StandardCharsets.UTF_8
 
@@ -125,7 +127,7 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         buffer.toString() =~
-               /Warning: \(.+, line \d+\) support for Script Security Plugin versions older than 999999.0 is deprecated/
+                /Warning: \(.+, line \d+\) support for Script Security Plugin versions older than 999999.0 is deprecated/
     }
 
     def 'logPluginDeprecationWarning does not log anything if plugin version is newer'() {
@@ -136,7 +138,8 @@ class JenkinsJobManagementSpec extends Specification {
         buffer.size() == 0
     }
 
-    @SuppressWarnings('UnnecessarySetter') // false positive for setResult
+    @SuppressWarnings('UnnecessarySetter')
+    // false positive for setResult
     def 'requirePlugin not installed'() {
         when:
         jobManagement.requirePlugin('foo')
@@ -163,7 +166,8 @@ class JenkinsJobManagementSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    @SuppressWarnings('UnnecessarySetter') // false positive for setResult
+    @SuppressWarnings('UnnecessarySetter')
+    // false positive for setResult
     def 'requirePlugin success'() {
         when:
         jobManagement.requirePlugin('script-security', failIfMissing)
@@ -795,6 +799,19 @@ class JenkinsJobManagementSpec extends Specification {
         result == 'hello'
     }
 
+    def 'read file with windows-31j, file exists'() {
+        setup:
+        FreeStyleBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject())
+        jobManagement = new JenkinsJobManagement(System.out, [:], build, build.workspace, LookupStrategy.JENKINS_ROOT)
+        build.workspace.child(FILE_NAME).write('こんにちは', 'windows-31j')
+
+        when:
+        String result = jobManagement.readFileInWorkspace(FILE_NAME, Charset.forName('windows-31j'))
+
+        then:
+        result == 'こんにちは'
+    }
+
     def 'create view'() {
         when:
         jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView/>', false)
@@ -863,6 +880,20 @@ class JenkinsJobManagementSpec extends Specification {
 
         when:
         jobManagement.readFileInWorkspace(fileName)
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message.contains(fileName)
+    }
+
+    def 'read file from workspace using specific charset with exception'() {
+        setup:
+        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject())
+        jobManagement = new JenkinsJobManagement(System.out, [:], build, build.workspace, LookupStrategy.JENKINS_ROOT)
+        String fileName = 'test.txt'
+
+        when:
+        jobManagement.readFileInWorkspace(fileName, Charset.forName('windows-31j'))
 
         then:
         Exception e = thrown(DslScriptException)
@@ -1044,8 +1075,8 @@ class JenkinsJobManagementSpec extends Specification {
     }
 
     private static FolderCredentialsProvider.FolderCredentialsProperty createCredentialProperty() {
-        UsernamePasswordCredentialsImpl  credentials = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, '',
-            '', '', '')
+        UsernamePasswordCredentialsImpl credentials = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, '',
+                '', '', '')
         DomainCredentials[] domainCredentials = new DomainCredentials[1]
         domainCredentials[0] = new DomainCredentials(Domain.global(), Collections.singletonList(credentials))
 
