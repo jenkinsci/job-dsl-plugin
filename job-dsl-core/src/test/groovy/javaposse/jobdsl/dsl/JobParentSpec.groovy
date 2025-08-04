@@ -1,7 +1,22 @@
 package javaposse.jobdsl.dsl
 
-import javaposse.jobdsl.dsl.jobs.*
-import javaposse.jobdsl.dsl.views.*
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import javaposse.jobdsl.dsl.jobs.IvyJob
+import javaposse.jobdsl.dsl.jobs.MatrixJob
+import javaposse.jobdsl.dsl.jobs.MavenJob
+import javaposse.jobdsl.dsl.jobs.MultiJob
+import javaposse.jobdsl.dsl.jobs.OrganizationFolderJob
+import javaposse.jobdsl.dsl.jobs.WorkflowJob
+import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
+import javaposse.jobdsl.dsl.views.BuildMonitorView
+import javaposse.jobdsl.dsl.views.BuildPipelineView
+import javaposse.jobdsl.dsl.views.CategorizedJobsView
+import javaposse.jobdsl.dsl.views.DashboardView
+import javaposse.jobdsl.dsl.views.DeliveryPipelineView
+import javaposse.jobdsl.dsl.views.ListView
+import javaposse.jobdsl.dsl.views.NestedView
+import javaposse.jobdsl.dsl.views.PipelineAggregatorView
+import javaposse.jobdsl.dsl.views.SectionedView
 import spock.lang.Specification
 
 import java.nio.charset.Charset

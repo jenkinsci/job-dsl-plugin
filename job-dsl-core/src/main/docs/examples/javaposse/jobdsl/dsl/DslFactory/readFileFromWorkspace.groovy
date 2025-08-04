@@ -18,7 +18,7 @@ job('example-2') {
     }
 }
 
-def winScript = readFileFromWorkspace('build.bat', Charset.forName("windows-31j"))
+def winScript = readFileFromWorkspace('build.bat', Charset.forName('windows-31j'))
 job('example-3') {
     steps {
         batchFile(winScript)

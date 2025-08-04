@@ -1,7 +1,14 @@
 package javaposse.jobdsl.dsl
 
 import javaposse.jobdsl.dsl.helpers.ConfigFilesContext
-import javaposse.jobdsl.dsl.jobs.*
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob
+import javaposse.jobdsl.dsl.jobs.IvyJob
+import javaposse.jobdsl.dsl.jobs.MatrixJob
+import javaposse.jobdsl.dsl.jobs.MavenJob
+import javaposse.jobdsl.dsl.jobs.MultiJob
+import javaposse.jobdsl.dsl.jobs.OrganizationFolderJob
+import javaposse.jobdsl.dsl.jobs.WorkflowJob
+import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
 
 import java.nio.charset.Charset
 
