@@ -292,7 +292,7 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             project.checkPermission(Item.WORKSPACE);
         }
         FilePath filePath = locateValidFileInWorkspace(workspace, relLocation);
-        try(InputStream inputStream = filePath.read()){
+        try (InputStream inputStream = filePath.read()) {
             return new String(inputStream.readAllBytes(), charset);
         }
     }
