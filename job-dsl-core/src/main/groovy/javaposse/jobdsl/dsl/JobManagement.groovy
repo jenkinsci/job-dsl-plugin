@@ -8,7 +8,7 @@ import java.nio.charset.Charset
 interface JobManagement {
     /**
      * Marker value returned by
-     * {@link #callExtension(java.lang.String, javaposse.jobdsl.dsl.Item, java.lang.Class, java.lang.Object [ ])} to
+     * {@link #callExtension(java.lang.String, javaposse.jobdsl.dsl.Item, java.lang.Class, java.lang.Object[])} to
      * indicate that an extension method does not produce a node.
      */
     Node NO_VALUE = new Node(null, 'no-value')

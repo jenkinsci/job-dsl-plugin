@@ -127,7 +127,7 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         buffer.toString() =~
-                /Warning: \(.+, line \d+\) support for Script Security Plugin versions older than 999999.0 is deprecated/
+               /Warning: \(.+, line \d+\) support for Script Security Plugin versions older than 999999.0 is deprecated/
     }
 
     def 'logPluginDeprecationWarning does not log anything if plugin version is newer'() {
@@ -138,8 +138,7 @@ class JenkinsJobManagementSpec extends Specification {
         buffer.size() == 0
     }
 
-    @SuppressWarnings('UnnecessarySetter')
-    // false positive for setResult
+    @SuppressWarnings('UnnecessarySetter') // false positive for setResult
     def 'requirePlugin not installed'() {
         when:
         jobManagement.requirePlugin('foo')
@@ -166,8 +165,7 @@ class JenkinsJobManagementSpec extends Specification {
         thrown(DslScriptException)
     }
 
-    @SuppressWarnings('UnnecessarySetter')
-    // false positive for setResult
+    @SuppressWarnings('UnnecessarySetter') // false positive for setResult
     def 'requirePlugin success'() {
         when:
         jobManagement.requirePlugin('script-security', failIfMissing)
@@ -1075,8 +1073,8 @@ class JenkinsJobManagementSpec extends Specification {
     }
 
     private static FolderCredentialsProvider.FolderCredentialsProperty createCredentialProperty() {
-        UsernamePasswordCredentialsImpl credentials = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, '',
-                '', '', '')
+        UsernamePasswordCredentialsImpl  credentials = new UsernamePasswordCredentialsImpl(CredentialsScope.GLOBAL, '',
+            '', '', '')
         DomainCredentials[] domainCredentials = new DomainCredentials[1]
         domainCredentials[0] = new DomainCredentials(Domain.global(), Collections.singletonList(credentials))
 
