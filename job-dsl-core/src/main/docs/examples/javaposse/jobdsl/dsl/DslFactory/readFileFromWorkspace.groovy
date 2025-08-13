@@ -18,6 +18,8 @@ job('example-2') {
     }
 }
 
+// read the file build.bat (encoded in Windows-31J) from the seed job's workspace
+// and configure a Groovy build step using that script
 def winScript = readFileFromWorkspace('build.bat', Charset.forName('windows-31j'))
 job('example-3') {
     steps {
