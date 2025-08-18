@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
-    "copy-webpack-plugin": "13.0.0",
+    "copy-webpack-plugin": "13.0.1",
     "css-loader": "7.1.2",
     "css-minimizer-webpack-plugin": "7.0.2",
     "eslint": "9.33.0",
