@@ -38,7 +38,7 @@
     "handlebars": "4.7.8",
     "handlebars-loader": "1.7.3",
     "html-webpack-plugin": "5.6.4",
-    "less": "4.4.0",
+    "less": "4.4.1",
     "less-loader": "12.3.0",
     "mini-css-extract-plugin": "2.9.4",
     "style-loader": "4.0.0",
