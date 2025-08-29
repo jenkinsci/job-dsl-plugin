@@ -51,7 +51,7 @@ jobs:
       - name: Build API viewer
         run: mvn -B -V -e -ntp -Pquick-build clean verify
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./job-dsl-plugin/target/gh-pages
 
