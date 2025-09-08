@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -283,6 +284,17 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             logWarning(format(Messages.ReadFileFromWorkspace_JobNotFound(), relLocation, jobName));
         }
         return null;
+    }
+
+    @Override
+    public String readFileInWorkspace(String relLocation, Charset charset) throws IOException, InterruptedException {
+        if (project != null) {
+            project.checkPermission(Item.WORKSPACE);
+        }
+        FilePath filePath = locateValidFileInWorkspace(workspace, relLocation);
+        try (InputStream inputStream = filePath.read()) {
+            return new String(inputStream.readAllBytes(), charset);
+        }
     }
 
     @Override
