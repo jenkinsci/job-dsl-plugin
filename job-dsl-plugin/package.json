@@ -42,7 +42,7 @@
     "less-loader": "12.3.0",
     "mini-css-extract-plugin": "2.9.4",
     "style-loader": "4.0.0",
-    "webpack": "5.101.3",
+    "webpack": "5.102.1",
     "webpack-cli": "6.0.1",
     "webpack-dev-server": "5.2.2",
     "webpack-merge": "6.0.1"
