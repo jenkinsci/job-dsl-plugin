@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl
 
+import java.nio.charset.Charset
+
 class FileJobManagement extends MockJobManagement {
     /**
      * Root of where to look for and write out job and view config files
@@ -61,6 +63,11 @@ class FileJobManagement extends MockJobManagement {
 
     @Override
     String readFileInWorkspace(String filePath) {
-        new File(root, filePath).text
+        readFileInWorkspace(filePath, Charset.defaultCharset())
+    }
+
+    @Override
+    String readFileInWorkspace(String filePath, Charset charset) {
+        new File(root, filePath).getText(charset.name())
     }
 }
