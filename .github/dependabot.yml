@@ -5,7 +5,7 @@ updates:
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     ignore:
       # Jenkins core is stuck on Groovy 2.4 due to JENKINS-53372, and CodeNarc
       # 1.x is the last version to support Groovy 2.4. Until Jenkins core moves
@@ -21,11 +21,11 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
   - package-ecosystem: "npm"
     directory: "job-dsl-plugin"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     ignore:
       # Breaks the appearance of the API viewer. See:
       # https://github.com/jenkinsci/job-dsl-plugin/pull/1270
