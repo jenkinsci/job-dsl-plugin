@@ -32,7 +32,7 @@
     "@eslint/js": "^9.39.2",
     "copy-webpack-plugin": "13.0.1",
     "css-loader": "7.1.2",
-    "css-minimizer-webpack-plugin": "7.0.2",
+    "css-minimizer-webpack-plugin": "7.0.4",
     "eslint": "9.39.2",
     "globals": "^16.5.0",
     "handlebars": "4.7.8",
