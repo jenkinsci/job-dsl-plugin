@@ -23,7 +23,7 @@
     "bootstrap": "3.4.1",
     "highlight.js": "11.11.1",
     "jquery": "4.0.0",
-    "jquery-ui": "1.14.1",
+    "jquery-ui": "1.14.2",
     "jquery.ui.layout": "1.1.0",
     "jstree": "3.3.17",
     "underscore": "1.13.7"
