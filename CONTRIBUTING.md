@@ -241,7 +241,7 @@ void clean(boolean clean = true) {
 ## Building
 
 Prerequisites:
-* JDK 11
+* JDK 17
 
 To build the plugin from source:
 

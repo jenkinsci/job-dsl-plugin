@@ -117,7 +117,8 @@ export default MnObject.extend({
             methodNode = _.findWhere(contextNode.methods, {name: token});
 
             if (i < tokens.length - 1) {
-                contextNode = this.getContext(methodNode.contextClass);
+                // TODO Understand why ESlint did not detect this dead store until 10.0
+                // contextNode = this.getContext(methodNode.contextClass);
                 // TODO this is a hack to make sure we get the right context (for copyArtifacts). it only checks one level though.
                 // should be a depth-first search or something
                 var nextToken = tokens[i + 1];
