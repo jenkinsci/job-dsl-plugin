@@ -26,12 +26,12 @@
   <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
     <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
     <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
-    <tag>${scmTag}</tag>
+    <tag>job-dsl-1.94</tag>
     <url>https://github.com/${gitHubRepo}</url>
   </scm>
   <properties>
     <revision>1.94</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <changelist></changelist>
     <gitHubRepo>jenkinsci/job-dsl-plugin</gitHubRepo>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.479</jenkins.baseline>
