@@ -1,3 +1,0 @@
-# https://github.com/jenkinsci/.github/blob/master/.github/release-drafter.adoc
-_extends: .github
-tag-template: job-dsl-$NEXT_MINOR_VERSION

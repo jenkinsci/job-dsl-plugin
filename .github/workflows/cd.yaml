@@ -1,0 +1,54 @@
+# Note: additional setup is required, see https://www.jenkins.io/redirect/continuous-delivery-of-plugins
+#
+# Please find additional hints for individual trigger use case
+# configuration options inline this script below.
+#
+---
+name: cd
+on:
+  workflow_dispatch:
+    inputs:
+      validate_only:
+        required: false
+        type: boolean
+        description: |
+          Run validation with release drafter only
+          → Skip the release job
+        # Note: Change this default to true,
+        #       if the checkbox should be checked by default.
+        default: false
+  # If you don't want any automatic trigger in general, then
+  # the following check_run trigger lines should all be commented.
+  # Note: Consider the use case #2 config for 'validate_only' below
+  #       as an alternative option!
+  check_run:
+    types:
+      - completed
+
+permissions:
+  checks: read
+  contents: write
+
+jobs:
+  maven-cd:
+    uses: jenkins-infra/github-reusable-workflows/.github/workflows/maven-cd.yml@v1
+    with:
+      # Comment / uncomment the validate_only config appropriate to your preference:
+      #
+      # Use case #1 (automatic release):
+      #   - Let any successful Jenkins build trigger another release,
+      #     if there are merged pull requests of interest
+      #   - Perform a validation only run with drafting a release note,
+      #     if manually triggered AND inputs.validate_only has been checked.
+      #
+      validate_only: ${{ inputs.validate_only == true }}
+      #
+      # Alternative use case #2 (no automatic release):
+      #   - Same as use case #1 - but:
+      #     - Let any check_run trigger a validate_only run.
+      #       => enforce the release job to be skipped.
+      #
+      #validate_only: ${{ inputs.validate_only == true || github.event_name == 'check_run' }}
+    secrets:
+      MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+      MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN }}

@@ -8,7 +8,7 @@
     <relativePath />
   </parent>
   <artifactId>job-dsl-parent</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${changelist}</version>
   <packaging>pom</packaging>
   <name>Job DSL Parent</name>
   <url>https://github.com/jenkinsci/job-dsl-plugin</url>
@@ -31,7 +31,7 @@
   </scm>
   <properties>
     <revision>1.95</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/job-dsl-plugin</gitHubRepo>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.479</jenkins.baseline>
