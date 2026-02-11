@@ -17,33 +17,6 @@
       <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
-  <developers>
-    <developer>
-      <id>quidryan</id>
-      <name>Justin Ryan</name>
-      <email>jryan@netflix.com</email>
-    </developer>
-    <developer>
-      <id>andrewharmellaw</id>
-      <name>Andrew Harmel-Law</name>
-      <email>andrew@harmel-law.com</email>
-    </developer>
-    <developer>
-      <id>daspilker</id>
-      <name>Daniel Spilker</name>
-      <email>mail@daniel-spilker.com</email>
-    </developer>
-    <developer>
-      <id>jamietanna</id>
-      <name>Jamie Tanna</name>
-      <email>jenkins@jamietanna.co.uk</email>
-    </developer>
-    <developer>
-      <id>sheehan</id>
-      <name>Matt Sheehan</name>
-      <email>mr.sheehan@gmail.com</email>
-    </developer>
-  </developers>
   <properties>
     <!-- TODO GMavenPlus does not support Javadoc -->
     <maven.javadoc.skip>true</maven.javadoc.skip>
