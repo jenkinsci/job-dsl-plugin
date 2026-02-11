@@ -31,3 +31,7 @@ updates:
       # https://github.com/jenkinsci/job-dsl-plugin/pull/1270
       - dependency-name: "bootstrap"
         versions: [">=4.0.0"]
+      # Breaks the API viewer. See:
+      # https://github.com/jenkinsci/job-dsl-plugin/pull/2558
+      - dependency-name: "jquery"
+        versions: [">=4.0.0"]
