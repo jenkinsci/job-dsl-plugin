@@ -38,7 +38,7 @@
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     <!-- TODO fix violations -->
     <spotbugs.threshold>High</spotbugs.threshold>
-    <spotless.check.skip>true</spotless.check.skip>
+    <spotless.check.skip>false</spotless.check.skip>
     <ban-commons-lang-2.skip>false</ban-commons-lang-2.skip>
   </properties>
   <dependencyManagement>
