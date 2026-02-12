@@ -9,6 +9,8 @@ import javaposse.jobdsl.dsl.NameNotProvidedException
 import javaposse.jobdsl.dsl.UserContent
 import javaposse.jobdsl.dsl.ExtensibleContext
 
+import java.nio.charset.Charset
+
 /**
  * Checks the thread's {@link Thread#interrupted() interrupted} flag before delegating each call and throws an
  * {@link InterruptedException} if the thread has been interrupted.
@@ -69,6 +71,11 @@ class InterruptibleJobManagement implements JobManagement {
     @Override
     String readFileInWorkspace(String jobName, String filePath) throws IOException {
         delegate.readFileInWorkspace(jobName, filePath)
+    }
+
+    @Override
+    String readFileInWorkspace(String jobName, Charset charset) throws IOException {
+        delegate.readFileInWorkspace(jobName, charset)
     }
 
     @Override

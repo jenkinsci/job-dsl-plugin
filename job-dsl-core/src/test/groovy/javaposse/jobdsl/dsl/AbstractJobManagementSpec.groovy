@@ -2,6 +2,8 @@ package javaposse.jobdsl.dsl
 
 import spock.lang.Specification
 
+import java.nio.charset.Charset
+
 import static org.codehaus.groovy.runtime.InvokerHelper.createScript
 
 class AbstractJobManagementSpec extends Specification {
@@ -148,6 +150,11 @@ class AbstractJobManagementSpec extends Specification {
 
         @Override
         String readFileInWorkspace(String filePath) throws IOException {
+            throw new UnsupportedOperationException()
+        }
+
+        @Override
+        String readFileInWorkspace(String filePath, Charset charset) throws IOException {
             throw new UnsupportedOperationException()
         }
 
