@@ -229,7 +229,7 @@ class ScmContext extends AbstractExtensibleContext {
      */
     @RequiresPlugin(id = 'subversion', minimumVersion = '2.8')
     void svn(@DslContext(SvnContext) Closure svnClosure) {
-        SvnContext svnContext = new SvnContext(jobManagement)
+        SvnContext svnContext = new SvnContext(jobManagement, item)
         executeInContext(svnClosure, svnContext)
 
         checkState(!svnContext.locations.empty, 'One or more locations must be specified')
@@ -242,6 +242,10 @@ class ScmContext extends AbstractExtensibleContext {
             excludedUsers(svnContext.excludedUsers.join('\n'))
             excludedCommitMessages(svnContext.excludedCommitMessages.join('\n'))
             excludedRevprop(svnContext.excludedRevisionProperty ?: '')
+        }
+
+        if (svnContext.svnBrowserContext.browser) {
+            svnNode.children().add(svnContext.svnBrowserContext.browser)
         }
 
         ContextHelper.executeConfigureBlock(svnNode, svnContext.configureBlock)
