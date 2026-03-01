@@ -26,7 +26,7 @@
     "jquery-ui": "1.14.2",
     "jquery.ui.layout": "1.1.0",
     "jstree": "3.3.17",
-    "underscore": "1.13.7"
+    "underscore": "1.13.8"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
