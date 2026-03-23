@@ -98,13 +98,6 @@
       <artifactId>vsphere-cloud</artifactId>
       <version>3.512.vfb_0824b_5068c</version>
       <optional>true</optional>
-      <exclusions>
-        <!-- TODO pending https://github.com/jenkinsci/vsphere-cloud-plugin/pull/135 -->
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.jenkins.configuration-as-code</groupId>
