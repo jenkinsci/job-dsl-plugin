@@ -264,7 +264,7 @@ This change leads to the desired result:
 </project>
 ```
 
-See also [JENKINS-41958](https://issues.jenkins-ci.org/browse/JENKINS-41958).
+See also [JENKINS-41958](https://issue-redirect.jenkins.io/browse/JENKINS-41958).
 
 # Samples
 

@@ -88,9 +88,9 @@ scm {
 Libraries can be used in a Job DSL script by adding them to the _Additional classpath_ option in the _Process Job DSLs_
 build step. The library's JAR files must be available in the workspace of the seed job. For libraries without transitive
 dependencies this can be achieved by using the _Artifact Resolver_ build step of the
-[Repository Connector Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Repository+Connector+Plugin) prior to the
+[Repository Connector Plugin](https://plugins.jenkins.io/repository-connector/) prior to the
 _Process Job DSLs_ build step. For more complex setups, an extra [Gradle](http://www.gradle.org/) build step
-([Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)) can be used.
+([Gradle Plugin](https://plugins.jenkins.io/gradle/)) can be used.
 
 For example, to use [Kohsuke's GitHub API](http://github-api.kohsuke.org/), the following `build.gradle` will copy all
 necessary libraries to a `lib` directory:
@@ -233,4 +233,4 @@ Options:
 > ⚠ **Note**: when using multiple Job DSL build steps in a single pipeline, set `removedJobAction`, `removedViewAction`
 > or `removedConfigFilesAction` to `DELETE` (or `DISABLE`) only for the last Job DSL build step. Otherwise jobs, views
 > or config files may be deleted and re-created (or disabled and re-enabled) and you may loose the job history of
-> generated jobs. See [JENKINS-44142](https://issues.jenkins-ci.org/browse/JENKINS-44142) for details.
+> generated jobs. See [JENKINS-44142](https://issue-redirect.jenkins.io/browse/JENKINS-44142) for details.

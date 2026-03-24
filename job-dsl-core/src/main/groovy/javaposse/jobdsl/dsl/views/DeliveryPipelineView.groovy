@@ -172,7 +172,7 @@ class DeliveryPipelineView extends View {
 
     /**
      * Shows promotions from the
-     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Promoted+Builds+Plugin">Promoted Builds Plugin</a>.
+     * <a href="https://plugins.jenkins.io/promoted-builds/">Promoted Builds Plugin</a>.
      * Defaults to {@code false}.
      *
      * @since 1.38
@@ -196,7 +196,7 @@ class DeliveryPipelineView extends View {
 
     /**
      * Show analysis results from
-     * <a href="https://wiki.jenkins.io/display/JENKINS/Analysis+Collector+Plugin">Analysis Collector Plugin</a>.
+     * <a href="https://plugins.jenkins.io/analysis-collector/">Analysis Collector Plugin</a>.
      * Defaults to {@code false}.
      *
      * @since 1.65

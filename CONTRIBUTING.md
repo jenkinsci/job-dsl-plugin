@@ -4,7 +4,7 @@
 **NOTE**
 
 The built-in DSL is in [Maintenance Mode](https://en.wikipedia.org/wiki/Maintenance_mode). If a feature is available in
-[Dynamic DSL](docs/Dynamic-DSL.md), it will not be added to the built-in DSL. Any pull requests or JIRA tickets for
+[Dynamic DSL](docs/Dynamic-DSL.md), it will not be added to the built-in DSL. Any pull requests or issues for
 adding support for features that are available in Dynamic DSL will be rejected.
 ---
 
@@ -25,13 +25,11 @@ the [Dynamic DSL](docs/Dynamic-DSL.md). Feature requests or pull requests for fe
 already supported by dynamic DSL are likely to be rejected since it's not feasible to add support for
 every config option of each of the 1000+ plugins available in the Update Center.
 
-* Feature Requests - Create a "New Feature" issue on the
-  [Jenkins JIRA](https://issues.jenkins-ci.org/secure/Dashboard.jspa?selectPageId=15341). Remember to add the `job-dsl-plugin`
-  component.
-* Feature Implementations - Even better than a JIRA issue is an implementation. If the implementation requires design
+* Feature Requests - Create a ["Feature request" issue](https://github.com/jenkinsci/job-dsl-plugin/issues).
+* Feature Implementations - An implementation is Even better than an issue. If the implementation requires design
   or architectural changes or would need refactoring, send a mail to the
   [group](https://groups.google.com/forum/?fromgroups#!forum/job-dsl-plugin) with a proposal. Otherwise simply fork
-  the repo, create a branch (named after the JIRA "New Feature" you created earlier), implement it yourself and submit a
+  the repo, create a branch, implement it yourself and submit a
   Pull Request.
 * Open a feature request for adding support for a specific plugin only if the plugin is not supported by the
   [Dynamic DSL](docs/Dynamic-DSL.md) and if the plugin does not implement the
@@ -40,11 +38,8 @@ every config option of each of the 1000+ plugins available in the Update Center.
 
 ### Bugs
 
-* Bug Reports - Create a new "Bug" issue on the
-  [Jenkins JIRA](https://issues.jenkins-ci.org/secure/Dashboard.jspa?selectPageId=15341). Remember to add the `job-dsl-plugin`
-  component.
-* Bug Fixes - Even better than a JIRA issue is a fix. Simply fork our repo, create a branch (named after the JIRA "Bug"
-  you created earlier), implement it yourself and submit a Pull Request.
+* Bug Reports - Create a new ["Bug report" issue](https://github.com/jenkinsci/job-dsl-plugin/issues).
+* Bug Fixes - A fix is even better than an issue. Simply fork our repo, create a branch, implement it yourself and submit a Pull Request.
 
 ## Our Git Protocol
 
@@ -53,7 +48,7 @@ GitHub account in order to do this):
 
 1. Fork the `jenkinsci/job-dsl-plugin` repository to your account.
 2. On your local machine, clone your copy of the `job-dsl-plugin` repo.
-3. Again on your local machine, create a branch, ideally named after a JIRA issue you've created for the work.
+3. Again on your local machine, create a branch, ideally named after the issue you've created for the work.
 4. Switch to the local branch and make your changes. When you're happy, commit them and push them to your repo branch.
 5. Also update the documentation (including examples) and add tests as part of your changes.
 6. Then, on the GitHub website, find the branch you created for your work, and submit a Pull Request. This will then

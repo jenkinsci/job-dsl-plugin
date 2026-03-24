@@ -1,6 +1,6 @@
 There are three options for handling credentials and other secrets in Job DSL scripts.
 
-The first option involves the [Credentials Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin) which
+The first option involves the [Credentials Plugin](https://plugins.jenkins.io/credentials/) which
 manages credentials in a secure manner and allows Job DSL scripts to reference credentials by their identifier. It is
 also the most secure option because the credentials do not need to passed to the Job DSL script.
 
@@ -14,13 +14,12 @@ The following sections show how to handle credentials in detail.
 
 ## The Credentials Plugin
 
-The [Credentials Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin) adds a new menu entry called
+The [Credentials Plugin](https://plugins.jenkins.io/credentials/) adds a new menu entry called
 "Credentials" to the top-level Jenkins navigation, next to "Manage Jenkins". The Credentials page allows to manage
 credentials for any plugins that can consume these credentials., e.g. the [Git
-Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin) or the [Subversion
-Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin).
+Plugin](https://plugins.jenkins.io/git/) or the [Subversion Plugin](https://plugins.jenkins.io/subversion/).
 
-The [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin) can be used to
+The [Credentials Binding Plugin](https://plugins.jenkins.io/credentials-binding/) can be used to
 assign credentials to build variables. These can be used in shell scripts or other plugins that can consume build
 variables but no credentials from the Credentials Plugin.
 
@@ -63,7 +62,7 @@ The Job DSL allows to specify the credentials' ID as a reference when when confi
 
 All build variables are exposed to the Job DSL scripts as variables, see [User Power
 Moves](User-Power-Moves#access-the-jenkins-environment-variables). There are several ways to define credentials as
-build variables, e.g. the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin) provides a
+build variables, e.g. the [EnvInject Plugin](https://plugins.jenkins.io/envinject/) provides a
 "Inject passwords to the build as environment variables" setting to inject passwords either defined globally in
 "Configure System" or directly on a job.
 
@@ -111,5 +110,5 @@ like build variables as in the examples above.
     }
 
 A drawback of using global passwords is that all credentials are injected into the job and not only the ones needed to
-run the job. The [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin)
+run the job. The [Credentials Binding Plugin](https://plugins.jenkins.io/credentials-binding/)
 allows more fine-grained access to credentials.

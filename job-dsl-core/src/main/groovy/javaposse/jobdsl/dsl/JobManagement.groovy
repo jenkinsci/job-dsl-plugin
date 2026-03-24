@@ -46,7 +46,7 @@ interface JobManagement {
             throws NameNotProvidedException, ConfigurationMissingException
 
     /**
-     * Uploads the given <a href="https://wiki.jenkins-ci.org/display/JENKINS/User+Content">user content</a>.
+     * Uploads the given <a href="https://www.jenkins.io/doc/book/managing/user-content/">user content</a>.
      *
      * @param userContent the user content to be uploaded
      * @param ignoreExisting do not update existing user content

@@ -18,10 +18,10 @@ class CredentialsParameterContext implements Context {
      * {@code 'com.cloudbees.plugins.credentials.impl.CertificateCredentialsImpl'}. Additional credentials types are
      * provided by other plugins, e.g.
      * {@code 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey'} is provided by the
-     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/SSH+Credentials+Plugin">SSH Credentials Plugin</a> and
+     * <a href="https://plugins.jenkins.io/ssh-credentials/">SSH Credentials Plugin</a> and
      * {@code 'org.jenkinsci.plugins.plaincredentials.impl.FileCredentialsImpl'} and
      * {@code 'org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl'} are provided by the
-     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Plain+Credentials+Plugin">Plain Credentials Plugin</a>.
+     * <a href="https://plugins.jenkins.io/plain-credentials/">Plain Credentials Plugin</a>.
      */
     void type(String type) {
         Preconditions.checkNotNullOrEmpty(type, 'type must not be null or empty')

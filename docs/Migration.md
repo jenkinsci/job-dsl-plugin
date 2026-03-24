@@ -2,7 +2,7 @@
 
 ### PostBuildScript plugin
 
-There are no longer any manually defined DSL methods for the PostBuildScript, which allows folks using PostBuildScript v3.0.0 to no longer have issues with Job DSL ([JENKINS-66189](https://issues.jenkins.io/browse/JENKINS-66189)).
+There are no longer any manually defined DSL methods for the PostBuildScript, which allows folks using PostBuildScript v3.0.0 to no longer have issues with Job DSL ([JENKINS-66189](https://issue-redirect.jenkins.io/browse/JENKINS-66189)).
 
 Note that this did not go through a deprecation cycle, as we usually should do, in a decision by the maintainers regarding how few folks still use the v2.x release, and the age of the plugin.
 
@@ -11,7 +11,7 @@ Note that this did not go through a deprecation cycle, as we usually should do, 
 ### Pipeline: Job Plugin
 
 The `triggers` option for Pipeline jobs causes problems
-([JENKINS-53775](https://issues.jenkins-ci.org/browse/JENKINS-53775)). It is [[deprecated|Deprecation-Policy]] and will
+([JENKINS-53775](https://issue-redirect.jenkins.io/browse/JENKINS-53775)). It is [[deprecated|Deprecation-Policy]] and will
 be removed. It should be replaced by the `pipelineTriggers` job property. The dynamic DSL syntax for pipeline triggers
 differs from the built-in syntax, use the embedded API viewer to look-up the exact syntax.
 
@@ -47,7 +47,7 @@ Support for versions older than 2.4 of the [Pipeline Job Plugin](https://plugins
 [[deprecated|Deprecation-Policy]] and will be removed.
 
 The `concurrentBuild` option for Pipeline jobs causes problems
-([JENKINS-53775](https://issues.jenkins-ci.org/browse/JENKINS-53775)). It is [[deprecated|Deprecation-Policy]] and will
+([JENKINS-53775](https://issue-redirect.jenkins.io/browse/JENKINS-53775)). It is [[deprecated|Deprecation-Policy]] and will
 be removed. It should be replaced by the `disableConcurrentBuilds` job property.
 
 DSL prior to 1.76
@@ -81,7 +81,7 @@ Support for versions older than 2.8 of the [Subversion Plugin](https://plugins.j
 ## Migrating to 1.75
 
 The `id` option in the Git and GitHub branch source contexts is now mandatory
-([JENKINS-43693](https://issues.jenkins-ci.org/browse/JENKINS-43693)).
+([JENKINS-43693](https://issue-redirect.jenkins.io/browse/JENKINS-43693)).
 
 DSL prior to 1.75
 ```groovy
@@ -108,7 +108,7 @@ multibranchPipelineJob('example') {
 
 ### CloudBees Folders Plugin
 
-The `periodic` trigger is broken ([JENKINS-55429](https://issues.jenkins-ci.org/browse/JENKINS-55429)) and will be
+The `periodic` trigger is broken ([JENKINS-55429](https://issue-redirect.jenkins.io/browse/JENKINS-55429)) and will be
 removed. It can be replaced by [[Dynamic DSL]]:
 
 DSL prior to 1.72
@@ -1598,7 +1598,7 @@ Support for versions older than 0.17 of the
 ### Flexible Publish
 
 The DSL syntax of the `flexiblePublish` context has been changed to fix
-([JENKINS-30010](https://issues.jenkins-ci.org/browse/JENKINS-30010)).
+([JENKINS-30010](https://issue-redirect.jenkins.io/browse/JENKINS-30010)).
 
 DSL prior to 1.42
 ```groovy
@@ -1672,7 +1672,7 @@ Support for versions older than 1.5 of the
 ### MultiJob
 
 A `phaseJob` method has been added to `phase` context to fix
-([JENKINS-27921](https://issues.jenkins-ci.org/browse/JENKINS-27921)). The `job` method within that context has been
+([JENKINS-27921](https://issue-redirect.jenkins.io/browse/JENKINS-27921)). The `job` method within that context has been
 [[deprecated|Deprecation-Policy]] and will be removed. The `jobName` method within the `phaseJob` context has deprecated
 and will also be removed.
 
@@ -1743,7 +1743,7 @@ javaposse.jobdsl.dsl.ConfigFileType.MavenSettings
 ### DslScriptLoader
 
 The signature of `DslScriptLoader.runDslEngineForParent` has changed and the method is no longer public. The change was
-necessary to avoid a class loader leak and to fix ([JENKINS-30348](https://issues.jenkins-ci.org/browse/JENKINS-30348)).
+necessary to avoid a class loader leak and to fix ([JENKINS-30348](https://issue-redirect.jenkins.io/browse/JENKINS-30348)).
 Use `DslScriptLoader.runDslEngine` instead.
 
 ## Migrating to 1.38
@@ -2499,7 +2499,7 @@ a `lib` directory). See [[Using Libraries|User-Power-Moves#using-libraries]] for
 
 The `perModuleEmail` option has been deprecated because the e-mail notification settings have changed in newer versions
 of the [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin), see
-[JENKINS-26284](https://issues.jenkins-ci.org/browse/JENKINS-26284).
+[JENKINS-26284](https://issue-redirect.jenkins.io/browse/JENKINS-26284).
 
 DSL prior to 1.29
 ```groovy
@@ -2780,7 +2780,7 @@ See the [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/#path/job-trigge
 ## Migrating to 1.20
 
 In version 1.20, some implementation classes have been moved to work around a
-[bug](http://jira.codehaus.org/browse/GROOVY-5875) in Groovy. When these classes have been used to extend the DSL,
+[bug](https://issues.apache.org/jira/browse/GROOVY-5875) in Groovy. When these classes have been used to extend the DSL,
 import statements and fully qualified class names have to be adjusted.
 
 ## Migrating to 1.19

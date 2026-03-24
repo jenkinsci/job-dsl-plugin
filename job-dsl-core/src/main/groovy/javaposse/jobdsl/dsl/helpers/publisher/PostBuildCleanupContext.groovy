@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.helpers.common.WorkspaceCleanupContext
 /**
  * DSL supporting the Workspace Cleanup Plugin post build action.
  *
- * See https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin
+ * See https://plugins.jenkins.io/ws-cleanup/
  */
 class PostBuildCleanupContext extends WorkspaceCleanupContext {
     boolean cleanWhenSuccess = true

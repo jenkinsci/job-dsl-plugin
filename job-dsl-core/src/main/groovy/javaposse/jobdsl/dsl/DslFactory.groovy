@@ -192,7 +192,7 @@ interface DslFactory extends ViewFactory {
     void configFiles(@DslContext(ConfigFilesContext) Closure closure)
 
     /**
-     * Upload the stream as <a href="https://wiki.jenkins-ci.org/display/JENKINS/User+Content">user content</a>.
+     * Upload the stream as <a href="https://www.jenkins.io/doc/book/managing/user-content/">user content</a>.
      * Use {@link DslFactory#streamFileFromWorkspace(java.lang.String)} to read the content from a file.
      *
      * @param path relative destination path within the Jenkins userContent directory
