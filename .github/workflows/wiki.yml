@@ -13,6 +13,8 @@ permissions:
 
 jobs:
   push-to-wiki:
+    # Only push to wiki from repository in jenkinsci GitHub organization
+    if: ${{ github.repository_owner == 'jenkinsci' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
