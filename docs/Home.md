@@ -29,62 +29,62 @@ Have a look at [Jenkins Job DSL Gradle example](https://github.com/sheehan/job-d
 [Job DSL Sample](https://github.com/unguiculus/job-dsl-sample) to see how to organize a SCM repository for Job DSL
 scripts, including [[tests for DSL scripts|Testing DSL Scripts]] and [[IDE Support]].
 
-Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins-ci.org/issues/?filter=15140).
+Browse the Jenkins issue tracker to see any [open issues](https://issue-redirect.jenkins.io/issues/?filter=15140).
 
 ## Release Notes
 * Release notes for versions >= 1.82 can be found on the [GitHub releases page](https://github.com/jenkinsci/job-dsl-plugin/releases).
 * 1.81.1 (March 13 2023)
   * Internal dependency management updates
-  * Fix concurrent modification exception in ExecuteDslScripts ([GH-1253](https://github.com/jenkinsci/job-dsl-plugin/pull/1253) [JENKINS-69064](https://issues.jenkins.io/browse/JENKINS-69064)).
-  * Importing a workspace file into a Job DSL script with the Groovy Sandbox does not work on Java 17 ([JENKINS-70361](https://issues.jenkins.io/browse/JENKINS-70361))
+  * Fix concurrent modification exception in ExecuteDslScripts ([GH-1253](https://github.com/jenkinsci/job-dsl-plugin/pull/1253) [JENKINS-69064](https://issue-redirect.jenkins.io/browse/JENKINS-69064)).
+  * Importing a workspace file into a Job DSL script with the Groovy Sandbox does not work on Java 17 ([JENKINS-70361](https://issue-redirect.jenkins.io/browse/JENKINS-70361))
 * 1.81.0 (July 18 2022)
-  * Add missing options for Parameterized Remote Trigger Plugin ([GH-1250](https://github.com/jenkinsci/job-dsl-plugin/pull/1250) [JENKINS-68781](https://issues.jenkins.io/browse/JENKINS-68781)).
+  * Add missing options for Parameterized Remote Trigger Plugin ([GH-1250](https://github.com/jenkinsci/job-dsl-plugin/pull/1250) [JENKINS-68781](https://issue-redirect.jenkins.io/browse/JENKINS-68781)).
 * 1.80.0 (July 1 2022)
-  * Don't destroy credentials when re-creating organization folders ([GH-1251](https://github.com/jenkinsci/job-dsl-plugin/pull/1251) [JENKINS-44681](https://issues.jenkins.io/browse/JENKINS-44681))
+  * Don't destroy credentials when re-creating organization folders ([GH-1251](https://github.com/jenkinsci/job-dsl-plugin/pull/1251) [JENKINS-44681](https://issue-redirect.jenkins.io/browse/JENKINS-44681))
 * 1.79.0 (April 14 2022)
-  * Allow using classes not supported by `structs` for `DescribableContext` ([GH-1202](https://github.com/jenkinsci/job-dsl-plugin/pull/1202) [JENKINS-57435](https://issues.jenkins-ci.org/browse/JENKINS-57435))
+  * Allow using classes not supported by `structs` for `DescribableContext` ([GH-1202](https://github.com/jenkinsci/job-dsl-plugin/pull/1202) [JENKINS-57435](https://issue-redirect.jenkins.io/browse/JENKINS-57435))
     ** Note that this has the potential to be unsafe and can lead to source-controlled secrets. Please be **very cautious** when embedding secrets into source control!
 * 1.78.3 (January 01 2022)
-  * Replace JSR305 annotations with SpotBugs annotations ([JENKINS-55973](https://issues.jenkins-ci.org/browse/JENKINS-55973))
+  * Replace JSR305 annotations with SpotBugs annotations ([JENKINS-55973](https://issue-redirect.jenkins.io/browse/JENKINS-55973))
 * 1.78.2 (January 01 2022)
   * Prepare for sunset icon removal from core (https://github.com/jenkinsci/job-dsl-plugin/pull/1245)
 * 1.78.1 (October 27 2021)
-  * Fix: Ensure API Viewer is packaged correctly into the built plugin ([JENKINS-66988](https://issues.jenkins.io/browse/JENKINS-66988))
+  * Fix: Ensure API Viewer is packaged correctly into the built plugin ([JENKINS-66988](https://issue-redirect.jenkins.io/browse/JENKINS-66988))
 * 1.78 (October 27 2021)
-  * Don't destroy credentials when re-creating folders ([JENKINS-44681](https://issues.jenkins.io/browse/JENKINS-44681))
+  * Don't destroy credentials when re-creating folders ([JENKINS-44681](https://issue-redirect.jenkins.io/browse/JENKINS-44681))
   * Close all streams that are passed into `userContent`
   * Increased the minimum supported Jenkins version to 2.176
   * Enhanced support for [Subversion Plugin](https://plugins.jenkins.io/subversion)
-    ([JENKINS-58575](https://issues.jenkins-ci.org/browse/JENKINS-58575))
+    ([JENKINS-58575](https://issue-redirect.jenkins.io/browse/JENKINS-58575))
   * Fixed a problem with case sensitivity of item names
-    ([JENKINS-63056](https://issues.jenkins-ci.org/browse/JENKINS-63056))
+    ([JENKINS-63056](https://issue-redirect.jenkins.io/browse/JENKINS-63056))
   * Improved documentation
-    ([JENKINS-42816](https://issues.jenkins-ci.org/browse/JENKINS-42816),
-    [JENKINS-61463](https://issues.jenkins-ci.org/browse/JENKINS-61463),
+    ([JENKINS-42816](https://issue-redirect.jenkins.io/browse/JENKINS-42816),
+    [JENKINS-61463](https://issue-redirect.jenkins.io/browse/JENKINS-61463),
     [#1231](https://github.com/jenkinsci/job-dsl-plugin/pull/1231))
   * Removed anything that has been deprecated in 1.76, see [Migration](Migration#migrating-to-176)
   * Removed anything that has been deprecated in 1.72, see [Migration](Migration#migrating-to-172)
 * 1.77 (March 11 2020)
   * Increased the minimum supported Jenkins version to 2.164
   * Improved support for views
-    ([JENKINS-59117](https://issues.jenkins-ci.org/browse/JENKINS-59117))
+    ([JENKINS-59117](https://issue-redirect.jenkins.io/browse/JENKINS-59117))
   * Fixed problem with detecting seed job collisions
-    ([JENKINS-59995](https://issues.jenkins-ci.org/browse/JENKINS-59995))
+    ([JENKINS-59995](https://issue-redirect.jenkins.io/browse/JENKINS-59995))
   * Fixed problem with paths on Windows
-    ([JENKINS-53840](https://issues.jenkins-ci.org/browse/JENKINS-53840))
+    ([JENKINS-53840](https://issue-redirect.jenkins.io/browse/JENKINS-53840))
   * Deprecated `triggers` method in `pipelineJob` context, see [Migration](Migration#migrating-to-177)
-    ([JENKINS-53775](https://issues.jenkins-ci.org/browse/JENKINS-53775))
+    ([JENKINS-53775](https://issue-redirect.jenkins.io/browse/JENKINS-53775))
 * 1.76 (August 22 2019)
   * Added documentation for pitfalls when using multiple Job DSL build steps in a single job
-    ([JENKINS-44142](https://issues.jenkins-ci.org/browse/JENKINS-44142))
+    ([JENKINS-44142](https://issue-redirect.jenkins.io/browse/JENKINS-44142))
   * Pass environment from CasC file to Job DSL script
-    ([JENKINS-59037](https://issues.jenkins-ci.org/browse/JENKINS-59037))
+    ([JENKINS-59037](https://issue-redirect.jenkins.io/browse/JENKINS-59037))
   * Fixed [[Dynamic DSL]] problem
-    ([JENKINS-57817](https://issues.jenkins-ci.org/browse/JENKINS-57817))
+    ([JENKINS-57817](https://issue-redirect.jenkins.io/browse/JENKINS-57817))
   * Show items with same display name on job and build pages
-    ([JENKINS-54231](https://issues.jenkins-ci.org/browse/JENKINS-54231))
+    ([JENKINS-54231](https://issue-redirect.jenkins.io/browse/JENKINS-54231))
   * Deprecated `concurrentBuild` method in `pipelineJob` context, see [Migration](Migration#migrating-to-176)
-    ([JENKINS-53775](https://issues.jenkins-ci.org/browse/JENKINS-53775))
+    ([JENKINS-53775](https://issue-redirect.jenkins.io/browse/JENKINS-53775))
   * Support for older versions of the [Pipeline Job Plugin](https://plugins.jenkins.io/workflow-job) is deprecated, see
     [Migration](Migration#migrating-to-176)
   * Support for older versions of the [Subversion Plugin](https://plugins.jenkins.io/subversion) is deprecated, see
@@ -92,84 +92,84 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.75 (August 12 2019)
   * Added documentation about mandatory identifier in multi-branch Pipeline job branch sources, the identifier will no
     longer be generated and must be set to a constant and unique value, see [Migration](Migration#migrating-to-175)
-    ([JENKINS-43693](https://issues.jenkins-ci.org/browse/JENKINS-43693))
+    ([JENKINS-43693](https://issue-redirect.jenkins.io/browse/JENKINS-43693))
   * Enhanced support for the [Branch API Plugin](https://plugins.jenkins.io/branch-api)
-    ([JENKINS-54877](https://issues.jenkins-ci.org/browse/JENKINS-54877))
+    ([JENKINS-54877](https://issue-redirect.jenkins.io/browse/JENKINS-54877))
   * Fixed problem with API viewer
-    ([JENKINS-51202](https://issues.jenkins-ci.org/browse/JENKINS-51202))
+    ([JENKINS-51202](https://issue-redirect.jenkins.io/browse/JENKINS-51202))
   * Fixed problems when using multiple Job DSL steps in a single seed job
-    ([JENKINS-29784](https://issues.jenkins-ci.org/browse/JENKINS-29784),
-    [JENKINS-44142](https://issues.jenkins-ci.org/browse/JENKINS-44142))
+    ([JENKINS-29784](https://issue-redirect.jenkins.io/browse/JENKINS-29784),
+    [JENKINS-44142](https://issue-redirect.jenkins.io/browse/JENKINS-44142))
 * 1.74 (May 01 2019)
   * Fixed [Configuration as Code](https://github.com/jenkinsci/configuration-as-code-plugin/) extension
-    ([JENKINS-57218](https://issues.jenkins-ci.org/browse/JENKINS-57218))
+    ([JENKINS-57218](https://issue-redirect.jenkins.io/browse/JENKINS-57218))
 * 1.73 (April 26 2019)
   * Support job creation in [Configuration as Code](https://github.com/jenkinsci/configuration-as-code-plugin/)
     ([#1173](https://github.com/jenkinsci/job-dsl-plugin/pull/1173))
   * Added option to fail seed job if an item is managed by another seed job
     ([#1147](https://github.com/jenkinsci/job-dsl-plugin/pull/1147))
   * Fixed line detection for JDK 9+
-    ([JENKINS-54942](https://issues.jenkins-ci.org/browse/JENKINS-54942))
+    ([JENKINS-54942](https://issue-redirect.jenkins.io/browse/JENKINS-54942))
   * Fixed name of "all" view
-    ([JENKINS-56505](https://issues.jenkins-ci.org/browse/JENKINS-56505))
+    ([JENKINS-56505](https://issue-redirect.jenkins.io/browse/JENKINS-56505))
   * Fixed support for the [Description Setter Plugin](https://plugins.jenkins.io/description-setter)
     ([#1162](https://github.com/jenkinsci/job-dsl-plugin/pull/1162))
 * 1.72 (March 06 2019)
   * Increased the minimum supported Jenkins version to 2.121
   * Replaced built-in support for periodic folder trigger, see [Migration](Migration#migrating-to-172)
-    ([JENKINS-55429](https://issues.jenkins-ci.org/browse/JENKINS-55429))
+    ([JENKINS-55429](https://issue-redirect.jenkins.io/browse/JENKINS-55429))
   * Fixed Groovy sandbox bypass via constructor invocation
-    ([SECURITY-1342](https://issues.jenkins-ci.org/browse/SECURITY-1342))
+    ([SECURITY-1342](https://issue-redirect.jenkins.io/browse/SECURITY-1342))
   * Removed anything that has been deprecated in 1.70, see [Migration](Migration#migrating-to-170)
   * Removed anything that has been deprecated in 1.69, see [Migration](Migration#migrating-to-169)
   * Removed anything that has been deprecated in 1.68, see [Migration](Migration#migrating-to-168)
   * Removed anything that has been deprecated in 1.67, see [Migration](Migration#migrating-to-167)
 * 1.71 (January 05 2019)
   * Log path of script file
-    ([JENKINS-52550](https://issues.jenkins-ci.org/browse/JENKINS-52550))
+    ([JENKINS-52550](https://issue-redirect.jenkins.io/browse/JENKINS-52550))
   * Fixed support for authentication token and disabling concurrent builds for Pipeline jobs
-    ([JENKINS-31832](https://issues.jenkins-ci.org/browse/JENKINS-31832))
+    ([JENKINS-31832](https://issue-redirect.jenkins.io/browse/JENKINS-31832))
   * Added support for `Object` typed options to [[Dynamic DSL]]
-    ([JENKINS-52546](https://issues.jenkins-ci.org/browse/JENKINS-52546))
+    ([JENKINS-52546](https://issue-redirect.jenkins.io/browse/JENKINS-52546))
   * Require `workflow-job` and `workflow-cps` plugins instead of `workflow-aggregator`
     ([#1145](https://github.com/jenkinsci/job-dsl-plugin/pull/1145  ))
   * Fixed serialization issue in `GlobalJobDslSecurityConfiguration`
-    ([JENKINS-53830](https://issues.jenkins-ci.org/browse/JENKINS-53830))
+    ([JENKINS-53830](https://issue-redirect.jenkins.io/browse/JENKINS-53830))
 * 1.70 (July 03 2018)
-  * Enhanced support for [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
+  * Enhanced support for [xUnit Plugin](https://plugins.jenkins.io/xunit/)
     ([#1129](https://github.com/jenkinsci/job-dsl-plugin/pull/1129))
-  * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
+  * Enhanced support for the [Copy Artifact Plugin](https://plugins.jenkins.io/copyartifact/)
     ([#1096](https://github.com/jenkinsci/job-dsl-plugin/pull/1096))
   * Log warning when plugins have been installed without restarting Jenkins
-    ([JENKINS-50858](https://issues.jenkins-ci.org/browse/JENKINS-50858))
+    ([JENKINS-50858](https://issue-redirect.jenkins.io/browse/JENKINS-50858))
   * Deprecated unsupported methods in `pipelineJob` context, see [Migration](Migration#migrating-to-170)
-    ([JENKINS-31832](https://issues.jenkins-ci.org/browse/JENKINS-31832))
+    ([JENKINS-31832](https://issue-redirect.jenkins.io/browse/JENKINS-31832))
 * 1.69 (April 14 2018)
   * Delete and re-create view if type changes
-    ([JENKINS-49696](https://issues.jenkins-ci.org/browse/JENKINS-49696))
+    ([JENKINS-49696](https://issue-redirect.jenkins.io/browse/JENKINS-49696))
   * Fixed problem when setting primary view for a folder
-    ([JENKINS-48288](https://issues.jenkins-ci.org/browse/JENKINS-48288))
+    ([JENKINS-48288](https://issue-redirect.jenkins.io/browse/JENKINS-48288))
   * Fixed problem with embedded API viewer
-    ([JENKINS-50411](https://issues.jenkins-ci.org/browse/JENKINS-50411))
+    ([JENKINS-50411](https://issue-redirect.jenkins.io/browse/JENKINS-50411))
   * Fixed problem with
-    [Pipeline Multibranch Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin)
-    ([JENKINS-50119](https://issues.jenkins-ci.org/browse/JENKINS-50119))
+    [Pipeline Multibranch Plugin](https://plugins.jenkins.io/workflow-multibranch/)
+    ([JENKINS-50119](https://issue-redirect.jenkins.io/browse/JENKINS-50119))
   * Fixed anonymous class warning
-    ([JENKINS-50750](https://issues.jenkins-ci.org/browse/JENKINS-50750))
+    ([JENKINS-50750](https://issue-redirect.jenkins.io/browse/JENKINS-50750))
   * Support for older versions of the
-    [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
+    [CloudBees Folders Plugin](https://plugins.jenkins.io/cloudbees-folder/) is deprecated, see
     [Migration](Migration#migrating-to-169)
   * Support for older versions of the
-    [Pipeline Multibranch Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin) is deprecated,
+    [Pipeline Multibranch Plugin](https://plugins.jenkins.io/workflow-multibranch/) is deprecated,
     see [Migration](Migration#migrating-to-169)
-  * Support for older versions of the [Branch API Plugin](https://wiki.jenkins.io/display/JENKINS/Branch+API+Plugin) is
+  * Support for older versions of the [Branch API Plugin](https://plugins.jenkins.io/branch-api/) is
     deprecated, see [Migration](Migration#migrating-to-169)
   * Support for setting the primary view in `multibranchPipelineJob` and `organizationFolder` is deprecated,
     see [Migration](Migration#migrating-to-169)
-  * Support for the [Perforce Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Perforce+Plugin) is
+  * Support for the [Perforce Plugin](https://plugins.jenkins.io/p4/) is
     deprecated, see [Migration](Migration#migrating-to-169)
   * Provide license information
-    ([JENKINS-36753](https://issues.jenkins-ci.org/browse/JENKINS-36753))
+    ([JENKINS-36753](https://issue-redirect.jenkins.io/browse/JENKINS-36753))
   * Removed anything that has been deprecated in 1.66, see [Migration](Migration#migrating-to-166)
 * 1.68 (February 09 2018)
   * Increased the minimum supported Java version to JDK 8
@@ -179,13 +179,13 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     feature
   * Renamed Automatically Generated DSL to [[Dynamic DSL]]
   * Un-deprecated support for the
-    [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin)
-    ([JENKINS-43637](https://issues.jenkins-ci.org/browse/JENKINS-43637))
+    [PostBuildScript Plugin](https://plugins.jenkins.io/postbuildscript/)
+    ([JENKINS-43637](https://issue-redirect.jenkins.io/browse/JENKINS-43637))
   * Un-deprecated support for the
-    [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin), but removed support for
+    [Active Choices Plugin](https://plugins.jenkins.io/uno-choice/), but removed support for
     Scriptler scripts
-    ([JENKINS-48121](https://issues.jenkins-ci.org/browse/JENKINS-48121))
-  * Enhanced support for the [Plot Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Plot+Plugin)
+    ([JENKINS-48121](https://issue-redirect.jenkins.io/browse/JENKINS-48121))
+  * Enhanced support for the [Plot Plugin](https://plugins.jenkins.io/plot/)
     ([#1091](https://github.com/jenkinsci/job-dsl-plugin/pull/1091))
   * Enhanced support for the
     [Pipeline Groovy Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Groovy+Plugin)
@@ -196,16 +196,16 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [Migration](Migration#migrating-to-168)
   * Enhanced support for the
     [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin)
-    ([JENKINS-48336](https://issues.jenkins-ci.org/browse/JENKINS-48336))
+    ([JENKINS-48336](https://issue-redirect.jenkins.io/browse/JENKINS-48336))
   * Fixed "Disable removed jobs" for Pipeline jobs
-    ([JENKINS-47705](https://issues.jenkins-ci.org/browse/JENKINS-47705))
+    ([JENKINS-47705](https://issue-redirect.jenkins.io/browse/JENKINS-47705))
   * Changed the default script path for Pipeline `cpsScm` context to `Jenkinsfile`, see
     [Migration](Migration#migrating-to-168)
-    ([JENKINS-34133](https://issues.jenkins-ci.org/browse/JENKINS-34133))
+    ([JENKINS-34133](https://issue-redirect.jenkins.io/browse/JENKINS-34133))
   * Changed the `sendTo` recipient list to be empty by default for the
     [Email Extension Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin), see
     [Migration](Migration#migrating-to-168)
-    ([JENKINS-49098](https://issues.jenkins-ci.org/browse/JENKINS-49098)
+    ([JENKINS-49098](https://issue-redirect.jenkins.io/browse/JENKINS-49098)
   * Support for older versions of the
     [Pipeline Groovy Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Groovy+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-168)
@@ -217,14 +217,14 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Allow import of Groovy code from the workspace when script security sandbox is enabled
     ([#1078](https://github.com/jenkinsci/job-dsl-plugin/pull/1078))
   * Fixed support for [[Dynamic DSL]] when using script security sandbox
-    ([JENKINS-47560](https://issues.jenkins-ci.org/browse/JENKINS-47560))
+    ([JENKINS-47560](https://issue-redirect.jenkins.io/browse/JENKINS-47560))
   * Enhanced support for the [Groovy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin)
-    ([JENKINS-44256](https://issues.jenkins-ci.org/browse/JENKINS-44256))
+    ([JENKINS-44256](https://issue-redirect.jenkins.io/browse/JENKINS-44256))
   * Enhanced support for the
     [Pipeline Multibranch Plugin](https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin)
     ([#1079](https://github.com/jenkinsci/job-dsl-plugin/pull/1079))
   * Fixed compatibility with Jenkins Remoting whitelist
-    ([JENKINS-49175](https://issues.jenkins-ci.org/browse/JENKINS-49175))
+    ([JENKINS-49175](https://issue-redirect.jenkins.io/browse/JENKINS-49175))
   * Support for the older versions of the [Groovy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+plugin) is
     deprecated, see [Migration](Migration#migrating-to-167)
   * Removed anything that has been deprecated in 1.61, see [Migration](Migration#migrating-to-161)
@@ -238,13 +238,13 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
     ([#1043](https://github.com/jenkinsci/job-dsl-plugin/pull/1043))
   * Enhanced support for the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin)
-    ([JENKINS-46332](https://issues.jenkins-ci.org/browse/JENKINS-46332))
+    ([JENKINS-46332](https://issue-redirect.jenkins.io/browse/JENKINS-46332))
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
     ([#1074](https://github.com/jenkinsci/job-dsl-plugin/pull/1074))
   * Allow passing custom parameters from Pipeline script
-    ([JENKINS-44128](https://issues.jenkins-ci.org/browse/JENKINS-44128))
+    ([JENKINS-44128](https://issue-redirect.jenkins.io/browse/JENKINS-44128))
   * Fixed problem with redundant paths
-    ([JENKINS-46932](https://issues.jenkins-ci.org/browse/JENKINS-46932))
+    ([JENKINS-46932](https://issue-redirect.jenkins.io/browse/JENKINS-46932))
   * Support for the older versions of the
     [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-166)
@@ -253,7 +253,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Removed anything that has been deprecated in 1.59, see [Migration](Migration#migrating-to-159)
 * 1.65 (September 07 2017)
   * Enhanced support for the [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
-    ([JENKINS-46463](https://issues.jenkins-ci.org/browse/JENKINS-46463))
+    ([JENKINS-46463](https://issue-redirect.jenkins.io/browse/JENKINS-46463))
   * Enhanced support for the
     [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
     ([#1046](https://github.com/jenkinsci/job-dsl-plugin/pull/1046))
@@ -265,15 +265,15 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [Throttle Concurrent Builds Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Throttle+Concurrent+Builds+Plugin)
     ([#1042](https://github.com/jenkinsci/job-dsl-plugin/pull/1042))
   * Updated documentation to avoid undesired libraries on the test classpath
-    ([JENKINS-45512](https://issues.jenkins-ci.org/browse/JENKINS-45512))
+    ([JENKINS-45512](https://issue-redirect.jenkins.io/browse/JENKINS-45512))
   * Changed visibility of a method in `JenkinsJobManagement`
-    ([JENKINS-45921](https://issues.jenkins-ci.org/browse/JENKINS-45921))
+    ([JENKINS-45921](https://issue-redirect.jenkins.io/browse/JENKINS-45921))
   * Provide better error message when job name ends with slash
-    ([JENKINS-44158](https://issues.jenkins-ci.org/browse/JENKINS-44158))
+    ([JENKINS-44158](https://issue-redirect.jenkins.io/browse/JENKINS-44158))
   * Fixed problem with static analysis plugins
-    ([JENKINS-46042](https://issues.jenkins-ci.org/browse/JENKINS-46042))
+    ([JENKINS-46042](https://issue-redirect.jenkins.io/browse/JENKINS-46042))
   * Fixed problem with `using` in Pipeline jobs
-    ([JENKINS-45812](https://issues.jenkins-ci.org/browse/JENKINS-45812))
+    ([JENKINS-45812](https://issue-redirect.jenkins.io/browse/JENKINS-45812))
   * Removed anything that has been deprecated in 1.57, see [Migration](Migration#migrating-to-157)
   * Removed anything that has been deprecated in 1.58, see [Migration](Migration#migrating-to-158)
 * 1.64 (July 07 2017)
@@ -283,17 +283,17 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
     ([#1029](https://github.com/jenkinsci/job-dsl-plugin/pull/1029))
   * Support for Gogs as browser for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
-    ([JENKINS-44306](https://issues.jenkins-ci.org/browse/JENKINS-44306))
+    ([JENKINS-44306](https://issue-redirect.jenkins.io/browse/JENKINS-44306))
   * Enhanced support for the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
     ([#1028](https://github.com/jenkinsci/job-dsl-plugin/pull/1028))
   * Enhanced support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)
-    ([JENKINS-44217](https://issues.jenkins-ci.org/browse/JENKINS-44217))
+    ([JENKINS-44217](https://issue-redirect.jenkins.io/browse/JENKINS-44217))
   * Enhanced support for the [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
-    ([JENKINS-44357](https://issues.jenkins-ci.org/browse/JENKINS-44357))
+    ([JENKINS-44357](https://issue-redirect.jenkins.io/browse/JENKINS-44357))
   * Enhanced support for [Sectioned View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sectioned+View+Plugin)
     ([#1037](https://github.com/jenkinsci/job-dsl-plugin/pull/1037))
   * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
-    ([JENKINS-44711](https://issues.jenkins-ci.org/browse/JENKINS-44711))
+    ([JENKINS-44711](https://issue-redirect.jenkins.io/browse/JENKINS-44711))
   * Support for older versions of the
     [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-164)
@@ -304,27 +304,27 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Removed anything that has been deprecated in 1.56, see [Migration](Migration#migrating-to-156)
 * 1.63 (May 09 2017)
   * Fixed problem with special characters in job, folder and view names
-    ([JENKINS-44140](https://issues.jenkins-ci.org/browse/JENKINS-44140))
+    ([JENKINS-44140](https://issue-redirect.jenkins.io/browse/JENKINS-44140))
 * 1.62 (May 09 2017)
   * Show enum values for dynamic DSL in embedded API viewer
     [#1020](https://github.com/jenkinsci/job-dsl-plugin/pull/1020)
   * Added option to remove unreferenced config files
-    ([JENKINS-40720](https://issues.jenkins-ci.org/browse/JENKINS-40720))
+    ([JENKINS-40720](https://issue-redirect.jenkins.io/browse/JENKINS-40720))
   * Enhanced support for the
     [Pipeline Multibranch Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Pipeline+Multibranch+Plugin)
-    ([JENKINS-43693](https://issues.jenkins-ci.org/browse/JENKINS-43693))
+    ([JENKINS-43693](https://issue-redirect.jenkins.io/browse/JENKINS-43693))
   * Enhanced support for the [Parameterized Remote Trigger
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin)
-    ([JENKINS-43025](https://issues.jenkins-ci.org/browse/JENKINS-43025))
+    ([JENKINS-43025](https://issue-redirect.jenkins.io/browse/JENKINS-43025))
   * Fixed problem with absolute paths when using "Seed Job" lookup strategy
-    ([JENKINS-43991](https://issues.jenkins-ci.org/browse/JENKINS-43991))
+    ([JENKINS-43991](https://issue-redirect.jenkins.io/browse/JENKINS-43991))
   * Improved error handling and fail if an item or view could not be created or updated
-    ([JENKINS-43991](https://issues.jenkins-ci.org/browse/JENKINS-43991))
+    ([JENKINS-43991](https://issue-redirect.jenkins.io/browse/JENKINS-43991))
   * Allow `..` path segments in job, folder and view names.
-    ([JENKINS-40732](https://issues.jenkins-ci.org/browse/JENKINS-40732))
+    ([JENKINS-40732](https://issue-redirect.jenkins.io/browse/JENKINS-40732))
   * Added a switch to the command line runner to put the script's directory on the classpath, see
     [User-Power-Moves](User-Power-Moves#run-a-dsl-script-locally)
-    ([JENKINS-42299](https://issues.jenkins-ci.org/browse/JENKINS-42299))
+    ([JENKINS-42299](https://issue-redirect.jenkins.io/browse/JENKINS-42299))
   * Support for the older versions of the [Parameterized Remote Trigger
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-162)
@@ -343,14 +343,14 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Removed anything that has been deprecated in 1.53, see [Migration](Migration#migrating-to-153)
 * 1.61 (April 17 2017)
   * Enhanced support for the [Stash Notifier Plugin](https://wiki.jenkins-ci.org/display/JENKINS/StashNotifier+Plugin)
-    ([JENKINS-42900](https://issues.jenkins-ci.org/browse/JENKINS-42900),
-    [JENKINS-29183](https://issues.jenkins-ci.org/browse/JENKINS-29183))
+    ([JENKINS-42900](https://issue-redirect.jenkins.io/browse/JENKINS-42900),
+    [JENKINS-29183](https://issue-redirect.jenkins.io/browse/JENKINS-29183))
   * Enhanced support for the [Join Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin)
-    ([JENKINS-43219](https://issues.jenkins-ci.org/browse/JENKINS-43219))
+    ([JENKINS-43219](https://issue-redirect.jenkins.io/browse/JENKINS-43219))
   * Fixed a problem with `readFileFromWorkspace`
-    ([JENKINS-43537](https://issues.jenkins-ci.org/browse/JENKINS-43537))
+    ([JENKINS-43537](https://issue-redirect.jenkins.io/browse/JENKINS-43537))
   * Do not print a warning when config file name equals config file identifier
-    ([JENKINS-43345](https://issues.jenkins-ci.org/browse/JENKINS-43345))
+    ([JENKINS-43345](https://issue-redirect.jenkins.io/browse/JENKINS-43345))
   * Support for the older versions of the [Join Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-161)
   * Support for the older versions of the
@@ -361,44 +361,44 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enabled script approval with the
     [Script Security Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin), see
     [Migration](Migration#migrating-to-160)
-    ([SECURITY-369](https://issues.jenkins-ci.org/browse/SECURITY-369))
+    ([SECURITY-369](https://issue-redirect.jenkins.io/browse/SECURITY-369))
   * Added permission checks and enforced running the build as a particular user, see
     [Migration](Migration#migrating-to-160)
-    ([SECURITY-363](https://issues.jenkins-ci.org/browse/SECURITY-363))
+    ([SECURITY-363](https://issue-redirect.jenkins.io/browse/SECURITY-363))
 * 1.59 (March 31 2017)
   * Enable [[Dynamic DSL]] for
     [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
-    ([JENKINS-41741](https://issues.jenkins-ci.org/browse/JENKINS-41741))
+    ([JENKINS-41741](https://issue-redirect.jenkins.io/browse/JENKINS-41741))
   * Log deprecation warnings for [[Dynamic DSL]] and DSL extensions
   * Updated the troubleshooting section for [[The Configure Block]]
-    ([JENKINS-41958](https://issues.jenkins-ci.org/browse/JENKINS-41958))
+    ([JENKINS-41958](https://issue-redirect.jenkins.io/browse/JENKINS-41958))
   * Updated [Structs Plugin](https://github.com/jenkinsci/structs-plugin) dependency to version 1.6
   * Support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-159)
-    ([JENKINS-42887](https://issues.jenkins-ci.org/browse/JENKINS-42887))
+    ([JENKINS-42887](https://issue-redirect.jenkins.io/browse/JENKINS-42887))
   * Removed anything that has been deprecated in 1.51, see [Migration](Migration#migrating-to-151)
   * Removed anything that has been deprecated in 1.47, see [Migration](Migration#migrating-to-147)
 * 1.58 (February 16 2017)
   * Increased the minimum supported Jenkins version to 1.651
   * Added support for the
     [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
-    ([JENKINS-39977](https://issues.jenkins-ci.org/browse/JENKINS-39977))
+    ([JENKINS-39977](https://issue-redirect.jenkins.io/browse/JENKINS-39977))
   * Enhanced support for
     [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
-    ([JENKINS-33630](https://issues.jenkins-ci.org/browse/JENKINS-33630),
-    [JENKINS-39754](https://issues.jenkins-ci.org/browse/JENKINS-39754),
-    [JENKINS-40719](https://issues.jenkins-ci.org/browse/JENKINS-40719))
+    ([JENKINS-33630](https://issue-redirect.jenkins.io/browse/JENKINS-33630),
+    [JENKINS-39754](https://issue-redirect.jenkins.io/browse/JENKINS-39754),
+    [JENKINS-40719](https://issue-redirect.jenkins.io/browse/JENKINS-40719))
   * Enhanced support for the [GitLab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin)
-    ([JENKINS-41485](https://issues.jenkins-ci.org/browse/JENKINS-41485),
-    [JENKINS-41789](https://issues.jenkins-ci.org/browse/JENKINS-41789))
+    ([JENKINS-41485](https://issue-redirect.jenkins.io/browse/JENKINS-41485),
+    [JENKINS-41789](https://issue-redirect.jenkins.io/browse/JENKINS-41789))
   * Fixed a problem with the plugin's dependencies
-   ([JENKINS-41001](https://issues.jenkins-ci.org/browse/JENKINS-41001))
+   ([JENKINS-41001](https://issue-redirect.jenkins.io/browse/JENKINS-41001))
   * Fixed a problem with Windows paths on Unix
-   ([JENKINS-41612](https://issues.jenkins-ci.org/browse/JENKINS-41612))
+   ([JENKINS-41612](https://issue-redirect.jenkins.io/browse/JENKINS-41612))
   * Improved error message for invalid enum values
-   ([JENKINS-41270](https://issues.jenkins-ci.org/browse/JENKINS-41270))
+   ([JENKINS-41270](https://issue-redirect.jenkins.io/browse/JENKINS-41270))
   * Show only one link to embedded API viewer
-   ([JENKINS-41083](https://issues.jenkins-ci.org/browse/JENKINS-41083))
+   ([JENKINS-41083](https://issue-redirect.jenkins.io/browse/JENKINS-41083))
   * The syntax for creating config files is changing, see [Migration](Migration#migrating-to-158)
   * Most classes and related methods for creating config files are deprecated, see
     [Migration](Migration#migrating-to-158)
@@ -409,25 +409,25 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Updated optional
     [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) dependency to
     version 2.15.4
-    ([JENKINS-40943](https://issues.jenkins-ci.org/browse/JENKINS-40943))
+    ([JENKINS-40943](https://issue-redirect.jenkins.io/browse/JENKINS-40943))
   * Allow `DashboardPortletContext` to be extended
     ([#981](https://github.com/jenkinsci/job-dsl-plugin/pull/981))
   * Show more available method signatures in embedded API viewer
     ([#982](https://github.com/jenkinsci/job-dsl-plugin/pull/982))
   * Fixed compatibility issue with [Ruby Runtime Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ruby+Runtime+Plugin)
-    ([JENKINS-39193](https://issues.jenkins-ci.org/browse/JENKINS-39193),
-    [JENKINS-39807](https://issues.jenkins-ci.org/browse/JENKINS-39807))
+    ([JENKINS-39193](https://issue-redirect.jenkins.io/browse/JENKINS-39193),
+    [JENKINS-39807](https://issue-redirect.jenkins.io/browse/JENKINS-39807))
   * Version 0.12 of the [Ruby Runtime Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ruby+Runtime+Plugin) is no
     longer deprecated since 0.13 has several issues
-    ([JENKINS-37353](https://issues.jenkins-ci.org/browse/JENKINS-37353),
-    [JENKINS-37771](https://issues.jenkins-ci.org/browse/JENKINS-37771),
-    [JENKINS-38145](https://issues.jenkins-ci.org/browse/JENKINS-38145))
+    ([JENKINS-37353](https://issue-redirect.jenkins.io/browse/JENKINS-37353),
+    [JENKINS-37771](https://issue-redirect.jenkins.io/browse/JENKINS-37771),
+    [JENKINS-38145](https://issue-redirect.jenkins.io/browse/JENKINS-38145))
   * Support for the older versions of the [Rbenv Plugin](https://wiki.jenkins-ci.org/display/JENKINS/rbenv+plugin) is
     deprecated, see [Migration](Migration#migrating-to-157)
 * 1.56 (January 06 2017)
   * Fixed support for
     [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
-    ([JENKINS-40797](https://issues.jenkins-ci.org/browse/JENKINS-40797))
+    ([JENKINS-40797](https://issue-redirect.jenkins.io/browse/JENKINS-40797))
   * Enhanced support for the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin)
     ([#978](https://github.com/jenkinsci/job-dsl-plugin/pull/978))
   * Enhanced support for the [SSH Agent Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SSH+Agent+Plugin)
@@ -439,7 +439,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Updated optional
     [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin) dependency to
     version 2.15
-    ([JENKINS-39769](https://issues.jenkins-ci.org/browse/JENKINS-39769))
+    ([JENKINS-39769](https://issue-redirect.jenkins.io/browse/JENKINS-39769))
   * Updated optional [Managed Scripts Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Managed+Script+Plugin)
     dependency to version 1.3
   * Use Groovy Shell instead of Groovy Script Engine to run DSL scripts, see [Migration](Migration#migrating-to-155)
@@ -459,18 +459,18 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin)
     ([#973](https://github.com/jenkinsci/job-dsl-plugin/pull/973))
   * Enhanced support for the Maven build step
-    ([JENKINS-40636](https://issues.jenkins-ci.org/browse/JENKINS-40636))
+    ([JENKINS-40636](https://issue-redirect.jenkins.io/browse/JENKINS-40636))
   * Changed embedded API Viewer to work without Internet connectivity
-    ([JENKINS-40205](https://issues.jenkins-ci.org/browse/JENKINS-40205))
+    ([JENKINS-40205](https://issue-redirect.jenkins.io/browse/JENKINS-40205))
   * Improved error message when a plugin is missing
-    ([JENKINS-40601](https://issues.jenkins-ci.org/browse/JENKINS-40601))
+    ([JENKINS-40601](https://issue-redirect.jenkins.io/browse/JENKINS-40601))
   * The short URL for the embedded API Viewer (http://localhost:8080/plugin/job-dsl/api-viewer) is deprecated, see
     [Migration](Migration#migrating-to-154)
   * Fixed problem with
     [GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Branch+Source+Plugin)
-    ([JENKINS-40191](https://issues.jenkins-ci.org/browse/JENKINS-40191))
+    ([JENKINS-40191](https://issue-redirect.jenkins.io/browse/JENKINS-40191))
   * Added a workaround for a problem with XStream conversion
-    ([JENKINS-40130](https://issues.jenkins-ci.org/browse/JENKINS-40130))
+    ([JENKINS-40130](https://issue-redirect.jenkins.io/browse/JENKINS-40130))
   * Support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-154)
   * Support for the older versions of the
@@ -485,25 +485,25 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
 * 1.53 (November 08 2016)
   * Enhanced support the
     [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
-    ([JENKINS-38637](https://issues.jenkins-ci.org/browse/JENKINS-38637))
+    ([JENKINS-38637](https://issue-redirect.jenkins.io/browse/JENKINS-38637))
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
-    ([JENKINS-39558](https://issues.jenkins-ci.org/browse/JENKINS-39558))
+    ([JENKINS-39558](https://issue-redirect.jenkins.io/browse/JENKINS-39558))
   * Allow `GString` as argument type for dynamic DSL
-    ([JENKINS-39153](https://issues.jenkins-ci.org/browse/JENKINS-39153))
+    ([JENKINS-39153](https://issue-redirect.jenkins.io/browse/JENKINS-39153))
   * The XML configuration for jobs and folders will only be generated once
-    ([JENKINS-39417](https://issues.jenkins-ci.org/browse/JENKINS-39417))
+    ([JENKINS-39417](https://issue-redirect.jenkins.io/browse/JENKINS-39417))
   * Fixed a problem with relative job names
-    ([JENKINS-39137](https://issues.jenkins-ci.org/browse/JENKINS-39137))
+    ([JENKINS-39137](https://issue-redirect.jenkins.io/browse/JENKINS-39137))
   * Added "Next Launch" and "Next Possible Launch" columns for
     [Next Executions Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Next+Executions)
     ([#940](https://github.com/jenkinsci/job-dsl-plugin/pull/940))
   * Overriding job, folder or view names is deprecated, see [Migration](Migration#migrating-to-153)
   * Deprecated unnecessary option in GitHub branch source context
-    ([JENKINS-39146](https://issues.jenkins-ci.org/browse/JENKINS-39146))
+    ([JENKINS-39146](https://issue-redirect.jenkins.io/browse/JENKINS-39146))
 * 1.52 (October 17 2016)
   * Increased the minimum supported Jenkins version to 1.642
   * Enhanced support for the [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin)
-    ([JENKINS-36683](https://issues.jenkins-ci.org/browse/JENKINS-36683))
+    ([JENKINS-36683](https://issue-redirect.jenkins.io/browse/JENKINS-36683))
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
     ([#930](https://github.com/jenkinsci/job-dsl-plugin/pull/930))
   * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
@@ -512,16 +512,16 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([#928](https://github.com/jenkinsci/job-dsl-plugin/pull/928))
   * Added an option to mark a seed job build as failed if a plugin must be installed or updated to support all feature
     used in DSL scripts
-    ([JENKINS-37417](https://issues.jenkins-ci.org/browse/JENKINS-37417))
+    ([JENKINS-37417](https://issue-redirect.jenkins.io/browse/JENKINS-37417))
   * Added an option to mark a seed job build as unstable when using deprecated features
-    ([JENKINS-37418](https://issues.jenkins-ci.org/browse/JENKINS-37418))
+    ([JENKINS-37418](https://issue-redirect.jenkins.io/browse/JENKINS-37418))
   * Allow `CredentialsBindingContext` to be extended
     ([#920](https://github.com/jenkinsci/job-dsl-plugin/pull/920))
   * Fixed problem with embedded API viewer
-    ([JENKINS-38456](https://issues.jenkins-ci.org/browse/JENKINS-38456),
-    [JENKINS-38964](https://issues.jenkins-ci.org/browse/JENKINS-38964))
+    ([JENKINS-38456](https://issue-redirect.jenkins.io/browse/JENKINS-38456),
+    [JENKINS-38964](https://issue-redirect.jenkins.io/browse/JENKINS-38964))
   * Sort generated items by name on the seed job's summary and build pages
-    ([JENKINS-38648](https://issues.jenkins-ci.org/browse/JENKINS-38648))
+    ([JENKINS-38648](https://issue-redirect.jenkins.io/browse/JENKINS-38648))
   * Support for the older versions of the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-152)
   * Support for the older versions of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
@@ -536,9 +536,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
     ([#885](https://github.com/jenkinsci/job-dsl-plugin/pull/885))
   * Fixed compatibility issue with [Ruby Runtime Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ruby+Runtime+Plugin)
-    ([JENKINS-37422](https://issues.jenkins-ci.org/browse/JENKINS-37422))
+    ([JENKINS-37422](https://issue-redirect.jenkins.io/browse/JENKINS-37422))
   * Fixed problem with embedded API viewer when no default Update Center is used
-    ([JENKINS-37103](https://issues.jenkins-ci.org/browse/JENKINS-37103))
+    ([JENKINS-37103](https://issue-redirect.jenkins.io/browse/JENKINS-37103))
   * Fixed problem with whitespace in additional classpath
     ([#911](https://github.com/jenkinsci/job-dsl-plugin/pull/911))
   * Improved performance for embedded API viewer with caching, compression and conditional GET requests
@@ -552,15 +552,15 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Removed anything that has been deprecated in 1.44, see [Migration](Migration#migrating-to-144)
 * 1.50 (August 17 2016)
   * Fixed regression when updating views
-    ([JENKINS-37450](https://issues.jenkins-ci.org/browse/JENKINS-37450))
+    ([JENKINS-37450](https://issue-redirect.jenkins.io/browse/JENKINS-37450))
   * Removed unnecessary transitive dependencies to `xmlpull:xmlpull` and `xpp3:xpp3_min`
 * 1.49 (August 16 2016)
   * Enhanced support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)
-    ([JENKINS-36370](https://issues.jenkins-ci.org/browse/JENKINS-36370))
+    ([JENKINS-36370](https://issue-redirect.jenkins.io/browse/JENKINS-36370))
   * Enhanced support for the [HTTP Request Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTTP+Request+Plugin)
     ([#879](https://github.com/jenkinsci/job-dsl-plugin/pull/879))
   * Enhanced support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)
-    ([JENKINS-33093](https://issues.jenkins-ci.org/browse/JENKINS-33093))
+    ([JENKINS-33093](https://issue-redirect.jenkins.io/browse/JENKINS-33093))
   * Enhanced support for the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin)
     ([#882](https://github.com/jenkinsci/job-dsl-plugin/pull/882))
   * Enhanced support for the [Groovy Postbuild Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin)
@@ -572,15 +572,15 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     viewer
   * Added symbol to allow nicer pipeline syntax, see
     [Use Job DSL in Pipeline scripts](User-Power-Moves#use-job-dsl-in-pipeline-scripts)
-    ([JENKINS-36768](https://issues.jenkins-ci.org/browse/JENKINS-36768))
+    ([JENKINS-36768](https://issue-redirect.jenkins.io/browse/JENKINS-36768))
   * Improved script processing performance
-    ([JENKINS-37138](https://issues.jenkins-ci.org/browse/JENKINS-37138))
+    ([JENKINS-37138](https://issue-redirect.jenkins.io/browse/JENKINS-37138))
   * Added a `SEED_JOB` script variable which provides access to the seed job,
     see [Job DSL Commands](Job-DSL-Commands#seed-job)
   * Fixed issues with embedded API Viewer
     ([#886](https://github.com/jenkinsci/job-dsl-plugin/pull/886))
   * Fixed compatibility with Pipeline Snippet Generator
-    ([JENKINS-36502](https://issues.jenkins-ci.org/browse/JENKINS-36502))
+    ([JENKINS-36502](https://issue-redirect.jenkins.io/browse/JENKINS-36502))
   * Deprecated the `scriptLocation` property of the `ExecuteDslScripts` build step, see
     [Migration](Migration#migrating-to-149)
   * Improved error message when trying to change the type of a view
@@ -589,61 +589,61 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Removed anything that has been deprecated in 1.43, see [Migration](Migration#migrating-to-143)
 * 1.48 (June 24 2016)
   * Added option to ignore missing DSL script files or empty wildcards
-    ([JENKINS-34060](https://issues.jenkins-ci.org/browse/JENKINS-34060))
+    ([JENKINS-34060](https://issue-redirect.jenkins.io/browse/JENKINS-34060))
   * Improved support for the [Build-timeout Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin)
-    ([JENKINS-35228](https://issues.jenkins-ci.org/browse/JENKINS-35228))
+    ([JENKINS-35228](https://issue-redirect.jenkins.io/browse/JENKINS-35228))
   * Enhanced support for the
     [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)
-    ([JENKINS-34282](https://issues.jenkins-ci.org/browse/JENKINS-34282))
+    ([JENKINS-34282](https://issue-redirect.jenkins.io/browse/JENKINS-34282))
   * Enhanced support for the
     [Throttle Concurrent Builds Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Throttle+Concurrent+Builds+Plugin)
-    ([JENKINS-32631](https://issues.jenkins-ci.org/browse/JENKINS-32631))
+    ([JENKINS-32631](https://issue-redirect.jenkins.io/browse/JENKINS-32631))
   * Enhanced support for the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin)
-    ([JENKINS-33341](https://issues.jenkins-ci.org/browse/JENKINS-33341))
+    ([JENKINS-33341](https://issue-redirect.jenkins.io/browse/JENKINS-33341))
   * Enhanced support for the [Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin)
-    ([JENKINS-34091](https://issues.jenkins-ci.org/browse/JENKINS-34091))
+    ([JENKINS-34091](https://issue-redirect.jenkins.io/browse/JENKINS-34091))
   * Enhanced support for the
     [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
     ([#863](https://github.com/jenkinsci/job-dsl-plugin/pull/863),
     [#872](https://github.com/jenkinsci/job-dsl-plugin/pull/872))
   * Made `ExecuteDslScripts` build step compatible with [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
-    ([JENKINS-35282](https://issues.jenkins-ci.org/browse/JENKINS-35282))
+    ([JENKINS-35282](https://issue-redirect.jenkins.io/browse/JENKINS-35282))
   * Several classes and some constructors have been deprecated, see [Migration](Migration#migrating-to-148)
   * Removed optional dependency to
     [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin)
   * Removed anything that has been deprecated in 1.41, see [Migration](Migration#migrating-to-141)
 * 1.47 (May 24 2016)
   * Improved support for [[Testing DSL Scripts]]
-    ([JENKINS-29091](https://issues.jenkins-ci.org/browse/JENKINS-29091))
+    ([JENKINS-29091](https://issue-redirect.jenkins.io/browse/JENKINS-29091))
   * Allow extensions for views
-    ([JENKINS-29510](https://issues.jenkins-ci.org/browse/JENKINS-29510))
+    ([JENKINS-29510](https://issue-redirect.jenkins.io/browse/JENKINS-29510))
   * Enhanced support for the
     [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin)
-    ([JENKINS-31488](https://issues.jenkins-ci.org/browse/JENKINS-31488))
+    ([JENKINS-31488](https://issue-redirect.jenkins.io/browse/JENKINS-31488))
   * Enhanced support for the
     [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
-   ([JENKINS-34552](https://issues.jenkins-ci.org/browse/JENKINS-34552))
+   ([JENKINS-34552](https://issue-redirect.jenkins.io/browse/JENKINS-34552))
   * Enhanced support for the [Branch API Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Branch+API+Plugin)
     ([#846](https://github.com/jenkinsci/job-dsl-plugin/pull/846))
   * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
-    ([JENKINS-34720](https://issues.jenkins-ci.org/browse/JENKINS-34720))
+    ([JENKINS-34720](https://issue-redirect.jenkins.io/browse/JENKINS-34720))
   * Enhanced support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
-    ([JENKINS-34941](https://issues.jenkins-ci.org/browse/JENKINS-34941))
+    ([JENKINS-34941](https://issue-redirect.jenkins.io/browse/JENKINS-34941))
   * Enhanced support for the [Gitlab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin)
-    ([JENKINS-34534](https://issues.jenkins-ci.org/browse/JENKINS-34534))
+    ([JENKINS-34534](https://issue-redirect.jenkins.io/browse/JENKINS-34534))
   * Fixed support for the [Violations Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Violations)
-    ([JENKINS-26086](https://issues.jenkins-ci.org/browse/JENKINS-26086))
+    ([JENKINS-26086](https://issue-redirect.jenkins.io/browse/JENKINS-26086))
   * Support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-147)
-    ([JENKINS-34124](https://issues.jenkins-ci.org/browse/JENKINS-34124))
+    ([JENKINS-34124](https://issue-redirect.jenkins.io/browse/JENKINS-34124))
   * Support for [HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-147)
-    ([JENKINS-32502](https://issues.jenkins-ci.org/browse/JENKINS-32502))
+    ([JENKINS-32502](https://issue-redirect.jenkins.io/browse/JENKINS-32502))
   * Support for the older versions of the [Gitlab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-147)
   * Added `pipelineJob` and `multibranchPipelineJob` as replacements for `workflowJob` and `multibranchWorkflowJob`, see
     [Migration](Migration#migrating-to-147)
-    ([JENKINS-33325](https://issues.jenkins-ci.org/browse/JENKINS-33325))
+    ([JENKINS-33325](https://issue-redirect.jenkins.io/browse/JENKINS-33325))
   * The enum `javaposse.jobdsl.dsl.helpers.step.condition.FileExistsCondition.BaseDir` is deprecated, see
     [Migration](Migration#migrating-to-147)
 * 1.46 (May 08 2016)
@@ -654,17 +654,17 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([#822](https://github.com/jenkinsci/job-dsl-plugin/pull/822))
   * Added a plugin dependency to the [Structs Plugin](https://github.com/jenkinsci/structs-plugin)
   * Added support for the [Maven Info Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Info+Plugin)
-    ([JENKINS-32196](https://issues.jenkins-ci.org/browse/JENKINS-32196))
+    ([JENKINS-32196](https://issue-redirect.jenkins.io/browse/JENKINS-32196))
   * Added support for the [Log Parser Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Log+Parser+Plugin)
-    ([JENKINS-33795](https://issues.jenkins-ci.org/browse/JENKINS-33795))
+    ([JENKINS-33795](https://issue-redirect.jenkins.io/browse/JENKINS-33795))
   * Added support for the [Jython Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jython+Plugin)
-    ([JENKINS-33881](https://issues.jenkins-ci.org/browse/JENKINS-33881))
+    ([JENKINS-33881](https://issue-redirect.jenkins.io/browse/JENKINS-33881))
   * Added support for the [Job Exporter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Job+Exporter+Plugin)
-    ([JENKINS-33882](https://issues.jenkins-ci.org/browse/JENKINS-33882))
+    ([JENKINS-33882](https://issue-redirect.jenkins.io/browse/JENKINS-33882))
   * Added support for the [Phing Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Phing+Plugin)
-    ([JENKINS-33887](https://issues.jenkins-ci.org/browse/JENKINS-33887))
+    ([JENKINS-33887](https://issue-redirect.jenkins.io/browse/JENKINS-33887))
   * Added support for the [MSBuild Plugin](https://wiki.jenkins-ci.org/display/JENKINS/MSBuild+Plugin)
-    ([JENKINS-33825](https://issues.jenkins-ci.org/browse/JENKINS-33825))
+    ([JENKINS-33825](https://issue-redirect.jenkins.io/browse/JENKINS-33825))
   * Added support for the
     [CloudBees GitHub Branch Source Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+GitHub+Branch+Source+Plugin)
   * Added support for the [Wall Display Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Wall+Display+Plugin)
@@ -672,13 +672,13 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the [Dashboard View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Dashboard+View)
     ([#824](https://github.com/jenkinsci/job-dsl-plugin/pull/824))
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
-    ([JENKINS-33967](https://issues.jenkins-ci.org/browse/JENKINS-33967),
-    [JENKINS-33968](https://issues.jenkins-ci.org/browse/JENKINS-33968))
+    ([JENKINS-33967](https://issue-redirect.jenkins.io/browse/JENKINS-33967),
+    [JENKINS-33968](https://issue-redirect.jenkins.io/browse/JENKINS-33968))
   * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
-    ([JENKINS-34360](https://issues.jenkins-ci.org/browse/JENKINS-34360))
+    ([JENKINS-34360](https://issue-redirect.jenkins.io/browse/JENKINS-34360))
   * Enhanced documentation for the [Gerrit Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger)
-    ([JENKINS-30323](https://issues.jenkins-ci.org/browse/JENKINS-30323))
-  * Enhanced support for the [JIRA Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JIRA+Plugin)
+    ([JENKINS-30323](https://issue-redirect.jenkins.io/browse/JENKINS-30323))
+  * Enhanced support for the [Jira Plugin](https://plugins.jenkins.io/jira/)
     ([#834](https://github.com/jenkinsci/job-dsl-plugin/pull/834))
   * Removed anything that has been deprecated in 1.40, see [Migration](Migration#migrating-to-140)
   * Changed the behavior of the `currentJobParameters` method in the `phaseJob` context, see
@@ -686,41 +686,41 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     ([#836](https://github.com/jenkinsci/job-dsl-plugin/pull/836))
 * 1.45 (April 05 2016)
   * Added support for the [CMake Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CMake+Plugin)
-    ([JENKINS-33829](https://issues.jenkins-ci.org/browse/JENKINS-33829))
+    ([JENKINS-33829](https://issue-redirect.jenkins.io/browse/JENKINS-33829))
   * Added support for the [JIRA Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JIRA+Plugin)
-    ([JENKINS-31545](https://issues.jenkins-ci.org/browse/JENKINS-31545))
+    ([JENKINS-31545](https://issue-redirect.jenkins.io/browse/JENKINS-31545))
   * Added support for the
     [BuildResultTrigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/BuildResultTrigger+Plugin)
-    ([JENKINS-33463](https://issues.jenkins-ci.org/browse/JENKINS-33463))
+    ([JENKINS-33463](https://issue-redirect.jenkins.io/browse/JENKINS-33463))
   * Enhanced documentation for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
-    ([JENKINS-33482](https://issues.jenkins-ci.org/browse/JENKINS-33482))
+    ([JENKINS-33482](https://issue-redirect.jenkins.io/browse/JENKINS-33482))
   * Enhanced support for the [SonarQube Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SonarQube+plugin)
-    ([JENKINS-33792](https://issues.jenkins-ci.org/browse/JENKINS-33792))
+    ([JENKINS-33792](https://issue-redirect.jenkins.io/browse/JENKINS-33792))
   * Enhanced support for [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
     ([#725](https://github.com/jenkinsci/job-dsl-plugin/pull/725))
   * Enhanced support for the [View Job Filters Plugin](https://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters) and
     the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin)
-    ([JENKINS-33416](https://issues.jenkins-ci.org/browse/JENKINS-33416),
-    [JENKINS-33675](https://issues.jenkins-ci.org/browse/JENKINS-33675))
+    ([JENKINS-33416](https://issue-redirect.jenkins.io/browse/JENKINS-33416),
+    [JENKINS-33675](https://issue-redirect.jenkins.io/browse/JENKINS-33675))
   * Enhanced support for [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
-    ([JENKINS-33823](https://issues.jenkins-ci.org/browse/JENKINS-33823))
+    ([JENKINS-33823](https://issue-redirect.jenkins.io/browse/JENKINS-33823))
   * Enhanced support for the [Extra Columns Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin)
-    ([JENKINS-32785](https://issues.jenkins-ci.org/browse/JENKINS-32785),
-    [JENKINS-33676](https://issues.jenkins-ci.org/browse/JENKINS-33676),
-    [JENKINS-33677](https://issues.jenkins-ci.org/browse/JENKINS-33677))
+    ([JENKINS-32785](https://issue-redirect.jenkins.io/browse/JENKINS-32785),
+    [JENKINS-33676](https://issue-redirect.jenkins.io/browse/JENKINS-33676),
+    [JENKINS-33677](https://issue-redirect.jenkins.io/browse/JENKINS-33677))
   * Improved script execution performance by re-using script engines
     ([#782](https://github.com/jenkinsci/job-dsl-plugin/pull/782))
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
     ([#790](https://github.com/jenkinsci/job-dsl-plugin/pull/790))
   * Enhanced support for the [Priority Sorter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Priority+Sorter+Plugin)
-    ([JENKINS-29678](https://issues.jenkins-ci.org/browse/JENKINS-29678))
+    ([JENKINS-29678](https://issue-redirect.jenkins.io/browse/JENKINS-29678))
   * Enhanced support for the [CloudBees Docker Build and Publish
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Build+and+Publish+plugin)
-    ([JENKINS-33439](https://issues.jenkins-ci.org/browse/JENKINS-33439))
+    ([JENKINS-33439](https://issue-redirect.jenkins.io/browse/JENKINS-33439))
   * Allow `EnvironmentVariableContributorsContext` to be extended
-    ([JENKINS-32742](https://issues.jenkins-ci.org/browse/JENKINS-32742))
+    ([JENKINS-32742](https://issue-redirect.jenkins.io/browse/JENKINS-32742))
   * Added a `__FILE__` script variable containing the script location
-    ([JENKINS-25935](https://issues.jenkins-ci.org/browse/JENKINS-25935))
+    ([JENKINS-25935](https://issue-redirect.jenkins.io/browse/JENKINS-25935))
   * Support for the older versions of the [CloudBees Docker Build and Publish
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Build+and+Publish+plugin) is deprecated, see
     [Migration](Migration#migrating-to-145)
@@ -735,21 +735,21 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [Migration](Migration#migrating-to-145)
   * Add support for the
     [Git Chooser Alternative Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Chooser+Alternative+Plugin)
-    ([JENKINS-33782](https://issues.jenkins-ci.org/browse/JENKINS-33782))
+    ([JENKINS-33782](https://issue-redirect.jenkins.io/browse/JENKINS-33782))
   * Removed anything that has been deprecated in 1.39, see [Migration](Migration#migrating-to-139)
 * 1.44 (March 11 2016)
   * Added support for the [Mattermost Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mattermost+Plugin)
-    ([JENKINS-32764](https://issues.jenkins-ci.org/browse/JENKINS-32764))
+    ([JENKINS-32764](https://issue-redirect.jenkins.io/browse/JENKINS-32764))
   * Added support for the [P4 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/P4+Plugin)
-    ([JENKINS-32391](https://issues.jenkins-ci.org/browse/JENKINS-32391))
+    ([JENKINS-32391](https://issue-redirect.jenkins.io/browse/JENKINS-32391))
   * Enhanced support for the
     [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin)
-    ([JENKINS-32906](https://issues.jenkins-ci.org/browse/JENKINS-32906))
+    ([JENKINS-32906](https://issue-redirect.jenkins.io/browse/JENKINS-32906))
   * Enhanced support for the [IRC Plugin](https://wiki.jenkins-ci.org/display/JENKINS/IRC+Plugin) and the
     [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin)
     ([#770](https://github.com/jenkinsci/job-dsl-plugin/pull/770))
   * Enhanced support for the [Pipeline Plugin](https://github.com/jenkinsci/pipeline-plugin)
-    ([JENKINS-32678](https://issues.jenkins-ci.org/browse/JENKINS-32678))
+    ([JENKINS-32678](https://issue-redirect.jenkins.io/browse/JENKINS-32678))
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
     ([#753](https://github.com/jenkinsci/job-dsl-plugin/pull/753),
     [#767](https://github.com/jenkinsci/job-dsl-plugin/pull/767),
@@ -757,17 +757,17 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the [Mask Passwords Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin)
     ([#755](https://github.com/jenkinsci/job-dsl-plugin/pull/755))
   * Enhanced support for [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
-    ([JENKINS-33359](https://issues.jenkins-ci.org/browse/JENKINS-33359))
+    ([JENKINS-33359](https://issue-redirect.jenkins.io/browse/JENKINS-33359))
   * Fixed a problem with relative job names
-    ([JENKINS-32995](https://issues.jenkins-ci.org/browse/JENKINS-32995))
+    ([JENKINS-32995](https://issue-redirect.jenkins.io/browse/JENKINS-32995))
   * Fixed a problem with multiple nodes generated by configure blocks
-    ([JENKINS-32941](https://issues.jenkins-ci.org/browse/JENKINS-32941))
+    ([JENKINS-32941](https://issue-redirect.jenkins.io/browse/JENKINS-32941))
   * Fixed documentation for [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
-    ([JENKINS-33176](https://issues.jenkins-ci.org/browse/JENKINS-33176))
+    ([JENKINS-33176](https://issue-redirect.jenkins.io/browse/JENKINS-33176))
   * Added a method to allow instantiating contexts from an extension
-    ([JENKINS-32912](https://issues.jenkins-ci.org/browse/JENKINS-32912))
+    ([JENKINS-32912](https://issue-redirect.jenkins.io/browse/JENKINS-32912))
   * Log warning when script name collides with package name
-    ([JENKINS-32628](https://issues.jenkins-ci.org/browse/JENKINS-32628))
+    ([JENKINS-32628](https://issue-redirect.jenkins.io/browse/JENKINS-32628))
   * Support for the older versions of the
     [Lockable Resources Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Lockable+Resources+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-144)
@@ -783,20 +783,20 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Removed anything that has been deprecated in 1.38, see [Migration](Migration#migrating-to-138)
 * 1.43 (February 13 2016)
   * Add support for the [Emotional Jenkins Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Emotional+Jenkins+Plugin)
-    ([JENKINS-32907](https://issues.jenkins-ci.org/browse/JENKINS-32907))
+    ([JENKINS-32907](https://issue-redirect.jenkins.io/browse/JENKINS-32907))
   * Added support for the [Clover PHP Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clover+PHP+Plugin)
-    ([JENKINS-31557](https://issues.jenkins-ci.org/browse/JENKINS-31557))
+    ([JENKINS-31557](https://issue-redirect.jenkins.io/browse/JENKINS-31557))
   * Allow `BuildParametersContext` to be extended
-    ([JENKINS-32285](https://issues.jenkins-ci.org/browse/JENKINS-32285))
+    ([JENKINS-32285](https://issue-redirect.jenkins.io/browse/JENKINS-32285))
   * Enhanced support for the [CloudBees Docker Custom Build Environment
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin)
-    ([JENKINS-32363](https://issues.jenkins-ci.org/browse/JENKINS-32363))
+    ([JENKINS-32363](https://issue-redirect.jenkins.io/browse/JENKINS-32363))
   * Enhanced support for the [Email-ext Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin)
-    ([JENKINS-28986](https://issues.jenkins-ci.org/browse/JENKINS-28986),
-    [JENKINS-30542](https://issues.jenkins-ci.org/browse/JENKINS-30542),
-    [JENKINS-32131](https://issues.jenkins-ci.org/browse/JENKINS-32131))
+    ([JENKINS-28986](https://issue-redirect.jenkins.io/browse/JENKINS-28986),
+    [JENKINS-30542](https://issue-redirect.jenkins.io/browse/JENKINS-30542),
+    [JENKINS-32131](https://issue-redirect.jenkins.io/browse/JENKINS-32131))
   * Enhanced support for the [SonarQube Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SonarQube+plugin)
-    ([JENKINS-32419](https://issues.jenkins-ci.org/browse/JENKINS-32419))
+    ([JENKINS-32419](https://issue-redirect.jenkins.io/browse/JENKINS-32419))
   * Enhanced support for the [JaCoCo Plugins](https://wiki.jenkins-ci.org/display/JENKINS/JaCoCo+Plugin)
     ([#729](https://github.com/jenkinsci/job-dsl-plugin/pull/729))
   * Enhanced support for the [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
@@ -809,13 +809,13 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Fixed support for scripts in directories when using the command line runner
     ([#740](https://github.com/jenkinsci/job-dsl-plugin/pull/740))
   * Fixed NPE when checking available permissions
-    ([JENKINS-32598](https://issues.jenkins-ci.org/browse/JENKINS-32598))
+    ([JENKINS-32598](https://issue-redirect.jenkins.io/browse/JENKINS-32598))
   * Enhanced support for the [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin)
     ([#741](https://github.com/jenkinsci/job-dsl-plugin/pull/741))
   * Built-in support for the
     [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
     is deprecated, see [Migration](Migration#migrating-to-143)
-    ([JENKINS-31214](https://issues.jenkins-ci.org/browse/JENKINS-31214))
+    ([JENKINS-31214](https://issue-redirect.jenkins.io/browse/JENKINS-31214))
   * Support for the older versions of the [CloudBees Docker Custom Build Environment
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin) is deprecated,
     see [Migration](Migration#migrating-to-143)
@@ -831,87 +831,87 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Removed anything that has been deprecated in 1.37, see [Migration](Migration#migrating-to-137)
 * 1.42 (January 05 2016)
   * Added support for the [Dashboard View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Dashboard+View)
-    ([JENKINS-29146](https://issues.jenkins-ci.org/browse/JENKINS-29146))
+    ([JENKINS-29146](https://issue-redirect.jenkins.io/browse/JENKINS-29146))
   * Added support for the [Workflow Multibranch Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Workflow+Plugin)
-    ([JENKINS-31671](https://issues.jenkins-ci.org/browse/JENKINS-31671),
-    [JENKINS-31719](https://issues.jenkins-ci.org/browse/JENKINS-31719))
+    ([JENKINS-31671](https://issue-redirect.jenkins.io/browse/JENKINS-31671),
+    [JENKINS-31719](https://issue-redirect.jenkins.io/browse/JENKINS-31719))
   * Added support for the [JSLint Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JSLint+plugin)
-    ([JENKINS-32195](https://issues.jenkins-ci.org/browse/JENKINS-32195))
+    ([JENKINS-32195](https://issue-redirect.jenkins.io/browse/JENKINS-32195))
   * Enhanced support for the
     [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin)
-    ([JENKINS-31853](https://issues.jenkins-ci.org/browse/JENKINS-31853))
+    ([JENKINS-31853](https://issue-redirect.jenkins.io/browse/JENKINS-31853))
   * Support for the older versions of the
     [PostBuildScript Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PostBuildScript+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-142)
   * Fixed documentation for the [M2 Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/M2+Release+Plugin)
-    ([JENKINS-32135](https://issues.jenkins-ci.org/browse/JENKINS-32135))
+    ([JENKINS-32135](https://issue-redirect.jenkins.io/browse/JENKINS-32135))
   * Added support for the [SeleniumHQ Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Seleniumhq+Plugin)
-    ([JENKINS-31887](https://issues.jenkins-ci.org/browse/JENKINS-31887))
+    ([JENKINS-31887](https://issue-redirect.jenkins.io/browse/JENKINS-31887))
   * Added support for the
     [Selenium HTML Report Plugin](https://wiki.jenkins-ci.org/display/JENKINS/seleniumhtmlreport+Plugin)
-    ([JENKINS-31886](https://issues.jenkins-ci.org/browse/JENKINS-31886))
+    ([JENKINS-31886](https://issue-redirect.jenkins.io/browse/JENKINS-31886))
   * Added support for the [NAnt Plugin](https://wiki.jenkins-ci.org/display/JENKINS/NAnt+Plugin)
-    ([JENKINS-31883](https://issues.jenkins-ci.org/browse/JENKINS-31883))
+    ([JENKINS-31883](https://issue-redirect.jenkins.io/browse/JENKINS-31883))
   * Added support for the [GitLab Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin)
-    ([JENKINS-31789](https://issues.jenkins-ci.org/browse/JENKINS-31789))
+    ([JENKINS-31789](https://issue-redirect.jenkins.io/browse/JENKINS-31789))
   * Added support for the [Ruby Metrics Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RubyMetrics+plugin)
-    ([JENKINS-31830](https://issues.jenkins-ci.org/browse/JENKINS-31830))
+    ([JENKINS-31830](https://issue-redirect.jenkins.io/browse/JENKINS-31830))
   * Added support for the [DOS Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/DOS+Trigger)
-    ([JENKINS-31879](https://issues.jenkins-ci.org/browse/JENKINS-31879))
+    ([JENKINS-31879](https://issue-redirect.jenkins.io/browse/JENKINS-31879))
   * Enhanced support for the
     [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)
-    ([JENKINS-30010](https://issues.jenkins-ci.org/browse/JENKINS-30010))
+    ([JENKINS-30010](https://issue-redirect.jenkins.io/browse/JENKINS-30010))
   * Enhanced support for the [Task Scanner Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Task+Scanner+Plugin)
-    ([JENKINS-30543](https://issues.jenkins-ci.org/browse/JENKINS-30543))
+    ([JENKINS-30543](https://issue-redirect.jenkins.io/browse/JENKINS-30543))
   * Support for the older versions of the
     [Task Scanner Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Task+Scanner+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-142)
   * Changed the DSL syntax for `flexiblePublish`, see [Migration](Migration#migrating-to-142)
   * Check DSL scripts for existence
-    ([JENKINS-30541](https://issues.jenkins-ci.org/browse/JENKINS-30541))
+    ([JENKINS-30541](https://issue-redirect.jenkins.io/browse/JENKINS-30541))
   * Enhanced support for the [Build Flow Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Plugin)
-    ([JENKINS-30201](https://issues.jenkins-ci.org/browse/JENKINS-30201))
+    ([JENKINS-30201](https://issue-redirect.jenkins.io/browse/JENKINS-30201))
   * Removed anything that has been deprecated in 1.35, see [Migration](Migration#migrating-to-135)
 * 1.41 (December 15 2015)
   * Added support for the [WebLogic Deployer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/WebLogic+Deployer+Plugin)
-    ([JENKINS-21880](https://issues.jenkins-ci.org/browse/JENKINS-21880))
+    ([JENKINS-21880](https://issue-redirect.jenkins.io/browse/JENKINS-21880))
   * Added support for the [Mantis Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Mantis+Plugin)
-    ([JENKINS-31911](https://issues.jenkins-ci.org/browse/JENKINS-31911))
+    ([JENKINS-31911](https://issue-redirect.jenkins.io/browse/JENKINS-31911))
   * Added support for the [Gatling Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gatling+Plugin)
   * Added support for the
     [Cucumber Test Result Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cucumber+Test+Result+Plugin)
-    ([JENKINS-31815](https://issues.jenkins-ci.org/browse/JENKINS-31815))
+    ([JENKINS-31815](https://issue-redirect.jenkins.io/browse/JENKINS-31815))
   * Added support for the [Ruby Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ruby+Plugin)
-    ([JENKINS-31783](https://issues.jenkins-ci.org/browse/JENKINS-31783))
+    ([JENKINS-31783](https://issue-redirect.jenkins.io/browse/JENKINS-31783))
   * Added support for the [BitBucket Plugin](https://wiki.jenkins-ci.org/display/JENKINS/BitBucket+Plugin)
-    ([JENKINS-31788](https://issues.jenkins-ci.org/browse/JENKINS-31788))
+    ([JENKINS-31788](https://issue-redirect.jenkins.io/browse/JENKINS-31788))
   * Added support for the
     [Subversion Tagging Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Tagging+Plugin)
-    ([JENKINS-31784](https://issues.jenkins-ci.org/browse/JENKINS-31784))
+    ([JENKINS-31784](https://issue-redirect.jenkins.io/browse/JENKINS-31784))
   * Added support for the [XShell Plugin](https://wiki.jenkins-ci.org/display/JENKINS/XShell+Plugin)
-    ([JENKINS-31512](https://issues.jenkins-ci.org/browse/JENKINS-31512))
+    ([JENKINS-31512](https://issue-redirect.jenkins.io/browse/JENKINS-31512))
   * Added support for the [Ownership Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ownership+Plugin)
-    ([JENKINS-31531](https://issues.jenkins-ci.org/browse/JENKINS-31531))
+    ([JENKINS-31531](https://issue-redirect.jenkins.io/browse/JENKINS-31531))
   * Added support for the
     [Build Failure Analyzer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Failure+Analyzer)
-    ([JENKINS-31544](https://issues.jenkins-ci.org/browse/JENKINS-31544))
+    ([JENKINS-31544](https://issue-redirect.jenkins.io/browse/JENKINS-31544))
   * Added support for the [SLOCCount Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SLOCCount+Plugin)
-    ([JENKINS-29740](https://issues.jenkins-ci.org/browse/JENKINS-29740))
+    ([JENKINS-29740](https://issue-redirect.jenkins.io/browse/JENKINS-29740))
   * Added support for the [Cucumber Reports Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cucumber+Reports+Plugin)
-    ([JENKINS-31762](https://issues.jenkins-ci.org/browse/JENKINS-31762))
+    ([JENKINS-31762](https://issue-redirect.jenkins.io/browse/JENKINS-31762))
   * Support for the older versions of the
     [CloudBees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin) is deprecated, see
     [Migration](Migration#migrating-to-141)
   * Support for the older versions of the [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-141)
   * Enhanced support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
-    ([JENKINS-31581](https://issues.jenkins-ci.org/browse/JENKINS-31581))
+    ([JENKINS-31581](https://issue-redirect.jenkins.io/browse/JENKINS-31581))
   * Enhanced support for the [vSphere Cloud Plugin](https://wiki.jenkins-ci.org/display/JENKINS/vSphere+Cloud+Plugin)
-    ([JENKINS-31818](https://issues.jenkins-ci.org/browse/JENKINS-31818))
+    ([JENKINS-31818](https://issue-redirect.jenkins.io/browse/JENKINS-31818))
   * Enhanced support for the [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin)
     ([#697](https://github.com/jenkinsci/job-dsl-plugin/pull/697))
   * Fixed support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
-    ([JENKINS-31604](https://issues.jenkins-ci.org/browse/JENKINS-31604))
+    ([JENKINS-31604](https://issue-redirect.jenkins.io/browse/JENKINS-31604))
 * 1.40 (November 08 2015)
   * Increased the minimum supported Jenkins version to 1.609
   * Added support for the [Sauce OnDemand Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sauce+OnDemand+Plugin)
@@ -919,34 +919,34 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [Matrix Combinations Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Combinations+Plugin)
   * Added support for the [Managed Scripts Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Managed+Script+Plugin)
   * Enhanced support for the [GitHub Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Plugin)
-    ([JENKINS-29849](https://issues.jenkins-ci.org/browse/JENKINS-29849))
+    ([JENKINS-29849](https://issue-redirect.jenkins.io/browse/JENKINS-29849))
   * Enhanced support for [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
-    ([JENKINS-30544](https://issues.jenkins-ci.org/browse/JENKINS-30544))
+    ([JENKINS-30544](https://issue-redirect.jenkins.io/browse/JENKINS-30544))
   * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
-    ([JENKINS-30760](https://issues.jenkins-ci.org/browse/JENKINS-30760))
+    ([JENKINS-30760](https://issue-redirect.jenkins.io/browse/JENKINS-30760))
   * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
-    ([JENKINS-31387](https://issues.jenkins-ci.org/browse/JENKINS-31387))
+    ([JENKINS-31387](https://issue-redirect.jenkins.io/browse/JENKINS-31387))
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
     ([#645](https://github.com/jenkinsci/job-dsl-plugin/pull/645))
   * Enhanced support for the
     [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
   * Fixed a problem with deprecation warnings
-    ([JENKINS-30826](https://issues.jenkins-ci.org/browse/JENKINS-30826))
+    ([JENKINS-30826](https://issue-redirect.jenkins.io/browse/JENKINS-30826))
   * Fixed a problem with the [Build Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin)
-    ([JENKINS-31427](https://issues.jenkins-ci.org/browse/JENKINS-31427))
+    ([JENKINS-31427](https://issue-redirect.jenkins.io/browse/JENKINS-31427))
   * Allow `@DslExtensionMethod` annotated methods to return `null` to not contribute to the job configuration
   * Allow `DownstreamTriggerParameterContext` to be extended
-    ([JENKINS-31111](https://issues.jenkins-ci.org/browse/JENKINS-31111))
+    ([JENKINS-31111](https://issue-redirect.jenkins.io/browse/JENKINS-31111))
   * Added support for the [TestNG Plugin](https://wiki.jenkins-ci.org/display/JENKINS/testng-plugin)
-    ([JENKINS-30895](https://issues.jenkins-ci.org/browse/JENKINS-30895))
+    ([JENKINS-30895](https://issue-redirect.jenkins.io/browse/JENKINS-30895))
   * Added workaround for [GROOVY-6263](https://issues.apache.org/jira/browse/GROOVY-6263) to `WorkspaceCleanupContext`
-  * Added workaround for [JENKINS-31366](https://issues.jenkins-ci.org/browse/JENKINS-31366)
+  * Added workaround for [JENKINS-31366](https://issue-redirect.jenkins.io/browse/JENKINS-31366)
   * Added support for the [SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SSH+plugin)
-    ([JENKINS-30957](https://issues.jenkins-ci.org/browse/JENKINS-30957))
+    ([JENKINS-30957](https://issue-redirect.jenkins.io/browse/JENKINS-30957))
   * Set default runner for `conditionalSteps`
-    ([JENKINS-31373](https://issues.jenkins-ci.org/browse/JENKINS-31373))
+    ([JENKINS-31373](https://issue-redirect.jenkins.io/browse/JENKINS-31373))
   * Enhanced support for the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin)
-    ([JENKINS-31264](https://issues.jenkins-ci.org/browse/JENKINS-31264))
+    ([JENKINS-31264](https://issue-redirect.jenkins.io/browse/JENKINS-31264))
   * Support for older versions of the [Gradle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Gradle+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-140)
   * Support for older versions of the
@@ -959,7 +959,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Added support for the [ZenTimestamp Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ZenTimestamp+Plugin)
   * Added support for the [CloudBees Docker Build and Publish
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Build+and+Publish+plugin)
-    ([JENKINS-29600](https://issues.jenkins-ci.org/browse/JENKINS-29600))
+    ([JENKINS-29600](https://issue-redirect.jenkins.io/browse/JENKINS-29600))
   * Added support for remote trigger authentication token
   * Added support for the [ArtifactDeployer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ArtifactDeployer+Plugin)
   * Added support for the [CloudBees Docker Custom Build Environment
@@ -972,10 +972,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the [SonarQube Plugin](https://wiki.jenkins-ci.org/display/JENKINS/SonarQube+plugin)
   * Enhanced support the
     [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
-    ([JENKINS-30493](https://issues.jenkins-ci.org/browse/JENKINS-30493))
+    ([JENKINS-30493](https://issue-redirect.jenkins.io/browse/JENKINS-30493))
   * Changed support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin), see
     [Migration](Migration#migrating-to-139)
-    ([JENKINS-27921](https://issues.jenkins-ci.org/browse/JENKINS-27921))
+    ([JENKINS-27921](https://issue-redirect.jenkins.io/browse/JENKINS-27921))
   * Support for older versions of the [Subversion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin)
     is deprecated, see [Migration](Migration#migrating-to-139)
   * Support for older versions of the
@@ -984,9 +984,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Support for the [JSHint Checkstyle Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JSHint+Checkstyle+Plugin) is
     deprecated, see [Migration](Migration#migrating-to-139)
   * Fixed `StackOverflowError` when using `downstreamParameterized` publisher
-    ([JENKINS-30504](https://issues.jenkins-ci.org/browse/JENKINS-30504))
+    ([JENKINS-30504](https://issue-redirect.jenkins.io/browse/JENKINS-30504))
   * Fixed problem with additional classpath
-    ([JENKINS-30348](https://issues.jenkins-ci.org/browse/JENKINS-30348))
+    ([JENKINS-30348](https://issue-redirect.jenkins.io/browse/JENKINS-30348))
   * Allow to abort DSL processing
   * Improved console output
   * Added support for the [Cron Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cron+Column+Plugin)
@@ -1003,7 +1003,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [API Viewer](https://jenkinsci.github.io/job-dsl-plugin/)
   * Added a collection of [[Talks and Blog Posts]]
   * Added support for [Crittercism dSYM Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Crittercism+dSYM+Plugin)
-    ([JENKINS-29501](https://issues.jenkins-ci.org/browse/JENKINS-29501))
+    ([JENKINS-29501](https://issue-redirect.jenkins.io/browse/JENKINS-29501))
   * Added support for the [ShiningPanda Plugin](https://wiki.jenkins-ci.org/display/JENKINS/ShiningPanda+Plugin)
   * Enhanced support for the [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin)
   * Enhanced support for the [Credentials Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin)
@@ -1011,18 +1011,18 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
     [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
   * Enhanced support for the
     [Delivery Pipeline Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Delivery+Pipeline+Plugin)
-    ([JENKINS-30221](https://issues.jenkins-ci.org/browse/JENKINS-30221))
+    ([JENKINS-30221](https://issue-redirect.jenkins.io/browse/JENKINS-30221))
   * Enhanced support for the
     [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
-    ([JENKINS-29662](https://issues.jenkins-ci.org/browse/JENKINS-29662),
-    [JENKINS-29801](https://issues.jenkins-ci.org/browse/JENKINS-29801))
+    ([JENKINS-29662](https://issue-redirect.jenkins.io/browse/JENKINS-29662),
+    [JENKINS-29801](https://issue-redirect.jenkins.io/browse/JENKINS-29801))
   * Enhanced support for the [Parameterized Remote Trigger
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Remote+Trigger+Plugin)
-    ([JENKINS-29531](https://issues.jenkins-ci.org/browse/JENKINS-29531))
+    ([JENKINS-29531](https://issue-redirect.jenkins.io/browse/JENKINS-29531))
   * Enhanced support for the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
   * Added documentation about [[handling credentials]]
   * Fixed a problem with `ScmContext` and the extension point
-    ([JENKINS-29972](https://issues.jenkins-ci.org/browse/JENKINS-29972))
+    ([JENKINS-29972](https://issue-redirect.jenkins.io/browse/JENKINS-29972))
   * Deprecated some overloaded DSL methods for the
     [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin), see
     [Migration](Migration#migrating-to-138)
@@ -1036,20 +1036,20 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Increased the minimum supported Jenkins version to 1.580
   * Increased the minimum required version of the [Config File Provider
     Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
-    ([JENKINS-30013](https://issues.jenkins-ci.org/browse/JENKINS-30013))
+    ([JENKINS-30013](https://issue-redirect.jenkins.io/browse/JENKINS-30013))
   * Added support for the [Ivy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Ivy+Plugin)
-    ([JENKINS-29910](https://issues.jenkins-ci.org/browse/JENKINS-29910))
+    ([JENKINS-29910](https://issue-redirect.jenkins.io/browse/JENKINS-29910))
   * Removed anything that has been deprecated in 1.30, see [Migration](Migration#migrating-to-130)
 * 1.37 (August 08 2015)
   * Added support for the [Clang Scan Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Clang+Scan-Build+Plugin)
-    ([JENKINS-29505](https://issues.jenkins-ci.org/browse/JENKINS-29505))
+    ([JENKINS-29505](https://issue-redirect.jenkins.io/browse/JENKINS-29505))
   * Enhanced support for the [Groovy Postbuild Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Postbuild+Plugin)
-    ([JENKINS-29500](https://issues.jenkins-ci.org/browse/JENKINS-29500))
+    ([JENKINS-29500](https://issue-redirect.jenkins.io/browse/JENKINS-29500))
   * Enhanced support for the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
-    ([JENKINS-29347](https://issues.jenkins-ci.org/browse/JENKINS-29347))
+    ([JENKINS-29347](https://issue-redirect.jenkins.io/browse/JENKINS-29347))
   * Fixed problem with methods in build scripts
-    ([JENKINS-29862](https://issues.jenkins-ci.org/browse/JENKINS-29862))
+    ([JENKINS-29862](https://issue-redirect.jenkins.io/browse/JENKINS-29862))
   * Support for older versions of the [Multijob Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin)
     is deprecated, see [Migration](Migration#migrating-to-137)
   * Support for older versions of the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
@@ -1060,27 +1060,27 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Added support for the [Compress Build Log Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Compress+Build+Log+Plugin)
   * Added support for the [Active Choices Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Active+Choices+Plugin)
   * Enhanced support for the [xUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/xUnit+Plugin)
-    ([JENKINS-29753](https://issues.jenkins-ci.org/browse/JENKINS-29753))
+    ([JENKINS-29753](https://issue-redirect.jenkins.io/browse/JENKINS-29753))
   * Enhanced support for the [Run Condition Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Run+Condition+Plugin)
-    ([JENKINS-29503](https://issues.jenkins-ci.org/browse/JENKINS-29503))
+    ([JENKINS-29503](https://issue-redirect.jenkins.io/browse/JENKINS-29503))
   * Added support for the [Slack Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin)
   * Added support for the [Heavy Job Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Heavy+Job+Plugin)
-    ([JENKINS-29499](https://issues.jenkins-ci.org/browse/JENKINS-29499))
+    ([JENKINS-29499](https://issue-redirect.jenkins.io/browse/JENKINS-29499))
   * Enhanced support for the [Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin)
-    ([JENKINS-29498](https://issues.jenkins-ci.org/browse/JENKINS-29498))
+    ([JENKINS-29498](https://issue-redirect.jenkins.io/browse/JENKINS-29498))
   * Enhanced support for the [Debian Package Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Debian+Package+Builder+Plugin)
-    ([JENKINS-29502](https://issues.jenkins-ci.org/browse/JENKINS-29502))
+    ([JENKINS-29502](https://issue-redirect.jenkins.io/browse/JENKINS-29502))
   * Enhanced support for the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
-    ([JENKINS-29629](https://issues.jenkins-ci.org/browse/JENKINS-29629))
+    ([JENKINS-29629](https://issue-redirect.jenkins.io/browse/JENKINS-29629))
   * Enhanced support for the [Matrix Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Project+Plugin)
-    ([JENKINS-29375](https://issues.jenkins-ci.org/browse/JENKINS-29375))
+    ([JENKINS-29375](https://issue-redirect.jenkins.io/browse/JENKINS-29375))
   * Removed automatic IDE support for IDEA, must be provided separately, see [[IDE Support]]
-    ([JENKINS-29668](https://issues.jenkins-ci.org/browse/JENKINS-29668),
-    [JENKINS-29669](https://issues.jenkins-ci.org/browse/JENKINS-29669))
+    ([JENKINS-29668](https://issue-redirect.jenkins.io/browse/JENKINS-29668),
+    [JENKINS-29669](https://issue-redirect.jenkins.io/browse/JENKINS-29669))
   * Improved error logging
-    ([JENKINS-16354](https://issues.jenkins-ci.org/browse/JENKINS-16354))
+    ([JENKINS-16354](https://issue-redirect.jenkins.io/browse/JENKINS-16354))
   * Fixed support for the [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin)
-    ([JENKINS-24851](https://issues.jenkins-ci.org/browse/JENKINS-24851))
+    ([JENKINS-24851](https://issue-redirect.jenkins.io/browse/JENKINS-24851))
   * Support for the older versions of the [Build Blocker Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Blocker+Plugin)
     is deprecated, see [Migration](Migration#migrating-to-136)
   * Support for arbitrary script names has been deprecated, see [Migration](Migration#migrating-to-136)
@@ -1091,64 +1091,64 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Removed anything that has been deprecated in 1.29, see [Migration](Migration#migrating-to-129)
 * 1.35 (July 01 2015)
   * Added support for the [Build Flow Test Aggregator Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Flow+Test+Aggregator+Plugin)
-    ([JENKINS-28851](https://issues.jenkins-ci.org/browse/JENKINS-28851))
+    ([JENKINS-28851](https://issue-redirect.jenkins.io/browse/JENKINS-28851))
   * Added support for the [Join Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin)
-    ([JENKINS-28985](https://issues.jenkins-ci.org/browse/JENKINS-28985))
+    ([JENKINS-28985](https://issue-redirect.jenkins.io/browse/JENKINS-28985))
   * Added support for the [Fail The Build Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Fail+The+Build+Plugin)
   * Added closure method for logRotator
   * Allow to extend the trigger context
-    ([JENKINS-28562](https://issues.jenkins-ci.org/browse/JENKINS-28562))
+    ([JENKINS-28562](https://issue-redirect.jenkins.io/browse/JENKINS-28562))
   * Enhanced DSL support for the Job DSL plugin
   * Fixed problem when deleting views from already deleted folder
-    ([JENKINS-28458](https://issues.jenkins-ci.org/browse/JENKINS-28458))
+    ([JENKINS-28458](https://issue-redirect.jenkins.io/browse/JENKINS-28458))
   * Fixed [Parameterized Trigger Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin) build step
-    ([JENKINS-28353](https://issues.jenkins-ci.org/browse/JENKINS-28353))
+    ([JENKINS-28353](https://issue-redirect.jenkins.io/browse/JENKINS-28353))
   * Fixed problem with implementing the extension point
-    ([JENKINS-28408](https://issues.jenkins-ci.org/browse/JENKINS-28408))
+    ([JENKINS-28408](https://issue-redirect.jenkins.io/browse/JENKINS-28408))
   * Provide better error message when trying to move a job into a non-existing folder
-    ([JENKINS-29100](https://issues.jenkins-ci.org/browse/JENKINS-29100))
+    ([JENKINS-29100](https://issue-redirect.jenkins.io/browse/JENKINS-29100))
   * Fixed problem that caused a changing order of elements not to trigger a job update
-    ([JENKINS-29107](https://issues.jenkins-ci.org/browse/JENKINS-29107))
+    ([JENKINS-29107](https://issue-redirect.jenkins.io/browse/JENKINS-29107))
   * Fixed support for multi-job phases in conditional build steps
   * Introduced nested steps context for conditional build steps and deprecated direct use of build steps in conditional
     build steps, see [[Migration]]
   * Enhanced support for the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
-    ([JENKINS-28564](https://issues.jenkins-ci.org/browse/JENKINS-28564))
+    ([JENKINS-28564](https://issue-redirect.jenkins.io/browse/JENKINS-28564))
   * Enhanced support for the [Config File Provider Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
   * Enhanced support for the [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
-    ([JENKINS-28405](https://issues.jenkins-ci.org/browse/JENKINS-28405))
+    ([JENKINS-28405](https://issue-redirect.jenkins.io/browse/JENKINS-28405))
   * Enhanced support for [Matrix Authorization Strategy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Authorization+Strategy+Plugin)
-    ([JENKINS-27320](https://issues.jenkins-ci.org/browse/JENKINS-27320))
+    ([JENKINS-27320](https://issue-redirect.jenkins.io/browse/JENKINS-27320))
   * Removed unnecessary update of Jenkins project dependency graph
   * Enhanced support for [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
-    ([JENKINS-29070](https://issues.jenkins-ci.org/browse/JENKINS-29070),
-    [JENKINS-29110](https://issues.jenkins-ci.org/browse/JENKINS-29110))
+    ([JENKINS-29070](https://issue-redirect.jenkins.io/browse/JENKINS-29070),
+    [JENKINS-29110](https://issue-redirect.jenkins.io/browse/JENKINS-29110))
   * Added support for the latest version of the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
-    ([JENKINS-26561](https://issues.jenkins-ci.org/browse/JENKINS-26561))
+    ([JENKINS-26561](https://issue-redirect.jenkins.io/browse/JENKINS-26561))
   * Added documentation for [[IDE Support]]
   * Added documentation about [logging](Job-DSL-Commands#logging)
   * Write output files for `FileJobManagment` to the same directory as the input files
   * Fixed `FileJobManagement` to create missing folders
-    ([JENKINS-27124](https://issues.jenkins-ci.org/browse/JENKINS-27124))
+    ([JENKINS-27124](https://issue-redirect.jenkins.io/browse/JENKINS-27124))
   * Support for the older versions of the [Matrix Authorization Strategy Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Authorization+Strategy+Plugin) is deprecated, see [[Migration]]
   * Support for the older versions of the [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin) is deprecated, see [[Migration]]
   * Support for the older versions of the [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin) is deprecated, see [[Migration]]
   * Support for the older versions of the [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin) is deprecated, see [[Migration]]
   * Removed anything that has been deprecated in 1.27, see [Migration](Migration#migrating-to-127)
-    ([JENKINS-27492](https://issues.jenkins-ci.org/browse/JENKINS-27492))
+    ([JENKINS-27492](https://issue-redirect.jenkins.io/browse/JENKINS-27492))
   * Removed anything that has been deprecated in 1.28, see [Migration](Migration#migrating-to-128)
 * 1.34 (May 08 2015)
   * Enhanced support for the [Publish Over SSH Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Publish+Over+SSH+Plugin)
-    ([JENKINS-26636](https://issues.jenkins-ci.org/browse/JENKINS-26636))
+    ([JENKINS-26636](https://issue-redirect.jenkins.io/browse/JENKINS-26636))
   * Fixed XML encoding issue when using a single conditional build step
-    ([JENKINS-28308](https://issues.jenkins-ci.org/browse/JENKINS-28308))
+    ([JENKINS-28308](https://issue-redirect.jenkins.io/browse/JENKINS-28308))
   * Fixed issue with multiple (script) parameters for Groovy build steps
-    ([JENKINS-28310](https://issues.jenkins-ci.org/browse/JENKINS-28310))
+    ([JENKINS-28310](https://issue-redirect.jenkins.io/browse/JENKINS-28310))
   * Deprecated an undocumented variant of the `runner` method in `conditionalSteps` context, see [[Migration]]
 * 1.33 (May 07 2015)
   * Enhanced support for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
-    ([JENKINS-27891](https://issues.jenkins-ci.org/browse/JENKINS-27891), [JENKINS-28264](https://issues.jenkins-ci.org/browse/JENKINS-28264))
+    ([JENKINS-27891](https://issue-redirect.jenkins.io/browse/JENKINS-27891), [JENKINS-28264](https://issue-redirect.jenkins.io/browse/JENKINS-28264))
   * Added support for the [Build Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Publisher+Plugin)
   * Added support for the [Naginator Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Naginator+Plugin)
   * Added support for the [Sidebar-Link Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sidebar-Link+Plugin)
@@ -1163,9 +1163,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)
   * Support for the older versions of the [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin) is deprecated, see [[Migration]]
   * Enhanced support for the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin)
-    ([JENKINS-27838](https://issues.jenkins-ci.org/browse/JENKINS-27838), [JENKINS-27894](https://issues.jenkins-ci.org/browse/JENKINS-27894))
+    ([JENKINS-27838](https://issue-redirect.jenkins.io/browse/JENKINS-27838), [JENKINS-27894](https://issue-redirect.jenkins.io/browse/JENKINS-27894))
   * Enhanced support for the [GitHub Pull Request Builder Plugin](https://wiki.jenkins-ci.org/display/JENKINS/GitHub+pull+request+builder+plugin)
-    ([JENKINS-27932](https://issues.jenkins-ci.org/browse/JENKINS-27932))
+    ([JENKINS-27932](https://issue-redirect.jenkins.io/browse/JENKINS-27932))
   * Support for the older versions of the [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin) is deprecated, see [[Migration]]
   * Enhanced support for the [Robot Framework Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin)
   * Support for the older versions of the [Robot Framework Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin) is deprecated, see [[Migration]]
@@ -1174,12 +1174,12 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Added support for [HipChat Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HipChat+Plugin)
   * Added support for uploading [user conent](https://wiki.jenkins-ci.org/display/JENKINS/User+Content)
   * Increased the minimum supported Jenkins version to 1.565
-    ([JENKINS-28167](https://issues.jenkins-ci.org/browse/JENKINS-28167))
+    ([JENKINS-28167](https://issue-redirect.jenkins.io/browse/JENKINS-28167))
 * 1.32 (April 07 2015)
   * Added support for [PowerShell Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PowerShell+Plugin)
-    ([JENKINS-27820](https://issues.jenkins-ci.org/browse/JENKINS-27820))
+    ([JENKINS-27820](https://issue-redirect.jenkins.io/browse/JENKINS-27820))
   * Fixed problem with publishers in Maven jobs
-    ([JENKINS-27767](https://issues.jenkins-ci.org/browse/JENKINS-27767))
+    ([JENKINS-27767](https://issue-redirect.jenkins.io/browse/JENKINS-27767))
 * 1.31 (April 04 2015)
   * Added support for [Categorized Jobs View](https://wiki.jenkins-ci.org/display/JENKINS/Categorized+Jobs+View)
   * Added support for [Build Node Column Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Node+Column+Plugin)
@@ -1200,7 +1200,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Enhanced support for the [Maven Project Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin)
   * Enhanced support for the [Description Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plugin)
   * Enhanced support for ([Cloudbees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin))
-  * Support all available permissions ([JENKINS-16365](https://issues.jenkins-ci.org/browse/JENKINS-16365))
+  * Support all available permissions ([JENKINS-16365](https://issue-redirect.jenkins.io/browse/JENKINS-16365))
   * Deprecated the Permissions enum, see [[Migration]]
   * The `tagFilterRegex` argument of `listTagsParam` can be null or empty
   * The enum argument of `localRepository` for the Maven job and context has changed, see [[Migration]]
@@ -1221,7 +1221,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Added populateToolInstallations and overrideBuildVariables options for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin)
   * Added groovy option in the wrappers context for the [EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin)
   * Fixed the `notifySuspects` option for the [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin)
-  * Fixed `extendedEmail` configure block resolve strategy ([JENKINS-27063](https://issues.jenkins-ci.org/browse/JENKINS-27063))
+  * Fixed `extendedEmail` configure block resolve strategy ([JENKINS-27063](https://issue-redirect.jenkins.io/browse/JENKINS-27063))
   * Deprecated some overloaded DSL methods for the [Jabber Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Jabber+Plugin), see [[Migration]]
   * Introduced new factory methods and deprecated the generic factory and `name` methods, see [[Migration]]
   * Finding credentials by description is deprecated, see [[Migration]]
@@ -1238,7 +1238,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Fixed support for JARs in the "Additional classpath" option of the "Process Job DSLs" build step
   * Allow Ant-style patterns in the "Additional classpath" option of the "Process Job DSLs" build step
   * Support for the `@Grab` and `@Grapes` annotations is deprecated, see [[Migration]]
-  * Deprecated `perModuleEmail` option for Maven jobs ([JENKINS-26284](https://issues.jenkins-ci.org/browse/JENKINS-26284))
+  * Deprecated `perModuleEmail` option for Maven jobs ([JENKINS-26284](https://issue-redirect.jenkins.io/browse/JENKINS-26284))
   * Removed deprecated build timeout methods, see [[Migration|Migration#migrating-to-124]]
 * 1.28 (January 01 2015)
   * Added support for the [Credentials Binding Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Binding+Plugin)
@@ -1250,10 +1250,10 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Added allow missing option for the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
   * Added clone timeout option for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
   * Support more trigger for [Email-ext Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin)
-  * Fixed documentation for the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin) ([JENKINS-25945](https://issues.jenkins-ci.org/browse/JENKINS-25945))
+  * Fixed documentation for the [Release Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Release+Plugin) ([JENKINS-25945](https://issue-redirect.jenkins.io/browse/JENKINS-25945))
   * Fixed `copyArtifacts` build step for matrix jobs, minimum supported version of [Copy Artifact Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Copy+Artifact+Plugin) raised to 1.26
-  * Allow the Job DSL build step to be used as conditional build step ([JENKINS-25961](https://issues.jenkins-ci.org/browse/JENKINS-25961))
-  * Allow views to be deleted ([JENKINS-26152](https://issues.jenkins-ci.org/browse/JENKINS-26152))
+  * Allow the Job DSL build step to be used as conditional build step ([JENKINS-25961](https://issue-redirect.jenkins.io/browse/JENKINS-25961))
+  * Allow views to be deleted ([JENKINS-26152](https://issue-redirect.jenkins.io/browse/JENKINS-26152))
   * The non-closure variants of the `report` methods in the `publishHtml` context are deprecated, see [[Migration]]
   * Set return type for most DSL methods to void, see [[Migration]]
   * Moved `Context` and `ContextHelper` to package `javaposse.jobdsl.dsl`, see [[Migration]]
@@ -1281,13 +1281,13 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Support for [Notification Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin)
   * Allow to merge more than one branch with Git SCM
   * Support for [S3 Plugin](https://wiki.jenkins-ci.org/display/JENKINS/S3+Plugin)
-  * Removed unnecessary undocumented methods in Gerrit trigger ([JENKINS-24787](https://issues.jenkins-ci.org/browse/JENKINS-24787))
+  * Removed unnecessary undocumented methods in Gerrit trigger ([JENKINS-24787](https://issue-redirect.jenkins.io/browse/JENKINS-24787))
   * Short names in the Gerrit trigger event closure have been replaced by DSL methods, see [[Migration]]
   * The `archiveJunit` method with boolean arguments has been deprecated, see [[Migration]]
   * The `xvnc` method with boolean arguments has been deprecated, see [[Migration]]
   * Support to specify the xAuthority file option of the [Xvnc Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Xvnc+Plugin)
   * `javaposse.jobdsl.dsl.helpers.step.AbstractStepContext` has been removed, see [[Migration]]
-  * Fixed endless recursion when calling `properties` in configure blocks ([JENKINS-22708](https://issues.jenkins-ci.org/browse/JENKINS-22708))
+  * Fixed endless recursion when calling `properties` in configure blocks ([JENKINS-22708](https://issue-redirect.jenkins.io/browse/JENKINS-22708))
   * Support for [Flexible Publish Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Flexible+Publish+Plugin)
   * Support for [Any Build Step Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Any+Build+Step+Plugin)
   * Support to specify the Stash browser URL for the [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin)
@@ -1306,9 +1306,9 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Added option to add classpath entries for Job DSL runs
   * Added localBranch option for Git SCM
   * Added method to read a file from any job's workspace
-  * Fixed workspace cleanup external delete command ([JENKINS-24231](https://issues.jenkins-ci.org/browse/JENKINS-24231))
-  * Fixed Build Timeout Plugin no activity timeout ([JENKINS-24258](https://issues.jenkins-ci.org/browse/JENKINS-24258))
-  * Fixed alwaysRun and neverRun conditions ([JENKINS-24510](https://issues.jenkins-ci.org/browse/JENKINS-24510))
+  * Fixed workspace cleanup external delete command ([JENKINS-24231](https://issue-redirect.jenkins.io/browse/JENKINS-24231))
+  * Fixed Build Timeout Plugin no activity timeout ([JENKINS-24258](https://issue-redirect.jenkins.io/browse/JENKINS-24258))
+  * Fixed alwaysRun and neverRun conditions ([JENKINS-24510](https://issue-redirect.jenkins.io/browse/JENKINS-24510))
 * 1.24 (July 05 2014)
   * Support for [Build Name Setter Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Name+Setter+Plugin)
   * Support for [RunDeck Plugin](https://wiki.jenkins-ci.org/display/JENKINS/RunDeck+Plugin)
@@ -1320,14 +1320,14 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * Extend support for [Build Timeout](https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin)
   * Added option for treating job names relative to the seed job
   * Added pruneBranches option for Git SCM
-  * Fixed ClassCastException when removing folder ([JENKINS-23289](https://issues.jenkins-ci.org/browse/JENKINS-23289))
-  * Fixed GerritContext not honoring default settings ([JENKINS-23318](https://issues.jenkins-ci.org/browse/JENKINS-23318))
+  * Fixed ClassCastException when removing folder ([JENKINS-23289](https://issue-redirect.jenkins.io/browse/JENKINS-23289))
+  * Fixed GerritContext not honoring default settings ([JENKINS-23318](https://issue-redirect.jenkins.io/browse/JENKINS-23318))
   * Moved PerforcePasswordEncryptor to javaposse.jobdsl.dsl.helpers.scm package
   * Support for [Exclusion Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin)
 * 1.23 (May 23 2014)
   * Added support for injecting globally defined passwords ([EnvInject Plugin](https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin))
-  * Added file name to exception message when reading missing workspace files ([JENKINS-23006](https://issues.jenkins-ci.org/browse/JENKINS-23006))
-  * Fixed behavior when creating Jabber targets that are not group chats ([JENKINS-23090](https://issues.jenkins-ci.org/browse/JENKINS-23090))
+  * Added file name to exception message when reading missing workspace files ([JENKINS-23006](https://issue-redirect.jenkins.io/browse/JENKINS-23006))
+  * Fixed behavior when creating Jabber targets that are not group chats ([JENKINS-23090](https://issue-redirect.jenkins.io/browse/JENKINS-23090))
   * Create and update folders ([Cloudbees Folders Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Folders+Plugin))
   * Allow to create or update views within folders
   * Removed multiscm limit
@@ -1384,7 +1384,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
   * [AnsiColor Plugin](https://wiki.jenkins-ci.org/display/JENKINS/AnsiColor+Plugin)
   * new wrappers block, containing all build wrapper methods (**BREAKING CHANGE**, see [[Migration]])
   * [Timestamper](https://wiki.jenkins-ci.org/display/JENKINS/Timestamper)
-  * [JENKINS-20284](https://issues.jenkins-ci.org/browse/JENKINS-20284)
+  * [JENKINS-20284](https://issue-redirect.jenkins.io/browse/JENKINS-20284)
   * [Text Finder](https://wiki.jenkins-ci.org/display/JENKINS/Text-finder+Plugin)
 * 1.17
   * Static Analysis Plugins (PMD, Checkstyle, Findbugs, DRY, Tasks, CCM, Lint, OWASP Dependency Check, Compiler warnings,
