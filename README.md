@@ -134,8 +134,8 @@ about Job DSL. If you have a talk or blog post to share, please raise a hand, e.
 Head over to [Stack Overflow](https://stackoverflow.com/questions/tagged/jenkins-job-dsl) or the
 [mailing list](https://groups.google.com/d/forum/job-dsl-plugin) to get help.
 
-Use the [Issue Tracker](https://issues.jenkins-ci.org/secure/Dashboard.jspa?selectPageId=15341) for reporting bugs and
-making feature requests. Select the `job-dsl-plugin` component when searching or creating issues.
+Use the [Issue Tracker](https://github.com/jenkinsci/job-dsl-plugin/issues) for reporting bugs and
+making feature requests.
 
 You can actively help to improve Job DSL by contributing code, documentation and tests or by reviewing and testing
 upcoming changes on [GitHub](https://github.com/jenkinsci/job-dsl-plugin). Start by reading the
