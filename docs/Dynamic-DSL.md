@@ -11,7 +11,7 @@ Dynamic methods are marked with a purple "Dynamic" tag. The dynamic DSL is *not*
 If a methods is marked as required in the API viewer, it must be specified within it's context.
 
 The following example shows a DSL script for using the dynamic DSL to configure the
-[CVS Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CVS+Plugin).
+[CVS Plugin](https://plugins.jenkins.io/cvs/).
 
     job('example') {
         scm {

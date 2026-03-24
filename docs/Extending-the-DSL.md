@@ -249,4 +249,4 @@ configuration can be changed at Manage Jenkins > System Log, e.g. by adding a ne
 
 The following plugins implement the extension point and serve as examples:
 
-* [JGiven Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JGiven+Plugin)
+* [JGiven Plugin](https://plugins.jenkins.io/jgiven/)
