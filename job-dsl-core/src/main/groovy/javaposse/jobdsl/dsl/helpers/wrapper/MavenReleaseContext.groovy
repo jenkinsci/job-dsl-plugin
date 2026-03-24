@@ -29,7 +29,7 @@ class MavenReleaseContext implements Context {
      *
      * As the passed passwords would potentially get written to the logs and therefore visible to users,
      * it is recommended to install the
-     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin">Mask Password Plugin</a>.
+     * <a href="https://plugins.jenkins.io/mask-passwords/">Mask Password Plugin</a>.
      */
     void scmPasswordEnvVar(String scmPasswordEnvVar) {
         this.scmPasswordEnvVar = scmPasswordEnvVar

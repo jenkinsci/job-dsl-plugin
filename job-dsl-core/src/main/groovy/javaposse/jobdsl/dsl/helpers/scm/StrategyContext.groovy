@@ -13,7 +13,7 @@ class StrategyContext extends AbstractContext {
 
     /**
      * This strategy must be selected when using the
-     * <a href="https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger">Gerrit Trigger Plugin</a>.
+     * <a href="https://plugins.jenkins.io/gerrit-trigger/">Gerrit Trigger Plugin</a>.
      */
     @RequiresPlugin(id = 'gerrit-trigger', minimumVersion = '2.0')
     void gerritTrigger() {

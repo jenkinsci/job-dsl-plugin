@@ -5,7 +5,7 @@ import javaposse.jobdsl.dsl.Context
 /**
  * Common DSL for the workspace cleanup plugin.
  *
- * See https://wiki.jenkins-ci.org/display/JENKINS/Workspace+Cleanup+Plugin
+ * See https://plugins.jenkins.io/ws-cleanup/
  */
 abstract class WorkspaceCleanupContext implements Context {
     List<Node> patternNodes = []

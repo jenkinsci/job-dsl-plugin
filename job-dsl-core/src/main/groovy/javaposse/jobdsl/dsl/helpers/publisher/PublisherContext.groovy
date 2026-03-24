@@ -1033,7 +1033,7 @@ class PublisherContext extends AbstractExtensibleContext {
     /**
      * Add conditional post-build actions.
      *
-     * If the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Any+Build+Step+Plugin">Any Build Step Plugin</a> is
+     * If the <a href="https://plugins.jenkins.io/any-buildstep/">Any Build Step Plugin</a> is
      * installed, build steps can be used along with publishers. When using versions older then 0.13 of the Flexible
      * Publish Plugin, only one build step or one publisher can be used.
      *
