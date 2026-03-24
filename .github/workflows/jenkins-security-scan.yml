@@ -18,6 +18,8 @@ permissions:
 
 jobs:
   security-scan:
+    # Only run security scan from repository in jenkinsci GitHub organization
+    if: ${{ github.repository_owner == 'jenkinsci' }}
     uses: jenkins-infra/jenkins-security-scan/.github/workflows/jenkins-security-scan.yaml@v2
     with:
       java-cache: 'maven' # Optionally enable use of a build dependency cache. Specify 'maven' or 'gradle' as appropriate.
