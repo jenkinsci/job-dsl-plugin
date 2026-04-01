@@ -48,7 +48,7 @@ jobs:
           # https://downloads.apache.org/maven/maven-3/3.9.14/binaries/apache-maven-3.9.14-bin.tar.gz.sha512
           CHECKSUM: d50af8ab5e6005b46a07f0ce9d3719e67cfdf898da988a84871304cd59fb1af0fef2f99dea709e6e66f21f732f905979b5c2dce6b6860406f60a70e84d9cf0b8
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Build API viewer
         run: mvn -B -V -e -ntp -Pquick-build clean verify
       - name: Upload artifact
