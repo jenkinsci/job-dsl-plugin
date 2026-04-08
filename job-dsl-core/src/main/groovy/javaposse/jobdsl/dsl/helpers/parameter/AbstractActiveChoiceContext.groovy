@@ -23,9 +23,14 @@ abstract class AbstractActiveChoiceContext implements Context {
         ActiveChoiceGroovyScriptContext context = new ActiveChoiceGroovyScriptContext()
         executeInContext(closure, context)
 
-        script = new NodeBuilder().script(class: 'org.biouno.unochoice.model.GroovyScript') {
-            delegate.script(context.script ?: '')
-            delegate.fallbackScript(context.fallbackScript ?: '')
+        if (context.secureScriptNode || context.secureFallbackScriptNode) {
+            script = new NodeBuilder().script(class: 'org.biouno.unochoice.model.GroovyScript')
+            script.children().addAll(context.secureScriptNode, context.secureFallbackScriptNode)
+        } else {
+            script = new NodeBuilder().script(class: 'org.biouno.unochoice.model.GroovyScript') {
+                delegate.script(context.script ?: '')
+                delegate.fallbackScript(context.fallbackScript ?: '')
+            }
         }
     }
 }

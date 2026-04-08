@@ -1004,7 +1004,7 @@ class BuildParametersContextSpec extends Specification {
             choiceType.text() == 'PT_SINGLE_SELECT'
             filterable.text() == 'false'
         }
-        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '2.0')
     }
 
     def 'active choice param with all options and groovy script'() {
@@ -1036,7 +1036,52 @@ class BuildParametersContextSpec extends Specification {
                 fallbackScript.text() == 'x2'
             }
         }
-        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '1.2')
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '2.0')
+    }
+
+    def 'active choice param with all options and groovy secure script'() {
+        when:
+        context.activeChoiceParam('activeChoiceGroovyParam') {
+            description('Active choice param test/groovy secure script')
+            filterable()
+            choiceType('MULTI_SELECT')
+            groovyScript {
+                secureScript {
+                    script('x1')
+                    sandbox(true)
+                }
+                secureFallbackScript {
+                    script('x2')
+                }
+            }
+        }
+
+        then:
+        with(context.buildParameterNodes['activeChoiceGroovyParam']) {
+            name() == 'org.biouno.unochoice.ChoiceParameter'
+            children().size() == 7
+            name.text() == 'activeChoiceGroovyParam'
+            description.text() == 'Active choice param test/groovy secure script'
+            randomName.text() =~ /choice-parameter-\d+/
+            visibleItemCount.text() == '1'
+            choiceType.text() == 'PT_MULTI_SELECT'
+            filterable.text() == 'true'
+            with(script[0]) {
+                attributes()['class'] == 'org.biouno.unochoice.model.GroovyScript'
+                children().size() == 2
+                with(secureScript) {
+                    children().size() == 2
+                    script.text() == 'x1'
+                    sandbox.text() == 'true'
+                }
+                with(secureFallbackScript) {
+                    children().size() == 2
+                    script.text() == 'x2'
+                    sandbox.text() == 'false'
+                }
+            }
+        }
+        1 * jobManagement.requireMinimumPluginVersion('uno-choice', '2.0')
     }
 
     def 'active choice reactive param without options'() {

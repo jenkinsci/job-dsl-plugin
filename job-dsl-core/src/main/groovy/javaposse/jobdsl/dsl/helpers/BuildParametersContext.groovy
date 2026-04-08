@@ -238,7 +238,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
      *
      * @since 1.36
      */
-    @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
+    @RequiresPlugin(id = 'uno-choice', minimumVersion = '2.0')
     void activeChoiceParam(String parameterName, @DslContext(ActiveChoiceContext) Closure closure) {
         ActiveChoiceContext context = new ActiveChoiceContext()
         ContextHelper.executeInContext(closure, context)
@@ -255,7 +255,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
+    @RequiresPlugin(id = 'uno-choice', minimumVersion = '2.0')
     void activeChoiceReactiveParam(String parameterName,
                                    @DslContext(ActiveChoiceReactiveContext) Closure closure = null) {
         ActiveChoiceReactiveContext context = new ActiveChoiceReactiveContext()
@@ -275,7 +275,7 @@ class BuildParametersContext extends AbstractExtensibleContext {
      *
      * @since 1.38
      */
-    @RequiresPlugin(id = 'uno-choice', minimumVersion = '1.2')
+    @RequiresPlugin(id = 'uno-choice', minimumVersion = '2.0')
     void activeChoiceReactiveReferenceParam(String parameterName,
                                             @DslContext(ActiveChoiceReactiveReferenceContext) Closure closure = null) {
         ActiveChoiceReactiveReferenceContext context = new ActiveChoiceReactiveReferenceContext()
