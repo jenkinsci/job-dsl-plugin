@@ -171,4 +171,172 @@ class DropdownFilterViewSpec extends Specification {
         root.columns[0].'hudson.views.StatusColumn'.size() == 1
         root.columns[0].'hudson.views.JobColumn'.size() == 1
     }
+
+    def 'dynamicBuildFilterColumn'() {
+        when:
+        view.columns {
+            dynamicBuildFilterColumn('status')
+        }
+
+        then:
+        Node root = view.node
+        def cols = root.columns[0].children()
+        cols.size() == 1
+        cols[0].name() == 'io.jenkins.plugins.dynamic__view__filter.DynamicBuildFilterColumn'
+        cols[0].delegate[0].@class == 'hudson.views.StatusColumn'
+        1 * jobManagement.requirePlugin('dynamic-view-filter', true)
+    }
+
+    def 'dynamicBuildFilterColumn with all delegate types'() {
+        when:
+        view.columns {
+            dynamicBuildFilterColumn(type)
+        }
+
+        then:
+        Node root = view.node
+        def col = root.columns[0].children()[0]
+        col.name() == 'io.jenkins.plugins.dynamic__view__filter.DynamicBuildFilterColumn'
+        col.delegate[0].@class == expected
+        1 * jobManagement.requirePlugin('dynamic-view-filter', true)
+
+        where:
+        type           || expected
+        'status'       || 'hudson.views.StatusColumn'
+        'weather'      || 'hudson.views.WeatherColumn'
+        'name'         || 'hudson.views.JobColumn'
+        'lastSuccess'  || 'hudson.views.LastSuccessColumn'
+        'lastFailure'  || 'hudson.views.LastFailureColumn'
+        'lastDuration' || 'hudson.views.LastDurationColumn'
+        'buildButton'  || 'hudson.views.BuildButtonColumn'
+    }
+
+    def 'dynamicBuildFilterColumn with null delegate'() {
+        when:
+        view.columns {
+            dynamicBuildFilterColumn(null)
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'dynamicBuildFilterColumn with unknown delegate'() {
+        when:
+        view.columns {
+            dynamicBuildFilterColumn('unknown')
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'parameterBuildFilterColumn'() {
+        when:
+        view.columns {
+            parameterBuildFilterColumn('lastSuccess', 'region', 'east')
+        }
+
+        then:
+        Node root = view.node
+        def cols = root.columns[0].children()
+        cols.size() == 1
+        cols[0].name() == 'io.jenkins.plugins.dynamic__view__filter.ParameterBuildFilterColumn'
+        cols[0].delegate[0].@class == 'hudson.views.LastSuccessColumn'
+        cols[0].paramName.text() == 'region'
+        cols[0].paramValueRegex.text() == 'east'
+        1 * jobManagement.requirePlugin('dynamic-view-filter', true)
+    }
+
+    def 'parameterBuildFilterColumn with null paramName'() {
+        when:
+        view.columns {
+            parameterBuildFilterColumn('status', null, 'east')
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'parameterBuildFilterColumn with empty paramValueRegex'() {
+        when:
+        view.columns {
+            parameterBuildFilterColumn('status', 'region', '')
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'parameterRunMatcher with defaults'() {
+        when:
+        view.jobFilters {
+            parameterRunMatcher {}
+        }
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+        Node filter = filters[0]
+        filter.name() == 'io.jenkins.plugins.dynamic__view__filter.ParameterRunMatcherFilter'
+        filter.includeExcludeTypeString.text() == 'includeMatched'
+        filter.nameRegex.text() == ''
+        filter.valueRegex.text() == ''
+        filter.descriptionRegex.text() == ''
+        filter.useDefaultValue.text() == 'false'
+        filter.matchAllBuilds.text() == 'true'
+        filter.maxBuildsToMatch.text() == '0'
+        filter.matchBuildsInProgress.text() == 'false'
+        1 * jobManagement.requirePlugin('dynamic-view-filter', true)
+    }
+
+    def 'parameterRunMatcher with all properties'() {
+        when:
+        view.jobFilters {
+            parameterRunMatcher {
+                matchType('excludeMatched')
+                nameRegex('.*region.*')
+                valueRegex('us-east-1')
+                descriptionRegex('deploy.*')
+                useDefaultValue(true)
+                matchAllBuilds(false)
+                maxBuildsToMatch(5)
+                matchBuildsInProgress(true)
+            }
+        }
+
+        then:
+        def filters = view.node.jobFilters[0].value()
+        filters.size() == 1
+        Node filter = filters[0]
+        filter.name() == 'io.jenkins.plugins.dynamic__view__filter.ParameterRunMatcherFilter'
+        filter.includeExcludeTypeString.text() == 'excludeMatched'
+        filter.nameRegex.text() == '.*region.*'
+        filter.valueRegex.text() == 'us-east-1'
+        filter.descriptionRegex.text() == 'deploy.*'
+        filter.useDefaultValue.text() == 'true'
+        filter.matchAllBuilds.text() == 'false'
+        filter.maxBuildsToMatch.text() == '5'
+        filter.matchBuildsInProgress.text() == 'true'
+        1 * jobManagement.requirePlugin('dynamic-view-filter', true)
+    }
+
+    def 'mixed columns with standard and dynamic-view-filter columns'() {
+        when:
+        view.columns {
+            status()
+            dynamicBuildFilterColumn('lastSuccess')
+            parameterBuildFilterColumn('lastFailure', 'env', 'prod')
+            name()
+        }
+
+        then:
+        Node root = view.node
+        def cols = root.columns[0].children()
+        cols.size() == 4
+        cols[0].name() == 'hudson.views.StatusColumn'
+        cols[1].name() == 'io.jenkins.plugins.dynamic__view__filter.DynamicBuildFilterColumn'
+        cols[2].name() == 'io.jenkins.plugins.dynamic__view__filter.ParameterBuildFilterColumn'
+        cols[3].name() == 'hudson.views.JobColumn'
+    }
 }

@@ -318,10 +318,10 @@ class ColumnsContext extends AbstractExtensibleContext {
      * @param paramValueRegex regex matching build parameter values
      */
     @RequiresPlugin(id = 'dynamic-view-filter', failIfMissing = true)
-    void parameterBuildFilterColumn(String delegateType, String paramName, String paramValueRegex) {
+    void parameterBuildFilterColumn(String delegateType, String pName, String pValueRegex) {
         checkNotNullOrEmpty(delegateType, 'delegateType must be specified')
-        checkNotNullOrEmpty(paramName, 'paramName must be specified')
-        checkNotNullOrEmpty(paramValueRegex, 'paramValueRegex must be specified')
+        checkNotNullOrEmpty(pName, 'paramName must be specified')
+        checkNotNullOrEmpty(pValueRegex, 'paramValueRegex must be specified')
 
         String delegateClass = COLUMN_DELEGATE_MAP[delegateType]
         if (!delegateClass) {
@@ -331,8 +331,8 @@ class ColumnsContext extends AbstractExtensibleContext {
 
         columnNodes << new NodeBuilder().'io.jenkins.plugins.dynamic__view__filter.ParameterBuildFilterColumn' {
             'delegate'(class: delegateClass)
-            'paramName'(paramName)
-            'paramValueRegex'(paramValueRegex)
+            'paramName'(pName)
+            'paramValueRegex'(pValueRegex)
         }
     }
 
