@@ -5,6 +5,8 @@ import javaposse.jobdsl.dsl.ContextType
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.RequiresPlugin
 
+import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
+
 @ContextType('hudson.views.ListViewColumn')
 class ColumnsContext extends AbstractExtensibleContext {
     List<Node> columnNodes = []
@@ -282,6 +284,67 @@ class ColumnsContext extends AbstractExtensibleContext {
     void scmType() {
         columnNodes << new Node(null, 'jenkins.plugins.extracolumns.SCMTypeColumn')
     }
+
+    /**
+     * Wraps a standard column with {@code DynamicBuildFilterColumn} from the dynamic-view-filter
+     * plugin. The wrapped column shows build data filtered through the view's RunMatcher job filters.
+     *
+     * <p>Valid delegate types: {@code 'status'}, {@code 'weather'}, {@code 'name'}, {@code 'lastSuccess'},
+     * {@code 'lastFailure'}, {@code 'lastDuration'}, {@code 'buildButton'}.
+     */
+    @RequiresPlugin(id = 'dynamic-view-filter', failIfMissing = true)
+    void dynamicBuildFilterColumn(String delegateType) {
+        checkNotNullOrEmpty(delegateType, 'delegateType must be specified')
+
+        String delegateClass = COLUMN_DELEGATE_MAP[delegateType]
+        if (!delegateClass) {
+            throw new javaposse.jobdsl.dsl.DslScriptException("Unknown column type: ${delegateType}. " +
+                "Valid types: ${COLUMN_DELEGATE_MAP.keySet().join(', ')}")
+        }
+
+        columnNodes << new NodeBuilder().'io.jenkins.plugins.dynamic__view__filter.DynamicBuildFilterColumn' {
+            'delegate'(class: delegateClass)
+        }
+    }
+
+    /**
+     * Adds a self-contained parameter-filtered column from the dynamic-view-filter plugin.
+     * Filters builds by a specific parameter name and value regex. No view-level RunMatcher required.
+     *
+     * <p>Valid delegate types: same as {@link #dynamicBuildFilterColumn(String)}.
+     *
+     * @param delegateType the column type to wrap (e.g., 'status', 'lastSuccess')
+     * @param paramName regex matching build parameter names
+     * @param paramValueRegex regex matching build parameter values
+     */
+    @RequiresPlugin(id = 'dynamic-view-filter', failIfMissing = true)
+    void parameterBuildFilterColumn(String delegateType, String paramName, String paramValueRegex) {
+        checkNotNullOrEmpty(delegateType, 'delegateType must be specified')
+        checkNotNullOrEmpty(paramName, 'paramName must be specified')
+        checkNotNullOrEmpty(paramValueRegex, 'paramValueRegex must be specified')
+
+        String delegateClass = COLUMN_DELEGATE_MAP[delegateType]
+        if (!delegateClass) {
+            throw new javaposse.jobdsl.dsl.DslScriptException("Unknown column type: ${delegateType}. " +
+                "Valid types: ${COLUMN_DELEGATE_MAP.keySet().join(', ')}")
+        }
+
+        columnNodes << new NodeBuilder().'io.jenkins.plugins.dynamic__view__filter.ParameterBuildFilterColumn' {
+            'delegate'(class: delegateClass)
+            'paramName'(paramName)
+            'paramValueRegex'(paramValueRegex)
+        }
+    }
+
+    private static final Map<String, String> COLUMN_DELEGATE_MAP = [
+        'status':       'hudson.views.StatusColumn',
+        'weather':      'hudson.views.WeatherColumn',
+        'name':         'hudson.views.JobColumn',
+        'lastSuccess':  'hudson.views.LastSuccessColumn',
+        'lastFailure':  'hudson.views.LastFailureColumn',
+        'lastDuration': 'hudson.views.LastDurationColumn',
+        'buildButton':  'hudson.views.BuildButtonColumn',
+    ]
 
     @Override
     protected void addExtensionNode(Node node) {

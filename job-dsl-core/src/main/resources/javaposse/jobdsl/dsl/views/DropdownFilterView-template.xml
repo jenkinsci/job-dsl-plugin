@@ -1,0 +1,14 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<io.jenkins.plugins.dynamic__view__filter.DropdownFilterView>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <jobNames class="tree-set">
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+    </jobNames>
+    <jobFilters/>
+    <columns/>
+    <recurse>false</recurse>
+    <filterPosition>top</filterPosition>
+    <dropdowns/>
+</io.jenkins.plugins.dynamic__view__filter.DropdownFilterView>

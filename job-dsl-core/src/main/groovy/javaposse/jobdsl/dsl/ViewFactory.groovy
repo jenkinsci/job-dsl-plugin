@@ -7,6 +7,7 @@ import javaposse.jobdsl.dsl.views.DashboardView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
+import javaposse.jobdsl.dsl.views.DropdownFilterView
 import javaposse.jobdsl.dsl.views.PipelineAggregatorView
 import javaposse.jobdsl.dsl.views.SectionedView
 
@@ -147,4 +148,20 @@ interface ViewFactory extends Context {
      */
     @RequiresPlugin(id = 'pipeline-aggregator-view', minimumVersion = '1.15', failIfMissing = true)
     PipelineAggregatorView pipelineAggregatorView(String name, @DslContext(PipelineAggregatorView) Closure closure)
+
+    /**
+     * Creates or updates a view with configurable dropdown filters that auto-populate
+     * from job folder paths and build parameters.
+     *
+     * @see #dropdownFilterView(java.lang.String, groovy.lang.Closure)
+     */
+    @RequiresPlugin(id = 'dynamic-view-filter', failIfMissing = true)
+    DropdownFilterView dropdownFilterView(String name)
+
+    /**
+     * Creates or updates a view with configurable dropdown filters that auto-populate
+     * from job folder paths and build parameters.
+     */
+    @RequiresPlugin(id = 'dynamic-view-filter', failIfMissing = true)
+    DropdownFilterView dropdownFilterView(String name, @DslContext(DropdownFilterView) Closure closure)
 }

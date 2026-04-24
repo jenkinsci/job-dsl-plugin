@@ -15,6 +15,7 @@ import javaposse.jobdsl.dsl.views.BuildPipelineView
 import javaposse.jobdsl.dsl.views.CategorizedJobsView
 import javaposse.jobdsl.dsl.views.DashboardView
 import javaposse.jobdsl.dsl.views.DeliveryPipelineView
+import javaposse.jobdsl.dsl.views.DropdownFilterView
 import javaposse.jobdsl.dsl.views.ListView
 import javaposse.jobdsl.dsl.views.NestedView
 import javaposse.jobdsl.dsl.views.PipelineAggregatorView
@@ -182,6 +183,12 @@ abstract class JobParent extends Script implements DslFactory {
     PipelineAggregatorView pipelineAggregatorView(
             String name, @DslContext(PipelineAggregatorView) Closure closure = null) {
         processView(name, PipelineAggregatorView, closure)
+    }
+
+    @Override
+    DropdownFilterView dropdownFilterView(
+            String name, @DslContext(DropdownFilterView) Closure closure = null) {
+        processView(name, DropdownFilterView, closure)
     }
 
     @Override

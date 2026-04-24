@@ -90,6 +90,12 @@ class NestedViewsContext extends AbstractExtensibleContext implements ViewFactor
     }
 
     @Override
+    DropdownFilterView dropdownFilterView(
+            String name, @DslContext(DropdownFilterView) Closure closure = null) {
+        processView(name, DropdownFilterView, closure)
+    }
+
+    @Override
     protected void addExtensionNode(Node node) {
         views << new View(jobManagement, node['name'].text()) {
             @Override

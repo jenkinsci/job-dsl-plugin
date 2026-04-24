@@ -133,6 +133,37 @@ class JobFiltersContext extends AbstractExtensibleContext {
         filterNodes << new NodeBuilder().'hudson.plugins.release.ReleaseJobsFilter'()
     }
 
+    /**
+     * Adds a parameter-based run matcher filter from the dynamic-view-filter plugin.
+     * Every {@code DynamicBuildFilterColumn} in the view will filter builds through this matcher.
+     *
+     * <p>Example:
+     * <pre>
+     * parameterRunMatcher {
+     *     matchType('includeMatched')
+     *     nameRegex('env')
+     *     valueRegex('prod')
+     *     matchAllBuilds(true)
+     * }
+     * </pre>
+     */
+    @RequiresPlugin(id = 'dynamic-view-filter', failIfMissing = true)
+    void parameterRunMatcher(@DslContext(ParameterRunMatcherContext) Closure closure) {
+        ParameterRunMatcherContext context = new ParameterRunMatcherContext()
+        executeInContext(closure, context)
+
+        filterNodes << new NodeBuilder().'io.jenkins.plugins.dynamic__view__filter.ParameterRunMatcherFilter' {
+            includeExcludeTypeString(context.matchType)
+            nameRegex(context.nameRegex)
+            valueRegex(context.valueRegex)
+            descriptionRegex(context.descriptionRegex)
+            useDefaultValue(context.useDefaultValue)
+            matchAllBuilds(context.matchAllBuilds)
+            maxBuildsToMatch(context.maxBuildsToMatch)
+            matchBuildsInProgress(context.matchBuildsInProgress)
+        }
+    }
+
     @Override
     protected void addExtensionNode(Node node) {
         filterNodes << node
