@@ -9,6 +9,16 @@ import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
 @ContextType('hudson.views.ListViewColumn')
 class ColumnsContext extends AbstractExtensibleContext {
+    private static final Map<String, String> COLUMN_DELEGATE_MAP = [
+        'status':       'hudson.views.StatusColumn',
+        'weather':      'hudson.views.WeatherColumn',
+        'name':         'hudson.views.JobColumn',
+        'lastSuccess':  'hudson.views.LastSuccessColumn',
+        'lastFailure':  'hudson.views.LastFailureColumn',
+        'lastDuration': 'hudson.views.LastDurationColumn',
+        'buildButton':  'hudson.views.BuildButtonColumn',
+    ]
+
     List<Node> columnNodes = []
 
     ColumnsContext(JobManagement jobManagement) {
@@ -335,16 +345,6 @@ class ColumnsContext extends AbstractExtensibleContext {
             'paramValueRegex'(pValueRegex)
         }
     }
-
-    private static final Map<String, String> COLUMN_DELEGATE_MAP = [
-        'status':       'hudson.views.StatusColumn',
-        'weather':      'hudson.views.WeatherColumn',
-        'name':         'hudson.views.JobColumn',
-        'lastSuccess':  'hudson.views.LastSuccessColumn',
-        'lastFailure':  'hudson.views.LastFailureColumn',
-        'lastDuration': 'hudson.views.LastDurationColumn',
-        'buildButton':  'hudson.views.BuildButtonColumn',
-    ]
 
     @Override
     protected void addExtensionNode(Node node) {
