@@ -44,9 +44,9 @@ jobs:
           sudo ln -s /opt/maven/bin/mvn /usr/bin/mvn
           mvn --version
         env:
-          MAVEN_VERSION: 3.9.14
-          # https://downloads.apache.org/maven/maven-3/3.9.14/binaries/apache-maven-3.9.14-bin.tar.gz.sha512
-          CHECKSUM: d50af8ab5e6005b46a07f0ce9d3719e67cfdf898da988a84871304cd59fb1af0fef2f99dea709e6e66f21f732f905979b5c2dce6b6860406f60a70e84d9cf0b8
+          MAVEN_VERSION: 3.9.15
+          # https://downloads.apache.org/maven/maven-3/3.9.15/binaries/apache-maven-3.9.15-bin.tar.gz.sha512
+          CHECKSUM: 33d81e0ec785f0207e3e5e3ffb61863e1dca5784c15ac3fb5ff105f69cffbea484eb8d473ea60467a63f7b0570eef8622f2fed8eee96acbe668aa313391cddb3
       - name: Push to wiki
         run: |
           git config --global user.email "actions@users.noreply.github.com"
