@@ -1,5 +1,7 @@
 package javaposse.jobdsl.dsl
 
+import java.nio.charset.Charset
+
 /**
  * In-memory JobManagement for testing.
  */
@@ -56,6 +58,11 @@ class MemoryJobManagement extends MockJobManagement {
 
     @Override
     String readFileInWorkspace(String filePath) {
+        readFileInWorkspace(filePath, Charset.defaultCharset())
+    }
+
+    @Override
+    String readFileInWorkspace(String filePath, Charset charset) {
         String body = availableFiles[filePath]
         if (body == null) {
             throw new FileNotFoundException(filePath)
