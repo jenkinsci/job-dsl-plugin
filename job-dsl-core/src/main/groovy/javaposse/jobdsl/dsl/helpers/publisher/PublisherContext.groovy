@@ -746,6 +746,37 @@ class PublisherContext extends AbstractExtensibleContext {
     }
 
     /**
+     * Searches with a few conditions for a regular expression in the console log and, if matched, executes a script.
+     *
+     * @since 1.19
+     */
+    @RequiresPlugin(id = 'postbuild-task')
+    void postBuildTaskMultiplyConditions(@DslContext(PostBuildTaskMultiplyContext) Closure postBuildClosure) {
+        PostBuildTaskMultiplyContext postBuildContext = new PostBuildTaskMultiplyContext()
+        ContextHelper.executeInContext(postBuildClosure, postBuildContext)
+
+        publisherNodes << new NodeBuilder().'hudson.plugins.postbuildtask.PostbuildTask' {
+            tasks {
+                postBuildContext.tasks.each { PostBuildTaskMultiplyContext.PostBuildTask task ->
+                    'hudson.plugins.postbuildtask.TaskProperties' {
+                        logTexts {
+                            task.conditions.each { conditionMap ->
+                                'hudson.plugins.postbuildtask.LogProperties' {
+                                    logText(conditionMap[0])
+                                    operator(conditionMap[1])
+                                }
+                            }
+                        }
+                        EscalateStatus(task.escalateStatus)
+                        RunIfJobSuccessful(task.runIfJobSuccessful)
+                        script(task.script)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Aggregates downstream test results.
      *
      * @since 1.19
