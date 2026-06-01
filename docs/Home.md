@@ -11,7 +11,7 @@ Welcome to the jenkins-job-dsl wiki!
 Highly recommended starting point is [[the tutorial|Tutorial - Using the Jenkins Job DSL]].
 
 Once you know how to create a "seed" job from the tutorial, start looking at the [[real world examples|Real World Examples]] for examples to steal from.
-After you get familiar with some of the commands, try them out at the [Job DSL Playground](http://job-dsl.herokuapp.com/).
+After you get familiar with some of the commands, try them out on your local Jenkins controller.
 
 Instead of creating a seed job manually, the
 [Configuration as Code plugin](https://github.com/jenkinsci/configuration-as-code-plugin/) can be used to execute Job

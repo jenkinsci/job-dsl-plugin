@@ -56,7 +56,7 @@ The following example shows a DSL script for using the dynamic DSL to configure 
 Be aware that [[IDE Support]] is currently not available for the dynamic DSL.
 
 The dynamic DSL is only supported when running in Jenkins, e.g. it is not available when running from
-the [command line](User-Power-Moves#run-a-dsl-script-locally) or in the [Playground](http://job-dsl.herokuapp.com/).
+the [command line](User-Power-Moves#run-a-dsl-script-locally).
 Use [[The Configure Block]] to generate custom config elements when not running in Jenkins.
 
 The dynamic DSL will not work for all plugins, e.g. if a plugin does not use the `@DataBoundConstructor`
