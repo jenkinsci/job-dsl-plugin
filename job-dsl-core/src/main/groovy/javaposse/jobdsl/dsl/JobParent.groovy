@@ -20,6 +20,8 @@ import javaposse.jobdsl.dsl.views.NestedView
 import javaposse.jobdsl.dsl.views.PipelineAggregatorView
 import javaposse.jobdsl.dsl.views.SectionedView
 
+import java.nio.charset.Charset
+
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNull
 import static javaposse.jobdsl.dsl.Preconditions.checkNotNullOrEmpty
 
@@ -237,6 +239,16 @@ abstract class JobParent extends Script implements DslFactory {
         checkNotNullOrEmpty(jobName, 'jobName must not be null or empty')
         checkNotNullOrEmpty(filePath, 'filePath must not be null or empty')
         jm.readFileInWorkspace(jobName, filePath)
+    }
+
+    /**
+     * @since 1.xx
+     */
+    @Override
+    String readFileFromWorkspace(String filePath, Charset charset) {
+        checkNotNullOrEmpty(filePath, 'filePath must not be null or empty')
+        checkNotNull(charset, 'charset must not be null')
+        jm.readFileInWorkspace(filePath, charset)
     }
 
     // this method cannot be private due to http://jira.codehaus.org/browse/GROOVY-6263
