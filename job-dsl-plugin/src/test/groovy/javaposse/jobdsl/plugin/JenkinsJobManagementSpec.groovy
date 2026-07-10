@@ -527,6 +527,29 @@ class JenkinsJobManagementSpec extends Specification {
         0 * saveableListener.onChange(job, _)
     }
 
+    def 'createOrUpdateConfig skips update after Jenkins re-serialized the config (JENKINS-38741)'() {
+        setup:
+        SaveableListener saveableListener = Mock(SaveableListener)
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
+
+        then:
+        FreeStyleProject job = jenkinsRule.jenkins.getItemByFullName('project') as FreeStyleProject
+
+        when:
+        // Persisting the job through Jenkins rewrites the config.xml via XStream, which
+        // reorders elements and adds plugin version attributes and plugin-default
+        // sub-elements that the generated XML does not contain. Without normalization
+        // the next seed run would consider the (unchanged) job as changed.
+        job.save()
+        SaveableListener.all().add(0, saveableListener)
+        jobManagement.createOrUpdateConfig(createItem('project', '/config.xml'), false)
+
+        then:
+        0 * saveableListener.onChange(job, _)
+    }
+
     def 'createOrUpdateConfig should fail if item is managed by another seed and failOnSeedCollision is enabled'() {
         setup:
         FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
