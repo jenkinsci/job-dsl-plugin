@@ -520,8 +520,9 @@ public class JenkinsJobManagement extends AbstractJobManagement {
                 // Canonicalization failed for one side; keep the raw strings on both
                 // so we never compare a canonical form against a raw one. At worst we
                 // update as the unpatched plugin would have.
-                LOGGER.log(Level.FINE, format("Could not canonicalize config for %s: %s",
-                        item.getName(), canonEx.getMessage()));
+                LOGGER.log(
+                        Level.FINE,
+                        format("Could not canonicalize config for %s: %s", item.getName(), canonEx.getMessage()));
             }
             XMLUnit.setIgnoreWhitespace(true);
             XMLUnit.setIgnoreComments(true);
