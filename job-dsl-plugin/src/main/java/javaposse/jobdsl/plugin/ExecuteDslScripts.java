@@ -644,7 +644,7 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
     private static void logItems(
             TaskListener listener, String message, Collection<?> collection, boolean verboseLogging) {
         if (!collection.isEmpty()) {
-            listener.getLogger().printf(message + " (%d)%n", collection.size(), verboseLogging ? ':' : '.');
+            listener.getLogger().printf(message + " (%d)%s%n", collection.size(), verboseLogging ? ':' : '.');
             if (verboseLogging) {
                 for (Object item : collection) {
                     listener.getLogger().println("    " + item.toString());
