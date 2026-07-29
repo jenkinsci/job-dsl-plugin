@@ -59,5 +59,8 @@
         <f:entry title="Mark build as unstable when using deprecated features:" field="unstableOnDeprecation">
             <f:checkbox name="unstableOnDeprecation" checked="${instance.unstableOnDeprecation}"/>
         </f:entry>
+        <f:entry title="Use verbose logging:" field="verboseLogging">
+            <f:checkbox name="verboseLogging" checked="${instance.verboseLogging}"/>
+        </f:entry>
     </f:advanced>
 </j:jelly>
