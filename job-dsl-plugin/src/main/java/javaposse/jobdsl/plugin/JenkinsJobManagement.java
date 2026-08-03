@@ -29,6 +29,7 @@ import hudson.model.TopLevelItem;
 import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.slaves.Cloud;
+import hudson.util.Secret;
 import hudson.util.VersionNumber;
 import hudson.util.XStream2;
 import java.io.ByteArrayInputStream;
@@ -38,6 +39,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,6 +49,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javaposse.jobdsl.dsl.AbstractJobManagement;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.DslScriptException;
@@ -451,32 +456,49 @@ public class JenkinsJobManagement extends AbstractJobManagement {
     }
 
     // Matches the Jenkins encrypted-Secret wire format: a base64 payload in braces.
-    private static final java.util.regex.Pattern ENCRYPTED_SECRET =
-            java.util.regex.Pattern.compile("\\{[A-Za-z0-9+/]+={0,2}\\}");
+    private static final Pattern ENCRYPTED_SECRET = Pattern.compile("\\{[A-Za-z0-9+/]+={0,2}\\}");
 
     /**
-     * Replaces every encrypted {@link hudson.util.Secret} payload in the given XML with its
-     * decrypted plaintext, so that two serializations of the same secret (which use a random
+     * Replaces every encrypted {@link Secret} payload in the given XML with a stable digest of
+     * its decrypted plaintext, so that two serializations of the same secret (which use a random
      * IV and therefore differ byte-for-byte) compare as equal. Non-secret matches are left
-     * untouched.
+     * untouched. The digest is hex-encoded so the substituted value is always XML-safe even when
+     * the plaintext contains metacharacters such as {@code &} or {@code <}; a raw plaintext would
+     * otherwise produce malformed XML and make the comparison fail, causing spurious updates.
      */
     private static String normalizeSecrets(String xml) {
-        java.util.regex.Matcher m = ENCRYPTED_SECRET.matcher(xml);
-        StringBuffer sb = new StringBuffer(xml.length());
+        Matcher m = ENCRYPTED_SECRET.matcher(xml);
+        StringBuilder sb = new StringBuilder(xml.length());
         while (m.find()) {
             String replacement = m.group();
             try {
-                hudson.util.Secret secret = hudson.util.Secret.decrypt(m.group());
+                Secret secret = Secret.decrypt(m.group());
                 if (secret != null) {
-                    replacement = "SECRET:" + secret.getPlainText();
+                    replacement = "SECRET:" + sha256Hex(secret.getPlainText());
                 }
             } catch (RuntimeException ignored) {
                 // Not a decryptable secret - keep the original text.
             }
-            m.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(replacement));
+            m.appendReplacement(sb, Matcher.quoteReplacement(replacement));
         }
         m.appendTail(sb);
         return sb.toString();
+    }
+
+    private static String sha256Hex(String value) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(value.getBytes(UTF_8));
+            StringBuilder hex = new StringBuilder(hash.length * 2);
+            for (byte b : hash) {
+                hex.append(Character.forDigit((b >> 4) & 0xF, 16));
+                hex.append(Character.forDigit(b & 0xF, 16));
+            }
+            return hex.toString();
+        } catch (NoSuchAlgorithmException e) {
+            // SHA-256 is a required algorithm on every JRE, so this should never happen.
+            throw new IllegalStateException("SHA-256 not available", e);
+        }
     }
 
     private boolean updateExistingItem(AbstractItem item, javaposse.jobdsl.dsl.Item dslItem) {
@@ -510,8 +532,8 @@ public class JenkinsJobManagement extends AbstractJobManagement {
                 // Secret-typed fields (e.g. remote-trigger authToken, passwords) are
                 // re-encrypted with a fresh random IV on every serialization, so their
                 // ciphertext differs on each write even when the underlying value is
-                // unchanged. Decrypt them to plaintext on both sides so only a real
-                // secret change is treated as a difference.
+                // unchanged. Replace them with a stable digest of their plaintext on both
+                // sides so only a real secret change is treated as a difference.
                 String canonicalOld = normalizeSecrets(Items.XSTREAM2.toXML(Items.XSTREAM2.fromXML(oldJob)));
                 String canonicalNew = normalizeSecrets(Items.XSTREAM2.toXML(Items.XSTREAM2.fromXML(config)));
                 oldJob = canonicalOld;
