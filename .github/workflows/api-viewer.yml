@@ -12,11 +12,16 @@ permissions:
   pages: write      # to deploy to Pages
   id-token: write   # to verify the deployment originates from an appropriate source
 
+# As advised by GitHub Copilot, cancel in progress jobs and allow concurrent jobs by ref
+concurrency:
+  group: "pages-${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+# concurrency:
+#   group: "pages"
+#   cancel-in-progress: false
 
 jobs:
   build:
