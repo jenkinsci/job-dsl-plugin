@@ -4,6 +4,7 @@ import static hudson.Util.fixEmptyAndTrim;
 import static java.lang.String.format;
 import static javaposse.jobdsl.plugin.actions.GeneratedObjectsAction.extractGeneratedObjects;
 
+import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -505,9 +506,20 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
                 } else {
                     if (removedItem instanceof ParameterizedJob) {
                         ParameterizedJob project = (ParameterizedJob) removedItem;
-                        project.checkPermission(Item.CONFIGURE);
-                        project.makeDisabled(true);
-                        disabled.add(unreferencedJob);
+                        if (project.supportsMakeDisabled()) {
+                            project.checkPermission(Item.CONFIGURE);
+                            project.makeDisabled(true);
+                            disabled.add(unreferencedJob);
+                        }
+                    }
+
+                    if (removedItem instanceof AbstractFolder) {
+                        AbstractFolder project = (AbstractFolder) removedItem;
+                        if (project.supportsMakeDisabled()) {
+                            project.checkPermission(Item.CONFIGURE);
+                            project.makeDisabled(true);
+                            disabled.add(unreferencedJob);
+                        }
                     }
                 }
             }
