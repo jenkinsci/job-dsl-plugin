@@ -19,6 +19,8 @@ import javaposse.jobdsl.dsl.views.PipelineAggregatorView
 import javaposse.jobdsl.dsl.views.SectionedView
 import spock.lang.Specification
 
+import java.nio.charset.Charset
+
 class JobParentSpec extends Specification {
     private final JobParent parent = Spy(JobParent)
     private final JobManagement jobManagement = Mock(JobManagement)
@@ -328,7 +330,7 @@ class JobParentSpec extends Specification {
         result == 'hello'
 
         when:
-        parent.readFileFromWorkspace('my-job', null)
+        parent.readFileFromWorkspace('my-job', (String) null)
 
         then:
         thrown(DslScriptException)
@@ -347,6 +349,28 @@ class JobParentSpec extends Specification {
 
         when:
         parent.readFileFromWorkspace('', 'foo.txt')
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'readFileInWorkspace with charset parameter'() {
+        jobManagement.readFileInWorkspace('foo.txt', Charset.forName('windows-31j')) >> 'hello'
+
+        when:
+        String result = parent.readFileFromWorkspace('foo.txt', Charset.forName('windows-31j'))
+
+        then:
+        result == 'hello'
+
+        when:
+        parent.readFileFromWorkspace('foo.txt', (Charset) null)
+
+        then:
+        thrown(DslScriptException)
+
+        when:
+        parent.readFileFromWorkspace(null, Charset.forName('windows-31j'))
 
         then:
         thrown(DslScriptException)

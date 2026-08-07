@@ -43,6 +43,8 @@ import org.jvnet.hudson.test.WithoutJenkins
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
+import java.nio.charset.Charset
+
 import static hudson.model.Result.UNSTABLE
 import static java.nio.charset.StandardCharsets.UTF_8
 
@@ -795,6 +797,19 @@ class JenkinsJobManagementSpec extends Specification {
         result == 'hello'
     }
 
+    def 'read file with windows-31j, file exists'() {
+        setup:
+        FreeStyleBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject())
+        jobManagement = new JenkinsJobManagement(System.out, [:], build, build.workspace, LookupStrategy.JENKINS_ROOT)
+        build.workspace.child(FILE_NAME).write('こんにちは', 'windows-31j')
+
+        when:
+        String result = jobManagement.readFileInWorkspace(FILE_NAME, Charset.forName('windows-31j'))
+
+        then:
+        result == 'こんにちは'
+    }
+
     def 'create view'() {
         when:
         jobManagement.createOrUpdateView('test-view', '<hudson.model.ListView/>', false)
@@ -863,6 +878,20 @@ class JenkinsJobManagementSpec extends Specification {
 
         when:
         jobManagement.readFileInWorkspace(fileName)
+
+        then:
+        Exception e = thrown(DslScriptException)
+        e.message.contains(fileName)
+    }
+
+    def 'read file from workspace using specific charset with exception'() {
+        setup:
+        AbstractBuild build = jenkinsRule.buildAndAssertSuccess(jenkinsRule.createFreeStyleProject())
+        jobManagement = new JenkinsJobManagement(System.out, [:], build, build.workspace, LookupStrategy.JENKINS_ROOT)
+        String fileName = 'test.txt'
+
+        when:
+        jobManagement.readFileInWorkspace(fileName, Charset.forName('windows-31j'))
 
         then:
         Exception e = thrown(DslScriptException)

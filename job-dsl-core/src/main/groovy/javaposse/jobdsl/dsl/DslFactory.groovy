@@ -10,6 +10,8 @@ import javaposse.jobdsl.dsl.jobs.OrganizationFolderJob
 import javaposse.jobdsl.dsl.jobs.WorkflowJob
 import javaposse.jobdsl.dsl.jobs.MultibranchWorkflowJob
 
+import java.nio.charset.Charset
+
 interface DslFactory extends ViewFactory {
     /**
      * Creates or updates a free style job.
@@ -236,4 +238,12 @@ interface DslFactory extends ViewFactory {
      * @param filePath path of the file relative to the workspace root
      */
     String readFileFromWorkspace(String jobName, String filePath)
+
+    /**
+     * Streams a file from the workspace of the seed job.
+     *
+     * @param filePath path of the file relative to the workspace root
+     * @param charset
+     */
+    String readFileFromWorkspace(String filePath, Charset charset)
 }
