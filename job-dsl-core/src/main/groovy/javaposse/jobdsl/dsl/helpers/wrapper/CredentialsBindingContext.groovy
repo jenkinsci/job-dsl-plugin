@@ -56,7 +56,20 @@ class CredentialsBindingContext extends AbstractExtensibleContext {
         addSimpleBinding('ZipFile', variable, credentials)
     }
 
-    private void addSimpleBinding(String type, String variableName, String credentials) {
+    /**
+     * Sets a variable to the given SSH User Private Key in the credentials.
+     */
+    @RequiresPlugin(id = 'credentials-binding', minimumVersion = '1.3')
+    void sshUserPrivateKey(String keyFileVariable, String passPhraseVariable, String usernameVariable, String credentials) {
+        nodes << new NodeBuilder().'org.jenkinsci.plugins.credentialsbinding.impl.SSHUserPrivateKeyBinding' {
+            credentialsId(credentials)
+            usernameVariable(userVariableName)
+            passPhraseVariable(passphraseVariable)
+            keyFileVariable(keyFileVariable)
+        }
+    }
+
+    private void addSimpleBinding(String type, String passphraseVariable, String usernameVariable, String variableName, String credentials) {
         nodes << new NodeBuilder()."org.jenkinsci.plugins.credentialsbinding.impl.${type}Binding" {
             variable(variableName)
             credentialsId(credentials)
