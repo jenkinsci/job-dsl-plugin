@@ -29,6 +29,7 @@ import hudson.model.TopLevelItem;
 import hudson.model.View;
 import hudson.model.ViewGroup;
 import hudson.slaves.Cloud;
+import hudson.util.Secret;
 import hudson.util.VersionNumber;
 import hudson.util.XStream2;
 import java.io.ByteArrayInputStream;
@@ -38,6 +39,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,6 +49,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javaposse.jobdsl.dsl.AbstractJobManagement;
 import javaposse.jobdsl.dsl.DslException;
 import javaposse.jobdsl.dsl.DslScriptException;
@@ -450,6 +455,52 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         }
     }
 
+    // Matches the Jenkins encrypted-Secret wire format: a base64 payload in braces.
+    private static final Pattern ENCRYPTED_SECRET = Pattern.compile("\\{[A-Za-z0-9+/]+={0,2}\\}");
+
+    /**
+     * Replaces every encrypted {@link Secret} payload in the given XML with a stable digest of
+     * its decrypted plaintext, so that two serializations of the same secret (which use a random
+     * IV and therefore differ byte-for-byte) compare as equal. Non-secret matches are left
+     * untouched. The digest is hex-encoded so the substituted value is always XML-safe even when
+     * the plaintext contains metacharacters such as {@code &} or {@code <}; a raw plaintext would
+     * otherwise produce malformed XML and make the comparison fail, causing spurious updates.
+     */
+    private static String normalizeSecrets(String xml) {
+        Matcher m = ENCRYPTED_SECRET.matcher(xml);
+        StringBuilder sb = new StringBuilder(xml.length());
+        while (m.find()) {
+            String replacement = m.group();
+            try {
+                Secret secret = Secret.decrypt(m.group());
+                if (secret != null) {
+                    replacement = "SECRET:" + sha256Hex(secret.getPlainText());
+                }
+            } catch (RuntimeException ignored) {
+                // Not a decryptable secret - keep the original text.
+            }
+            m.appendReplacement(sb, Matcher.quoteReplacement(replacement));
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static String sha256Hex(String value) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(value.getBytes(UTF_8));
+            StringBuilder hex = new StringBuilder(hash.length * 2);
+            for (byte b : hash) {
+                hex.append(Character.forDigit((b >> 4) & 0xF, 16));
+                hex.append(Character.forDigit(b & 0xF, 16));
+            }
+            return hex.toString();
+        } catch (NoSuchAlgorithmException e) {
+            // SHA-256 is a required algorithm on every JRE, so this should never happen.
+            throw new IllegalStateException("SHA-256 not available", e);
+        }
+    }
+
     private boolean updateExistingItem(AbstractItem item, javaposse.jobdsl.dsl.Item dslItem) {
         mergeCredentials(item, dslItem);
         String config = dslItem.getXml();
@@ -460,7 +511,44 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         Diff diff;
         try {
             String oldJob = item.getConfigFile().asString();
-            diff = XMLUnit.compareXML(oldJob, config);
+            // Jenkins persists job configs through XStream, which adds plugin version
+            // attributes (plugin="name@version") and plugin-default sub-elements that
+            // the Job DSL generated XML omits, and also differs in indentation,
+            // sibling element order and XML version/quote escaping. On top of that the
+            // stored configs are themselves a mix of raw Job DSL form (version="1.0")
+            // and XStream form (version='1.1'), depending on whether Jenkins ever
+            // re-saved the job. Left uncorrected this makes almost every persisted job
+            // compare as "changed" on every seed run, causing a mass re-serialization
+            // storm (JENKINS-38741). Canonicalize BOTH the stored and the generated
+            // XML through the very same serializer so the on-disk format is irrelevant
+            // on both sides, then compare strictly. Because both sides go through the
+            // same serializer, cosmetic drift (attributes, defaults, indentation, the
+            // element order that XStream itself normalizes) is already resolved, while
+            // meaningful ordering that XStream preserves - e.g. the order of build
+            // steps or publishers - is still compared, so a genuine reordering is
+            // correctly detected as a change.
+            String newJob = config;
+            try {
+                // Secret-typed fields (e.g. remote-trigger authToken, passwords) are
+                // re-encrypted with a fresh random IV on every serialization, so their
+                // ciphertext differs on each write even when the underlying value is
+                // unchanged. Replace them with a stable digest of their plaintext on both
+                // sides so only a real secret change is treated as a difference.
+                String canonicalOld = normalizeSecrets(Items.XSTREAM2.toXML(Items.XSTREAM2.fromXML(oldJob)));
+                String canonicalNew = normalizeSecrets(Items.XSTREAM2.toXML(Items.XSTREAM2.fromXML(config)));
+                oldJob = canonicalOld;
+                newJob = canonicalNew;
+            } catch (Exception canonEx) {
+                // Canonicalization failed for one side; keep the raw strings on both
+                // so we never compare a canonical form against a raw one. At worst we
+                // update as the unpatched plugin would have.
+                LOGGER.log(
+                        Level.FINE,
+                        format("Could not canonicalize config for %s: %s", item.getName(), canonEx.getMessage()));
+            }
+            XMLUnit.setIgnoreWhitespace(true);
+            XMLUnit.setIgnoreComments(true);
+            diff = new Diff(oldJob, newJob);
             if (diff.identical()) {
                 LOGGER.log(Level.FINE, format("Item %s is identical", item.getName()));
                 notifyItemUpdated(item, dslItem);
