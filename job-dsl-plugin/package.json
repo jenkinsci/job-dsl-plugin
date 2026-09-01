@@ -43,7 +43,7 @@
     "mini-css-extract-plugin": "2.10.2",
     "style-loader": "4.0.0",
     "webpack": "5.109.2",
-    "webpack-cli": "7.2.2",
+    "webpack-cli": "7.2.3",
     "webpack-dev-server": "6.0.0",
     "webpack-merge": "6.0.1"
   }
