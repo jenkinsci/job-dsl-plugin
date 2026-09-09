@@ -24,6 +24,48 @@ class StepContextSpec extends Specification {
         shellStep.command[0].value() == 'echo "Hello"'
     }
 
+    def 'call shell method with unstable return'() {
+        when:
+        context.shell('./run-tests.sh') {
+            unstableReturn(3)
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.tasks.Shell'
+            children().size() == 2
+            command[0].value() == './run-tests.sh'
+            unstableReturn[0].value() == 3
+        }
+    }
+
+    def 'call shell method with an empty closure'() {
+        when:
+        context.shell('echo "Hello"') {
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            name() == 'hudson.tasks.Shell'
+            children().size() == 1
+            command[0].value() == 'echo "Hello"'
+        }
+    }
+
+    def 'call shell method with invalid unstable return #exitCode'(int exitCode) {
+        when:
+        context.shell('exit 1') {
+            unstableReturn(exitCode)
+        }
+
+        then:
+        thrown(DslScriptException)
+
+        where:
+        exitCode << [0, -1, 256]
+    }
+
     def 'call remoteShell method with minimal options'() {
         when:
         context.remoteShell('root@example.com:22') {
@@ -103,6 +145,32 @@ class StepContextSpec extends Specification {
         def shellStep = context.stepNodes[0]
         shellStep.name() == 'hudson.tasks.BatchFile'
         shellStep.command[0].value() == 'echo "Hello from Windows"'
+    }
+
+    def 'call batchFile method with unstable return'() {
+        when:
+        context.batchFile('run-tests.bat') {
+            unstableReturn(-1)
+        }
+
+        then:
+        context.stepNodes.size() == 1
+        with(context.stepNodes[0]) {
+            name() == 'hudson.tasks.BatchFile'
+            children().size() == 2
+            command[0].value() == 'run-tests.bat'
+            unstableReturn[0].value() == -1
+        }
+    }
+
+    def 'call batchFile method with unstable return of zero'() {
+        when:
+        context.batchFile('exit 0') {
+            unstableReturn(0)
+        }
+
+        then:
+        thrown(DslScriptException)
     }
 
     def 'call powerShell method'() {

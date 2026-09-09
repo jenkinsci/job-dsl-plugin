@@ -30,8 +30,26 @@ class StepContext extends AbstractExtensibleContext {
      * the script from a file.
      */
     void shell(String command) {
+        shell(command, null)
+    }
+
+    /**
+     * Runs a shell script, with options such as the exit code that marks the build as unstable.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
+     *
+     * @since 1.95
+     */
+    void shell(String command, @DslContext(ShellContext) Closure shellClosure) {
+        ShellContext shellContext = new ShellContext()
+        ContextHelper.executeInContext(shellClosure, shellContext)
+
         stepNodes << new NodeBuilder().'hudson.tasks.Shell' {
             delegate.command(command)
+            if (shellContext.unstableReturn != null) {
+                unstableReturn(shellContext.unstableReturn)
+            }
         }
     }
 
@@ -78,8 +96,26 @@ class StepContext extends AbstractExtensibleContext {
      * the script from a file.
      */
     void batchFile(String command) {
+        batchFile(command, null)
+    }
+
+    /**
+     * Runs a Windows batch script, with options such as the error level that marks the build as unstable.
+     *
+     * Use {@link javaposse.jobdsl.dsl.DslFactory#readFileFromWorkspace(java.lang.String) readFileFromWorkspace} to read
+     * the script from a file.
+     *
+     * @since 1.95
+     */
+    void batchFile(String command, @DslContext(BatchFileContext) Closure batchFileClosure) {
+        BatchFileContext batchFileContext = new BatchFileContext()
+        ContextHelper.executeInContext(batchFileClosure, batchFileContext)
+
         stepNodes << new NodeBuilder().'hudson.tasks.BatchFile' {
             delegate.command(command)
+            if (batchFileContext.unstableReturn != null) {
+                unstableReturn(batchFileContext.unstableReturn)
+            }
         }
     }
 
