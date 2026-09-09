@@ -1,3 +1,12 @@
+## Migrating to 1.95
+
+### Delivery Pipeline Plugin
+
+Delivery Pipeline Plugin 2.0 removed the avatar, theme, relative link and console link options of its view. The
+`showAvatars`, `useTheme`, `useRelativeLinks` and `linkToConsoleLog` methods of `deliveryPipelineView` are
+[[deprecated|Deprecation-Policy]] and will be removed; they still write the options, which 1.x uses and 2.0 ignores.
+The new `allowAbort` method covers an option of the view that had no DSL method.
+
 ## Migrating to 1.81
 
 ### PostBuildScript plugin

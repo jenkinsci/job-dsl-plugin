@@ -70,7 +70,10 @@ class DeliveryPipelineView extends View {
 
     /**
      * Show avatar pictures instead of user names. Defaults to {@code false}.
+     *
+     * @deprecated Delivery Pipeline Plugin 2.0 removed the option
      */
+    @Deprecated
     void showAvatars(boolean value = true) {
         configure {
             it / methodMissing('showAvatars', value)
@@ -119,7 +122,9 @@ class DeliveryPipelineView extends View {
      * Use defined theme for pipeline. Defaults to {@code 'default'}.
      *
      * @since 1.48
+     * @deprecated Delivery Pipeline Plugin 2.0 removed the option
      */
+    @Deprecated
     void useTheme(String value) {
         configure {
             it / methodMissing('theme', value)
@@ -212,7 +217,9 @@ class DeliveryPipelineView extends View {
      * Defaults to {@code false}.
      *
      * @since 1.65
+     * @deprecated Delivery Pipeline Plugin 2.0 removed the option
      */
+    @Deprecated
     void useRelativeLinks(boolean value = true) {
         configure {
             it / methodMissing('linkRelative', value)
@@ -224,11 +231,25 @@ class DeliveryPipelineView extends View {
      * Defaults to {@code false}.
      *
      * @since 1.65
+     * @deprecated Delivery Pipeline Plugin 2.0 removed the option
      */
+    @Deprecated
     @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '0.10.3')
     void linkToConsoleLog(boolean value = true) {
         configure {
             it / methodMissing('linkToConsoleLog', value)
+        }
+    }
+
+    /**
+     * Allows aborting running builds from the view. Defaults to {@code false}.
+     *
+     * @since 1.95
+     */
+    @RequiresPlugin(id = 'delivery-pipeline-plugin', minimumVersion = '1.3.1')
+    void allowAbort(boolean value = true) {
+        configure {
+            it / methodMissing('allowAbort', value)
         }
     }
 
