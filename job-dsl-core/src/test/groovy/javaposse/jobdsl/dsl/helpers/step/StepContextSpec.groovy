@@ -1160,12 +1160,18 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 14
             targets[0].value() == ''
             usingScriptText[0].value() == false
+            sandbox[0].value() == false
             ignoreExisting[0].value() == false
+            ignoreMissingFiles[0].value() == false
+            failOnMissingPlugin[0].value() == false
+            failOnSeedCollision[0].value() == false
+            unstableOnDeprecation[0].value() == false
             removedJobAction[0].value() == 'IGNORE'
             removedViewAction[0].value() == 'IGNORE'
+            removedConfigFilesAction[0].value() == 'IGNORE'
             scriptText[0].value() == ''
             additionalClasspath[0].value() == ''
             lookupStrategy[0].value() == 'JENKINS_ROOT'
@@ -1177,9 +1183,15 @@ class StepContextSpec extends Specification {
         context.dsl {
             external('some-dsl.groovy', 'some-other-dsl.groovy')
             external('still-another-dsl.groovy')
+            sandbox()
             ignoreExisting()
+            ignoreMissingFiles()
+            failOnMissingPlugin()
+            failOnSeedCollision()
+            unstableOnDeprecation()
             removeAction('DISABLE')
             removeViewAction('DELETE')
+            removeConfigFilesAction('DELETE')
             additionalClasspath('some/path')
             lookupStrategy('SEED_JOB')
         }
@@ -1187,15 +1199,51 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 14
             targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
             usingScriptText[0].value() == false
+            sandbox[0].value() == true
             ignoreExisting[0].value() == true
+            ignoreMissingFiles[0].value() == true
+            failOnMissingPlugin[0].value() == true
+            failOnSeedCollision[0].value() == true
+            unstableOnDeprecation[0].value() == true
             removedJobAction[0].value() == 'DISABLE'
             removedViewAction[0].value() == 'DELETE'
+            removedConfigFilesAction[0].value() == 'DELETE'
             scriptText[0].value() == ''
             additionalClasspath[0].value() == 'some/path'
             lookupStrategy[0].value() == 'SEED_JOB'
+        }
+    }
+
+    def 'call dsl with invalid remove config files action'() {
+        when:
+        context.dsl {
+            removeConfigFilesAction('XXX')
+        }
+
+        then:
+        thrown(DslScriptException)
+    }
+
+    def 'call dsl with options switched off explicitly'() {
+        when:
+        context.dsl {
+            sandbox(false)
+            ignoreMissingFiles(false)
+            failOnMissingPlugin(false)
+            failOnSeedCollision(false)
+            unstableOnDeprecation(false)
+        }
+
+        then:
+        with(context.stepNodes[0]) {
+            sandbox[0].value() == false
+            ignoreMissingFiles[0].value() == false
+            failOnMissingPlugin[0].value() == false
+            failOnSeedCollision[0].value() == false
+            unstableOnDeprecation[0].value() == false
         }
     }
 
@@ -1249,12 +1297,13 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 14
             targets[0].value() == ''
             usingScriptText[0].value() == true
             ignoreExisting[0].value() == true
             removedJobAction[0].value() == 'DELETE'
             removedViewAction[0].value() == 'DELETE'
+            removedConfigFilesAction[0].value() == 'IGNORE'
             scriptText[0].value() == '''job {
   foo()
   bar {
@@ -1274,7 +1323,7 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 14
             targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == false
@@ -1293,7 +1342,7 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 14
             targets[0].value() == 'some-dsl.groovy\nsome-other-dsl.groovy\nstill-another-dsl.groovy'
             usingScriptText[0].value() == false
             ignoreExisting[0].value() == true
@@ -1318,7 +1367,7 @@ class StepContextSpec extends Specification {
         then:
         with(context.stepNodes[0]) {
             name() == 'javaposse.jobdsl.plugin.ExecuteDslScripts'
-            children().size() == 8
+            children().size() == 14
             targets[0].value() == ''
             usingScriptText[0].value() == true
             ignoreExisting[0].value() == false

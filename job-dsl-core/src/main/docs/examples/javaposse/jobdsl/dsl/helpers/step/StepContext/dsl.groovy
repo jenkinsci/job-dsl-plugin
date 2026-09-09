@@ -24,3 +24,20 @@ job('example-3') {
         }
     }
 }
+
+// run the scripts in the sandbox, be strict about missing plugins and collisions with other seed jobs, and
+// delete everything that is no longer generated
+job('example-4') {
+    steps {
+        dsl {
+            external('jobs/*.groovy')
+            sandbox()
+            failOnMissingPlugin()
+            failOnSeedCollision()
+            unstableOnDeprecation()
+            removeAction('DELETE')
+            removeViewAction('DELETE')
+            removeConfigFilesAction('DELETE')
+        }
+    }
+}
