@@ -55,6 +55,7 @@ class DeliveryPipelineViewSpec extends Specification {
     <showTotalBuildTime>true</showTotalBuildTime>
     <allowRebuild>true</allowRebuild>
     <allowPipelineStart>true</allowPipelineStart>
+    <allowAbort>true</allowAbort>
     <showDescription>true</showDescription>
     <showPromotions>true</showPromotions>
     <pagingEnabled>true</pagingEnabled>
@@ -122,6 +123,7 @@ class DeliveryPipelineViewSpec extends Specification {
             showTotalBuildTime()
             allowRebuild()
             allowPipelineStart()
+            allowAbort()
             showDescription()
             showPromotions()
             enablePaging()
@@ -140,5 +142,27 @@ class DeliveryPipelineViewSpec extends Specification {
         then:
         compareXML(ALL_OPTIONS_XML, view.xml).similar()
         1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '0.10.3')
+        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '1.3.1')
+        4 * jobManagement.logDeprecationWarning()
+    }
+
+    def 'allowAbort'() {
+        when:
+        view.allowAbort()
+
+        then:
+        view.xml.contains('<allowAbort>true</allowAbort>')
+        1 * jobManagement.requireMinimumPluginVersion('delivery-pipeline-plugin', '1.3.1')
+    }
+
+    def 'options removed in Delivery Pipeline Plugin 2.0 log a deprecation warning'() {
+        when:
+        view.showAvatars()
+        view.useTheme('foo')
+        view.useRelativeLinks()
+        view.linkToConsoleLog()
+
+        then:
+        4 * jobManagement.logDeprecationWarning()
     }
 }
