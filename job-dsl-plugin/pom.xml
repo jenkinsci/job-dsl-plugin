@@ -128,7 +128,7 @@
     <dependency>
       <groupId>org.jenkinsci.plugins</groupId>
       <artifactId>managed-scripts</artifactId>
-      <version>1.5.6</version>
+      <version>1.6.157.v9a_ca_a_6796cf4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
