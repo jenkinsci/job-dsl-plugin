@@ -23,3 +23,7 @@ jobs:
               shell('echo hello world')
           }
       }
+
+  - file: ./src/test/resources/javaposse/jobdsl/plugin/testjob-with-classpath.groovy
+    classpath:
+      - ./src/test/resources/javaposse/jobdsl/plugin/shared
