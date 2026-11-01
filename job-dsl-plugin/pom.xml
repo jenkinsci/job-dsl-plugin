@@ -96,7 +96,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>vsphere-cloud</artifactId>
-      <version>3.512.vfb_0824b_5068c</version>
+      <version>5.725.v407a_83379a_7c</version>
       <optional>true</optional>
     </dependency>
     <dependency>
