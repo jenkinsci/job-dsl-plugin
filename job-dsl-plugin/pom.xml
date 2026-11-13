@@ -126,6 +126,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-multibranch</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jenkinsci.plugins</groupId>
       <artifactId>managed-scripts</artifactId>
       <version>1.5.6</version>
