@@ -2167,6 +2167,31 @@ class PublisherContextSpec extends Specification {
         1 * jobManagement.requirePlugin('postbuild-task')
     }
 
+    def 'call postBuildTaskChain with two conditions'() {
+        def conditions = [
+                ['Build was aborted', 'AND'],
+                ['Simulation.*started', 'AND']
+        ]
+        when:
+        context.postBuildTaskMultiplyConditions {
+            task(conditions, 'git clean -fdx')
+        }
+
+        then:
+        context.publisherNodes.size() == 1
+        context.publisherNodes[0].name() == 'hudson.plugins.postbuildtask.PostbuildTask'
+        with(context.publisherNodes[0].tasks[0].'hudson.plugins.postbuildtask.TaskProperties'[0]) {
+            logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].logText[0].value() == 'Build was aborted'
+            logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[0].operator[0].value() == 'AND'
+            logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[1].logText[0].value() == 'Simulation.*started'
+            logTexts[0].'hudson.plugins.postbuildtask.LogProperties'[1].operator[0].value() == 'AND'
+            EscalateStatus[0].value() == false
+            RunIfJobSuccessful[0].value() == false
+            script[0].value() == 'git clean -fdx'
+        }
+        1 * jobManagement.requirePlugin('postbuild-task')
+    }
+
     def 'call postBuildTask with two tasks'() {
         when:
         context.postBuildTask {
