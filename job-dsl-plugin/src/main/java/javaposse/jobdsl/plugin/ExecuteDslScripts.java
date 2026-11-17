@@ -461,8 +461,10 @@ public class ExecuteDslScripts extends Builder implements SimpleBuildStep {
             if (matching.size() == 1) {
                 // Just update digest
                 SeedReference ref = Iterables.get(matching, 0);
-                if (digest.equals(ref.getDigest())) {
-                    ref.setDigest(digest);
+                if (!digest.equals(ref.getDigest())) {
+                    // the digest is part of the hash code, so replace the reference instead of modifying it
+                    seedJobReferences.remove(ref);
+                    seedJobReferences.add(new SeedReference(templateName, seedJobName, digest));
                     descriptorMutated = true;
                 }
             } else {

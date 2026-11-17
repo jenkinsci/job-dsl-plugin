@@ -4,6 +4,7 @@ import com.cloudbees.hudson.plugins.folder.Folder
 import com.cloudbees.hudson.plugins.folder.FolderIcon
 import com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon
 import hudson.FilePath
+import hudson.Util
 import hudson.model.AbstractItem
 import hudson.model.AbstractProject
 import hudson.model.BallColor
@@ -749,6 +750,43 @@ folder('folder-a/folder-b') {
         then:
         build.result == SUCCESS
         jenkinsRule.jenkins.getItemByFullName('/folder/test-job', FreeStyleProject).description == description
+    }
+
+    def templateDigestIsUpdatedWhenTemplateChanges() {
+        setup:
+        DescriptorImpl descriptor = jenkinsRule.instance.getDescriptorByType(DescriptorImpl)
+        Queue queue = jenkinsRule.instance.queue
+        FreeStyleProject template = jenkinsRule.createFreeStyleProject('template')
+        template.description = 'first'
+        FreeStyleProject seedJob = jenkinsRule.createFreeStyleProject('seed')
+        ExecuteDslScripts builder = new ExecuteDslScripts('job("test-job") {\n using("template")\n}')
+
+        when:
+        runBuild(seedJob, builder)
+        template.description = 'second'
+
+        then:
+        queue.getItem(seedJob) != null
+
+        when:
+        queue.clear()
+        runBuild(seedJob, builder)
+
+        then:
+        descriptor.templateJobMap.get('template')*.digest == [Util.getDigestOf(template.configFile.file)]
+        jenkinsRule.instance.getItemByFullName('test-job', FreeStyleProject).description == 'second'
+
+        when:
+        template.save()
+
+        then:
+        queue.getItem(seedJob) == null
+
+        when:
+        template.description = 'first'
+
+        then:
+        queue.getItem(seedJob) != null
     }
 
     def "SeedJobAction is added to created jobs"() {
