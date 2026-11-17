@@ -43,6 +43,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -65,10 +66,14 @@ import jenkins.branch.OrganizationFolder;
 import jenkins.model.DirectlyModifiableTopLevelItemGroup;
 import jenkins.model.Jenkins;
 import jenkins.model.ModifiableTopLevelItemGroup;
+import jenkins.util.xml.XMLUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jenkinsci.plugins.vSphereCloud;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * Manages Jenkins jobs, providing facilities to retrieve and create / update.
@@ -485,6 +490,61 @@ public class JenkinsJobManagement extends AbstractJobManagement {
         return sb.toString();
     }
 
+    /**
+     * Removes state that Jenkins rebuilds when it loads an item and that therefore cannot carry a
+     * configuration change: {@code owner} back-references to the item itself (e.g. the owner of a
+     * branch project factory), which are set again on load, and an empty actions list on the item,
+     * which loads the same way as a missing one. Generated configs often lack both, e.g. for
+     * multibranch jobs or for nodes replaced through the dynamic DSL or a configure block, so
+     * without this such items compare as changed on every seed run. Package-private for testing.
+     */
+    static Document normalizeLoadTimeState(String xml) throws IOException, SAXException {
+        Document document = XMLUtils.parse(new StringReader(xml));
+        Element root = document.getDocumentElement();
+        removeOwnerReferences(root, 1);
+        for (org.w3c.dom.Node child = root.getFirstChild(); child != null; child = child.getNextSibling()) {
+            if (child instanceof Element && "actions".equals(child.getNodeName()) && !hasChildElements(child)) {
+                root.removeChild(child);
+                break;
+            }
+        }
+        return document;
+    }
+
+    /**
+     * Removes {@code owner} elements whose only content is an XStream reference to the item itself,
+     * i.e. a reference made only of {@code ..} steps that leads back to the document root element.
+     *
+     * @param depth the depth of the children of {@code element}, the root's children having depth 1
+     */
+    private static void removeOwnerReferences(Element element, int depth) {
+        String referenceToRoot = String.join("/", Collections.nCopies(depth, ".."));
+        org.w3c.dom.Node child = element.getFirstChild();
+        while (child != null) {
+            org.w3c.dom.Node next = child.getNextSibling();
+            if (child instanceof Element) {
+                Element childElement = (Element) child;
+                if ("owner".equals(childElement.getNodeName())
+                        && !hasChildElements(childElement)
+                        && referenceToRoot.equals(childElement.getAttribute("reference"))) {
+                    element.removeChild(childElement);
+                } else {
+                    removeOwnerReferences(childElement, depth + 1);
+                }
+            }
+            child = next;
+        }
+    }
+
+    private static boolean hasChildElements(org.w3c.dom.Node node) {
+        for (org.w3c.dom.Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
+            if (child instanceof Element) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static String sha256Hex(String value) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -527,28 +587,28 @@ public class JenkinsJobManagement extends AbstractJobManagement {
             // meaningful ordering that XStream preserves - e.g. the order of build
             // steps or publishers - is still compared, so a genuine reordering is
             // correctly detected as a change.
-            String newJob = config;
+            XMLUnit.setIgnoreWhitespace(true);
+            XMLUnit.setIgnoreComments(true);
             try {
                 // Secret-typed fields (e.g. remote-trigger authToken, passwords) are
                 // re-encrypted with a fresh random IV on every serialization, so their
                 // ciphertext differs on each write even when the underlying value is
                 // unchanged. Replace them with a stable digest of their plaintext on both
                 // sides so only a real secret change is treated as a difference.
-                String canonicalOld = normalizeSecrets(Items.XSTREAM2.toXML(Items.XSTREAM2.fromXML(oldJob)));
-                String canonicalNew = normalizeSecrets(Items.XSTREAM2.toXML(Items.XSTREAM2.fromXML(config)));
-                oldJob = canonicalOld;
-                newJob = canonicalNew;
+                Document canonicalOld =
+                        normalizeLoadTimeState(normalizeSecrets(Items.XSTREAM2.toXML(Items.XSTREAM2.fromXML(oldJob))));
+                Document canonicalNew =
+                        normalizeLoadTimeState(normalizeSecrets(Items.XSTREAM2.toXML(Items.XSTREAM2.fromXML(config))));
+                diff = new Diff(canonicalOld, canonicalNew);
             } catch (Exception canonEx) {
-                // Canonicalization failed for one side; keep the raw strings on both
+                // Canonicalization failed for one side; compare the raw strings on both
                 // so we never compare a canonical form against a raw one. At worst we
                 // update as the unpatched plugin would have.
                 LOGGER.log(
                         Level.FINE,
                         format("Could not canonicalize config for %s: %s", item.getName(), canonEx.getMessage()));
+                diff = new Diff(oldJob, config);
             }
-            XMLUnit.setIgnoreWhitespace(true);
-            XMLUnit.setIgnoreComments(true);
-            diff = new Diff(oldJob, newJob);
             if (diff.identical()) {
                 LOGGER.log(Level.FINE, format("Item %s is identical", item.getName()));
                 notifyItemUpdated(item, dslItem);

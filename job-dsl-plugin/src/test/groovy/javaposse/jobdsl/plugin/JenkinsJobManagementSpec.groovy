@@ -37,9 +37,12 @@ import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint
 import javaposse.jobdsl.plugin.fixtures.TestContextExtensionPoint2
 import jenkins.model.Jenkins
 import org.custommonkey.xmlunit.XMLUnit
+import org.jenkinsci.plugins.workflow.multibranch.WorkflowBranchProjectFactory
+import org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject
 import org.junit.Rule
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.WithoutJenkins
+import org.w3c.dom.Document
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
@@ -572,6 +575,83 @@ class JenkinsJobManagementSpec extends Specification {
 
         then:
         0 * saveableListener.onChange(job, _)
+    }
+
+    def 'createOrUpdateConfig skips update of an unchanged multibranch job (JENKINS-38741)'() {
+        setup:
+        SaveableListener saveableListener = Mock(SaveableListener)
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('mb', '/multibranch.xml'), false)
+
+        then:
+        WorkflowMultiBranchProject job = jenkinsRule.jenkins.getItemByFullName('mb') as WorkflowMultiBranchProject
+
+        when:
+        // The generated config has no actions list and, as with a factory configured through the dynamic DSL,
+        // no back-reference from the factory to its owner. Jenkins adds both when it loads and persists the job.
+        job.save()
+        SaveableListener.all().add(0, saveableListener)
+        jobManagement.createOrUpdateConfig(createItem('mb', '/multibranch.xml'), false)
+
+        then:
+        0 * saveableListener.onChange(job, _)
+    }
+
+    def 'createOrUpdateConfig updates a multibranch job with a changed config (JENKINS-38741)'() {
+        setup:
+        SaveableListener saveableListener = Mock(SaveableListener)
+
+        when:
+        jobManagement.createOrUpdateConfig(createItem('mb', '/multibranch.xml'), false)
+
+        then:
+        WorkflowMultiBranchProject job = jenkinsRule.jenkins.getItemByFullName('mb') as WorkflowMultiBranchProject
+
+        when:
+        job.save()
+        SaveableListener.all().add(0, saveableListener)
+        jobManagement.createOrUpdateConfig(createItem('mb', '/multibranch-changed.xml'), false)
+
+        then:
+        1 * saveableListener.onChange(job, _)
+        (job.projectFactory as WorkflowBranchProjectFactory).scriptPath == 'Jenkinsfile.ci'
+    }
+
+    @WithoutJenkins
+    def 'normalizeLoadTimeState only removes owner references to the item and an empty actions list'() {
+        when:
+        Document document = JenkinsJobManagement.normalizeLoadTimeState('''
+            <project>
+                <actions/>
+                <factory>
+                    <owner reference="../.."/>
+                    <scriptPath>Jenkinsfile</scriptPath>
+                </factory>
+                <views>
+                    <view>
+                        <owner reference="../.."/>
+                        <parent reference="../../.."/>
+                    </view>
+                </views>
+                <property>
+                    <job reference="../.."/>
+                </property>
+            </project>'''.trim())
+
+        then:
+        document.getElementsByTagName('actions').length == 0
+        // the factory owner points to the item; the view owner points to <views>, so it is kept
+        document.getElementsByTagName('owner').length == 1
+        document.getElementsByTagName('parent').length == 1
+        document.getElementsByTagName('job').length == 1
+        document.getElementsByTagName('scriptPath').length == 1
+
+        when:
+        document = JenkinsJobManagement.normalizeLoadTimeState('<project><actions><action/></actions></project>')
+
+        then:
+        document.getElementsByTagName('actions').length == 1
     }
 
     def 'createOrUpdateConfig should fail if item is managed by another seed and failOnSeedCollision is enabled'() {
