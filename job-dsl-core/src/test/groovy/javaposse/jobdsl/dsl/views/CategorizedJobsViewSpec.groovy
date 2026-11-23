@@ -74,6 +74,42 @@ class CategorizedJobsViewSpec extends ListViewSpec<CategorizedJobsView> {
         }
     }
 
+    def 'hide aggregated info on categories'() {
+        when:
+        view.hideAggregatedInfoOnCategories()
+
+        then:
+        view.node.hideAggregatedInfoOnCategories[0].value() == true
+        1 * jobManagement.requireMinimumPluginVersion('categorized-view', '246.ve02ea_a_a_d21a_7')
+    }
+
+    def 'show aggregated info on categories'() {
+        when:
+        view.hideAggregatedInfoOnCategories(false)
+
+        then:
+        view.node.hideAggregatedInfoOnCategories[0].value() == false
+        1 * jobManagement.requireMinimumPluginVersion('categorized-view', '246.ve02ea_a_a_d21a_7')
+    }
+
+    def 'nested groups'() {
+        when:
+        view.nestedGroups()
+
+        then:
+        view.node.nestedGroups[0].value() == true
+        1 * jobManagement.requireMinimumPluginVersion('categorized-view', '246.ve02ea_a_a_d21a_7')
+    }
+
+    def 'flat groups'() {
+        when:
+        view.nestedGroups(false)
+
+        then:
+        view.node.nestedGroups[0].value() == false
+        1 * jobManagement.requireMinimumPluginVersion('categorized-view', '246.ve02ea_a_a_d21a_7')
+    }
+
     protected String getDefaultXml() {
         '''<?xml version='1.0' encoding='UTF-8'?>
 <org.jenkinsci.plugins.categorizedview.CategorizedJobsView plugin="categorized-view">
